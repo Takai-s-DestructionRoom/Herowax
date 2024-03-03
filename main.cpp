@@ -28,6 +28,7 @@
 #include "SimpleSceneTransition.h"
 #include "RImGui.h"
 #include "MainTestScene.h"
+#include "ProtoScene.h"
 #include "Colliders.h"
 #include <RenderTarget.h>
 #include <Renderer.h>
@@ -107,7 +108,7 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 	TextureManager::Load("Resources/Internals/loadingMark.png", "LoadingMark");
 
 	//初期シーンセット
-	SceneManager::Set<MainTestScene>();
+	SceneManager::Set<ProtoScene>();
 
 	//////////////////////////////////////
 

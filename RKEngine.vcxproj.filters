@@ -106,6 +106,12 @@
     <Filter Include="ヘッダー ファイル\Application\Scene">
       <UniqueIdentifier>{380574da-0fc7-48b6-b738-90570b96c9e0}</UniqueIdentifier>
     </Filter>
+    <Filter Include="ソース ファイル\Application\Player">
+      <UniqueIdentifier>{df234f43-8a3b-44a0-8b5c-d42cad307db5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\Application\Player">
+      <UniqueIdentifier>{29fa3160-1c53-4639-b065-f7e5d636b5ca}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Engine\2d\Sprite.cpp">
@@ -326,6 +332,12 @@
     </ClCompile>
     <ClCompile Include="Application\SpectrumAnalyze.cpp">
       <Filter>ソース ファイル\Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="ProtoScene.cpp">
+      <Filter>ソース ファイル\Application\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="Player.cpp">
+      <Filter>ソース ファイル\Application\Player</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -687,6 +699,12 @@
     </ClInclude>
     <ClInclude Include="Application\SpectrumAnalyze.h">
       <Filter>ヘッダー ファイル\Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="ProtoScene.h">
+      <Filter>ヘッダー ファイル\Application\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="Player.h">
+      <Filter>ヘッダー ファイル\Application\Player</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

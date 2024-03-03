@@ -178,6 +178,8 @@
     <ClCompile Include="Engine\Base\SRVertexBuffer.cpp" />
     <ClCompile Include="Engine\PathUtil.cpp" />
     <ClCompile Include="Application\SpectrumAnalyze.cpp" />
+    <ClCompile Include="Player.cpp" />
+    <ClCompile Include="ProtoScene.cpp" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Shader\BasicPS.hlsl">
@@ -483,6 +485,8 @@
     <ClInclude Include="Engine\Base\SRVertexBuffer.h" />
     <ClInclude Include="Engine\PathUtil.h" />
     <ClInclude Include="Application\SpectrumAnalyze.h" />
+    <ClInclude Include="Player.h" />
+    <ClInclude Include="ProtoScene.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Shader\Basic.hlsli">
