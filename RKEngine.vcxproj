@@ -519,6 +519,9 @@
       <Project>{491d8eaf-cc8c-414b-a479-0090d6b6b8be}</Project>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup>
+    <Text Include="hogehoge.txt" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

@@ -742,4 +742,7 @@
       <Filter>シェーダー ファイル</Filter>
     </None>
   </ItemGroup>
+  <ItemGroup>
+    <Text Include="hogehoge.txt" />
+  </ItemGroup>
 </Project>
