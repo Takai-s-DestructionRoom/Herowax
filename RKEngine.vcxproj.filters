@@ -333,10 +333,10 @@
     <ClCompile Include="Application\SpectrumAnalyze.cpp">
       <Filter>ソース ファイル\Engine</Filter>
     </ClCompile>
-    <ClCompile Include="ProtoScene.cpp">
+    <ClCompile Include="Application\Scene\ProtoScene.cpp">
       <Filter>ソース ファイル\Application\Scene</Filter>
     </ClCompile>
-    <ClCompile Include="Player.cpp">
+    <ClCompile Include="Application\Player\Player.cpp">
       <Filter>ソース ファイル\Application\Player</Filter>
     </ClCompile>
   </ItemGroup>
@@ -700,10 +700,10 @@
     <ClInclude Include="Application\SpectrumAnalyze.h">
       <Filter>ヘッダー ファイル\Engine</Filter>
     </ClInclude>
-    <ClInclude Include="ProtoScene.h">
+    <ClInclude Include="Application\Scene\ProtoScene.h">
       <Filter>ヘッダー ファイル\Application\Scene</Filter>
     </ClInclude>
-    <ClInclude Include="Player.h">
+    <ClInclude Include="Application\Player\Player.h">
       <Filter>ヘッダー ファイル\Application\Player</Filter>
     </ClInclude>
   </ItemGroup>

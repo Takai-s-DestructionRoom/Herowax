@@ -27,6 +27,8 @@ void ProtoScene::Update()
 	{
 		ImGuiWindowFlags window_flags = 0;
 		window_flags |= ImGuiWindowFlags_NoResize;
+
+		// プレイヤー //
 		ImGui::Begin("Player", NULL, window_flags);
 
 		ImGui::Text("pos:%f,%f,%f", player.GetPos().x, player.GetPos().y, player.GetPos().z);
@@ -34,6 +36,14 @@ void ProtoScene::Update()
 		if (ImGui::Button("Reset")) {
 			player.SetPos({ 0, 0, 0 });
 		}
+
+		ImGui::End();
+
+		// カメラ //
+		ImGui::Begin("Camera", NULL, window_flags);
+
+		ImGui::Text("pos:%f,%f,%f",
+			camera.mViewProjection.mEye.x, camera.mViewProjection.mEye.y, camera.mViewProjection.mEye.z);
 
 		ImGui::End();
 	}

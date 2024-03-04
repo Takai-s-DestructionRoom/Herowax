@@ -33,6 +33,7 @@ void Player::Update()
 		obj.mTransform.position += moveVec;
 	}
 
+	obj.mTransform.UpdateMatrix();
 	obj.TransferBuffer(Camera::sNowCamera->mViewProjection);
 }
 
