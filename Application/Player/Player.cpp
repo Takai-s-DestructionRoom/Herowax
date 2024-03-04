@@ -31,7 +31,7 @@ void Player::Update()
 	obj.TransferBuffer(Camera::sNowCamera->mViewProjection);
 
 #pragma region ImGui
-	ImGui::SetNextWindowSize({ 300, 100 });
+	ImGui::SetNextWindowSize({ 300, 150 });
 
 	ImGuiWindowFlags window_flags = 0;
 	window_flags |= ImGuiWindowFlags_NoResize;
@@ -40,6 +40,7 @@ void Player::Update()
 
 	ImGui::Text("pos:%f,%f,%f", GetPos().x, GetPos().y, GetPos().z);
 	ImGui::Text("moveVec:%f,%f,%f", moveVec.x, moveVec.y, moveVec.z);
+	ImGui::SliderFloat("moveSpeed:%f", &moveSpeed,0.f,5.f);
 
 	if (ImGui::Button("Reset")) {
 		SetPos({ 0, 0, 0 });
