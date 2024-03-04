@@ -3,9 +3,9 @@
 #include "Camera.h"
 #include "RImGui.h"
 
-Player::Player():
-	moveSpeed(1.f),isJumping(false),jumpTimer(0.0f),maxJumpTimer(1.0f),
-	isGraund(true), hp(0),maxHP(10),isAlive(true)
+Player::Player() :
+	moveSpeed(1.f), isJumping(false), jumpTimer(0.0f), maxJumpTimer(1.0f),
+	isGraund(true), hp(0), maxHP(10), isAlive(true)
 {
 	obj = ModelObj(Model::Load("./Resources/Model/Cube.obj", "Cube", true));
 }
@@ -40,7 +40,7 @@ void Player::Update()
 
 	ImGui::Text("pos:%f,%f,%f", GetPos().x, GetPos().y, GetPos().z);
 	ImGui::Text("moveVec:%f,%f,%f", moveVec.x, moveVec.y, moveVec.z);
-	ImGui::SliderFloat("moveSpeed:%f", &moveSpeed,0.f,5.f);
+	ImGui::SliderFloat("moveSpeed:%f", &moveSpeed, 0.f, 5.f);
 
 	if (ImGui::Button("Reset")) {
 		SetPos({ 0, 0, 0 });

@@ -23,6 +23,8 @@ ProtoScene::ProtoScene()
 void ProtoScene::Init()
 {
 	Camera::sNowCamera = &camera;
+	cameraDist = -20.f;
+	cameraAngle = { 20.f,0.f };
 	LightGroup::sNowLight = &light;
 	player.Init();
 }
@@ -30,8 +32,11 @@ void ProtoScene::Init()
 void ProtoScene::Update()
 {
 	Vector3 cameraVec = { 0, 0, 1 };
-	cameraVec *= Quaternion::AngleAxis(Vector3(0, 1, 0).Cross(cameraVec), Util::AngleToRadian(20));
-	cameraVec *= -20.0f;
+	//カメラアングル適応
+	cameraVec *= Quaternion::AngleAxis(Vector3(1, 0, 0).Cross(cameraVec), Util::AngleToRadian(cameraAngle.y));
+	cameraVec *= Quaternion::AngleAxis(Vector3(0, 1, 0).Cross(cameraVec), Util::AngleToRadian(cameraAngle.x));
+	//カメラの距離適応
+	cameraVec *= cameraDist;
 
 	//プレイヤーと一定の距離を保って着いていく
 	camera.mViewProjection.mEye = player.GetPos() + cameraVec;
@@ -46,7 +51,7 @@ void ProtoScene::Update()
 	skydome.TransferBuffer(camera.mViewProjection);
 	ground.TransferBuffer(camera.mViewProjection);
 
-	//スペースかAボタン押されたらプロトシーンへ
+	//スペースかAボタン押されたらリザルトシーンへ
 	if (RInput::GetInstance()->GetKeyDown(DIK_SPACE) ||
 		RInput::GetInstance()->GetPadButtonDown(XINPUT_GAMEPAD_START))
 	{
@@ -55,6 +60,8 @@ void ProtoScene::Update()
 
 	//テストGUI
 	{
+		ImGui::SetNextWindowSize({ 300, 200 });
+
 		ImGuiWindowFlags window_flags = 0;
 		window_flags |= ImGuiWindowFlags_NoResize;
 
@@ -63,6 +70,9 @@ void ProtoScene::Update()
 
 		ImGui::Text("pos:%f,%f,%f",
 			camera.mViewProjection.mEye.x, camera.mViewProjection.mEye.y, camera.mViewProjection.mEye.z);
+		ImGui::SliderFloat("dist:%f", &cameraDist, -50.f, 0.f);
+		ImGui::SliderFloat("angleX:%f", &cameraAngle.x, 0.f, 360.f);
+		ImGui::SliderFloat("angleY:%f", &cameraAngle.y, 0.f, 360.f);
 
 		ImGui::End();
 	}

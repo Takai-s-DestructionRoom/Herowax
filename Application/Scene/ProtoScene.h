@@ -26,6 +26,8 @@ private:
 	Player player;
 
 	Camera camera = Camera();
+	float cameraDist = -20.f;	//注視点からカメラの距離
+	Vector2 cameraAngle{};		//カメラアングル
 	Vector2 mAngle = { 0, 0 };
 	LightGroup light;
 

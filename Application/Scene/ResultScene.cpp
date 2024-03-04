@@ -18,7 +18,7 @@ void ResultScene::Init()
 
 void ResultScene::Update()
 {
-	//スペースかメニューボタン押されたらプロトシーンへ
+	//スペースかメニューボタン押されたらタイトルシーンへ
 	if (RInput::GetInstance()->GetKeyDown(DIK_SPACE) ||
 		RInput::GetInstance()->GetPadButtonDown(XINPUT_GAMEPAD_START))
 	{
