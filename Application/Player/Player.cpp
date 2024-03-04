@@ -17,31 +17,21 @@ void Player::Init()
 
 void Player::Update()
 {
-	Vector2 stick = RInput::GetInstance()->GetPadLStick();
+	Move();
 
-	//スティックが倒されてたら
-	if (stick.LengthSq() > 0.f) {
-		//カメラから注視点へのベクトル
-		Vector3 cameraVec = Camera::sNowCamera->mViewProjection.mTarget - Camera::sNowCamera->mViewProjection.mEye;
-		//カメラの角度
-		float cameraRad = atan2f(cameraVec.x, cameraVec.z);
-		//スティックの角度
-		float stickRad = atan2f(stick.x, stick.y);
-
-		moveVec = { 0, 0, 1 };
-		moveVec *= Matrix4::RotationY(cameraRad + stickRad);
-		moveVec.Normalize();
-		moveVec *= stick.Length();
-
-		moveVec *= moveSpeed;
-		obj.mTransform.position += moveVec;
+	//地面に埋ってたら
+	if (obj.mTransform.position.y + obj.mTransform.scale.y > 0.f)
+	{
+		//地面に触れるとこまで移動
+		obj.mTransform.position.y = 0.f + obj.mTransform.scale.y;
 	}
 
+	//更新してからバッファに送る
 	obj.mTransform.UpdateMatrix();
 	obj.TransferBuffer(Camera::sNowCamera->mViewProjection);
 
-	// ImGui //
-	ImGui::SetNextWindowSize({ 400, 150 });
+#pragma region ImGui
+	ImGui::SetNextWindowSize({ 300, 100 });
 
 	ImGuiWindowFlags window_flags = 0;
 	window_flags |= ImGuiWindowFlags_NoResize;
@@ -56,9 +46,33 @@ void Player::Update()
 	}
 
 	ImGui::End();
+#pragma endregion
 }
 
 void Player::Draw()
 {
 	obj.Draw();
+}
+
+void Player::Move()
+{
+	Vector2 stick = RInput::GetInstance()->GetPadLStick();
+
+	//スティックが倒されてたら
+	if (stick.LengthSq() > 0.f) {
+		//カメラから注視点へのベクトル
+		Vector3 cameraVec = Camera::sNowCamera->mViewProjection.mTarget - Camera::sNowCamera->mViewProjection.mEye;
+		//カメラの角度
+		float cameraRad = atan2f(cameraVec.x, cameraVec.z);
+		//スティックの角度
+		float stickRad = atan2f(stick.x, stick.y);
+
+		moveVec = { 0, 0, 1 };									//正面を基準に
+		moveVec *= Matrix4::RotationY(cameraRad + stickRad);	//カメラの角度から更にスティックの入力角度を足して
+		moveVec.Normalize();									//方向だけの情報なので正規化して
+		moveVec *= stick.Length();								//傾き具合を大きさに反映
+
+		moveVec *= moveSpeed;									//移動速度をかけ合わせたら完成
+		obj.mTransform.position += moveVec;						//完成したものを座標に足し合わせる
+	}
 }

@@ -26,6 +26,9 @@ public:
 	void Update();
 	void Draw();
 
+	//移動関数
+	void Move();
+
 	// ゲッター //
 	//座標取得
 	Vector3 GetPos()const { return obj.mTransform.position; }

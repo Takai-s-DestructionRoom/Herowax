@@ -21,7 +21,8 @@ public:
 	void Draw() override;
 
 private:
-	ModelObj skydome;
+	ModelObj skydome;	//天球
+	ModelObj ground;	//地面
 	Player player;
 
 	Camera camera = Camera();
