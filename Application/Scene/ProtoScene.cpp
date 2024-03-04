@@ -28,17 +28,6 @@ void ProtoScene::Update()
 		ImGuiWindowFlags window_flags = 0;
 		window_flags |= ImGuiWindowFlags_NoResize;
 
-		// プレイヤー //
-		ImGui::Begin("Player", NULL, window_flags);
-
-		ImGui::Text("pos:%f,%f,%f", player.GetPos().x, player.GetPos().y, player.GetPos().z);
-
-		if (ImGui::Button("Reset")) {
-			player.SetPos({ 0, 0, 0 });
-		}
-
-		ImGui::End();
-
 		// カメラ //
 		ImGui::Begin("Camera", NULL, window_flags);
 
@@ -49,11 +38,11 @@ void ProtoScene::Update()
 	}
 
 	Vector3 cameraVec = { 0, 0, 1 };
-	//cameraVec *= Quaternion::AngleAxis(Vector3(0, 1, 0).Cross(cameraVec), Util::AngleToRadian(20));
-	//cameraVec *= -20.0f;
+	cameraVec *= Quaternion::AngleAxis(Vector3(0, 1, 0).Cross(cameraVec), Util::AngleToRadian(20));
+	cameraVec *= -20.0f;
 
-	//camera.mViewProjection.mEye = player.GetPos() + cameraVec;
-	//camera.mViewProjection.mTarget = {0,0,0};
+	camera.mViewProjection.mEye = player.GetPos() + cameraVec;
+	camera.mViewProjection.mTarget = player.GetPos();
 	camera.mViewProjection.UpdateMatrix();
 
 	player.Update();
