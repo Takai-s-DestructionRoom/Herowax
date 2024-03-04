@@ -345,6 +345,9 @@
     <ClCompile Include="Application\Scene\ResultScene.cpp">
       <Filter>ソース ファイル\Application\Scene</Filter>
     </ClCompile>
+    <ClCompile Include="Engine\Easing.cpp">
+      <Filter>ソース ファイル\Engine</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Shader\TestVS.hlsl">
@@ -717,6 +720,9 @@
     </ClInclude>
     <ClInclude Include="Application\Scene\ResultScene.h">
       <Filter>ヘッダー ファイル\Application\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Easing.h">
+      <Filter>ヘッダー ファイル\Engine</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

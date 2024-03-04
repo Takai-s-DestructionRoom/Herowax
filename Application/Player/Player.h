@@ -1,5 +1,6 @@
 #pragma once
 #include "ModelObj.h"
+#include "Easing.h"
 
 class Player
 {
@@ -8,9 +9,13 @@ public:
 	Vector3 moveVec;			//移動ベクトル
 	float moveSpeed;			//移動速度
 	bool isJumping;				//ジャンプ中かフラグ
-	float jumpTimer;			//ジャンプ時間計測用
-	const float maxJumpTimer;	//ジャンプ時間
+	Easing::EaseTimer jumpTimer;//ジャンプ時間計測用
+	float jumpHeight;			//ジャンプしてる高さ
+	float maxJumpHeight;		//ジャンプの最高到達点
+	float jumpPower;			//ジャンプ力(初速)
+	float jumpSpeed;			//ジャンプ速度
 	bool isGraund;				//接地しているかフラグ
+	float gravity = 0.098f;		//重力
 
 	//------------ HP関連 ------------//
 	bool isAlive;				//生きてるか否か

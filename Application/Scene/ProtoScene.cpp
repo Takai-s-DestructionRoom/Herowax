@@ -76,7 +76,6 @@ void ProtoScene::Update()
 
 		ImGui::End();
 	}
-
 }
 
 void ProtoScene::Draw()
