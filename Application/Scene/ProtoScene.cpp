@@ -1,4 +1,6 @@
 #include "ProtoScene.h"
+#include "ResultScene.h"
+#include "SceneManager.h"
 #include "RInput.h"
 #include "RImGui.h"
 #include <Quaternion.h>
@@ -27,20 +29,6 @@ void ProtoScene::Init()
 
 void ProtoScene::Update()
 {
-	//テストGUI
-	{
-		ImGuiWindowFlags window_flags = 0;
-		window_flags |= ImGuiWindowFlags_NoResize;
-
-		// カメラ //
-		ImGui::Begin("Camera", NULL, window_flags);
-
-		ImGui::Text("pos:%f,%f,%f",
-			camera.mViewProjection.mEye.x, camera.mViewProjection.mEye.y, camera.mViewProjection.mEye.z);
-
-		ImGui::End();
-	}
-
 	Vector3 cameraVec = { 0, 0, 1 };
 	cameraVec *= Quaternion::AngleAxis(Vector3(0, 1, 0).Cross(cameraVec), Util::AngleToRadian(20));
 	cameraVec *= -20.0f;
@@ -57,6 +45,28 @@ void ProtoScene::Update()
 
 	skydome.TransferBuffer(camera.mViewProjection);
 	ground.TransferBuffer(camera.mViewProjection);
+
+	//スペースかAボタン押されたらプロトシーンへ
+	if (RInput::GetInstance()->GetKeyDown(DIK_SPACE) ||
+		RInput::GetInstance()->GetPadButtonDown(XINPUT_GAMEPAD_START))
+	{
+		SceneManager::GetInstance()->Change<ResultScene>();
+	}
+
+	//テストGUI
+	{
+		ImGuiWindowFlags window_flags = 0;
+		window_flags |= ImGuiWindowFlags_NoResize;
+
+		// カメラ //
+		ImGui::Begin("Camera", NULL, window_flags);
+
+		ImGui::Text("pos:%f,%f,%f",
+			camera.mViewProjection.mEye.x, camera.mViewProjection.mEye.y, camera.mViewProjection.mEye.z);
+
+		ImGui::End();
+	}
+
 }
 
 void ProtoScene::Draw()

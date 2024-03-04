@@ -76,4 +76,27 @@ void Player::Move()
 		moveVec *= moveSpeed;									//移動速度をかけ合わせたら完成
 		obj.mTransform.position += moveVec;						//完成したものを座標に足し合わせる
 	}
+
+	//接地時にAボタン押すと
+	if (isGraund && RInput::GetInstance()->GetPadButtonDown(XINPUT_GAMEPAD_A))
+	{
+		isJumping = true;
+		isGraund = false;
+	}
+
+	if (isJumping) {
+		/*velocity.y += 0.1f * TimeManager::deltaFrame;
+		if (velocity.y > 0.2f)
+		{
+			velocity.y = 0.2f;
+		}
+		jumpTimer += TimeManager::deltaTime;*/
+
+		//ジャンプ時間超えるか途中でAボタン離されたら
+		if (jumpTimer >= maxJumpTimer || (!RInput::GetInstance()->GetPadButton(XINPUT_GAMEPAD_A)))
+		{
+			jumpTimer = 0;		//ジャンプタイマーリセット
+			isJumping = false;	//ジャンプフラグもリセット
+		}
+	}
 }
