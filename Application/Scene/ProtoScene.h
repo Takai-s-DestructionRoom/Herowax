@@ -11,7 +11,7 @@
 #include "Sprite.h"
 #include "Player.h"
 #include "Tower.h"
-#include "../../EnemyManager.h"
+#include "EnemyManager.h"
 
 class ProtoScene : public IScene
 {

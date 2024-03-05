@@ -1,14 +1,15 @@
 #pragma once
 #include "ModelObj.h"
 
-class Enemy
+//Player,Enemyなど生きてる系オブジェクトの基底クラス
+class Charactor
 {
 public:
 	//------------ 移動関連 ------------//
 	Vector3 moveVec;			//移動ベクトル
 	float moveSpeed;			//移動速度
 	bool isGraund;				//接地しているかフラグ
-	
+
 	//------------ HP関連 ------------//
 	bool isAlive;				//生きてるか否か
 	int hp;						//現在のヒットポイント
@@ -17,14 +18,12 @@ public:
 	//------------ その他 ------------//
 	ModelObj obj;				//オブジェクト
 
-	//追跡する対象(プレイヤーを入れる)
-	ModelObj* target = nullptr;
-
 public:
-	Enemy(ModelObj* target_);
-	void Init();
-	void Update();
-	void Draw();
+	Charactor();
+	virtual ~Charactor() {};
+	virtual void Init() = 0;
+	virtual void Update() = 0;
+	virtual void Draw() = 0;
 
 	// ゲッター //
 	//座標取得
@@ -44,6 +43,6 @@ public:
 
 private:
 	//コピー禁止
-	Enemy& operator=(const Enemy&) = delete;
+	Charactor& operator=(const Charactor&) = delete;
 };
 

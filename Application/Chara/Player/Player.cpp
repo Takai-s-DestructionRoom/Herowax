@@ -6,9 +6,7 @@
 #include "RImGui.h"
 
 Player::Player() :
-	moveSpeed(1.f), isJumping(false), jumpTimer(0.2f),
-	jumpHeight(0.f), maxJumpHeight(5.f), jumpPower(2.f),jumpSpeed(0.f),
-	isGraund(true), hp(0), maxHP(10), isAlive(true)
+	isJumping(false), jumpTimer(0.2f),jumpHeight(0.f), maxJumpHeight(5.f), jumpPower(2.f),jumpSpeed(0.f)
 {
 	obj = ModelObj(Model::Load("./Resources/Model/Cube.obj", "Cube", true));
 }

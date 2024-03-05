@@ -64,7 +64,7 @@
       <ConformanceMode>false</ConformanceMode>
       <TreatWarningAsError>true</TreatWarningAsError>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
-      <AdditionalIncludeDirectories>$(ProjectDir)Application;$(ProjectDir)Application\BackGround;$(ProjectDir)Application\Scene;$(ProjectDir)Application\RhythmCore;$(ProjectDir)Application\Particle;$(ProjectDir)Engine;$(ProjectDir)Engine\2d;$(ProjectDir)Engine\3d;$(ProjectDir)Engine\3d\Model;$(ProjectDir)Engine\Base;$(ProjectDir)Engine\Camera;$(ProjectDir)Engine\Collision;$(ProjectDir)Engine\Light;$(ProjectDir)Engine\Math;$(ProjectDir)Engine\Scene;$(ProjectDir)Engine\PostEffect;$(ProjectDir)Engine\SimpleDrawer;$(ProjectDir)Engine\Renderer;$(ProjectDir)Application\Chara\Player;$(ProjectDir)Application\Object\Tower;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)Application;$(ProjectDir)Application\BackGround;$(ProjectDir)Application\Scene;$(ProjectDir)Application\RhythmCore;$(ProjectDir)Application\Particle;$(ProjectDir)Engine;$(ProjectDir)Engine\2d;$(ProjectDir)Engine\3d;$(ProjectDir)Engine\3d\Model;$(ProjectDir)Engine\Base;$(ProjectDir)Engine\Camera;$(ProjectDir)Engine\Collision;$(ProjectDir)Engine\Light;$(ProjectDir)Engine\Math;$(ProjectDir)Engine\Scene;$(ProjectDir)Engine\PostEffect;$(ProjectDir)Engine\SimpleDrawer;$(ProjectDir)Engine\Renderer;$(ProjectDir)Application\Chara\Player;$(ProjectDir)Application\Object\Tower;$(ProjectDir)Application\Chara\Enemy;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
@@ -86,7 +86,7 @@
       <ConformanceMode>false</ConformanceMode>
       <TreatWarningAsError>true</TreatWarningAsError>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
-      <AdditionalIncludeDirectories>$(ProjectDir)Application;$(ProjectDir)Application\BackGround;$(ProjectDir)Application\Scene;$(ProjectDir)Application\RhythmCore;$(ProjectDir)Application\Particle;$(ProjectDir)Engine;$(ProjectDir)Engine\2d;$(ProjectDir)Engine\3d;$(ProjectDir)Engine\3d\Model;$(ProjectDir)Engine\Base;$(ProjectDir)Engine\Camera;$(ProjectDir)Engine\Collision;$(ProjectDir)Engine\Light;$(ProjectDir)Engine\Math;$(ProjectDir)Engine\Scene;$(ProjectDir)Engine\PostEffect;$(ProjectDir)Engine\SimpleDrawer;$(ProjectDir)Engine\Renderer;$(ProjectDir)Application\Chara\Player;$(ProjectDir)Application\Object\Tower;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)Application;$(ProjectDir)Application\BackGround;$(ProjectDir)Application\Scene;$(ProjectDir)Application\RhythmCore;$(ProjectDir)Application\Particle;$(ProjectDir)Engine;$(ProjectDir)Engine\2d;$(ProjectDir)Engine\3d;$(ProjectDir)Engine\3d\Model;$(ProjectDir)Engine\Base;$(ProjectDir)Engine\Camera;$(ProjectDir)Engine\Collision;$(ProjectDir)Engine\Light;$(ProjectDir)Engine\Math;$(ProjectDir)Engine\Scene;$(ProjectDir)Engine\PostEffect;$(ProjectDir)Engine\SimpleDrawer;$(ProjectDir)Engine\Renderer;$(ProjectDir)Application\Chara\Player;$(ProjectDir)Application\Object\Tower;$(ProjectDir)Application\Chara\Enemy;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
@@ -108,8 +108,9 @@
     <ClCompile Include="Application\Scene\SimpleSceneTransition.cpp" />
     <ClCompile Include="Application\Scene\SoundScene.cpp" />
     <ClCompile Include="Application\Scene\SpriteScene.cpp" />
-    <ClCompile Include="Enemy.cpp" />
-    <ClCompile Include="EnemyManager.cpp" />
+    <ClCompile Include="Application\Chara\Charactor\Charactor.cpp" />
+    <ClCompile Include="Application\Chara\Enemy\Enemy.cpp" />
+    <ClCompile Include="Application\Chara\Enemy\EnemyManager.cpp" />
     <ClCompile Include="Engine\Easing.cpp" />
     <ClCompile Include="Engine\Base\RenderTarget.cpp" />
     <ClCompile Include="Engine\Base\SRIndexBuffer.cpp" />
@@ -415,8 +416,9 @@
     <ClInclude Include="Application\Scene\SimpleSceneTransition.h" />
     <ClInclude Include="Application\Scene\SoundScene.h" />
     <ClInclude Include="Application\Scene\SpriteScene.h" />
-    <ClInclude Include="Enemy.h" />
-    <ClInclude Include="EnemyManager.h" />
+    <ClInclude Include="Application\Chara\Charactor\Charactor.h" />
+    <ClInclude Include="Application\Chara\Enemy\Enemy.h" />
+    <ClInclude Include="Application\Chara\Enemy\EnemyManager.h" />
     <ClInclude Include="Engine\Easing.h" />
     <ClInclude Include="Engine\Base\Rect.h" />
     <ClInclude Include="Engine\Base\RenderTarget.h" />
