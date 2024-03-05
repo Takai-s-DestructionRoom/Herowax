@@ -17,6 +17,8 @@ void Tower::Init()
 
 void Tower::Update()
 {
+	UpdateCollider();
+
 	//HP0になったら死ぬ
 	if (hp <= 0)
 	{
@@ -52,4 +54,12 @@ void Tower::Draw()
 	{
 		obj.Draw();
 	}
+}
+
+void Tower::UpdateCollider()
+{
+	collider.pos = GetPos();
+	//足元に判定をずらす
+	collider.pos.y = 0;
+	collider.r = 1;
 }

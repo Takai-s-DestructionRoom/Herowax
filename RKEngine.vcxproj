@@ -103,6 +103,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Application\EnemySpawner.cpp" />
     <ClCompile Include="Application\Scene\ControllerScene.cpp" />
     <ClCompile Include="Application\Scene\MainTestScene.cpp" />
     <ClCompile Include="Application\Scene\SimpleSceneTransition.cpp" />
@@ -411,6 +412,7 @@
     </FxCompile>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Application\EnemySpawner.h" />
     <ClInclude Include="Application\Scene\ControllerScene.h" />
     <ClInclude Include="Application\Scene\MainTestScene.h" />
     <ClInclude Include="Application\Scene\SimpleSceneTransition.h" />

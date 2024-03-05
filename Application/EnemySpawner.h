@@ -1,25 +1,32 @@
 #pragma once
 #include "ModelObj.h"
-#include "ColPrimitive3D.h"
+#include "Easing.h"
 
-class Tower
+class EnemySpawner
 {
 public:
 	//------------ HP関連 ------------//
 	bool isAlive;				//生きてるか否か
 	int hp;						//現在のヒットポイント
 	int maxHP;					//最大HP
+	float spawnInterval;		//敵の出現間隔
+	int spawnNum;				//敵の同時出現数
+	float spawnRandomPos;		//敵が出現する際の中心位置からのズレ
 
 	//------------ その他 ------------//
 	ModelObj obj;				//オブジェクト
-	
-	ColPrimitive3D::Sphere collider;
+
+private:
+	Easing::EaseTimer spawnTimer;
 
 public:
-	Tower();
+	EnemySpawner();
 	void Init();
 	void Update();
 	void Draw();
+
+	//敵を指定秒数感覚で出現
+	void PopEnemy(const Vector3 position,float time);
 
 	//ダメージくらう
 	void Damage(uint32_t damage) { hp -= damage; }
@@ -39,11 +46,9 @@ public:
 	void SetScale(const Vector3& scale) { obj.mTransform.scale = scale; }
 	//生きてるかフラグ設定
 	void SetIsAlive(bool alive) { isAlive = alive; }
-protected:
-	//当たり判定の更新
-	void UpdateCollider();
 
 private:
 	//コピー禁止
-	Tower& operator=(const Tower&) = delete;
+	EnemySpawner& operator=(const EnemySpawner&) = delete;
 };
+

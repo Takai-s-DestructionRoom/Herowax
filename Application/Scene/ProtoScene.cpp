@@ -4,6 +4,7 @@
 #include "RInput.h"
 #include "RImGui.h"
 #include <Quaternion.h>
+#include "ColPrimitive3D.h"
 
 ProtoScene::ProtoScene()
 {
@@ -29,8 +30,11 @@ void ProtoScene::Init()
 	tower.Init();
 	player.Init();
 
-	enemyManager.Init();
-	enemyManager.SetTarget(&player.obj);
+	EnemyManager::GetInstance()->Init();
+	EnemyManager::GetInstance()->SetTarget(&tower.obj);
+
+	enemySpawner.Init();
+	enemySpawner.SetPos({30,0,0});
 }
 
 void ProtoScene::Update()
@@ -54,13 +58,18 @@ void ProtoScene::Update()
 	{
 		tower.Damage(1);
 	}
-	//Lボタンでタワーの位置に敵出現
-	if (RInput::GetInstance()->GetPadButtonDown(XINPUT_GAMEPAD_LEFT_SHOULDER))
-	{
-		enemyManager.PopEnemy(tower.GetPos());
-	}
 
-	enemyManager.Update();
+	//3秒ごとに1回敵を出現させる
+	enemySpawner.Update();
+	EnemyManager::GetInstance()->Update();
+	//クソ手抜き当たり判定
+	for (auto& enemy : EnemyManager::GetInstance()->enemys)
+	{
+		if (ColPrimitive3D::CheckSphereToSphere(enemy.collider, tower.collider)) {
+			enemy.SetIsAlive(false);
+			tower.Damage(1);
+		}
+	}
 	tower.Update();
 	player.Update();
 
@@ -97,7 +106,8 @@ void ProtoScene::Update()
 
 void ProtoScene::Draw()
 {
-	enemyManager.Draw();
+	EnemyManager::GetInstance()->Draw();
+	enemySpawner.Draw();
 	skydome.Draw();
 	ground.Draw();
 	tower.Draw();

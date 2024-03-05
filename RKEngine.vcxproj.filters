@@ -142,6 +142,12 @@
     <Filter Include="ヘッダー ファイル\Application\Chara\Charactor">
       <UniqueIdentifier>{fe8c54e7-0d25-4367-bf51-0bcbc3a8a270}</UniqueIdentifier>
     </Filter>
+    <Filter Include="ソース ファイル\Application\Object\EnemySpawner">
+      <UniqueIdentifier>{82fc10b4-caf4-4682-bcca-a7a23bf0b7fc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\Application\Object\EnemySpawner">
+      <UniqueIdentifier>{65e2e1d4-60aa-4f58-a8a8-413f2ab72128}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Engine\2d\Sprite.cpp">
@@ -389,6 +395,9 @@
     </ClCompile>
     <ClCompile Include="Application\Chara\Charactor\Charactor.cpp">
       <Filter>ソース ファイル\Application\Chara\Charactor</Filter>
+    </ClCompile>
+    <ClCompile Include="Application\EnemySpawner.cpp">
+      <Filter>ソース ファイル\Application\Object\EnemySpawner</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -777,6 +786,9 @@
     </ClInclude>
     <ClInclude Include="Application\Chara\Charactor\Charactor.h">
       <Filter>ヘッダー ファイル\Application\Chara\Charactor</Filter>
+    </ClInclude>
+    <ClInclude Include="Application\EnemySpawner.h">
+      <Filter>ヘッダー ファイル\Application\Object\EnemySpawner</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

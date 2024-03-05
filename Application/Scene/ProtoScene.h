@@ -12,6 +12,7 @@
 #include "Player.h"
 #include "Tower.h"
 #include "EnemyManager.h"
+#include "EnemySpawner.h"
 
 class ProtoScene : public IScene
 {
@@ -27,7 +28,7 @@ private:
 	ModelObj ground;	//地面
 	Tower tower;
 	Player player;
-	EnemyManager enemyManager;
+	EnemySpawner enemySpawner;
 
 	Camera camera = Camera();
 	float cameraDist = -20.f;	//注視点からカメラの距離

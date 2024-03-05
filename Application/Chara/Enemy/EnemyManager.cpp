@@ -1,12 +1,14 @@
 #include "EnemyManager.h"
 #include "RImGui.h"
+#include "Colliders.h"
 
-EnemyManager::EnemyManager()
+EnemyManager* EnemyManager::GetInstance()
 {
-
+	static EnemyManager instance;
+	return &instance;
 }
 
-void EnemyManager::PopEnemy(const Vector3 position)
+void EnemyManager::CreateEnemy(const Vector3 position)
 {
 	enemys.emplace_back(target);
 	enemys.back().SetPos(position);
@@ -33,7 +35,7 @@ void EnemyManager::Update()
 	{
 		enemy.Update();
 	}
-
+	
 #pragma region ImGui
 	ImGui::SetNextWindowSize({ 300, 100 });
 

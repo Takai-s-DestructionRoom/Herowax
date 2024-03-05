@@ -3,7 +3,7 @@
 
 Enemy::Enemy(ModelObj* target_)
 {
-	moveSpeed = 0.5f;
+	moveSpeed = 0.1f;
 	obj = ModelObj(Model::Load("./Resources/Model/Cube.obj", "Sphere", true));
 	target = target_;
 }
@@ -22,6 +22,8 @@ void Enemy::Update()
 
 	obj.mTransform.position += pVec * moveSpeed;
 
+	UpdateCollider();
+
 	//更新してからバッファに送る
 	obj.mTransform.UpdateMatrix();
 	obj.TransferBuffer(Camera::sNowCamera->mViewProjection);
@@ -29,6 +31,9 @@ void Enemy::Update()
 
 void Enemy::Draw()
 {
-	obj.Draw();
+	if (isAlive)
+	{
+		obj.Draw();
+	}
 }
 

@@ -1,5 +1,6 @@
 #pragma once
 #include "ModelObj.h"
+#include "ColPrimitive3D.h"
 
 //Player,Enemyなど生きてる系オブジェクトの基底クラス
 class Charactor
@@ -17,6 +18,8 @@ public:
 
 	//------------ その他 ------------//
 	ModelObj obj;				//オブジェクト
+
+	ColPrimitive3D::Sphere collider;	//AABBの当たり判定
 
 public:
 	Charactor();
@@ -40,6 +43,10 @@ public:
 	void SetScale(const Vector3& scale) { obj.mTransform.scale = scale; }
 	//生きてるかフラグ設定
 	void SetIsAlive(bool alive) { isAlive = alive; }
+
+protected:
+	//当たり判定の更新
+	void UpdateCollider();
 
 private:
 	//コピー禁止

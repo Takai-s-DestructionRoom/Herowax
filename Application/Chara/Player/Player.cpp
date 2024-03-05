@@ -36,6 +36,8 @@ void Player::Update()
 		isAlive = false;
 	}
 
+	UpdateCollider();
+
 	//更新してからバッファに送る
 	obj.mTransform.UpdateMatrix();
 	obj.TransferBuffer(Camera::sNowCamera->mViewProjection);
