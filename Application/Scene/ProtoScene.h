@@ -11,6 +11,7 @@
 #include "Sprite.h"
 #include "Player.h"
 #include "Tower.h"
+#include "../../EnemyManager.h"
 
 class ProtoScene : public IScene
 {
@@ -26,6 +27,7 @@ private:
 	ModelObj ground;	//地面
 	Tower tower;
 	Player player;
+	EnemyManager enemyManager;
 
 	Camera camera = Camera();
 	float cameraDist = -20.f;	//注視点からカメラの距離

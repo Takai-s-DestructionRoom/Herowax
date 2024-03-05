@@ -28,6 +28,9 @@ void ProtoScene::Init()
 	LightGroup::sNowLight = &light;
 	tower.Init();
 	player.Init();
+
+	enemyManager.Init();
+	enemyManager.SetTarget(&player.obj);
 }
 
 void ProtoScene::Update()
@@ -51,7 +54,13 @@ void ProtoScene::Update()
 	{
 		tower.Damage(1);
 	}
+	//Lボタンでタワーの位置に敵出現
+	if (RInput::GetInstance()->GetPadButtonDown(XINPUT_GAMEPAD_LEFT_SHOULDER))
+	{
+		enemyManager.PopEnemy(tower.GetPos());
+	}
 
+	enemyManager.Update();
 	tower.Update();
 	player.Update();
 
@@ -88,6 +97,7 @@ void ProtoScene::Update()
 
 void ProtoScene::Draw()
 {
+	enemyManager.Draw();
 	skydome.Draw();
 	ground.Draw();
 	tower.Draw();

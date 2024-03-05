@@ -130,6 +130,12 @@
     <Filter Include="ヘッダー ファイル\Application\Object\Tower">
       <UniqueIdentifier>{1d506580-ad2a-47f4-aebd-9adddac14fdb}</UniqueIdentifier>
     </Filter>
+    <Filter Include="ヘッダー ファイル\Application\Chara\Enemy">
+      <UniqueIdentifier>{9b1ce1aa-20ad-4b74-913a-99fc7d72ec75}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\Application\Chara\Enemy">
+      <UniqueIdentifier>{8f748a72-7aec-4fea-ae88-467f01173e80}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Engine\2d\Sprite.cpp">
@@ -368,6 +374,12 @@
     </ClCompile>
     <ClCompile Include="Application\Object\Tower\Tower.cpp">
       <Filter>ソース ファイル\Application\Object\Tower</Filter>
+    </ClCompile>
+    <ClCompile Include="Enemy.cpp">
+      <Filter>ソース ファイル\Application\Chara\Enemy</Filter>
+    </ClCompile>
+    <ClCompile Include="EnemyManager.cpp">
+      <Filter>ソース ファイル\Application\Chara\Enemy</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -747,6 +759,12 @@
     </ClInclude>
     <ClInclude Include="Application\Object\Tower\Tower.h">
       <Filter>ヘッダー ファイル\Application\Object\Tower</Filter>
+    </ClInclude>
+    <ClInclude Include="Enemy.h">
+      <Filter>ヘッダー ファイル\Application\Chara\Enemy</Filter>
+    </ClInclude>
+    <ClInclude Include="EnemyManager.h">
+      <Filter>ヘッダー ファイル\Application\Chara\Enemy</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

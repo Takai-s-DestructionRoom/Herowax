@@ -108,6 +108,8 @@
     <ClCompile Include="Application\Scene\SimpleSceneTransition.cpp" />
     <ClCompile Include="Application\Scene\SoundScene.cpp" />
     <ClCompile Include="Application\Scene\SpriteScene.cpp" />
+    <ClCompile Include="Enemy.cpp" />
+    <ClCompile Include="EnemyManager.cpp" />
     <ClCompile Include="Engine\Easing.cpp" />
     <ClCompile Include="Engine\Base\RenderTarget.cpp" />
     <ClCompile Include="Engine\Base\SRIndexBuffer.cpp" />
@@ -413,6 +415,8 @@
     <ClInclude Include="Application\Scene\SimpleSceneTransition.h" />
     <ClInclude Include="Application\Scene\SoundScene.h" />
     <ClInclude Include="Application\Scene\SpriteScene.h" />
+    <ClInclude Include="Enemy.h" />
+    <ClInclude Include="EnemyManager.h" />
     <ClInclude Include="Engine\Easing.h" />
     <ClInclude Include="Engine\Base\Rect.h" />
     <ClInclude Include="Engine\Base\RenderTarget.h" />
