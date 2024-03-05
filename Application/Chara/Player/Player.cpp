@@ -7,7 +7,7 @@
 
 Player::Player() :
 	moveSpeed(1.f), isJumping(false), jumpTimer(0.2f),
-	jumpHeight(0.f), maxJumpHeight(5.f), jumpPower(3.f),jumpSpeed(0.f),
+	jumpHeight(0.f), maxJumpHeight(5.f), jumpPower(2.f),jumpSpeed(0.f),
 	isGraund(true), hp(0), maxHP(10), isAlive(true)
 {
 	obj = ModelObj(Model::Load("./Resources/Model/Cube.obj", "Cube", true));
@@ -50,6 +50,7 @@ void Player::Update()
 
 	ImGui::Begin("Player", NULL, window_flags);
 
+	ImGui::Text("Lスティック移動、Aボタンジャンプ");
 	ImGui::Text("pos:%f,%f,%f", GetPos().x, GetPos().y, GetPos().z);
 	ImGui::Text("moveVec:%f,%f,%f", moveVec.x, moveVec.y, moveVec.z);
 	ImGui::Text("jumpHeight:%f", jumpHeight);

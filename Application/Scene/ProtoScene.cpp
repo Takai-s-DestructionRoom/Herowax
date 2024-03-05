@@ -46,7 +46,8 @@ void ProtoScene::Update()
 	camera.mViewProjection.UpdateMatrix();
 
 	//Rボタンでタワーにダメージ
-	if (RInput::GetInstance()->GetPadButtonDown(XINPUT_GAMEPAD_RIGHT_SHOULDER))
+	if (RInput::GetInstance()->GetKeyDown(DIK_R) || 
+		RInput::GetInstance()->GetPadButtonDown(XINPUT_GAMEPAD_RIGHT_SHOULDER))
 	{
 		tower.Damage(1);
 	}

@@ -27,13 +27,14 @@ void Tower::Update()
 	obj.TransferBuffer(Camera::sNowCamera->mViewProjection);
 
 #pragma region ImGui
-	ImGui::SetNextWindowSize({ 300, 150 });
+	ImGui::SetNextWindowSize({ 300, 100 });
 
 	ImGuiWindowFlags window_flags = 0;
 	window_flags |= ImGuiWindowFlags_NoResize;
 
 	ImGui::Begin("Tower", NULL, window_flags);
 
+	ImGui::Text("RキーかRボタンでHP減らせます");
 	ImGui::Text("HP:%d", hp);
 
 	if (ImGui::Button("Reset")) {
