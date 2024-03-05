@@ -32,10 +32,16 @@ void Player::Update()
 		isJumping = false;
 	}
 
+	//HP0になったら死ぬ
+	if (hp <= 0)
+	{
+		isAlive = false;
+	}
+
 	//更新してからバッファに送る
 	obj.mTransform.UpdateMatrix();
 	obj.TransferBuffer(Camera::sNowCamera->mViewProjection);
-
+	
 #pragma region ImGui
 	ImGui::SetNextWindowSize({ 300, 250 });
 
@@ -62,7 +68,10 @@ void Player::Update()
 
 void Player::Draw()
 {
-	obj.Draw();
+	if (isAlive)
+	{
+		obj.Draw();
+	}
 }
 
 void Player::Move()

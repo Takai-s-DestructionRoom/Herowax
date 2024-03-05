@@ -64,7 +64,7 @@
       <ConformanceMode>false</ConformanceMode>
       <TreatWarningAsError>true</TreatWarningAsError>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
-      <AdditionalIncludeDirectories>$(ProjectDir)Application;$(ProjectDir)Application\BackGround;$(ProjectDir)Application\Scene;$(ProjectDir)Application\RhythmCore;$(ProjectDir)Application\Particle;$(ProjectDir)Engine;$(ProjectDir)Engine\2d;$(ProjectDir)Engine\3d;$(ProjectDir)Engine\3d\Model;$(ProjectDir)Engine\Base;$(ProjectDir)Engine\Camera;$(ProjectDir)Engine\Collision;$(ProjectDir)Engine\Light;$(ProjectDir)Engine\Math;$(ProjectDir)Engine\Scene;$(ProjectDir)Engine\PostEffect;$(ProjectDir)Engine\SimpleDrawer;$(ProjectDir)Engine\Renderer;$(ProjectDir)Application\Player;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)Application;$(ProjectDir)Application\BackGround;$(ProjectDir)Application\Scene;$(ProjectDir)Application\RhythmCore;$(ProjectDir)Application\Particle;$(ProjectDir)Engine;$(ProjectDir)Engine\2d;$(ProjectDir)Engine\3d;$(ProjectDir)Engine\3d\Model;$(ProjectDir)Engine\Base;$(ProjectDir)Engine\Camera;$(ProjectDir)Engine\Collision;$(ProjectDir)Engine\Light;$(ProjectDir)Engine\Math;$(ProjectDir)Engine\Scene;$(ProjectDir)Engine\PostEffect;$(ProjectDir)Engine\SimpleDrawer;$(ProjectDir)Engine\Renderer;$(ProjectDir)Application\Chara\Player;$(ProjectDir)Application\Object\Tower;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
@@ -86,7 +86,7 @@
       <ConformanceMode>false</ConformanceMode>
       <TreatWarningAsError>true</TreatWarningAsError>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
-      <AdditionalIncludeDirectories>$(ProjectDir)Application;$(ProjectDir)Application\BackGround;$(ProjectDir)Application\Scene;$(ProjectDir)Application\RhythmCore;$(ProjectDir)Application\Particle;$(ProjectDir)Engine;$(ProjectDir)Engine\2d;$(ProjectDir)Engine\3d;$(ProjectDir)Engine\3d\Model;$(ProjectDir)Engine\Base;$(ProjectDir)Engine\Camera;$(ProjectDir)Engine\Collision;$(ProjectDir)Engine\Light;$(ProjectDir)Engine\Math;$(ProjectDir)Engine\Scene;$(ProjectDir)Engine\PostEffect;$(ProjectDir)Engine\SimpleDrawer;$(ProjectDir)Engine\Renderer;$(ProjectDir)Application\Player;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)Application;$(ProjectDir)Application\BackGround;$(ProjectDir)Application\Scene;$(ProjectDir)Application\RhythmCore;$(ProjectDir)Application\Particle;$(ProjectDir)Engine;$(ProjectDir)Engine\2d;$(ProjectDir)Engine\3d;$(ProjectDir)Engine\3d\Model;$(ProjectDir)Engine\Base;$(ProjectDir)Engine\Camera;$(ProjectDir)Engine\Collision;$(ProjectDir)Engine\Light;$(ProjectDir)Engine\Math;$(ProjectDir)Engine\Scene;$(ProjectDir)Engine\PostEffect;$(ProjectDir)Engine\SimpleDrawer;$(ProjectDir)Engine\Renderer;$(ProjectDir)Application\Chara\Player;$(ProjectDir)Application\Object\Tower;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
@@ -179,10 +179,11 @@
     <ClCompile Include="Engine\Base\SRVertexBuffer.cpp" />
     <ClCompile Include="Engine\PathUtil.cpp" />
     <ClCompile Include="Application\SpectrumAnalyze.cpp" />
-    <ClCompile Include="Application\Player\Player.cpp" />
+    <ClCompile Include="Application\Chara\Player\Player.cpp" />
     <ClCompile Include="Application\Scene\ProtoScene.cpp" />
     <ClCompile Include="Application\Scene\ResultScene.cpp" />
     <ClCompile Include="Application\Scene\TitleScene.cpp" />
+    <ClCompile Include="Application\Object\Tower\Tower.cpp" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Shader\BasicPS.hlsl">
@@ -489,10 +490,11 @@
     <ClInclude Include="Engine\Base\SRVertexBuffer.h" />
     <ClInclude Include="Engine\PathUtil.h" />
     <ClInclude Include="Application\SpectrumAnalyze.h" />
-    <ClInclude Include="Application\Player\Player.h" />
+    <ClInclude Include="Application\Chara\Player\Player.h" />
     <ClInclude Include="Application\Scene\ProtoScene.h" />
     <ClInclude Include="Application\Scene\ResultScene.h" />
     <ClInclude Include="Application\Scene\TitleScene.h" />
+    <ClInclude Include="Application\Object\Tower\Tower.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Shader\Basic.hlsli">

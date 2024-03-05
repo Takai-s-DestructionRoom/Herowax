@@ -10,6 +10,7 @@
 #include "ModelObj.h"
 #include "Sprite.h"
 #include "Player.h"
+#include "Tower.h"
 
 class ProtoScene : public IScene
 {
@@ -23,6 +24,7 @@ public:
 private:
 	ModelObj skydome;	//天球
 	ModelObj ground;	//地面
+	Tower tower;
 	Player player;
 
 	Camera camera = Camera();

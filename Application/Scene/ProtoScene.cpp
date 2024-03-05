@@ -26,6 +26,7 @@ void ProtoScene::Init()
 	cameraDist = -20.f;
 	cameraAngle = { 20.f,0.f };
 	LightGroup::sNowLight = &light;
+	tower.Init();
 	player.Init();
 }
 
@@ -44,6 +45,13 @@ void ProtoScene::Update()
 	camera.mViewProjection.mTarget = player.GetPos();
 	camera.mViewProjection.UpdateMatrix();
 
+	//Rボタンでタワーにダメージ
+	if (RInput::GetInstance()->GetPadButtonDown(XINPUT_GAMEPAD_RIGHT_SHOULDER))
+	{
+		tower.Damage(1);
+	}
+
+	tower.Update();
 	player.Update();
 
 	light.Update();
@@ -58,29 +66,29 @@ void ProtoScene::Update()
 		SceneManager::GetInstance()->Change<ResultScene>();
 	}
 
-	//テストGUI
-	{
-		ImGui::SetNextWindowSize({ 300, 200 });
+#pragma region ImGui
+	ImGui::SetNextWindowSize({ 300, 200 });
 
-		ImGuiWindowFlags window_flags = 0;
-		window_flags |= ImGuiWindowFlags_NoResize;
+	ImGuiWindowFlags window_flags = 0;
+	window_flags |= ImGuiWindowFlags_NoResize;
 
-		// カメラ //
-		ImGui::Begin("Camera", NULL, window_flags);
+	// カメラ //
+	ImGui::Begin("Camera", NULL, window_flags);
 
-		ImGui::Text("pos:%f,%f,%f",
-			camera.mViewProjection.mEye.x, camera.mViewProjection.mEye.y, camera.mViewProjection.mEye.z);
-		ImGui::SliderFloat("dist:%f", &cameraDist, -50.f, 0.f);
-		ImGui::SliderFloat("angleX:%f", &cameraAngle.x, 0.f, 360.f);
-		ImGui::SliderFloat("angleY:%f", &cameraAngle.y, 0.f, 360.f);
+	ImGui::Text("pos:%f,%f,%f",
+		camera.mViewProjection.mEye.x, camera.mViewProjection.mEye.y, camera.mViewProjection.mEye.z);
+	ImGui::SliderFloat("dist:%f", &cameraDist, -50.f, 0.f);
+	ImGui::SliderAngle("angleX:%f", &cameraAngle.x);
+	ImGui::SliderAngle("angleY:%f", &cameraAngle.y);
 
-		ImGui::End();
-	}
+	ImGui::End();
+#pragma endregion
 }
 
 void ProtoScene::Draw()
 {
 	skydome.Draw();
 	ground.Draw();
+	tower.Draw();
 	player.Draw();
 }
