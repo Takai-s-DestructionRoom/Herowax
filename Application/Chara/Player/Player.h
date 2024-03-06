@@ -20,5 +20,6 @@ public:
 	void Draw()override;
 
 	//移動関数
-	void Move();
+	void MovePad();
+	void MoveKey();
 };

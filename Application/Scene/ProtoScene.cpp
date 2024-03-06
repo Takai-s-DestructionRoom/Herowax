@@ -78,8 +78,8 @@ void ProtoScene::Update()
 	skydome.TransferBuffer(camera.mViewProjection);
 	ground.TransferBuffer(camera.mViewProjection);
 
-	//スペースかAボタン押されたらリザルトシーンへ
-	if (RInput::GetInstance()->GetKeyDown(DIK_SPACE) ||
+	//エンターかメニューボタン押されたらリザルトシーンへ
+	if (RInput::GetInstance()->GetKeyDown(DIK_RETURN) ||
 		RInput::GetInstance()->GetPadButtonDown(XINPUT_GAMEPAD_START))
 	{
 		SceneManager::GetInstance()->Change<ResultScene>();

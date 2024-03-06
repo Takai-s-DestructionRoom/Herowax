@@ -18,8 +18,8 @@ void ResultScene::Init()
 
 void ResultScene::Update()
 {
-	//スペースかメニューボタン押されたらタイトルシーンへ
-	if (RInput::GetInstance()->GetKeyDown(DIK_SPACE) ||
+	//エンターかメニューボタン押されたらタイトルシーンへ
+	if (RInput::GetInstance()->GetKeyDown(DIK_RETURN) ||
 		RInput::GetInstance()->GetPadButtonDown(XINPUT_GAMEPAD_START))
 	{
 		SceneManager::GetInstance()->Change<TitleScene>();
