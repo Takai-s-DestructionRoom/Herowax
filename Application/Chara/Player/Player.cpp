@@ -1,4 +1,5 @@
 #include "Player.h"
+#include "WaxManager.h"
 #include "RInput.h"
 #include "Camera.h"
 #include "TimeManager.h"
@@ -8,11 +9,9 @@
 
 Player::Player() :
 	isJumping(false), jumpTimer(0.2f), jumpHeight(0.f), maxJumpHeight(5.f), jumpPower(2.f), jumpSpeed(0.f),
-	isAttack(false), atkPower(1), atkDist(1.f), atkRange({ 3.f,5.f }), atkSize(0.f), atkCoolTimer(0.3f), atkTimer(0.5f)
+	isAttack(false), atkDist(1.f), atkRange({ 3.f,5.f }), atkSize(0.f), atkPower(1), atkCoolTimer(0.3f), atkTimer(0.5f)
 {
 	obj = ModelObj(Model::Load("./Resources/Model/Cube.obj", "Cube", true));
-	atkColObj = ModelObj(Model::Load("./Resources/Model/Cube.obj", "Cube", true));
-	atkColObj.mTuneMaterial.mColor = { 0.8f,0.1f,0.1f,1.f };
 }
 
 void Player::Init()
@@ -55,8 +54,6 @@ void Player::Update()
 	//更新してからバッファに送る
 	obj.mTransform.UpdateMatrix();
 	obj.TransferBuffer(Camera::sNowCamera->mViewProjection);
-	atkColObj.mTransform.UpdateMatrix();
-	atkColObj.TransferBuffer(Camera::sNowCamera->mViewProjection);
 
 #pragma region ImGui
 	ImGui::SetNextWindowSize({ 400, 250 });
@@ -107,11 +104,6 @@ void Player::Draw()
 	if (isAlive)
 	{
 		obj.Draw();
-	}
-
-	if (isAttack)
-	{
-		atkColObj.Draw();
 	}
 }
 
@@ -247,26 +239,22 @@ void Player::Attack()
 			isAttack = true;
 			atkTimer.Start();
 
-			atkColObj.mTransform = obj.mTransform;	//プレイヤーと同じ状態に
 			//入力時の出現位置と方向を記録
-			atkOriginPos = atkColObj.mTransform.position + GetFrontVec();
+			atkOriginPos = GetPos() + GetFrontVec();
 			atkVec = GetFrontVec();
+
+			//生成
+			WaxManager::GetInstance()->Create(
+			obj.mTransform,atkPower, atkVec,atkOriginPos,
+				atkDist,atkRange,atkSize,atkTimer.maxTime_);
 		}
 	}
 
+	//攻撃中は
 	if (isAttack)
 	{
 		atkTimer.Update();
 		atkCoolTimer.Update();
-
-		//段々大きくなる
-		atkSize = Easing::OutBack(atkTimer.GetTimeRate());
-		atkColObj.mTransform.scale = { atkRange.x,1.f,atkRange.y };
-		atkColObj.mTransform.scale *= atkSize;
-
-		//出現位置と方向をもとに攻撃飛ばす
-		atkColObj.mTransform.position =
-			atkOriginPos + atkVec * atkRange.y * atkDist * Easing::OutBack(atkTimer.GetTimeRate());
 	}
 
 	//攻撃終わったらクールタイム開始

@@ -1,6 +1,7 @@
 #include "ProtoScene.h"
 #include "ResultScene.h"
 #include "SceneManager.h"
+#include "WaxManager.h"
 #include "RInput.h"
 #include "RImGui.h"
 #include <Quaternion.h>
@@ -35,6 +36,8 @@ void ProtoScene::Init()
 
 	enemySpawner.Init();
 	enemySpawner.SetPos({30,0,0});
+
+	WaxManager::GetInstance()->Init();
 }
 
 void ProtoScene::Update()
@@ -71,6 +74,8 @@ void ProtoScene::Update()
 	}
 	tower.Update();
 	player.Update();
+
+	WaxManager::GetInstance()->Update();
 
 	light.Update();
 
@@ -110,5 +115,6 @@ void ProtoScene::Draw()
 	skydome.Draw();
 	ground.Draw();
 	tower.Draw();
+	WaxManager::GetInstance()->Draw();
 	player.Draw();
 }

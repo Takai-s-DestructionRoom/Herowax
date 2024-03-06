@@ -19,15 +19,14 @@ public:
 	bool isAttack;					//攻撃中かフラグ
 	Vector3 atkVec;					//攻撃方向
 	Vector3 atkOriginPos;			//攻撃の出現位置
-	uint32_t atkPower;				//攻撃力
 	float atkDist;					//攻撃の射出距離
 	Vector2 atkRange{};				//攻撃範囲
 	float atkSize;					//攻撃範囲の大きさ
+	uint32_t atkPower;			//攻撃力
 	Easing::EaseTimer atkCoolTimer;	//攻撃のクールタイム
 	Easing::EaseTimer atkTimer;		//攻撃時間計測用
 
 	//------------ その他 ------------//
-	ModelObj atkColObj;				//当たり判定可視化用オブジェクト
 
 public:
 	Player();

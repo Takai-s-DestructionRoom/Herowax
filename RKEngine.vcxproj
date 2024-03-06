@@ -188,7 +188,8 @@
     <ClCompile Include="Application\Scene\ResultScene.cpp" />
     <ClCompile Include="Application\Scene\TitleScene.cpp" />
     <ClCompile Include="Application\Object\Tower\Tower.cpp" />
-    <ClCompile Include="Wax.cpp" />
+    <ClCompile Include="Application\Object\Wax\Wax.cpp" />
+    <ClCompile Include="Application\Object\Wax\WaxManager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Shader\BasicPS.hlsl">
@@ -504,7 +505,8 @@
     <ClInclude Include="Application\Scene\ResultScene.h" />
     <ClInclude Include="Application\Scene\TitleScene.h" />
     <ClInclude Include="Application\Object\Tower\Tower.h" />
-    <ClInclude Include="Wax.h" />
+    <ClInclude Include="Application\Object\Wax\Wax.h" />
+    <ClInclude Include="Application\Object\Wax\WaxManager.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Shader\Basic.hlsli">

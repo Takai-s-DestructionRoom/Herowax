@@ -405,7 +405,10 @@
     <ClCompile Include="Application\EnemySpawner.cpp">
       <Filter>ソース ファイル\Application\Object\EnemySpawner</Filter>
     </ClCompile>
-    <ClCompile Include="Wax.cpp">
+    <ClCompile Include="Application\Object\Wax\Wax.cpp">
+      <Filter>ソース ファイル\Application\Object\Wax</Filter>
+    </ClCompile>
+    <ClCompile Include="Application\Object\Wax\WaxManager.cpp">
       <Filter>ソース ファイル\Application\Object\Wax</Filter>
     </ClCompile>
   </ItemGroup>
@@ -799,7 +802,10 @@
     <ClInclude Include="Application\EnemySpawner.h">
       <Filter>ヘッダー ファイル\Application\Object\EnemySpawner</Filter>
     </ClInclude>
-    <ClInclude Include="Wax.h">
+    <ClInclude Include="Application\Object\Wax\Wax.h">
+      <Filter>ヘッダー ファイル\Application\Object\Wax</Filter>
+    </ClInclude>
+    <ClInclude Include="Application\Object\Wax\WaxManager.h">
       <Filter>ヘッダー ファイル\Application\Object\Wax</Filter>
     </ClInclude>
   </ItemGroup>
