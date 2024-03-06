@@ -3,12 +3,15 @@
 #include "Camera.h"
 #include "TimeManager.h"
 #include "Util.h"
+#include "Quaternion.h"
 #include "RImGui.h"
 
 Player::Player() :
-	isJumping(false), jumpTimer(0.2f), jumpHeight(0.f), maxJumpHeight(5.f), jumpPower(2.f), jumpSpeed(0.f)
+	isJumping(false), jumpTimer(0.2f), jumpHeight(0.f), maxJumpHeight(5.f), jumpPower(2.f), jumpSpeed(0.f),
+	isAttack(false), atkPower(1), atkDist(1.f), atkRange({3.f,5.f}),atkSize(0.f), atkCoolTime(0.5f),atkTimer(0.5f)
 {
 	obj = ModelObj(Model::Load("./Resources/Model/Cube.obj", "Cube", true));
+	atkColObj = ModelObj(Model::Load("./Resources/Model/Cube.obj", "Cube", true));
 }
 
 void Player::Init()
@@ -18,6 +21,7 @@ void Player::Init()
 
 void Player::Update()
 {
+	//パッド接続してたら
 	if (RInput::GetInstance()->GetPadConnect())
 	{
 		MovePad();
@@ -26,6 +30,8 @@ void Player::Update()
 	{
 		MoveKey();
 	}
+
+	Attack();
 
 	//地面に埋ってたら
 	if (obj.mTransform.position.y - obj.mTransform.scale.y < 0.f)
@@ -48,9 +54,11 @@ void Player::Update()
 	//更新してからバッファに送る
 	obj.mTransform.UpdateMatrix();
 	obj.TransferBuffer(Camera::sNowCamera->mViewProjection);
+	atkColObj.mTransform.UpdateMatrix();
+	atkColObj.TransferBuffer(Camera::sNowCamera->mViewProjection);
 
 #pragma region ImGui
-	ImGui::SetNextWindowSize({ 300, 250 });
+	ImGui::SetNextWindowSize({ 400, 250 });
 
 	ImGuiWindowFlags window_flags = 0;
 	window_flags |= ImGuiWindowFlags_NoResize;
@@ -59,13 +67,30 @@ void Player::Update()
 
 	ImGui::Text("Lスティック移動、Aボタンジャンプ");
 	ImGui::Text("WASD移動、スペースジャンプ");
-	ImGui::Text("pos:%f,%f,%f", GetPos().x, GetPos().y, GetPos().z);
-	ImGui::Text("moveVec:%f,%f,%f", moveVec.x, moveVec.y, moveVec.z);
-	ImGui::Text("jumpHeight:%f", jumpHeight);
-	ImGui::Text("jumpSpeed:%f", jumpSpeed);
-	ImGui::SliderFloat("moveSpeed:%f", &moveSpeed, 0.f, 5.f);
-	ImGui::SliderFloat("gravity:%f", &gravity, 0.f, 0.2f);
-	ImGui::SliderFloat("jumpPower:%f", &jumpPower, 0.f, 5.f);
+
+	if (ImGui::TreeNode("移動系"))
+	{
+		ImGui::Text("座標:%f,%f,%f", GetPos().x, GetPos().y, GetPos().z);
+		ImGui::Text("動く方向:%f,%f,%f", moveVec.x, moveVec.y, moveVec.z);
+		//ImGui::Text("正面ベクトル:%f,%f,%f", frontVec.x, frontVec.y, frontVec.z);
+		ImGui::Text("ジャンプの高さ:%f", jumpHeight);
+		ImGui::Text("ジャンプ速度:%f", jumpSpeed);
+		ImGui::SliderFloat("移動速度:%f", &moveSpeed, 0.f, 5.f);
+		ImGui::SliderFloat("重力:%f", &gravity, 0.f, 0.2f);
+		ImGui::SliderFloat("ジャンプ力:%f", &jumpPower, 0.f, 5.f);
+
+		ImGui::TreePop();
+	}
+	if (ImGui::TreeNode("攻撃系"))
+	{
+		ImGui::Text("攻撃中か:%d", isAttack);
+		ImGui::SliderFloat("攻撃時間", &atkTimer.maxTime_, 0.f, 2.f);
+		ImGui::SliderFloat("射出距離", &atkDist, 0.f, 5.f);
+		ImGui::SliderFloat("攻撃範囲X", &atkRange.x, 0.f, 10.f);
+		ImGui::SliderFloat("攻撃範囲Y", &atkRange.y, 0.f, 10.f);
+
+		ImGui::TreePop();
+	}
 
 	if (ImGui::Button("Reset")) {
 		SetPos({ 0, 0, 0 });
@@ -80,6 +105,11 @@ void Player::Draw()
 	if (isAlive)
 	{
 		obj.Draw();
+	}
+
+	if (isAttack)
+	{
+		atkColObj.Draw();
 	}
 }
 
@@ -202,4 +232,49 @@ void Player::MoveKey()
 
 	//「ジャンプの高さ」+「プレイヤーの大きさ」を反映
 	obj.mTransform.position.y = jumpHeight + obj.mTransform.scale.y;
+}
+
+void Player::Attack()
+{
+	if (isAttack == false)
+	{
+		if (RInput::GetInstance()->GetPadButtonDown(XINPUT_GAMEPAD_RIGHT_SHOULDER) ||
+			RInput::GetInstance()->GetPadButtonDown(XINPUT_GAMEPAD_RIGHT_THUMB) ||
+			RInput::GetInstance()->GetMouseClickDown(0))
+		{
+			isAttack = true;
+			atkTimer.Start();
+
+			atkColObj.mTransform = obj.mTransform;	//プレイヤーと同じ状態に
+			//入力時の出現位置と方向を記録
+			atkOriginPos = atkColObj.mTransform.position + GetFrontVec();
+			atkVec = GetFrontVec();
+		}
+	}
+
+	if (isAttack)
+	{
+		atkTimer.Update();
+
+		//段々大きくなる
+		atkSize = Easing::OutBack(atkTimer.GetTimeRate());
+		atkColObj.mTransform.scale = { atkRange.x,1.f,atkRange.y };
+		atkColObj.mTransform.scale *= atkSize;
+
+		//出現位置と方向をもとに攻撃飛ばす
+		atkColObj.mTransform.position = 
+			atkOriginPos + atkVec * atkRange.y * atkDist * Easing::OutBack(atkTimer.GetTimeRate());
+	}
+
+	if (atkTimer.GetEnd())
+	{
+		isAttack = false;
+	}
+}
+
+Vector3 Player::GetFrontVec()
+{
+	//正面ベクトルを取得
+	frontVec *= Quaternion::Euler(obj.mTransform.rotation);
+	return frontVec;
 }

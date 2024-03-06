@@ -36,7 +36,7 @@ void Tower::Update()
 
 	ImGui::Begin("Tower", NULL, window_flags);
 
-	ImGui::Text("RキーかRボタンでHP減らせます");
+	ImGui::Text("RキーでHP減らせます");
 	ImGui::Text("HP:%d", hp);
 
 	if (ImGui::Button("Reset")) {

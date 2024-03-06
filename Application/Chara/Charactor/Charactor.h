@@ -13,8 +13,8 @@ public:
 
 	//------------ HP関連 ------------//
 	bool isAlive;				//生きてるか否か
-	int hp;						//現在のヒットポイント
-	int maxHP;					//最大HP
+	uint32_t hp;				//現在のヒットポイント
+	uint32_t maxHP;				//最大HP
 
 	//------------ その他 ------------//
 	ModelObj obj;				//オブジェクト

@@ -25,7 +25,7 @@ void ProtoScene::Init()
 {
 	Camera::sNowCamera = &camera;
 	cameraDist = -20.f;
-	cameraAngle = { 20.f,0.f };
+	cameraAngle = { Util::AngleToRadian(20.f),0.f };
 	LightGroup::sNowLight = &light;
 	tower.Init();
 	player.Init();
@@ -41,8 +41,8 @@ void ProtoScene::Update()
 {
 	Vector3 cameraVec = { 0, 0, 1 };
 	//カメラアングル適応
-	cameraVec *= Quaternion::AngleAxis(Vector3(1, 0, 0).Cross(cameraVec), Util::AngleToRadian(cameraAngle.y));
-	cameraVec *= Quaternion::AngleAxis(Vector3(0, 1, 0).Cross(cameraVec), Util::AngleToRadian(cameraAngle.x));
+	cameraVec *= Quaternion::AngleAxis(Vector3(1, 0, 0).Cross(cameraVec), cameraAngle.y);
+	cameraVec *= Quaternion::AngleAxis(Vector3(0, 1, 0).Cross(cameraVec), cameraAngle.x);
 	//カメラの距離適応
 	cameraVec *= cameraDist;
 
@@ -52,9 +52,8 @@ void ProtoScene::Update()
 	camera.mViewProjection.mTarget = player.GetPos();
 	camera.mViewProjection.UpdateMatrix();
 
-	//Rボタンでタワーにダメージ
-	if (RInput::GetInstance()->GetKeyDown(DIK_R) || 
-		RInput::GetInstance()->GetPadButtonDown(XINPUT_GAMEPAD_RIGHT_SHOULDER))
+	//Rキーでタワーにダメージ
+	if (RInput::GetInstance()->GetKeyDown(DIK_R))
 	{
 		tower.Damage(1);
 	}
@@ -94,11 +93,11 @@ void ProtoScene::Update()
 	// カメラ //
 	ImGui::Begin("Camera", NULL, window_flags);
 
-	ImGui::Text("pos:%f,%f,%f",
+	ImGui::Text("座標:%f,%f,%f",
 		camera.mViewProjection.mEye.x, camera.mViewProjection.mEye.y, camera.mViewProjection.mEye.z);
-	ImGui::SliderFloat("dist:%f", &cameraDist, -50.f, 0.f);
-	ImGui::SliderAngle("angleX:%f", &cameraAngle.x);
-	ImGui::SliderAngle("angleY:%f", &cameraAngle.y);
+	ImGui::SliderFloat("カメラ距離:%f", &cameraDist, -50.f, 0.f);
+	ImGui::SliderAngle("カメラアングルX:%f", &cameraAngle.x);
+	ImGui::SliderAngle("カメラアングルY:%f", &cameraAngle.y);
 
 	ImGui::End();
 #pragma endregion
