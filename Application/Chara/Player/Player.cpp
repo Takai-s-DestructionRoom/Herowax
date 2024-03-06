@@ -8,10 +8,11 @@
 
 Player::Player() :
 	isJumping(false), jumpTimer(0.2f), jumpHeight(0.f), maxJumpHeight(5.f), jumpPower(2.f), jumpSpeed(0.f),
-	isAttack(false), atkPower(1), atkDist(1.f), atkRange({3.f,5.f}),atkSize(0.f), atkCoolTime(0.5f),atkTimer(0.5f)
+	isAttack(false), atkPower(1), atkDist(1.f), atkRange({ 3.f,5.f }), atkSize(0.f), atkCoolTimer(0.3f), atkTimer(0.5f)
 {
 	obj = ModelObj(Model::Load("./Resources/Model/Cube.obj", "Cube", true));
 	atkColObj = ModelObj(Model::Load("./Resources/Model/Cube.obj", "Cube", true));
+	atkColObj.mTuneMaterial.mColor = { 0.8f,0.1f,0.1f,1.f };
 }
 
 void Player::Init()
@@ -88,6 +89,7 @@ void Player::Update()
 		ImGui::SliderFloat("射出距離", &atkDist, 0.f, 5.f);
 		ImGui::SliderFloat("攻撃範囲X", &atkRange.x, 0.f, 10.f);
 		ImGui::SliderFloat("攻撃範囲Y", &atkRange.y, 0.f, 10.f);
+		ImGui::SliderFloat("クールタイム", &atkCoolTimer.maxTime_, 0.f, 2.f);
 
 		ImGui::TreePop();
 	}
@@ -255,6 +257,7 @@ void Player::Attack()
 	if (isAttack)
 	{
 		atkTimer.Update();
+		atkCoolTimer.Update();
 
 		//段々大きくなる
 		atkSize = Easing::OutBack(atkTimer.GetTimeRate());
@@ -262,13 +265,22 @@ void Player::Attack()
 		atkColObj.mTransform.scale *= atkSize;
 
 		//出現位置と方向をもとに攻撃飛ばす
-		atkColObj.mTransform.position = 
+		atkColObj.mTransform.position =
 			atkOriginPos + atkVec * atkRange.y * atkDist * Easing::OutBack(atkTimer.GetTimeRate());
 	}
 
+	//攻撃終わったらクールタイム開始
 	if (atkTimer.GetEnd())
 	{
+		atkCoolTimer.Start();
+		atkTimer.Reset();
+	}
+
+	//クールタイム終わったら攻撃再びできるように
+	if (atkCoolTimer.GetEnd())
+	{
 		isAttack = false;
+		atkCoolTimer.Reset();
 	}
 }
 

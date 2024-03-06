@@ -148,6 +148,12 @@
     <Filter Include="ヘッダー ファイル\Application\Object\EnemySpawner">
       <UniqueIdentifier>{65e2e1d4-60aa-4f58-a8a8-413f2ab72128}</UniqueIdentifier>
     </Filter>
+    <Filter Include="ソース ファイル\Application\Object\Wax">
+      <UniqueIdentifier>{07c310c7-5e20-427d-9c67-2a5bb8525ee8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\Application\Object\Wax">
+      <UniqueIdentifier>{a14a79e1-571e-4787-8f5b-22ce36983cc6}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Engine\2d\Sprite.cpp">
@@ -398,6 +404,9 @@
     </ClCompile>
     <ClCompile Include="Application\EnemySpawner.cpp">
       <Filter>ソース ファイル\Application\Object\EnemySpawner</Filter>
+    </ClCompile>
+    <ClCompile Include="Wax.cpp">
+      <Filter>ソース ファイル\Application\Object\Wax</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -789,6 +798,9 @@
     </ClInclude>
     <ClInclude Include="Application\EnemySpawner.h">
       <Filter>ヘッダー ファイル\Application\Object\EnemySpawner</Filter>
+    </ClInclude>
+    <ClInclude Include="Wax.h">
+      <Filter>ヘッダー ファイル\Application\Object\Wax</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
