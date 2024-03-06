@@ -63,8 +63,8 @@ void Player::Update()
 
 	ImGui::Begin("Player", NULL, window_flags);
 
-	ImGui::Text("Lスティック移動、Aボタンジャンプ");
-	ImGui::Text("WASD移動、スペースジャンプ");
+	ImGui::Text("Lスティック移動、Aボタンジャンプ、Rで攻撃");
+	ImGui::Text("WASD移動、スペースジャンプ、右クリで攻撃");
 
 	if (ImGui::TreeNode("移動系"))
 	{
@@ -234,7 +234,7 @@ void Player::Attack()
 	{
 		if (RInput::GetInstance()->GetPadButtonDown(XINPUT_GAMEPAD_RIGHT_SHOULDER) ||
 			RInput::GetInstance()->GetPadButtonDown(XINPUT_GAMEPAD_RIGHT_THUMB) ||
-			RInput::GetInstance()->GetMouseClickDown(0))
+			RInput::GetInstance()->GetMouseClickDown(1))
 		{
 			isAttack = true;
 			atkTimer.Start();
