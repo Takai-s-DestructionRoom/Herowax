@@ -1,9 +1,9 @@
 #include "Wax.h"
 #include "Camera.h"
 
-Wax::Wax():isAlive(true)
+Wax::Wax():GameObject()
 {
-	obj = ModelObj(Model::Load("./Resources/Model/Cube.obj", "Cube", true));
+	obj = ModelObj(Model::Load("./Resources/Model/Sphere.obj", "Sphere", true));
 	obj.mTuneMaterial.mColor = { 0.8f,0.1f,0.1f,1.f };
 }
 

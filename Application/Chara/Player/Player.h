@@ -1,11 +1,14 @@
 #pragma once
-#include "../../Chara/Charactor/Charactor.h"
+#include "GameObject.h"
 #include "Easing.h"
 
-class Player : public Charactor
+class Player : public GameObject
 {
 public:
 	//------------ 移動関連 ------------//
+	Vector3 moveVec;			//移動ベクトル
+	float moveSpeed;			//移動速度
+	bool isGraund;				//接地しているかフラグ
 	bool isJumping;					//ジャンプ中かフラグ
 	Easing::EaseTimer jumpTimer;	//ジャンプ時間計測用
 	float jumpHeight;				//ジャンプしてる高さ
@@ -14,6 +17,10 @@ public:
 	float jumpSpeed;				//ジャンプ速度
 	float gravity = 0.098f;			//重力
 	Vector3 frontVec{ 0,0,1 };		//正面ベクトル
+
+	//------------ HP関連 ------------//
+	uint32_t hp;				//現在のヒットポイント
+	uint32_t maxHP;				//最大HP
 
 	//------------ 攻撃関連 ------------//
 	bool isAttack;					//攻撃中かフラグ

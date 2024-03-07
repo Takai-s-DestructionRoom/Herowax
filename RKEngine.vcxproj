@@ -104,12 +104,12 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Application\EnemySpawner.cpp" />
+    <ClCompile Include="Application\InstantDrawer.cpp" />
     <ClCompile Include="Application\Scene\ControllerScene.cpp" />
     <ClCompile Include="Application\Scene\MainTestScene.cpp" />
     <ClCompile Include="Application\Scene\SimpleSceneTransition.cpp" />
     <ClCompile Include="Application\Scene\SoundScene.cpp" />
     <ClCompile Include="Application\Scene\SpriteScene.cpp" />
-    <ClCompile Include="Application\Chara\Charactor\Charactor.cpp" />
     <ClCompile Include="Application\Chara\Enemy\Enemy.cpp" />
     <ClCompile Include="Application\Chara\Enemy\EnemyManager.cpp" />
     <ClCompile Include="Engine\Easing.cpp" />
@@ -144,6 +144,7 @@
     <ClCompile Include="Engine\Renderer\TestRenderStage.cpp" />
     <ClCompile Include="Engine\Renderer\TransparentRenderStage.cpp" />
     <ClCompile Include="Engine\Light\LightGroup.cpp" />
+    <ClCompile Include="Application\GameObject.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Engine\Base\Material.cpp" />
     <ClCompile Include="Engine\Math\Matrix4.cpp" />
@@ -193,6 +194,7 @@
     <ClCompile Include="Engine\Particle\Particle3D.cpp" />
     <ClCompile Include="Engine\Particle\ParticleManager.cpp" />
     <ClCompile Include="Engine\Particle\SimpleParticle.cpp" />
+    <ClCompile Include="Application\Temperature.cpp" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Shader\BasicPS.hlsl">
@@ -418,12 +420,12 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Application\EnemySpawner.h" />
+    <ClInclude Include="Application\InstantDrawer.h" />
     <ClInclude Include="Application\Scene\ControllerScene.h" />
     <ClInclude Include="Application\Scene\MainTestScene.h" />
     <ClInclude Include="Application\Scene\SimpleSceneTransition.h" />
     <ClInclude Include="Application\Scene\SoundScene.h" />
     <ClInclude Include="Application\Scene\SpriteScene.h" />
-    <ClInclude Include="Application\Chara\Charactor\Charactor.h" />
     <ClInclude Include="Application\Chara\Enemy\Enemy.h" />
     <ClInclude Include="Application\Chara\Enemy\EnemyManager.h" />
     <ClInclude Include="Engine\Easing.h" />
@@ -513,6 +515,8 @@
     <ClInclude Include="Engine\Particle\Particle3D.h" />
     <ClInclude Include="Engine\Particle\ParticleManager.h" />
     <ClInclude Include="Engine\Particle\SimpleParticle.h" />
+    <ClInclude Include="Application\Temperature.h" />
+    <ClInclude Include="Application\GameObject.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Shader\Basic.hlsli">
