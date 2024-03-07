@@ -12,6 +12,7 @@
 
 #include "Vector2.h"
 #include "Vector3.h"
+#include "Color.h"
 #include <vector>
 
 struct VertexP
@@ -54,3 +55,18 @@ public:
 	static void CalcNormalVec(std::vector<VertexPNU> list, std::vector<uint32_t> indexlist);
 };
 
+//position,scale,colorの3要素
+struct VertexParticle
+{
+	Vector3 pos = { 0, 0, 0 };
+	Vector3 rot = { 0, 0, 0 };
+	Color color = Color::kWhite;
+	float scale = 0.0f;
+
+	//コンストラクタ
+	VertexParticle(Vector3 pos = { 0, 0, 0 }, Vector3 rot = { 0, 0, 0 },
+		Color color = Color::kWhite, float scale = 0.0f)
+		: pos(pos), rot(rot), color(color), scale(scale) {}
+
+	bool operator==(const VertexParticle& a) const;
+};

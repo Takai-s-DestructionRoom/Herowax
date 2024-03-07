@@ -130,6 +130,12 @@
     <Filter Include="ヘッダー ファイル\Application\Object\Wax">
       <UniqueIdentifier>{a14a79e1-571e-4787-8f5b-22ce36983cc6}</UniqueIdentifier>
     </Filter>
+    <Filter Include="ソース ファイル\Engine\Particle">
+      <UniqueIdentifier>{fd81948c-52b9-4e11-a49f-c462ca62e9b6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\Engine\Particle">
+      <UniqueIdentifier>{b1c7bfc6-f987-486e-b474-1d171b68067c}</UniqueIdentifier>
+    </Filter>
     <Filter Include="ソース ファイル\Application\Temperature">
       <UniqueIdentifier>{61c88ded-7ef9-499c-beb8-a80031debf6e}</UniqueIdentifier>
     </Filter>
@@ -425,6 +431,15 @@
     </ClCompile>
     <ClCompile Include="Application\Object\Wax\WaxManager.cpp">
       <Filter>ソース ファイル\Application\Object\Wax</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\Particle\Particle3D.cpp">
+      <Filter>ソース ファイル\Engine\Particle</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\Particle\ParticleManager.cpp">
+      <Filter>ソース ファイル\Engine\Particle</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\Particle\SimpleParticle.cpp">
+      <Filter>ソース ファイル\Engine\Particle</Filter>
     </ClCompile>
     <ClCompile Include="Application\Temperature.cpp">
       <Filter>ソース ファイル\Application\Temperature</Filter>
@@ -834,6 +849,15 @@
     </ClInclude>
     <ClInclude Include="Application\Object\Wax\WaxManager.h">
       <Filter>ヘッダー ファイル\Application\Object\Wax</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Particle\Particle3D.h">
+      <Filter>ヘッダー ファイル\Engine\Particle</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Particle\ParticleManager.h">
+      <Filter>ヘッダー ファイル\Engine\Particle</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Particle\SimpleParticle.h">
+      <Filter>ヘッダー ファイル\Engine\Particle</Filter>
     </ClInclude>
     <ClInclude Include="Application\Temperature.h">
       <Filter>ヘッダー ファイル\Application\Tempareture</Filter>

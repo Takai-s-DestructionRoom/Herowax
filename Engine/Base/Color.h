@@ -32,6 +32,16 @@ public:
 	Color(float r, float g, float b, float a) : r(r), g(g), b(b), a(a) {}
 	Color(int32_t hexcolor);
 
+	//すぐ呼べる用の色
+	const static Color kRed;
+	const static Color kGreen;
+	const static Color kBlue;
+	const static Color kYellow;
+	const static Color kPink;
+	const static Color kLightblue;
+	const static Color kWhite;
+	const static Color kBlack;
+
 	bool operator==(const Color& o) const;
 
 	static Color convertFromHSVA(HSVA hsva) {

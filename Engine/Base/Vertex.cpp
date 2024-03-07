@@ -52,3 +52,25 @@ void VertexPNU::CalcNormalVec(std::vector<VertexPNU> list, std::vector<uint32_t>
 		list[index2].normal = normal;
 	}
 }
+
+bool VertexParticle::operator==(const VertexParticle& a) const
+{
+	if (pos.x != a.pos.x || pos.y != a.pos.y || pos.z != a.pos.z)
+	{
+		return false;
+	}
+	else if (rot.x != a.rot.x || rot.y != a.rot.y || rot.z != a.rot.z)
+	{
+		return false;
+	}
+	else if (color != a.color)
+	{
+		return false;
+	}
+	else if (scale != a.scale)
+	{
+		return false;
+	}
+
+	return true;
+}
