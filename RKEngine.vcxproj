@@ -104,6 +104,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Application\EnemySpawner.cpp" />
+    <ClCompile Include="Application\InstantDrawer.cpp" />
     <ClCompile Include="Application\Scene\ControllerScene.cpp" />
     <ClCompile Include="Application\Scene\MainTestScene.cpp" />
     <ClCompile Include="Application\Scene\SimpleSceneTransition.cpp" />
@@ -190,6 +191,7 @@
     <ClCompile Include="Application\Object\Tower\Tower.cpp" />
     <ClCompile Include="Application\Object\Wax\Wax.cpp" />
     <ClCompile Include="Application\Object\Wax\WaxManager.cpp" />
+    <ClCompile Include="Application\Temperature.cpp" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Shader\BasicPS.hlsl">
@@ -415,6 +417,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Application\EnemySpawner.h" />
+    <ClInclude Include="Application\InstantDrawer.h" />
     <ClInclude Include="Application\Scene\ControllerScene.h" />
     <ClInclude Include="Application\Scene\MainTestScene.h" />
     <ClInclude Include="Application\Scene\SimpleSceneTransition.h" />
@@ -507,6 +510,7 @@
     <ClInclude Include="Application\Object\Tower\Tower.h" />
     <ClInclude Include="Application\Object\Wax\Wax.h" />
     <ClInclude Include="Application\Object\Wax\WaxManager.h" />
+    <ClInclude Include="Application\Temperature.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Shader\Basic.hlsli">

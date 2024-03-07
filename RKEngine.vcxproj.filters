@@ -154,6 +154,18 @@
     <Filter Include="ヘッダー ファイル\Application\Object\Wax">
       <UniqueIdentifier>{a14a79e1-571e-4787-8f5b-22ce36983cc6}</UniqueIdentifier>
     </Filter>
+    <Filter Include="ソース ファイル\Application\Temperature">
+      <UniqueIdentifier>{61c88ded-7ef9-499c-beb8-a80031debf6e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\Application\Tempareture">
+      <UniqueIdentifier>{fdad76f3-8dc3-43a4-8adb-16bb57c173ed}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\Application\InstantDrawer">
+      <UniqueIdentifier>{218bb840-003a-4ffa-ad95-1a65e595f057}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\Application\InstantDrawer">
+      <UniqueIdentifier>{fda5466a-22e4-4a24-8126-1dd7f48e0538}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Engine\2d\Sprite.cpp">
@@ -410,6 +422,12 @@
     </ClCompile>
     <ClCompile Include="Application\Object\Wax\WaxManager.cpp">
       <Filter>ソース ファイル\Application\Object\Wax</Filter>
+    </ClCompile>
+    <ClCompile Include="Application\Temperature.cpp">
+      <Filter>ソース ファイル\Application\Temperature</Filter>
+    </ClCompile>
+    <ClCompile Include="Application\InstantDrawer.cpp">
+      <Filter>ソース ファイル\Application\InstantDrawer</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -807,6 +825,12 @@
     </ClInclude>
     <ClInclude Include="Application\Object\Wax\WaxManager.h">
       <Filter>ヘッダー ファイル\Application\Object\Wax</Filter>
+    </ClInclude>
+    <ClInclude Include="Application\Temperature.h">
+      <Filter>ヘッダー ファイル\Application\Tempareture</Filter>
+    </ClInclude>
+    <ClInclude Include="Application\InstantDrawer.h">
+      <Filter>ヘッダー ファイル\Application\InstantDrawer</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

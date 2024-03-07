@@ -6,6 +6,8 @@
 #include "RImGui.h"
 #include <Quaternion.h>
 #include "ColPrimitive3D.h"
+#include "InstantDrawer.h"
+#include "Temperature.h"
 
 ProtoScene::ProtoScene()
 {
@@ -20,6 +22,9 @@ ProtoScene::ProtoScene()
 	camera.mViewProjection.mEye = { 0, 0, -50 };
 	camera.mViewProjection.mTarget = { 0, 0, 0 };
 	camera.mViewProjection.UpdateMatrix();
+
+	TemperatureUI::LoadResource();
+	InstantDrawer::PreCreate();
 }
 
 void ProtoScene::Init()
@@ -42,6 +47,8 @@ void ProtoScene::Init()
 
 void ProtoScene::Update()
 {
+	InstantDrawer::DrawInit();
+
 	Vector3 cameraVec = { 0, 0, 1 };
 	//カメラアングル適応
 	cameraVec *= Quaternion::AngleAxis(Vector3(1, 0, 0).Cross(cameraVec), cameraAngle.y);
@@ -76,6 +83,7 @@ void ProtoScene::Update()
 	player.Update();
 
 	WaxManager::GetInstance()->Update();
+	TemperatureManager::GetInstance()->UpdateUI();
 
 	light.Update();
 
@@ -116,5 +124,10 @@ void ProtoScene::Draw()
 	ground.Draw();
 	tower.Draw();
 	WaxManager::GetInstance()->Draw();
+	TemperatureManager::GetInstance()->DrawUI();
 	player.Draw();
+
+	//更新
+	InstantDrawer::AllUpdate();
+	InstantDrawer::AllDraw2D();
 }

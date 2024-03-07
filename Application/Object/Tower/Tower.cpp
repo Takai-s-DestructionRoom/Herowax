@@ -5,14 +5,15 @@
 Tower::Tower():
 	hp(0), maxHP(5), isAlive(true)
 {
-	obj = ModelObj(Model::Load("./Resources/Model/stick.obj", "Stick", true));
+	obj = ModelObj(Model::Load("./Resources/Model/Birdnest/Birdnest.obj", "Birdnest", true));
 }
 
 void Tower::Init()
 {
 	hp = maxHP;
-	obj.mTransform.position = { 0.f,0.f,2.f };
-	obj.mTransform.rotation.z = Util::AngleToRadian(90.f);
+	obj.mTransform.position = { 0.f,2.f,2.f };
+	obj.mTransform.scale = { 2,2,2};
+	//obj.mTransform.rotation.z = Util::AngleToRadian(90.f);
 }
 
 void Tower::Update()
@@ -38,7 +39,6 @@ void Tower::Update()
 
 	ImGui::Text("RキーでHP減らせます");
 	ImGui::Text("HP:%d", hp);
-
 	if (ImGui::Button("Reset")) {
 		hp = maxHP;
 		isAlive = true;
