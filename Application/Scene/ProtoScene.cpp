@@ -2,6 +2,7 @@
 #include "ResultScene.h"
 #include "SceneManager.h"
 #include "WaxManager.h"
+#include "ParticleManager.h"
 #include "RInput.h"
 #include "RImGui.h"
 #include <Quaternion.h>
@@ -34,6 +35,9 @@ void ProtoScene::Init()
 	cameraDist = -20.f;
 	cameraAngle = { Util::AngleToRadian(20.f),0.f };
 	LightGroup::sNowLight = &light;
+
+	ParticleManager::GetInstance()->Init();
+
 	tower.Init();
 	player.Init();
 
@@ -120,6 +124,7 @@ void ProtoScene::Update()
 	WaxManager::GetInstance()->Update();
 	FireManager::GetInstance()->Update();
 	TemperatureManager::GetInstance()->Update();
+	ParticleManager::GetInstance()->Update();
 
 	light.Update();
 
@@ -154,6 +159,7 @@ void ProtoScene::Update()
 
 void ProtoScene::Draw()
 {
+	ParticleManager::GetInstance()->Draw();
 	EnemyManager::GetInstance()->Draw();
 	enemySpawner.Draw();
 	skydome.Draw();

@@ -46,21 +46,23 @@ void IEmitter3D::Update()
 		particle.growingTimer.Update(elapseSpeed_);
 
 		//スケールの線形補間
+		float scale;
 		if (isGrowing_)	//発生時に拡大する場合
 		{
 			if (particle.growingTimer.GetRun())	//拡大タイマーが動いてたら
 			{
-				particle.scale = Easing::lerp(0.f, particle.startScale, particle.growingTimer.GetTimeRate());
+				scale = Easing::lerp(0.f, particle.startScale, particle.growingTimer.GetTimeRate());
 			}
 			else
 			{
-				particle.scale = Easing::lerp(particle.startScale, particle.endScale, particle.easeTimer.GetTimeRate());
+				scale = Easing::lerp(particle.startScale, particle.endScale, particle.easeTimer.GetTimeRate());
 			}
 		}
 		else
 		{
-			particle.scale = Easing::lerp(particle.startScale, particle.endScale, particle.easeTimer.GetTimeRate());
+			scale = Easing::lerp(particle.startScale, particle.endScale, particle.easeTimer.GetTimeRate());
 		}
+		particle.obj.mTransform.scale = { scale ,scale ,scale };	//オブジェクトのスケールに代入
 
 		//加速度を速度に加算
 		particle.velo += particle.accel;
@@ -124,6 +126,8 @@ void IEmitter3D::Add(uint32_t addNum, float life, Color color, float minScale, f
 		particles_.emplace_back();
 		//追加した要素の参照
 		Particle3D& p = particles_.back();
+		p.obj = ModelObj(Model::Load("./Resources/Model/Cube.obj", "Cube", true));
+
 		//エミッターの中からランダムで座標を決定
 		float pX = Util::GetRand(-scale_.x, scale_.x);
 		float pY = Util::GetRand(-scale_.y, scale_.y);

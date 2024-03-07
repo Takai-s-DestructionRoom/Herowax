@@ -3,6 +3,7 @@
 #include "RInput.h"
 #include "Camera.h"
 #include "TimeManager.h"
+#include "ParticleManager.h"
 #include "Util.h"
 #include "Quaternion.h"
 #include "RImGui.h"
@@ -14,6 +15,11 @@ Player::Player() :GameObject(),
 	isAttack(false), atkDist(1.f), atkRange({ 3.f,5.f }), atkSize(0.f), atkPower(1), atkCoolTimer(0.3f), atkTimer(0.5f)
 {
 	obj = ModelObj(Model::Load("./Resources/Model/Cube.obj", "Cube", true));
+
+	moveParticle.SetShapeType((uint32_t)ShapeType::Polygon);
+	ParticleManager::GetInstance()->AddEmitter(&moveParticle, "playerMove");
+	moveParticle.SetIsRotation(true);
+	moveParticle.SetIsGrowing(true);
 }
 
 void Player::Init()
@@ -131,6 +137,18 @@ void Player::MovePad()
 
 		moveVec *= moveSpeed;									//移動速度をかけ合わせたら完成
 		obj.mTransform.position += moveVec;						//完成したものを座標に足し合わせる
+
+		//エミッターの座標はプレイヤーの座標から移動方向の逆側にスケール分ずらしたもの
+		Vector3 emitterPos = obj.mTransform.position;
+		Vector2 mVelo = moveVec;	//moveVecを正規化すると実際の移動に支障が出るので一時変数に格納
+		emitterPos.x -= mVelo.Normalize().x * obj.mTransform.scale.x * 4.f;
+		emitterPos.z -= mVelo.Normalize().y * obj.mTransform.scale.z * 4.f;
+
+		moveParticle.SetPos(emitterPos);
+		moveParticle.Add(
+			3, 0.7f, obj.mTuneMaterial.mColor, 0.1f, 0.6f,
+			{ -0.001f,0.01f,-0.001f }, { 0.001f,0.03f,0.001f },
+			0.01f, -Vector3::ONE * 0.1f, Vector3::ONE * 0.1f, 0.05f);
 	}
 
 	//接地時にAボタン押すと
@@ -187,11 +205,23 @@ void Player::MoveKey()
 		float keyRad = atan2f(keyVec.x, keyVec.y);
 
 		moveVec = { 0, 0, 1 };									//正面を基準に
-		moveVec *= Matrix4::RotationY(cameraRad + keyRad);		//カメラの角度から更にスティックの入力角度を足して
+		moveVec *= Matrix4::RotationY(cameraRad + keyRad);		//カメラの角度から更にキーの入力角度を足して
 		moveVec.Normalize();									//方向だけの情報なので正規化して
 
 		moveVec *= moveSpeed;									//移動速度をかけ合わせたら完成
 		obj.mTransform.position += moveVec;						//完成したものを座標に足し合わせる
+
+		//エミッターの座標はプレイヤーの座標から移動方向の逆側にスケール分ずらしたもの
+		Vector3 emitterPos = obj.mTransform.position;
+		Vector2 mVelo = moveVec;	//moveVecを正規化すると実際の移動に支障が出るので一時変数に格納
+		emitterPos.x -= mVelo.Normalize().x * obj.mTransform.scale.x;
+		emitterPos.z -= mVelo.Normalize().y * obj.mTransform.scale.z;
+
+		moveParticle.SetPos(emitterPos);
+		moveParticle.Add(
+			2, 0.5f, obj.mTuneMaterial.mColor, 0.3f, 0.7f,
+			{ -0.001f,0.01f,-0.001f }, { 0.001f,0.03f,0.001f },
+			0.01f, -Vector3::ONE * 0.1f, Vector3::ONE * 0.1f, 0.05f);
 	}
 
 	//接地時にAボタン押すと
