@@ -1,5 +1,6 @@
 #pragma once
 #include "GameObject.h"
+#include "SimpleParticle.h"
 #include "Easing.h"
 
 class Player : public GameObject
@@ -29,11 +30,12 @@ public:
 	float atkDist;					//攻撃の射出距離
 	Vector2 atkRange{};				//攻撃範囲
 	float atkSize;					//攻撃範囲の大きさ
-	uint32_t atkPower;			//攻撃力
+	uint32_t atkPower;				//攻撃力
 	Easing::EaseTimer atkCoolTimer;	//攻撃のクールタイム
 	Easing::EaseTimer atkTimer;		//攻撃時間計測用
 
 	//------------ その他 ------------//
+	SimpleParticle moveParticle;
 
 public:
 	Player();
