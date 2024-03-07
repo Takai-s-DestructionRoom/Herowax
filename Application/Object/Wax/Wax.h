@@ -1,9 +1,9 @@
 #pragma once
-#include "../../Chara/Charactor/Charactor.h"
+#include "GameObject.h"
 #include "Easing.h"
 
 //蝋
-class Wax
+class Wax : public GameObject
 {
 public:
 	//------------ 攻撃関連 ------------//
@@ -15,32 +15,15 @@ public:
 	float atkSize;				//攻撃範囲の大きさ
 	Easing::EaseTimer atkTimer;	//攻撃時間計測用
 
-	//------------ その他 ------------//
-	ModelObj obj;				//オブジェクト
-	bool isAlive;				//生存フラグ
-
 public:
 	Wax();
 	//生成時に必要な情報だけもらって独立
 	void Init(
-		uint32_t power, Vector3 vec,Vector3 originPos,
-		float dist,Vector2 range, float size,float time);
-	void Update();
-	void Draw();
-
-	// ゲッター //
-	//座標取得
-	Vector3 GetPos()const { return obj.mTransform.position; }
-	//大きさ取得
-	Vector3 GetScale()const { return obj.mTransform.scale; }
-	//生存フラグ取得
-	bool GetIsAlive()const { return isAlive; }
-
-	// セッター //
-	//座標設定
-	void SetPos(const Vector3& pos) { obj.mTransform.position = pos; }
-	//大きさ設定
-	void SetScale(const Vector3& scale) { obj.mTransform.scale = scale; }
-	//生きてるかフラグ設定
-	void SetIsAlive(bool alive) { isAlive = alive; }
+		uint32_t power, Vector3 vec, Vector3 originPos,
+		float dist, Vector2 range, float size, float time);
+	//継承元との齟齬がないように空のやつを宣言だけしておく
+	void Init()override {};
+	
+	void Update()override;
+	void Draw()override;
 };

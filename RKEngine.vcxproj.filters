@@ -118,12 +118,6 @@
     <Filter Include="ヘッダー ファイル\Application\Chara\Player">
       <UniqueIdentifier>{29fa3160-1c53-4639-b065-f7e5d636b5ca}</UniqueIdentifier>
     </Filter>
-    <Filter Include="ソース ファイル\Application\Chara">
-      <UniqueIdentifier>{03be220b-3f1b-44b1-81b4-4620045f7a40}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="ソース ファイル\Application\Chara\Player">
-      <UniqueIdentifier>{df234f43-8a3b-44a0-8b5c-d42cad307db5}</UniqueIdentifier>
-    </Filter>
     <Filter Include="ソース ファイル\Application\Object\Tower">
       <UniqueIdentifier>{3cc077ba-1f91-4ef0-8fa1-850e2ba3572c}</UniqueIdentifier>
     </Filter>
@@ -132,15 +126,6 @@
     </Filter>
     <Filter Include="ヘッダー ファイル\Application\Chara\Enemy">
       <UniqueIdentifier>{9b1ce1aa-20ad-4b74-913a-99fc7d72ec75}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="ソース ファイル\Application\Chara\Enemy">
-      <UniqueIdentifier>{8f748a72-7aec-4fea-ae88-467f01173e80}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="ソース ファイル\Application\Chara\Charactor">
-      <UniqueIdentifier>{5661025d-af62-4416-b6fb-4961dd93a73c}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="ヘッダー ファイル\Application\Chara\Charactor">
-      <UniqueIdentifier>{fe8c54e7-0d25-4367-bf51-0bcbc3a8a270}</UniqueIdentifier>
     </Filter>
     <Filter Include="ソース ファイル\Application\Object\EnemySpawner">
       <UniqueIdentifier>{82fc10b4-caf4-4682-bcca-a7a23bf0b7fc}</UniqueIdentifier>
@@ -165,6 +150,21 @@
     </Filter>
     <Filter Include="ソース ファイル\Application\InstantDrawer">
       <UniqueIdentifier>{fda5466a-22e4-4a24-8126-1dd7f48e0538}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\Application\Object\GameObject">
+      <UniqueIdentifier>{c8eef873-567f-4388-a866-5290f5952331}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\Application\Chara">
+      <UniqueIdentifier>{03be220b-3f1b-44b1-81b4-4620045f7a40}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\Application\Chara\Player">
+      <UniqueIdentifier>{df234f43-8a3b-44a0-8b5c-d42cad307db5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\Application\Chara\Enemy">
+      <UniqueIdentifier>{8f748a72-7aec-4fea-ae88-467f01173e80}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\Application\Object\GameObject">
+      <UniqueIdentifier>{5cb2e61f-c08a-4655-a8b1-8d544387f830}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -411,9 +411,6 @@
     <ClCompile Include="Application\Chara\Enemy\EnemyManager.cpp">
       <Filter>ソース ファイル\Application\Chara\Enemy</Filter>
     </ClCompile>
-    <ClCompile Include="Application\Chara\Charactor\Charactor.cpp">
-      <Filter>ソース ファイル\Application\Chara\Charactor</Filter>
-    </ClCompile>
     <ClCompile Include="Application\EnemySpawner.cpp">
       <Filter>ソース ファイル\Application\Object\EnemySpawner</Filter>
     </ClCompile>
@@ -428,6 +425,9 @@
     </ClCompile>
     <ClCompile Include="Application\InstantDrawer.cpp">
       <Filter>ソース ファイル\Application\InstantDrawer</Filter>
+    </ClCompile>
+    <ClCompile Include="Application\GameObject.cpp">
+      <Filter>ソース ファイル\Application\Object\GameObject</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -814,9 +814,6 @@
     <ClInclude Include="Application\Chara\Enemy\EnemyManager.h">
       <Filter>ヘッダー ファイル\Application\Chara\Enemy</Filter>
     </ClInclude>
-    <ClInclude Include="Application\Chara\Charactor\Charactor.h">
-      <Filter>ヘッダー ファイル\Application\Chara\Charactor</Filter>
-    </ClInclude>
     <ClInclude Include="Application\EnemySpawner.h">
       <Filter>ヘッダー ファイル\Application\Object\EnemySpawner</Filter>
     </ClInclude>
@@ -831,6 +828,9 @@
     </ClInclude>
     <ClInclude Include="Application\InstantDrawer.h">
       <Filter>ヘッダー ファイル\Application\InstantDrawer</Filter>
+    </ClInclude>
+    <ClInclude Include="Application\GameObject.h">
+      <Filter>ヘッダー ファイル\Application\Object\GameObject</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

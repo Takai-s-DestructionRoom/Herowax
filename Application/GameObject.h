@@ -2,27 +2,20 @@
 #include "ModelObj.h"
 #include "ColPrimitive3D.h"
 
-//Player,Enemyなど生きてる系オブジェクトの基底クラス
-class Charactor
+//モデルを持ち、画面に描画されるオブジェクトの基底クラス
+class GameObject
 {
 public:
-	//------------ 移動関連 ------------//
-	Vector3 moveVec;			//移動ベクトル
-	float moveSpeed;			//移動速度
-	bool isGraund;				//接地しているかフラグ
-
-	//------------ HP関連 ------------//
-	uint32_t hp;				//現在のヒットポイント
-	uint32_t maxHP;				//最大HP
+	bool isAlive;				//生きてるか否か
 
 	//------------ その他 ------------//
 	ModelObj obj;				//オブジェクト
-
-	ColPrimitive3D::Sphere collider;	//AABBの当たり判定
+	
+	ColPrimitive3D::Sphere collider;	//Sphereの当たり判定
 
 public:
-	Charactor();
-	virtual ~Charactor() {};
+	GameObject();
+	virtual ~GameObject() {};
 	virtual void Init() = 0;
 	virtual void Update() = 0;
 	virtual void Draw() = 0;
@@ -49,6 +42,6 @@ protected:
 
 private:
 	//コピー禁止
-	Charactor& operator=(const Charactor&) = delete;
+	GameObject& operator=(const GameObject&) = delete;
 };
 

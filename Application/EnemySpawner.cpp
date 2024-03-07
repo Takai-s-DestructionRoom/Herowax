@@ -3,8 +3,8 @@
 #include "EnemyManager.h"
 #include "Util.h"
 
-EnemySpawner::EnemySpawner() :
-	hp(0), maxHP(5), isAlive(true), spawnInterval(3.f), spawnNum(1),
+EnemySpawner::EnemySpawner() : GameObject(),
+	hp(0), maxHP(5), spawnInterval(3.f), spawnNum(1),
 	spawnRandomPos(5.f)
 {
 	obj = ModelObj(Model::Load("./Resources/Model/stick.obj", "Stick", true));
@@ -34,6 +34,8 @@ void EnemySpawner::Update()
 
 	obj.mTransform.UpdateMatrix();
 	obj.TransferBuffer(Camera::sNowCamera->mViewProjection);
+
+	UpdateCollider();
 }
 
 void EnemySpawner::Draw()

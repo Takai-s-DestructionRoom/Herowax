@@ -83,7 +83,7 @@ void ProtoScene::Update()
 	player.Update();
 
 	WaxManager::GetInstance()->Update();
-	TemperatureManager::GetInstance()->UpdateUI();
+	TemperatureManager::GetInstance()->Update();
 
 	light.Update();
 
@@ -124,7 +124,7 @@ void ProtoScene::Draw()
 	ground.Draw();
 	tower.Draw();
 	WaxManager::GetInstance()->Draw();
-	TemperatureManager::GetInstance()->DrawUI();
+	TemperatureManager::GetInstance()->Draw();
 	player.Draw();
 
 	//更新

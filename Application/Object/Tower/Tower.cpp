@@ -2,8 +2,7 @@
 #include "Camera.h"
 #include "ImGui.h"
 
-Tower::Tower():
-	hp(0), maxHP(5), isAlive(true)
+Tower::Tower(): GameObject(),hp(0), maxHP(5)
 {
 	obj = ModelObj(Model::Load("./Resources/Model/Birdnest/Birdnest.obj", "Birdnest", true));
 }
@@ -19,6 +18,9 @@ void Tower::Init()
 void Tower::Update()
 {
 	UpdateCollider();
+	//無理やり判定を足元にずらす(カスのコード)
+	//どっかで当たり判定可視化出来るようにしたいね
+	collider.pos.y = 0;
 
 	//HP0になったら死ぬ
 	if (hp <= 0)
@@ -54,12 +56,4 @@ void Tower::Draw()
 	{
 		obj.Draw();
 	}
-}
-
-void Tower::UpdateCollider()
-{
-	collider.pos = GetPos();
-	//足元に判定をずらす
-	collider.pos.y = 0;
-	collider.r = 1;
 }

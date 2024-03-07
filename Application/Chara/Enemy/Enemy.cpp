@@ -1,10 +1,10 @@
 #include "Enemy.h"
 #include "Camera.h"
 
-Enemy::Enemy(ModelObj* target_)
+Enemy::Enemy(ModelObj* target_) : GameObject(),
+	moveSpeed(0.1f), isGraund(true), hp(0), maxHP(10)
 {
-	moveSpeed = 0.1f;
-	obj = ModelObj(Model::Load("./Resources/Model/Cube.obj", "Sphere", true));
+	obj = ModelObj(Model::Load("./Resources/Model/Sphere.obj", "Sphere", true));
 	target = target_;
 }
 

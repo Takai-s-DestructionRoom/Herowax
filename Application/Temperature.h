@@ -8,6 +8,8 @@ public:
 	Vector2 position;
 	Vector2 size;
 
+	float angle = -60.f;
+
 public:
 	TemperatureUI();
 
@@ -15,8 +17,6 @@ public:
 
 	void Update();
 	void Draw();
-
-	void ImGui();
 };
 
 //温度を管理するクラス
@@ -29,11 +29,19 @@ public:
 	float GetTemperature() {return temperature;};
 	void SetTemperature(float value) { temperature = value; };
 
-	void UpdateUI();
-	void DrawUI();
+	void Update();
+	void Draw();
 
+private:
+	TemperatureManager();
+	~TemperatureManager() {};
+
+public:
+	const float MAX_TEMPERATURE = 240.f;
 private:
 	TemperatureUI ui;		//描画UI
 	float temperature;		//温度
+	float downSpeed;		//1秒あたりに下がる温度
+
 };
 
