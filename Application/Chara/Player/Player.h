@@ -50,5 +50,8 @@ public:
 	//攻撃
 	void Attack();
 
+	//ﾌｧｲｱ
+	void Fire();
+
 	Vector3 GetFrontVec();
 };

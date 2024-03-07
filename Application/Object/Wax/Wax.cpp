@@ -1,10 +1,22 @@
 #include "Wax.h"
 #include "Camera.h"
 
-Wax::Wax():GameObject()
+Wax::Wax():GameObject(),
+	waxOriginColor(0.8f, 0.6f, 0.35f, 1.f),
+	waxEndColor(0.8f,0.0f,0.f,1.f),
+	igniteTimer(0.25f),
+	burningTimer(1.0f),
+	extinguishTimer(0.5f),
+	state(new WaxNormal)
 {
 	obj = ModelObj(Model::Load("./Resources/Model/Sphere.obj", "Sphere", true));
-	obj.mTuneMaterial.mColor = { 0.8f,0.1f,0.1f,1.f };
+	obj.mTuneMaterial.mColor = waxOriginColor;
+}
+
+void Wax::ChangeState(WaxState* newstate)
+{
+	delete state;
+	state = newstate;
 }
 
 void Wax::Init(uint32_t power, Vector3 vec, Vector3 originPos,
@@ -23,7 +35,7 @@ void Wax::Init(uint32_t power, Vector3 vec, Vector3 originPos,
 void Wax::Update()
 {
 	atkTimer.Update();
-	
+
 	//段々大きくなる
 	atkSize = Easing::OutBack(atkTimer.GetTimeRate());
 	Vector3 waxScale = { atkRange.x,1.f,atkRange.y };	//蝋の大きさ
@@ -34,6 +46,11 @@ void Wax::Update()
 	SetPos(atkOriginPos + atkVec * atkRange.y * atkDist *
 		Easing::OutBack(atkTimer.GetTimeRate()));
 
+	//燃焼周りのステートの更新
+	state->Update(this);
+
+	UpdateCollider();
+
 	obj.mTransform.UpdateMatrix();
 	obj.TransferBuffer(Camera::sNowCamera->mViewProjection);
 }
@@ -41,4 +58,16 @@ void Wax::Update()
 void Wax::Draw()
 {
 	obj.Draw();
+}
+
+bool Wax::IsBurning()
+{
+	return burningTimer.GetRun();
+}
+
+bool Wax::IsNormal() 
+{
+	return !igniteTimer.GetStarted() &&
+		!burningTimer.GetStarted() && 
+		!extinguishTimer.GetStarted();
 }

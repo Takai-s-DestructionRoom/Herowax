@@ -9,6 +9,7 @@
 #include "ColPrimitive3D.h"
 #include "InstantDrawer.h"
 #include "Temperature.h"
+#include "FireManager.h"
 
 ProtoScene::ProtoScene()
 {
@@ -47,6 +48,7 @@ void ProtoScene::Init()
 	enemySpawner.SetPos({30,0,0});
 
 	WaxManager::GetInstance()->Init();
+	FireManager::GetInstance()->Init();
 }
 
 void ProtoScene::Update()
@@ -75,6 +77,8 @@ void ProtoScene::Update()
 	//3秒ごとに1回敵を出現させる
 	enemySpawner.Update();
 	EnemyManager::GetInstance()->Update();
+
+	//ここに無限に当たり判定増やしていくの嫌なのであとで何か作ります
 	//クソ手抜き当たり判定
 	for (auto& enemy : EnemyManager::GetInstance()->enemys)
 	{
@@ -83,10 +87,39 @@ void ProtoScene::Update()
 			tower.Damage(1);
 		}
 	}
+	for (auto& fire : FireManager::GetInstance()->fires)
+	{
+		for (auto& wax : WaxManager::GetInstance()->waxs)
+		{
+			if (ColPrimitive3D::CheckSphereToSphere(wax->collider, fire.collider)) {
+				fire.SetIsAlive(false);
+				wax->ChangeState(new WaxIgnite());
+			}
+		}
+	}
+	for (auto& wax1 : WaxManager::GetInstance()->waxs)
+	{
+		//燃えているなら
+		if (wax1->IsBurning())
+		{
+			for (auto& wax2 : WaxManager::GetInstance()->waxs)
+			{
+				//ぶつかっていて通常の状態なら
+				if (ColPrimitive3D::CheckSphereToSphere(wax1->collider, wax2->collider) &&
+					wax2->IsNormal()) 
+				{
+					//燃えている状態へ遷移
+					wax2->ChangeState(new WaxIgnite());
+				}
+			}
+		}
+	}
+
 	tower.Update();
 	player.Update();
 
 	WaxManager::GetInstance()->Update();
+	FireManager::GetInstance()->Update();
 	TemperatureManager::GetInstance()->Update();
 	ParticleManager::GetInstance()->Update();
 
@@ -130,6 +163,7 @@ void ProtoScene::Draw()
 	ground.Draw();
 	tower.Draw();
 	WaxManager::GetInstance()->Draw();
+	FireManager::GetInstance()->Draw();
 	TemperatureManager::GetInstance()->Draw();
 	player.Draw();
 

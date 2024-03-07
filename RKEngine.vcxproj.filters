@@ -112,20 +112,11 @@
     <Filter Include="ヘッダー ファイル\Application\Object">
       <UniqueIdentifier>{c8c44cc2-c2dd-4dcc-b6a1-d6fb23b8c015}</UniqueIdentifier>
     </Filter>
-    <Filter Include="ヘッダー ファイル\Application\Chara">
-      <UniqueIdentifier>{f3ab33f9-404d-4315-bbd0-d9afc2339908}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="ヘッダー ファイル\Application\Chara\Player">
-      <UniqueIdentifier>{29fa3160-1c53-4639-b065-f7e5d636b5ca}</UniqueIdentifier>
-    </Filter>
     <Filter Include="ソース ファイル\Application\Object\Tower">
       <UniqueIdentifier>{3cc077ba-1f91-4ef0-8fa1-850e2ba3572c}</UniqueIdentifier>
     </Filter>
     <Filter Include="ヘッダー ファイル\Application\Object\Tower">
       <UniqueIdentifier>{1d506580-ad2a-47f4-aebd-9adddac14fdb}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="ヘッダー ファイル\Application\Chara\Enemy">
-      <UniqueIdentifier>{9b1ce1aa-20ad-4b74-913a-99fc7d72ec75}</UniqueIdentifier>
     </Filter>
     <Filter Include="ソース ファイル\Application\Object\EnemySpawner">
       <UniqueIdentifier>{82fc10b4-caf4-4682-bcca-a7a23bf0b7fc}</UniqueIdentifier>
@@ -160,17 +151,32 @@
     <Filter Include="ソース ファイル\Application\Object\GameObject">
       <UniqueIdentifier>{c8eef873-567f-4388-a866-5290f5952331}</UniqueIdentifier>
     </Filter>
-    <Filter Include="ソース ファイル\Application\Chara">
-      <UniqueIdentifier>{03be220b-3f1b-44b1-81b4-4620045f7a40}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="ソース ファイル\Application\Chara\Player">
-      <UniqueIdentifier>{df234f43-8a3b-44a0-8b5c-d42cad307db5}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="ソース ファイル\Application\Chara\Enemy">
-      <UniqueIdentifier>{8f748a72-7aec-4fea-ae88-467f01173e80}</UniqueIdentifier>
-    </Filter>
     <Filter Include="ヘッダー ファイル\Application\Object\GameObject">
       <UniqueIdentifier>{5cb2e61f-c08a-4655-a8b1-8d544387f830}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\Application\Object\Chara">
+      <UniqueIdentifier>{f3ab33f9-404d-4315-bbd0-d9afc2339908}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\Application\Object\Chara\Enemy">
+      <UniqueIdentifier>{9b1ce1aa-20ad-4b74-913a-99fc7d72ec75}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\Application\Object\Chara\Player">
+      <UniqueIdentifier>{29fa3160-1c53-4639-b065-f7e5d636b5ca}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\Application\Object\Chara">
+      <UniqueIdentifier>{03be220b-3f1b-44b1-81b4-4620045f7a40}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\Application\Object\Chara\Player">
+      <UniqueIdentifier>{df234f43-8a3b-44a0-8b5c-d42cad307db5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\Application\Object\Chara\Enemy">
+      <UniqueIdentifier>{8f748a72-7aec-4fea-ae88-467f01173e80}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\Application\Object\Fire">
+      <UniqueIdentifier>{753f6898-ab12-42e9-8e79-5cbc81b2dae1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\Application\Object\Fire">
+      <UniqueIdentifier>{39ad8b67-59f0-4380-baad-1fb4a594b964}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -397,7 +403,7 @@
       <Filter>ソース ファイル\Application\Scene</Filter>
     </ClCompile>
     <ClCompile Include="Application\Chara\Player\Player.cpp">
-      <Filter>ソース ファイル\Application\Chara\Player</Filter>
+      <Filter>ソース ファイル\Application\Object\Chara\Player</Filter>
     </ClCompile>
     <ClCompile Include="Application\Scene\TitleScene.cpp">
       <Filter>ソース ファイル\Application\Scene</Filter>
@@ -412,10 +418,10 @@
       <Filter>ソース ファイル\Application\Object\Tower</Filter>
     </ClCompile>
     <ClCompile Include="Application\Chara\Enemy\Enemy.cpp">
-      <Filter>ソース ファイル\Application\Chara\Enemy</Filter>
+      <Filter>ソース ファイル\Application\Object\Chara\Enemy</Filter>
     </ClCompile>
     <ClCompile Include="Application\Chara\Enemy\EnemyManager.cpp">
-      <Filter>ソース ファイル\Application\Chara\Enemy</Filter>
+      <Filter>ソース ファイル\Application\Object\Chara\Enemy</Filter>
     </ClCompile>
     <ClCompile Include="Application\EnemySpawner.cpp">
       <Filter>ソース ファイル\Application\Object\EnemySpawner</Filter>
@@ -443,6 +449,15 @@
     </ClCompile>
     <ClCompile Include="Application\GameObject.cpp">
       <Filter>ソース ファイル\Application\Object\GameObject</Filter>
+    </ClCompile>
+    <ClCompile Include="Application\FireManager.cpp">
+      <Filter>ソース ファイル\Application\Object\Fire</Filter>
+    </ClCompile>
+    <ClCompile Include="Application\Fire.cpp">
+      <Filter>ソース ファイル\Application\Object\Fire</Filter>
+    </ClCompile>
+    <ClCompile Include="Application\WaxState.cpp">
+      <Filter>ソース ファイル</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -809,7 +824,7 @@
       <Filter>ヘッダー ファイル\Application\Scene</Filter>
     </ClInclude>
     <ClInclude Include="Application\Chara\Player\Player.h">
-      <Filter>ヘッダー ファイル\Application\Chara\Player</Filter>
+      <Filter>ヘッダー ファイル\Application\Object\Chara\Player</Filter>
     </ClInclude>
     <ClInclude Include="Application\Scene\TitleScene.h">
       <Filter>ヘッダー ファイル\Application\Scene</Filter>
@@ -824,10 +839,10 @@
       <Filter>ヘッダー ファイル\Application\Object\Tower</Filter>
     </ClInclude>
     <ClInclude Include="Application\Chara\Enemy\Enemy.h">
-      <Filter>ヘッダー ファイル\Application\Chara\Enemy</Filter>
+      <Filter>ヘッダー ファイル\Application\Object\Chara\Enemy</Filter>
     </ClInclude>
     <ClInclude Include="Application\Chara\Enemy\EnemyManager.h">
-      <Filter>ヘッダー ファイル\Application\Chara\Enemy</Filter>
+      <Filter>ヘッダー ファイル\Application\Object\Chara\Enemy</Filter>
     </ClInclude>
     <ClInclude Include="Application\EnemySpawner.h">
       <Filter>ヘッダー ファイル\Application\Object\EnemySpawner</Filter>
@@ -855,6 +870,15 @@
     </ClInclude>
     <ClInclude Include="Application\GameObject.h">
       <Filter>ヘッダー ファイル\Application\Object\GameObject</Filter>
+    </ClInclude>
+    <ClInclude Include="Application\Fire.h">
+      <Filter>ヘッダー ファイル\Application\Object\Fire</Filter>
+    </ClInclude>
+    <ClInclude Include="Application\FireManager.h">
+      <Filter>ヘッダー ファイル\Application\Object\Fire</Filter>
+    </ClInclude>
+    <ClInclude Include="Application\WaxState.h">
+      <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

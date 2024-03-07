@@ -193,3 +193,32 @@ void Util::DebugLogC(std::wstring log)
 		OutputDebugStringW((log + L"\n").c_str());
 	}
 }
+
+Vector3 Util::Spline(const std::vector<Vector3>& points, float t)
+{
+	//ひとつしか入っていないならそのまま返す
+	if (points.size() <= 1) { return Vector3(points.front()); }
+	t = Util::Clamp(t, 0.f, 1.f);
+
+	float perSegment = 1.f / (points.size() - 1);
+	int32_t currentIndex = (int32_t)(t / perSegment);
+
+	if (t == 1.0f)
+	{
+		currentIndex -= 1;
+	}
+
+	t = t - currentIndex * perSegment;
+	t = t / perSegment;
+
+	currentIndex -= 1;
+
+	const Vector3& p0 = points.at(currentIndex < 0 ? 0 : currentIndex);
+	const Vector3& p1 = points.at(currentIndex + 1);
+	const Vector3& p2 = points.at(currentIndex + 2);
+	const Vector3& p3 = points.at(currentIndex + 3 >= points.size() ? points.size() - 1 : currentIndex + 3);
+
+	return (p1 * 2 + (-p0 + p2) * t +
+		(p0 * 2 - p1 * 5 + p2 * 4 - p3) * t * t +
+		(-p0 + p1 * 3 - p2 * 3 + p3) * t * t * t) * 0.5f;
+}

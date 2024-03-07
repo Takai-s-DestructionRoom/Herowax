@@ -13,7 +13,7 @@ public:
 	uint32_t hp;				//現在のヒットポイント
 	uint32_t maxHP;				//最大HP
 
-	//追跡する対象(プレイヤーを入れる)
+	//追跡する対象(タワーを入れる)
 	ModelObj* target = nullptr;
 
 public:
