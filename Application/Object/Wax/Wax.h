@@ -1,6 +1,7 @@
 #pragma once
 #include "GameObject.h"
 #include "Easing.h"
+#include "WaxState.h"
 
 //蝋
 class Wax : public GameObject
@@ -15,6 +16,15 @@ public:
 	float atkSize;				//攻撃範囲の大きさ
 	Easing::EaseTimer atkTimer;	//攻撃時間計測用
 
+	//------------ 燃焼関連 ------------//
+	Color waxOriginColor;		//蝋の元の色
+	Color waxEndColor;			//蝋の燃えた後の色
+	Easing::EaseTimer igniteTimer;	//燃え始めて色が変わるの時間
+	Easing::EaseTimer burningTimer;	//蝋が燃え尽きるまでの時間
+	Easing::EaseTimer extinguishTimer;	//蝋が燃え尽きて消えるまでの時間
+	WaxState* state;
+	void ChangeState(WaxState* newstate);
+
 public:
 	Wax();
 	//生成時に必要な情報だけもらって独立
@@ -26,4 +36,9 @@ public:
 	
 	void Update()override;
 	void Draw()override;
+
+	void Burning();
+
+	bool IsBurning();
+	bool IsNormal();
 };

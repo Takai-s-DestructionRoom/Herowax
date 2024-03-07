@@ -25,6 +25,8 @@ void Fire::Update()
 		isAlive = false;
 	}
 
+	UpdateCollider();
+
 	obj.mTransform.position = Util::Spline(splinePoints,timer.GetTimeRate());
 
 	obj.mTransform.UpdateMatrix();

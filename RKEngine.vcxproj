@@ -197,6 +197,7 @@
     <ClCompile Include="Engine\Particle\ParticleManager.cpp" />
     <ClCompile Include="Engine\Particle\SimpleParticle.cpp" />
     <ClCompile Include="Application\Temperature.cpp" />
+    <ClCompile Include="Application\WaxState.cpp" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Shader\BasicPS.hlsl">
@@ -521,6 +522,7 @@
     <ClInclude Include="Application\GameObject.h" />
     <ClInclude Include="Application\Fire.h" />
     <ClInclude Include="Application\FireManager.h" />
+    <ClInclude Include="Application\WaxState.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Shader\Basic.hlsli">
