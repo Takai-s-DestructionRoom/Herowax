@@ -14,6 +14,7 @@
 #include <random>
 #include <chrono>
 #include <windows.h>
+#include "Vector3.h"
 #pragma warning(pop)
 
 namespace Util {
@@ -164,4 +165,12 @@ namespace Util {
 
     //デバッグ出力(debugBoolが立っている時処理)
     void DebugLogC(std::wstring log);
+
+    /// <summary>
+    /// Spline挙動を作る
+    /// </summary>
+    /// <param name="points"></param>
+    /// <param name="t"></param>
+    /// <returns></returns>
+    Vector3 Spline(const std::vector<Vector3>& points, float t);
 }

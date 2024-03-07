@@ -22,11 +22,11 @@ public:
 
 	// ゲッター //
 	//座標取得
-	Vector3 GetPos()const { return obj.mTransform.position; }
+	Vector3 GetPos()const;
 	//大きさ取得
-	Vector3 GetScale()const { return obj.mTransform.scale; }
+	Vector3 GetScale()const;
 	//生きてるかフラグ取得
-	bool GetIsAlive()const { return isAlive; }
+	bool GetIsAlive()const;
 
 	// セッター //
 	//座標設定

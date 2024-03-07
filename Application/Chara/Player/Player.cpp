@@ -6,6 +6,7 @@
 #include "Util.h"
 #include "Quaternion.h"
 #include "RImGui.h"
+#include "FireManager.h"
 
 Player::Player() :GameObject(),
 	moveSpeed(1.f), isGraund(true), hp(0), maxHP(10),
@@ -33,6 +34,8 @@ void Player::Update()
 	}
 
 	Attack();
+
+	Fire();
 
 	//地面に埋ってたら
 	if (obj.mTransform.position.y - obj.mTransform.scale.y < 0.f)
@@ -234,7 +237,6 @@ void Player::Attack()
 	if (isAttack == false)
 	{
 		if (RInput::GetInstance()->GetPadButtonDown(XINPUT_GAMEPAD_RIGHT_SHOULDER) ||
-			RInput::GetInstance()->GetPadButtonDown(XINPUT_GAMEPAD_RIGHT_THUMB) ||
 			RInput::GetInstance()->GetMouseClickDown(1))
 		{
 			isAttack = true;
@@ -270,6 +272,20 @@ void Player::Attack()
 	{
 		isAttack = false;
 		atkCoolTimer.Reset();
+	}
+}
+
+void Player::Fire()
+{
+	//情報をfiremanagerへ送信
+	FireManager::GetInstance()->SetTarget(&obj);
+	FireManager::GetInstance()->SetThorwVec(GetFrontVec());
+
+	//押し込んだら
+	if (RInput::GetPadButtonDown(XINPUT_GAMEPAD_RIGHT_THUMB))
+	{
+		//放物線上に炎を投げる
+		FireManager::GetInstance()->Create();
 	}
 }
 

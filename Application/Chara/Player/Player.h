@@ -33,8 +33,6 @@ public:
 	Easing::EaseTimer atkCoolTimer;	//攻撃のクールタイム
 	Easing::EaseTimer atkTimer;		//攻撃時間計測用
 
-	//------------ その他 ------------//
-
 public:
 	Player();
 	void Init()override;
@@ -47,6 +45,9 @@ public:
 
 	//攻撃
 	void Attack();
+
+	//ﾌｧｲｱ
+	void Fire();
 
 	Vector3 GetFrontVec();
 };

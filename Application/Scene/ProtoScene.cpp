@@ -8,6 +8,7 @@
 #include "ColPrimitive3D.h"
 #include "InstantDrawer.h"
 #include "Temperature.h"
+#include "FireManager.h"
 
 ProtoScene::ProtoScene()
 {
@@ -43,6 +44,7 @@ void ProtoScene::Init()
 	enemySpawner.SetPos({30,0,0});
 
 	WaxManager::GetInstance()->Init();
+	FireManager::GetInstance()->Init();
 }
 
 void ProtoScene::Update()
@@ -83,6 +85,7 @@ void ProtoScene::Update()
 	player.Update();
 
 	WaxManager::GetInstance()->Update();
+	FireManager::GetInstance()->Update();
 	TemperatureManager::GetInstance()->Update();
 
 	light.Update();
@@ -124,6 +127,7 @@ void ProtoScene::Draw()
 	ground.Draw();
 	tower.Draw();
 	WaxManager::GetInstance()->Draw();
+	FireManager::GetInstance()->Draw();
 	TemperatureManager::GetInstance()->Draw();
 	player.Draw();
 
