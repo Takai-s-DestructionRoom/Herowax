@@ -1,10 +1,18 @@
 #include "WaxState.h"
 #include "Wax.h"
 #include "Easing.h"
+#include "Temperature.h"
+#include "WaxManager.h"
 
 void WaxNormal::Update(Wax* wax)
 {
 	wax;
+}
+
+WaxIgnite::WaxIgnite()
+{
+	//燃えている数カウントに+1
+	WaxManager::GetInstance()->isBurningNum++;
 }
 
 void WaxIgnite::Update(Wax* wax)
@@ -25,7 +33,12 @@ void WaxIgnite::Update(Wax* wax)
 
 void WaxBurining::Update(Wax* wax)
 {
-	if (!wax->burningTimer.GetStarted())wax->burningTimer.Start();
+	//この状態になった瞬間、温度を上昇させる
+	if (!wax->burningTimer.GetStarted()) {
+		TemperatureManager::GetInstance()->TemperaturePlus(
+			WaxManager::GetInstance()->heatUpTemperature);
+		wax->burningTimer.Start();
+	}
 	wax->burningTimer.Update();
 	//燃える、この状態で当たったら周囲をigniteにする
 

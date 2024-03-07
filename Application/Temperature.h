@@ -27,7 +27,7 @@ public:
 	static TemperatureManager* GetInstance();
 
 	float GetTemperature() {return temperature;};
-	void SetTemperature(float value) { temperature = value; };
+	void TemperaturePlus(float value) { temperature += value; };
 
 	void Update();
 	void Draw();

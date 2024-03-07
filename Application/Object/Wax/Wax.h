@@ -19,11 +19,12 @@ public:
 	//------------ 燃焼関連 ------------//
 	Color waxOriginColor;		//蝋の元の色
 	Color waxEndColor;			//蝋の燃えた後の色
+	
 	Easing::EaseTimer igniteTimer;	//燃え始めて色が変わるの時間
 	Easing::EaseTimer burningTimer;	//蝋が燃え尽きるまでの時間
 	Easing::EaseTimer extinguishTimer;	//蝋が燃え尽きて消えるまでの時間
-	WaxState* state;
-	void ChangeState(WaxState* newstate);
+	
+	WaxState* state;			//燃焼の状態管理
 
 public:
 	Wax();
@@ -37,8 +38,8 @@ public:
 	void Update()override;
 	void Draw()override;
 
-	void Burning();
-
 	bool IsBurning();
 	bool IsNormal();
+
+	void ChangeState(WaxState* newstate);
 };
