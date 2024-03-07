@@ -20,6 +20,7 @@ namespace Util {
 	extern bool debugBool;
     extern int32_t debugInt;
 	constexpr float PI = 3.1415926535897932384626f;
+	constexpr float PI2 = 6.2831853071795864769252f;
 
     const int32_t WIN_WIDTH = 1280;
     const int32_t WIN_HEIGHT = 720;

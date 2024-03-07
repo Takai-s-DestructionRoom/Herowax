@@ -1,5 +1,14 @@
 #include "Color.h"
 
+const Color Color::kRed(1.f, 0, 0, 1.f);
+const Color Color::kGreen(0, 1.0f, 0, 1.f);
+const Color Color::kBlue(0, 0, 1.0f, 1.f);
+const Color Color::kYellow(1.0f, 1.0f, 0, 1.f);
+const Color Color::kPink(1.0f, 0, 1.0f, 1.f);
+const Color Color::kLightblue(0, 1.0f, 1.0f, 1.f);
+const Color Color::kWhite(1.0f, 1.0f, 1.0f, 1.f);
+const Color Color::kBlack(0, 0, 0, 1.f);
+
 Color::Color(int32_t hexcolor)
 {
 	int32_t r_, g_, b_;
@@ -56,5 +65,5 @@ Color Color::convertFromHSVA(int32_t h, int32_t s, int32_t v, int32_t a)
 		return Color(MAX / 255.0f, MIN / 255.0f, (((360 - h) / 60.0f) * (MAX - MIN) + MIN) / 255.0f, a / 255.0f);
 	}
 
-    return Color();
+	return Color();
 }

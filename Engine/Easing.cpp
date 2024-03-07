@@ -92,7 +92,7 @@ float Easing::InOutBounce(float start, float end, float timeRate)
 
 float Easing::InElastic(float timeRate)
 {
-	const float c4 = Util::PI * 2.f / 3.f;
+	const float c4 = Util::PI2 / 3.f;
 
 	return timeRate == 0
 		? 0
@@ -103,7 +103,7 @@ float Easing::InElastic(float timeRate)
 
 float Easing::OutElastic(float timeRate)
 {
-	const float c4 = Util::PI * 2.f / 3;
+	const float c4 = Util::PI2 / 3;
 
 	return timeRate == 0
 		? 0
