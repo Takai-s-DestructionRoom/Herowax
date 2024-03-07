@@ -106,6 +106,9 @@ void ProtoScene::Update()
 				{
 					//燃えている状態へ遷移
 					wax2->ChangeState(new WaxIgnite());
+					//燃えたときに、すでに燃えている蝋の数に応じてボーナス
+					TemperatureManager::GetInstance()->TemperaturePlus(
+						WaxManager::GetInstance()->GetCalcHeatBonus());
 				}
 			}
 		}

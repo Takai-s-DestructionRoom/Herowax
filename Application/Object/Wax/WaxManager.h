@@ -7,9 +7,17 @@ class WaxManager final
 private:
 	bool isWaxDead = false;
 
+	float heatBonus;			//上記の同時燃焼数に応じたボーナス係数
+	//↑これは燃えた量が多ければ多いほど温度を保ちやすい、ってやつを
+	//タカイが適当に解釈して適当にそれっぽくしてあります。
+	//後でよりそれっぽいシステムにしてくださいプランナーさん
+
 public:
 	std::vector<std::unique_ptr<Wax>> waxs;	//蝋ども
 	const uint32_t kMaxWax = 128;	//最大弾数
+
+	int isBurningNum = 0;
+	float heatUpTemperature;	//蝋が燃えたときに上がる温度
 
 public:
 	//シングルトンインスタンス取得
@@ -30,12 +38,15 @@ public:
 	//最初の要素削除
 	void EraceBegin();
 
+	//現在の温度ボーナスを返す(計算済み)
+	float GetCalcHeatBonus();
+
 	//満杯かどうか返す
 	bool GetIsEmpty() { return waxs.size() >= kMaxWax; }
 
 private:
 	//コンストラクタ
-	WaxManager() = default;
+	WaxManager();
 	//コピー禁止
 	WaxManager(const WaxManager&) = delete;
 	//デストラクタ

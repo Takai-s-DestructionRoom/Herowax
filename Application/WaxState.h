@@ -19,6 +19,7 @@ public:
 class WaxIgnite : public WaxState
 {
 public:
+	WaxIgnite();
 	void Update(Wax* wax)override;
 };
 

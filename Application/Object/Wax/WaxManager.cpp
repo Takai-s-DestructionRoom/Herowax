@@ -1,10 +1,18 @@
 #include "WaxManager.h"
 #include "ImGui.h"
+#include "Temperature.h"
 
 WaxManager* WaxManager::GetInstance()
 {
 	static WaxManager instance;
 	return &instance;
+}
+
+WaxManager::WaxManager() : 
+	heatUpTemperature(10.f),
+	heatBonus(5.f)
+{
+
 }
 
 void WaxManager::Init()
@@ -24,18 +32,28 @@ void WaxManager::Update()
 		}
 	}
 
+	//燃えている数を初期化
+	isBurningNum = 0;
+
 	for (auto& wax : waxs)
 	{
 		wax->Update();
 	}
 
 #pragma region ImGui
-	ImGui::SetNextWindowSize({ 100, 70 });
+	ImGui::SetNextWindowSize({ 350, 180 });
 
 	ImGuiWindowFlags window_flags = 0;
 	window_flags |= ImGuiWindowFlags_NoResize;
 
 	ImGui::Begin("Wax", NULL, window_flags);
+	ImGui::Text("存在しているロウの数:%d", (int)waxs.size());
+	ImGui::Text("燃えているロウの数:%d", isBurningNum);
+	ImGui::Text("現在の温度:%f", TemperatureManager::GetInstance()->GetTemperature());
+	ImGui::PushItemWidth(100);
+	ImGui::InputFloat("ロウが燃えたときの上昇温度", &heatUpTemperature,1.0f);
+	ImGui::InputFloat("ボーナス上昇温度", &heatBonus, 1.0f);
+	ImGui::PopItemWidth();
 
 	if (ImGui::Button("Reset")) {
 		Init();
@@ -69,4 +87,9 @@ void WaxManager::Create(Transform transform, uint32_t power, Vector3 vec,
 void WaxManager::EraceBegin()
 {
 	waxs.erase(waxs.begin());
+}
+
+float WaxManager::GetCalcHeatBonus()
+{
+	return heatBonus * (float)isBurningNum;
 }
