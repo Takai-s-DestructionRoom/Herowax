@@ -16,6 +16,7 @@ Player::Player() :GameObject(),
 {
 	obj = ModelObj(Model::Load("./Resources/Model/Cube.obj", "Cube", true));
 
+	ParticleManager::GetInstance()->EraseEmitter("playerMove");
 	moveParticle.SetShapeType((uint32_t)ShapeType::Polygon);
 	ParticleManager::GetInstance()->AddEmitter(&moveParticle, "playerMove");
 	moveParticle.SetIsRotation(true);

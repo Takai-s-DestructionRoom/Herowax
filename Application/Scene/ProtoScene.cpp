@@ -36,10 +36,10 @@ void ProtoScene::Init()
 	cameraAngle = { Util::AngleToRadian(20.f),0.f };
 	LightGroup::sNowLight = &light;
 
-	ParticleManager::GetInstance()->Init();
-
 	tower.Init();
 	player.Init();
+
+	ParticleManager::GetInstance()->Init();
 
 	EnemyManager::GetInstance()->Init();
 	EnemyManager::GetInstance()->SetTarget(&tower.obj);
