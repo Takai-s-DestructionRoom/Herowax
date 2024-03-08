@@ -9,7 +9,8 @@ Wax::Wax():GameObject(),
 	igniteTimer(0.25f),
 	burningTimer(1.0f),
 	extinguishTimer(0.5f),
-	state(new WaxNormal)
+	state(new WaxNormal),
+	solidTimer(1.f)
 {
 	obj = ModelObj(Model::Load("./Resources/Model/Sphere.obj", "Sphere", true));
 	obj.mTuneMaterial.mColor = waxOriginColor;
@@ -21,20 +22,23 @@ void Wax::ChangeState(WaxState* newstate)
 	state = newstate;
 }
 
-void Wax::Init(uint32_t power, Vector3 vec,
-	float speed, Vector2 range, float size,float time)
+void Wax::Init(uint32_t power, Vector3 vec,float speed,
+	Vector2 range, float size, float atkTime, float solidTime)
 {
 	atkPower = power;
 	atkVec = vec * speed;
 	atkRange = range;
 	atkSize = size;
-	atkTimer = time;
+	atkTimer = atkTime;
 	atkTimer.Start();
+	solidTimer = solidTime;
+	solidTimer.Start();
 }
 
 void Wax::Update()
 {
 	atkTimer.Update();
+	solidTimer.Update();
 
 	//段々大きくなる
 	atkSize = Easing::OutBack(atkTimer.GetTimeRate());
@@ -42,14 +46,10 @@ void Wax::Update()
 	waxScale *= atkSize;
 	SetScale(waxScale);									//大きさを反映
 
-	//出現位置と方向をもとに射出距離もかけて攻撃飛ばす
-	/*SetPos(atkVec * atkRange.y * atkSpeed *
-		Easing::OutBack(atkTimer.GetTimeRate()));*/
-
 	//空中にいる時だけ
 	if (isGround == false)
 	{
-		obj.mTransform.position += atkVec;
+		obj.mTransform.position += atkVec;	//飛んでいく
 
 		//重力加算
 		atkVec.y -= gravity;
@@ -62,6 +62,28 @@ void Wax::Update()
 		obj.mTransform.position.y = 0.f + obj.mTransform.scale.y;
 		
 		isGround = true;
+	}
+
+	//もう少しで固まりそうなら
+	if (solidTimer.GetTimeRate() > 0.7f)
+	{
+		//もう1色は更新し続け
+		obj.mTuneMaterial.mColor = Color::kWhite;
+
+		//トグルでtrueになったら色変えることで点滅
+		isFlashing = ((int)(solidTimer.GetTimeRate() * 1000.0f) % 100 > 50);
+		if (isFlashing ^ obj.mTuneMaterial.mColor == Color::kWhite)
+		{
+			obj.mTuneMaterial.mColor = Color::kYellow;
+		}
+		
+	}
+
+	//固まるまでの時間過ぎたら固まる
+	if (solidTimer.GetEnd())
+	{
+		isSolid = true;
+		obj.mTuneMaterial.mColor = Color::kLightblue;
 	}
 
 	//燃焼周りのステートの更新

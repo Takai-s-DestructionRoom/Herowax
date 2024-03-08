@@ -25,6 +25,11 @@ public:
 	
 	WaxState* state;			//燃焼の状態管理
 
+	//------------ 固形関連 ------------//
+	bool isSolid;					//固形かフラグ
+	Easing::EaseTimer solidTimer;	//固形になるまでの時間
+	bool isFlashing;				//点滅フラグ
+
 	//------------ その他 ------------//
 	float gravity = 0.098f;		//重力
 	bool isGround;				//接地してるかフラグ
@@ -33,8 +38,8 @@ public:
 	Wax();
 	//生成時に必要な情報だけもらって独立
 	void Init(
-		uint32_t power, Vector3 vec,
-		float speed, Vector2 range, float size, float time);
+		uint32_t power, Vector3 vec,float speed,
+		Vector2 range, float size, float atkTime, float solidTime);
 	//継承元との齟齬がないように空のやつを宣言だけしておく
 	void Init()override {};
 	

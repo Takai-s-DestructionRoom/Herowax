@@ -33,6 +33,7 @@ public:
 	uint32_t atkPower;				//攻撃力
 	Easing::EaseTimer atkCoolTimer;	//攻撃のクールタイム
 	Easing::EaseTimer atkTimer;		//攻撃時間計測用
+	Easing::EaseTimer solidTimer;	//固まるまでの時間(調整用)
 
 	//------------ その他 ------------//
 	SimpleParticle moveParticle;

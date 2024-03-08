@@ -13,7 +13,7 @@ Player::Player() :GameObject(),
 moveSpeed(1.f), isGround(true), hp(0), maxHP(10),
 isJumping(false), jumpTimer(0.2f), jumpHeight(0.f), maxJumpHeight(5.f), jumpPower(2.f), jumpSpeed(0.f),
 isAttack(false), atkSpeed(1.f), atkRange({ 3.f,5.f }), atkSize(0.f), atkPower(1),
-atkCoolTimer(0.3f), atkTimer(0.5f), atkHeight(1.f)
+atkCoolTimer(0.3f), atkTimer(0.5f), atkHeight(1.f), solidTimer(1.f)
 {
 	obj = ModelObj(Model::Load("./Resources/Model/Cube.obj", "Cube", true));
 
@@ -100,6 +100,7 @@ void Player::Update()
 		ImGui::SliderFloat("攻撃範囲X", &atkRange.x, 0.f, 10.f);
 		ImGui::SliderFloat("攻撃範囲Y", &atkRange.y, 0.f, 10.f);
 		ImGui::SliderFloat("クールタイム", &atkCoolTimer.maxTime_, 0.f, 2.f);
+		ImGui::SliderFloat("固まるまでの時間", &solidTimer.maxTime_, 0.f, 10.f);
 
 		ImGui::TreePop();
 	}
@@ -281,8 +282,8 @@ void Player::Attack()
 
 			//生成
 			WaxManager::GetInstance()->Create(
-				obj.mTransform, atkPower, atkVec, 
-				atkSpeed, atkRange, atkSize, atkTimer.maxTime_);
+				obj.mTransform, atkPower, atkVec, atkSpeed,
+				atkRange, atkSize, atkTimer.maxTime_, solidTimer.maxTime_);
 		}
 	}
 
