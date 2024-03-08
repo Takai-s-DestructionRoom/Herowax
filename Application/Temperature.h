@@ -37,7 +37,8 @@ private:
 	~TemperatureManager() {};
 
 public:
-	const float MAX_TEMPERATURE = 240.f;
+	float MIN_TEMPERATURE = 40.f;
+	float MAX_TEMPERATURE = 100.f;
 private:
 	TemperatureUI ui;		//描画UI
 	float temperature;		//温度

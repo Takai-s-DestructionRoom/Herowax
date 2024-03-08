@@ -19,23 +19,38 @@ TemperatureManager::TemperatureManager() :
 void TemperatureManager::Update()
 {
 	temperature -= downSpeed * TimeManager::deltaTime;
-	temperature = Util::Clamp(temperature, 0.f, MAX_TEMPERATURE);
+	temperature = Util::Clamp(temperature, MIN_TEMPERATURE, MAX_TEMPERATURE);
 
 	ui.Update();
 
 #pragma region ImGui
-	ImGui::SetNextWindowSize({ 200, 210 });
+	ImGui::SetNextWindowSize({ 350, 210 });
 
 	ImGuiWindowFlags window_flags = 0;
 	window_flags |= ImGuiWindowFlags_NoResize;
 
 	ImGui::Begin("TemperatureUI", NULL, window_flags);
 
-	ImGui::SliderFloat("温度", &temperature,0.f, MAX_TEMPERATURE);
-	ImGui::InputFloat("PositionX", &ui.position.x);
-	ImGui::InputFloat("PositionY", &ui.position.y);
-	ImGui::InputFloat("SizeX", &ui.size.y);
-	ImGui::InputFloat("SizeY", &ui.size.y);
+	ImGui::SliderFloat("温度", &temperature, MIN_TEMPERATURE, MAX_TEMPERATURE);
+	ImGui::PushItemWidth(120);	//入力の枠小さくするやつ
+	ImGui::InputFloat("一定時間(1秒)ごとの低下量", &downSpeed,1.f);
+	ImGui::PopItemWidth();		//入力の枠元に戻すやつ
+	if (ImGui::TreeNode("温度:詳細設定"))
+	{
+		ImGui::InputFloat("最低温度", &MIN_TEMPERATURE,1.f);
+		ImGui::InputFloat("最大温度", &MAX_TEMPERATURE,1.f);
+
+		ImGui::TreePop();
+	}
+	if (ImGui::TreeNode("UI:詳細設定"))
+	{
+		ImGui::SliderFloat("X座標", &ui.position.x, 0, Util::WIN_WIDTH);
+		ImGui::SliderFloat("Y座標", &ui.position.y, 0, Util::WIN_HEIGHT);
+		ImGui::SliderFloat("Xのスケール", &ui.size.x, 0, 10.f);
+		ImGui::SliderFloat("Yのスケール", &ui.size.y, 0, 10.f);
+
+		ImGui::TreePop();
+	}
 
 	ImGui::End();
 #pragma endregion
