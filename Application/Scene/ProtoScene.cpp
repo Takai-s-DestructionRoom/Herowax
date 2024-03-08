@@ -78,11 +78,11 @@ void ProtoScene::Update()
 			if (ColPrimitive3D::CheckSphereToSphere(enemy.collider, wax->collider) &&
 				wax->isSolid == false)
 			{
-				enemy.SetSpeedMag(wax->decelerationRate);	//蝋に設定された減速率をもとに敵を足止め
+				enemy.SetIsSlow(true);	//蝋に設定された減速率をもとに敵を足止め
 			}
 			else
 			{
-				enemy.SetSpeedMag(1.f);
+				enemy.SetIsSlow(false);
 			}
 		}
 	}
