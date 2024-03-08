@@ -82,9 +82,17 @@ void ProtoScene::Update()
 	//クソ手抜き当たり判定
 	for (auto& enemy : EnemyManager::GetInstance()->enemys)
 	{
+		//タワーとの当たり判定
 		if (ColPrimitive3D::CheckSphereToSphere(enemy.collider, tower.collider)) {
 			enemy.SetIsAlive(false);
 			tower.Damage(1);
+		}
+		//蝋との当たり判定
+		for (auto& wax : WaxManager::GetInstance()->waxs)
+		{
+			if (ColPrimitive3D::CheckSphereToSphere(enemy.collider, wax->collider)) {
+				
+			}
 		}
 	}
 	for (auto& fire : FireManager::GetInstance()->fires)
