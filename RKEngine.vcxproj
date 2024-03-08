@@ -112,6 +112,7 @@
     <ClCompile Include="Application\Scene\SpriteScene.cpp" />
     <ClCompile Include="Application\Chara\Enemy\Enemy.cpp" />
     <ClCompile Include="Application\Chara\Enemy\EnemyManager.cpp" />
+    <ClCompile Include="EnemyState.cpp" />
     <ClCompile Include="Engine\Easing.cpp" />
     <ClCompile Include="Engine\Base\RenderTarget.cpp" />
     <ClCompile Include="Engine\Base\SRIndexBuffer.cpp" />
@@ -431,6 +432,7 @@
     <ClInclude Include="Application\Scene\SpriteScene.h" />
     <ClInclude Include="Application\Chara\Enemy\Enemy.h" />
     <ClInclude Include="Application\Chara\Enemy\EnemyManager.h" />
+    <ClInclude Include="EnemyState.h" />
     <ClInclude Include="Engine\Easing.h" />
     <ClInclude Include="Engine\Base\Rect.h" />
     <ClInclude Include="Engine\Base\RenderTarget.h" />

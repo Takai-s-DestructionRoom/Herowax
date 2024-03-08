@@ -313,7 +313,8 @@ void Player::Fire()
 	FireManager::GetInstance()->SetThorwVec(GetFrontVec());
 
 	//押し込んだら
-	if (RInput::GetPadButtonDown(XINPUT_GAMEPAD_RIGHT_THUMB))
+	if (RInput::GetPadButtonDown(XINPUT_GAMEPAD_RIGHT_THUMB) ||
+		RInput::GetInstance()->GetKeyDown(DIK_F))
 	{
 		//放物線上に炎を投げる
 		FireManager::GetInstance()->Create();
