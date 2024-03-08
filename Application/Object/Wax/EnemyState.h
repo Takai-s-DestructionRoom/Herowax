@@ -21,6 +21,12 @@ public:
 	void Update(Enemy* enemy)override;
 };
 
+class EnemyWaxCoating : public EnemyState
+{
+public:
+	void Update(Enemy* enemy)override;
+};
+
 class EnemyStop : public EnemyState
 {
 public:

@@ -74,16 +74,22 @@ void ProtoScene::Update()
 		//蝋との当たり判定
 		for (auto& wax : WaxManager::GetInstance()->waxs)
 		{
-			//液体の蝋に当たってたら
-			if (ColPrimitive3D::CheckSphereToSphere(enemy.collider, wax->collider) &&
-				wax->isSolid == false)
-			{
-				enemy.ChangeState(new EnemySlow());	//敵を足止め状態に
+			bool isCollision = ColPrimitive3D::CheckSphereToSphere(enemy.collider, wax->collider);
 
-			}
-			else
+			//液体の蝋に当たってたら
+			if (isCollision && wax->isSolid == false)
 			{
-				enemy.ChangeState(new EnemyNormal());
+				enemy.ChangeState(new EnemySlow());		//敵を足止め状態に
+			}
+			//足を取られてる状態で固体になったら
+			else if (isCollision && enemy.GetState() == "Slow" && wax->GetIsSolidNow())
+			{
+				enemy.ChangeState(new EnemyStop());		//敵を固定状態に
+			}
+			//固まってる状態じゃないなら
+			else if(enemy.GetState() != "Stop")
+			{
+				enemy.ChangeState(new EnemyNormal());	//敵を通常状態に
 			}
 		}
 	}

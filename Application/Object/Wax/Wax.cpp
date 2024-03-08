@@ -22,6 +22,15 @@ void Wax::ChangeState(WaxState* newstate)
 	state = newstate;
 }
 
+bool Wax::GetIsSolidNow()
+{
+	if (isSolid && isSolided == false)
+	{
+		return true;
+	}
+	return false;
+}
+
 void Wax::Init(uint32_t power, Vector3 vec,float speed,
 	Vector2 range, float size, float atkTime, float solidTime)
 {
@@ -39,6 +48,8 @@ void Wax::Update()
 {
 	atkTimer.Update();
 	solidTimer.Update();
+
+	isSolided = isSolid;	//1F前の状態を保存
 
 	//段々大きくなる
 	atkSize = Easing::OutBack(atkTimer.GetTimeRate());

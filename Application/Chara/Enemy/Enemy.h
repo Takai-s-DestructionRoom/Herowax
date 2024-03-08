@@ -20,6 +20,7 @@ private:
 	ModelObj* target = nullptr;
 
 	EnemyState* state;			//状態管理
+	std::string stateStr;		//状態を文字列で保存
 
 public:
 	Enemy(ModelObj* target_);
@@ -32,8 +33,13 @@ public:
 	//状態の
 	void ChangeState(EnemyState* newstate);
 
+	// ゲッター //
+	std::string GetState() { return stateStr; }
+
 	// セッター //
 	//移動速度設定
 	void SetSpeedMag(float mag) { slowMag = mag; }
+	//状態文字情報を設定
+	void SetStateStr(std::string str) { stateStr = str; }
 };
 
