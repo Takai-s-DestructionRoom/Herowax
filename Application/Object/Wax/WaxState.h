@@ -23,7 +23,7 @@ public:
 	void Update(Wax* wax)override;
 };
 
-class WaxBurining : public WaxState
+class WaxBurning : public WaxState
 {
 public:
 	void Update(Wax* wax)override;

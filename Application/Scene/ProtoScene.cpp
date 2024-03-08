@@ -78,11 +78,12 @@ void ProtoScene::Update()
 			if (ColPrimitive3D::CheckSphereToSphere(enemy.collider, wax->collider) &&
 				wax->isSolid == false)
 			{
-				enemy.SetIsSlow(true);	//蝋に設定された減速率をもとに敵を足止め
+				enemy.ChangeState(new EnemySlow());	//敵を足止め状態に
+
 			}
 			else
 			{
-				enemy.SetIsSlow(false);
+				enemy.ChangeState(new EnemyNormal());
 			}
 		}
 	}

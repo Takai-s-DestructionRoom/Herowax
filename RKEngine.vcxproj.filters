@@ -462,7 +462,7 @@
     <ClCompile Include="Application\Fire.cpp">
       <Filter>ソース ファイル\Application\Object\Fire</Filter>
     </ClCompile>
-    <ClCompile Include="Application\WaxState.cpp">
+    <ClCompile Include="Application\Object\Wax\WaxState.cpp">
       <Filter>ソース ファイル\Application\Object\Wax</Filter>
     </ClCompile>
     <ClCompile Include="Application\SpawnerManager.cpp">
@@ -479,6 +479,9 @@
     </ClCompile>
     <ClCompile Include="Application\Singleton.cpp">
       <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Application\Chara\Enemy\EnemyState.cpp">
+      <Filter>ソース ファイル\Application\Object\Chara\Enemy</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -898,7 +901,7 @@
     <ClInclude Include="Application\FireManager.h">
       <Filter>ヘッダー ファイル\Application\Object\Fire</Filter>
     </ClInclude>
-    <ClInclude Include="Application\WaxState.h">
+    <ClInclude Include="Application\Object\Wax\WaxState.h">
       <Filter>ヘッダー ファイル\Application\Object\Wax</Filter>
     </ClInclude>
     <ClInclude Include="Application\Level.h">
@@ -915,6 +918,9 @@
     </ClInclude>
     <ClInclude Include="Application\Singleton.h">
       <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Application\Object\Wax\EnemyState.h">
+      <Filter>ヘッダー ファイル\Application\Object\Chara\Enemy</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

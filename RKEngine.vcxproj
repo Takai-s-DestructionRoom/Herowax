@@ -114,6 +114,7 @@
     <ClCompile Include="Application\Scene\SpriteScene.cpp" />
     <ClCompile Include="Application\Chara\Enemy\Enemy.cpp" />
     <ClCompile Include="Application\Chara\Enemy\EnemyManager.cpp" />
+    <ClCompile Include="Application\Chara\Enemy\EnemyState.cpp" />
     <ClCompile Include="Engine\Easing.cpp" />
     <ClCompile Include="Engine\Base\RenderTarget.cpp" />
     <ClCompile Include="Engine\Base\SRIndexBuffer.cpp" />
@@ -200,7 +201,7 @@
     <ClCompile Include="Engine\Particle\ParticleManager.cpp" />
     <ClCompile Include="Engine\Particle\SimpleParticle.cpp" />
     <ClCompile Include="Application\Temperature.cpp" />
-    <ClCompile Include="Application\WaxState.cpp" />
+    <ClCompile Include="Application\Object\Wax\WaxState.cpp" />
     <ClCompile Include="Application\Singleton.cpp" />
     <ClCompile Include="Application\SpawnerManager.cpp" />
   </ItemGroup>
@@ -438,6 +439,7 @@
     <ClInclude Include="Application\Scene\SpriteScene.h" />
     <ClInclude Include="Application\Chara\Enemy\Enemy.h" />
     <ClInclude Include="Application\Chara\Enemy\EnemyManager.h" />
+    <ClInclude Include="Application\Object\Wax\EnemyState.h" />
     <ClInclude Include="Engine\Easing.h" />
     <ClInclude Include="Engine\Base\Rect.h" />
     <ClInclude Include="Engine\Base\RenderTarget.h" />
@@ -529,7 +531,7 @@
     <ClInclude Include="Application\GameObject.h" />
     <ClInclude Include="Application\Fire.h" />
     <ClInclude Include="Application\FireManager.h" />
-    <ClInclude Include="Application\WaxState.h" />
+    <ClInclude Include="Application\Object\Wax\WaxState.h" />
     <ClInclude Include="Application\Level.h" />
     <ClInclude Include="Application\Singleton.h" />
     <ClInclude Include="Application\SpawnerManager.h" />
