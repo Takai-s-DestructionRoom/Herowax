@@ -147,7 +147,7 @@ void ProtoScene::Update()
 
 	ImGui::Text("座標:%f,%f,%f",
 		camera.mViewProjection.mEye.x, camera.mViewProjection.mEye.y, camera.mViewProjection.mEye.z);
-	ImGui::SliderFloat("カメラ距離:%f", &cameraDist, -50.f, 0.f);
+	ImGui::SliderFloat("カメラ距離:%f", &cameraDist, -500.f, 0.f);
 	ImGui::SliderAngle("カメラアングルX:%f", &cameraAngle.x);
 	ImGui::SliderAngle("カメラアングルY:%f", &cameraAngle.y);
 

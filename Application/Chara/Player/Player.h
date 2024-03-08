@@ -35,6 +35,8 @@ private:
 	Easing::EaseTimer atkTimer;		//攻撃時間計測用
 	Easing::EaseTimer solidTimer;	//固まるまでの時間(調整用)
 
+	bool isMugenAttack = false;		//攻撃中でも次の攻撃を出せるフラグ
+
 	//------------ その他 ------------//
 	SimpleParticle moveParticle;
 
