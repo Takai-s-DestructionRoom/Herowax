@@ -27,11 +27,11 @@ void WaxIgnite::Update(Wax* wax)
 
 	//次へ
 	if (wax->igniteTimer.GetEnd()) {
-		wax->ChangeState(new WaxBurining());
+		wax->ChangeState(new WaxBurning());
 	}
 }
 
-void WaxBurining::Update(Wax* wax)
+void WaxBurning::Update(Wax* wax)
 {
 	//この状態になった瞬間、温度を上昇させる
 	if (!wax->burningTimer.GetStarted()) {

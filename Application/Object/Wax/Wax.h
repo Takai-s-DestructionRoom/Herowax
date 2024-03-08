@@ -27,6 +27,7 @@ public:
 
 	//------------ 固形関連 ------------//
 	bool isSolid;					//固形かフラグ
+	bool isSolided;					//1F前に固形だったかフラグ
 	Easing::EaseTimer solidTimer;	//固形になるまでの時間
 	bool isFlashing;				//点滅フラグ
 
@@ -50,4 +51,8 @@ public:
 	bool IsNormal();
 
 	void ChangeState(WaxState* newstate);
+
+	// ゲッター //
+	//固まった瞬間かどうかを返す
+	bool GetIsSolidNow();
 };
