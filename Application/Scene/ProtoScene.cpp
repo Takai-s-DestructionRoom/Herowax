@@ -17,16 +17,14 @@ ProtoScene::ProtoScene()
 	skydome.mTransform.scale = { 5, 5, 5 };
 	skydome.mTransform.UpdateMatrix();
 
-	ground = ModelObj(Model::Load("./Resources/Model/Ground/ground.obj", "Ground"));
-	ground.mTransform.scale = { 5, 5, 5 };
-	ground.mTransform.UpdateMatrix();
-
 	camera.mViewProjection.mEye = { 0, 0, -50 };
 	camera.mViewProjection.mTarget = { 0, 0, 0 };
 	camera.mViewProjection.UpdateMatrix();
 
 	TemperatureUI::LoadResource();
 	InstantDrawer::PreCreate();
+
+	level.Load();
 }
 
 void ProtoScene::Init()
@@ -36,19 +34,15 @@ void ProtoScene::Init()
 	cameraAngle = { Util::AngleToRadian(20.f),0.f };
 	LightGroup::sNowLight = &light;
 
-	tower.Init();
 	player.Init();
 
 	ParticleManager::GetInstance()->Init();
 
-	EnemyManager::GetInstance()->Init();
-	EnemyManager::GetInstance()->SetTarget(&tower.obj);
-
-	enemySpawner.Init();
-	enemySpawner.SetPos({30,0,0});
-
 	WaxManager::GetInstance()->Init();
 	FireManager::GetInstance()->Init();
+
+	//とりあえず最初のステージを設定しておく
+	level.Extract("test");
 }
 
 void ProtoScene::Update()
@@ -68,24 +62,14 @@ void ProtoScene::Update()
 	camera.mViewProjection.mTarget = player.GetPos();
 	camera.mViewProjection.UpdateMatrix();
 
-	//Rキーでタワーにダメージ
-	if (RInput::GetInstance()->GetKeyDown(DIK_R))
-	{
-		tower.Damage(1);
-	}
-
-	//3秒ごとに1回敵を出現させる
-	enemySpawner.Update();
-	EnemyManager::GetInstance()->Update();
-
 	//ここに無限に当たり判定増やしていくの嫌なのであとで何か作ります
 	//クソ手抜き当たり判定
 	for (auto& enemy : EnemyManager::GetInstance()->enemys)
 	{
 		//タワーとの当たり判定
-		if (ColPrimitive3D::CheckSphereToSphere(enemy.collider, tower.collider)) {
+		if (ColPrimitive3D::CheckSphereToSphere(enemy.collider, level.tower.collider)) {
 			enemy.SetIsAlive(false);
-			tower.Damage(1);
+			level.tower.Damage(1);
 		}
 		//蝋との当たり判定
 		for (auto& wax : WaxManager::GetInstance()->waxs)
@@ -126,8 +110,8 @@ void ProtoScene::Update()
 		}
 	}
 
-	tower.Update();
 	player.Update();
+	level.Update();
 
 	WaxManager::GetInstance()->Update();
 	FireManager::GetInstance()->Update();
@@ -137,7 +121,6 @@ void ProtoScene::Update()
 	light.Update();
 
 	skydome.TransferBuffer(camera.mViewProjection);
-	ground.TransferBuffer(camera.mViewProjection);
 
 	//エンターかメニューボタン押されたらリザルトシーンへ
 	if (RInput::GetInstance()->GetKeyDown(DIK_RETURN) ||
@@ -168,15 +151,13 @@ void ProtoScene::Update()
 void ProtoScene::Draw()
 {
 	ParticleManager::GetInstance()->Draw();
-	EnemyManager::GetInstance()->Draw();
-	enemySpawner.Draw();
 	skydome.Draw();
-	ground.Draw();
-	tower.Draw();
 	WaxManager::GetInstance()->Draw();
 	FireManager::GetInstance()->Draw();
 	TemperatureManager::GetInstance()->Draw();
 	player.Draw();
+
+	level.Draw();
 
 	//更新
 	InstantDrawer::AllUpdate();

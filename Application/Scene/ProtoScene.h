@@ -14,6 +14,8 @@
 #include "EnemyManager.h"
 #include "EnemySpawner.h"
 
+#include "Level.h"
+
 class ProtoScene : public IScene
 {
 public:
@@ -25,10 +27,9 @@ public:
 
 private:
 	ModelObj skydome;	//天球
-	ModelObj ground;	//地面
-	Tower tower;
 	Player player;
-	EnemySpawner enemySpawner;
+
+	Level level;
 
 	Camera camera = Camera();
 	float cameraDist = -20.f;	//注視点からカメラの距離

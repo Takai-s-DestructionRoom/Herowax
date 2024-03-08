@@ -33,6 +33,8 @@ public:
 	void SetPos(const Vector3& pos) { obj.mTransform.position = pos; }
 	//大きさ設定
 	void SetScale(const Vector3& scale) { obj.mTransform.scale = scale; }
+	//回転設定
+	void SetRota(const Vector3& rota) { obj.mTransform.rotation = rota; }
 	//生きてるかフラグ設定
 	void SetIsAlive(bool alive) { isAlive = alive; }
 

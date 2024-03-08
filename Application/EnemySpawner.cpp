@@ -16,7 +16,6 @@ EnemySpawner::EnemySpawner() : GameObject(),
 void EnemySpawner::Init()
 {
 	hp = maxHP;
-	obj.mTransform.rotation.z = Util::AngleToRadian(90.f);
 
 	spawnTimer.Start();
 }

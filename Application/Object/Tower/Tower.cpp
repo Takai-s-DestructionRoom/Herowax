@@ -10,9 +10,6 @@ Tower::Tower(): GameObject(),hp(0), maxHP(5)
 void Tower::Init()
 {
 	hp = maxHP;
-	obj.mTransform.position = { 0.f,2.f,2.f };
-	obj.mTransform.scale = { 2,2,2};
-	//obj.mTransform.rotation.z = Util::AngleToRadian(90.f);
 }
 
 void Tower::Update()

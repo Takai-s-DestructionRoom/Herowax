@@ -178,6 +178,12 @@
     <Filter Include="ソース ファイル\Application\Object\Fire">
       <UniqueIdentifier>{39ad8b67-59f0-4380-baad-1fb4a594b964}</UniqueIdentifier>
     </Filter>
+    <Filter Include="ソース ファイル\Application\Loader">
+      <UniqueIdentifier>{8641c79d-d9a5-4356-9bae-8a379bfc7e7a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\Application\Loader">
+      <UniqueIdentifier>{ab289c2b-613f-44cb-b055-130c0e1b2b3b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Engine\2d\Sprite.cpp">
@@ -456,11 +462,23 @@
     <ClCompile Include="Application\Fire.cpp">
       <Filter>ソース ファイル\Application\Object\Fire</Filter>
     </ClCompile>
-    <ClCompile Include="EnemyState.cpp">
-      <Filter>ソース ファイル\Application\Object\Chara\Enemy</Filter>
-    </ClCompile>
     <ClCompile Include="Application\WaxState.cpp">
       <Filter>ソース ファイル\Application\Object\Wax</Filter>
+    </ClCompile>
+    <ClCompile Include="Application\SpawnerManager.cpp">
+      <Filter>ソース ファイル\Application\Object\EnemySpawner</Filter>
+    </ClCompile>
+    <ClCompile Include="Application\Level.cpp">
+      <Filter>ソース ファイル\Application\Loader</Filter>
+    </ClCompile>
+    <ClCompile Include="Application\LevelData.cpp">
+      <Filter>ソース ファイル\Application\Loader</Filter>
+    </ClCompile>
+    <ClCompile Include="Application\LevelLoader.cpp">
+      <Filter>ソース ファイル\Application\Loader</Filter>
+    </ClCompile>
+    <ClCompile Include="Application\Singleton.cpp">
+      <Filter>ソース ファイル</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -880,11 +898,23 @@
     <ClInclude Include="Application\FireManager.h">
       <Filter>ヘッダー ファイル\Application\Object\Fire</Filter>
     </ClInclude>
-    <ClInclude Include="EnemyState.h">
-      <Filter>ヘッダー ファイル\Application\Object\Chara\Enemy</Filter>
-    </ClInclude>
     <ClInclude Include="Application\WaxState.h">
       <Filter>ヘッダー ファイル\Application\Object\Wax</Filter>
+    </ClInclude>
+    <ClInclude Include="Application\Level.h">
+      <Filter>ヘッダー ファイル\Application\Loader</Filter>
+    </ClInclude>
+    <ClInclude Include="Application\LevelData.h">
+      <Filter>ヘッダー ファイル\Application\Loader</Filter>
+    </ClInclude>
+    <ClInclude Include="Application\LevelLoader.h">
+      <Filter>ヘッダー ファイル\Application\Loader</Filter>
+    </ClInclude>
+    <ClInclude Include="Application\SpawnerManager.h">
+      <Filter>ヘッダー ファイル\Application\Object\EnemySpawner</Filter>
+    </ClInclude>
+    <ClInclude Include="Application\Singleton.h">
+      <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
