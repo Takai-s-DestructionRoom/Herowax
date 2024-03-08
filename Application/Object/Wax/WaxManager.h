@@ -33,7 +33,7 @@ public:
 	//生成
 	void Create(
 		Transform transform, uint32_t power, Vector3 vec,
-		Vector3 originPos,float dist, Vector2 range, float size,float time);
+		float speed, Vector2 range, float size,float atkTime, float solidTime);
 
 	//最初の要素削除
 	void EraceBegin();
