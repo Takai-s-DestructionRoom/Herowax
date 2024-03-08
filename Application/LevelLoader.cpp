@@ -101,20 +101,20 @@ void LevelLoader::ObjectLoad(LevelData& levelData,nlohmann::json& object)
 
 		//座標
 		//blenderとdirectXでは座標系が異なるため、ここで変換する(エクスポート時に変換するのが一般的ではある)
-		objectData.translation.x = (float)transform["translation"][1];
+		objectData.translation.x = -1 * (float)transform["translation"][0];
 		objectData.translation.y = (float)transform["translation"][2];
-		objectData.translation.z = -1 * (float)transform["translation"][0];
+		objectData.translation.z = -1 * (float)transform["translation"][1];
 
 		//回転
 		
-		objectData.rotation.x = -1 * Util::AngleToRadian((float)transform["rotation"][1]);
+		objectData.rotation.x = -1 * Util::AngleToRadian((float)transform["rotation"][0]);
 		objectData.rotation.y = -1 * (float)Util::AngleToRadian(transform["rotation"][2]);
-		objectData.rotation.z = (float)Util::AngleToRadian(transform["rotation"][0]);
+		objectData.rotation.z = (float)Util::AngleToRadian(transform["rotation"][1]);
 
 		//スケーリング
-		objectData.scaling.x = (float)transform["scaling"][1];
+		objectData.scaling.x = (float)transform["scaling"][0];
 		objectData.scaling.y = (float)transform["scaling"][2];
-		objectData.scaling.z = (float)transform["scaling"][0];
+		objectData.scaling.z = (float)transform["scaling"][1];
 
 		//collider
 		nlohmann::json& collider = object["collider"];

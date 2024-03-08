@@ -29,13 +29,13 @@ void Level::Reload()
 
 void Level::Update()
 {
-	spawnerManager->Update();
-
 	//Rキーで再読み込み
 	if (RInput::GetInstance()->GetKeyDown(DIK_R))
 	{
 		Reload();
 	}
+
+	spawnerManager->Update();
 
 	EnemyManager::GetInstance()->Update();
 
