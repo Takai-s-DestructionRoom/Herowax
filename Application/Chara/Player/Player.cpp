@@ -10,9 +10,9 @@
 #include "FireManager.h"
 
 Player::Player() :GameObject(),
-	moveSpeed(1.f), isGraund(true), hp(0), maxHP(10),
-	isJumping(false), jumpTimer(0.2f), jumpHeight(0.f), maxJumpHeight(5.f), jumpPower(2.f), jumpSpeed(0.f),
-	isAttack(false), atkDist(1.f), atkRange({ 3.f,5.f }), atkSize(0.f), atkPower(1), atkCoolTimer(0.3f), atkTimer(0.5f)
+moveSpeed(1.f), isGraund(true), hp(0), maxHP(10),
+isJumping(false), jumpTimer(0.2f), jumpHeight(0.f), maxJumpHeight(5.f), jumpPower(2.f), jumpSpeed(0.f),
+isAttack(false), atkDist(1.f), atkRange({ 3.f,5.f }), atkSize(0.f), atkPower(1), atkCoolTimer(0.3f), atkTimer(0.5f)
 {
 	obj = ModelObj(Model::Load("./Resources/Model/Cube.obj", "Cube", true));
 
@@ -279,8 +279,8 @@ void Player::Attack()
 
 			//生成
 			WaxManager::GetInstance()->Create(
-			obj.mTransform,atkPower, atkVec,atkOriginPos,
-				atkDist,atkRange,atkSize,atkTimer.maxTime_);
+				obj.mTransform, atkPower, atkVec, atkOriginPos,
+				atkDist, atkRange, atkSize, atkTimer.maxTime_);
 		}
 	}
 
