@@ -2,7 +2,7 @@
 #include "Camera.h"
 
 Enemy::Enemy(ModelObj* target_) : GameObject(),
-	moveSpeed(0.1f), isGraund(true), hp(0), maxHP(10)
+	moveSpeed(0.1f),slowMag(0.8f), isGraund(true), isSlow(false), hp(0), maxHP(10)
 {
 	obj = ModelObj(Model::Load("./Resources/Model/Sphere.obj", "Sphere", true));
 	target = target_;
@@ -20,7 +20,13 @@ void Enemy::Update()
 	pVec.Normalize();
 	pVec.y = 0;
 
-	obj.mTransform.position += pVec * moveSpeed;
+	if (isSlow == false)
+	{
+		slowMag = 0.f;
+	}
+
+	//減速率は大きいほどスピード下がるから1.0から引くようにしてる
+	obj.mTransform.position += pVec * moveSpeed * (1.f - slowMag);
 
 	UpdateCollider();
 
@@ -44,6 +50,7 @@ void Enemy::Tracking()
 	pVec.Normalize();
 	pVec.y = 0;
 
-	obj.mTransform.position += pVec * moveSpeed;
+	//減速率は大きいほどスピード下がるから1.0から引くようにしてる
+	obj.mTransform.position += pVec * moveSpeed * (1.f - slowMag);
 }
 

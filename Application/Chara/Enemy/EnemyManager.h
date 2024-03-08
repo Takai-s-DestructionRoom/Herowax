@@ -10,6 +10,8 @@ public:
 	//敵リスト
 	std::list<Enemy> enemys;
 
+	float speedMag;		//共通の移動速度倍率
+
 public:
 	static EnemyManager* GetInstance();
 

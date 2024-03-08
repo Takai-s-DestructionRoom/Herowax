@@ -3,11 +3,13 @@
 
 class Enemy : public GameObject
 {
-public:
+private:
 	//------------ 移動関連 ------------//
 	Vector3 moveVec;			//移動ベクトル
 	float moveSpeed;			//移動速度
+	float slowMag;				//減速率
 	bool isGraund;				//接地しているかフラグ
+	bool isSlow;				//減速しているかフラグ
 
 	//------------ HP関連 ------------//
 	uint32_t hp;				//現在のヒットポイント
@@ -24,5 +26,11 @@ public:
 
 	void Tracking();
 
+	// セッター //
+	//移動速度設定
+	void SetSpeedMag(float mag) { slowMag = mag; }
+
+	//減速しているかフラグ設定
+	void SetIsSlow(bool frag) { isSlow = frag; }
 };
 

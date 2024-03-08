@@ -21,7 +21,7 @@ void EnemyManager::SetTarget(ModelObj* target_)
 
 void EnemyManager::Init()
 {
-
+	speedMag = 0.8f;
 }
 
 void EnemyManager::Update()
@@ -33,6 +33,7 @@ void EnemyManager::Update()
 	
 	for (auto& enemy : enemys)
 	{
+		enemy.SetSpeedMag(speedMag);	//移動速度倍率まとめて変更
 		enemy.Update();
 	}
 	
@@ -46,6 +47,7 @@ void EnemyManager::Update()
 
 	ImGui::Text("パッドのLボタンでタワーの位置に敵出現");
 	ImGui::Text("EnemyNum:%d", enemys.size());
+	ImGui::SliderFloat("移動速度倍率", &speedMag, 0.f, 1.f);
 
 	if (ImGui::Button("Reset")) {
 		enemys.clear();
