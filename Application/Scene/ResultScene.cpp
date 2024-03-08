@@ -18,8 +18,8 @@ void ResultScene::Init()
 
 void ResultScene::Update()
 {
-	//エンターかメニューボタン押されたらタイトルシーンへ
-	if (RInput::GetInstance()->GetKeyDown(DIK_RETURN) ||
+	//F6かメニューボタン押されたらタイトルシーンへ
+	if (RInput::GetInstance()->GetKeyDown(DIK_F6) ||
 		RInput::GetInstance()->GetPadButtonDown(XINPUT_GAMEPAD_START))
 	{
 		SceneManager::GetInstance()->Change<TitleScene>();

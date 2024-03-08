@@ -18,8 +18,8 @@ void TitleScene::Init()
 
 void TitleScene::Update()
 {
-	//エンターかメニューボタン押されたらプロトシーンへ
-	if (RInput::GetInstance()->GetKeyDown(DIK_RETURN) ||
+	//F6かメニューボタン押されたらプロトシーンへ
+	if (RInput::GetInstance()->GetKeyDown(DIK_F6) ||
 		RInput::GetInstance()->GetPadButtonDown(XINPUT_GAMEPAD_START))
 	{
 		SceneManager::GetInstance()->Change<ProtoScene>();
