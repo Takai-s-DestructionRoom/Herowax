@@ -456,9 +456,6 @@
     <ClCompile Include="Application\Fire.cpp">
       <Filter>ソース ファイル\Application\Object\Fire</Filter>
     </ClCompile>
-    <ClCompile Include="EnemyState.cpp">
-      <Filter>ソース ファイル\Application\Object\Chara\Enemy</Filter>
-    </ClCompile>
     <ClCompile Include="Application\WaxState.cpp">
       <Filter>ソース ファイル\Application\Object\Wax</Filter>
     </ClCompile>
@@ -879,9 +876,6 @@
     </ClInclude>
     <ClInclude Include="Application\FireManager.h">
       <Filter>ヘッダー ファイル\Application\Object\Fire</Filter>
-    </ClInclude>
-    <ClInclude Include="EnemyState.h">
-      <Filter>ヘッダー ファイル\Application\Object\Chara\Enemy</Filter>
     </ClInclude>
     <ClInclude Include="Application\WaxState.h">
       <Filter>ヘッダー ファイル\Application\Object\Wax</Filter>

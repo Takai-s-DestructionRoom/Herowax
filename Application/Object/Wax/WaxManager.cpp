@@ -72,7 +72,7 @@ void WaxManager::Draw()
 }
 
 void WaxManager::Create(Transform transform, uint32_t power, Vector3 vec,
-	Vector3 originPos, float dist, Vector2 range, float size, float time)
+	float speed, Vector2 range, float size, float time)
 {
 	//要素追加
 	waxs.emplace_back();
@@ -81,7 +81,7 @@ void WaxManager::Create(Transform transform, uint32_t power, Vector3 vec,
 	//指定された状態に
 	waxs.back()->obj.mTransform = transform;
 	//情報を受け取って格納
-	waxs.back()->Init(power, vec, originPos, dist, range, size, time);
+	waxs.back()->Init(power, vec, speed, range, size, time);
 }
 
 void WaxManager::EraceBegin()

@@ -9,7 +9,7 @@ public:
 	//------------ 移動関連 ------------//
 	Vector3 moveVec;			//移動ベクトル
 	float moveSpeed;			//移動速度
-	bool isGraund;				//接地しているかフラグ
+	bool isGround;				//接地しているかフラグ
 	bool isJumping;					//ジャンプ中かフラグ
 	Easing::EaseTimer jumpTimer;	//ジャンプ時間計測用
 	float jumpHeight;				//ジャンプしてる高さ
@@ -26,8 +26,8 @@ public:
 	//------------ 攻撃関連 ------------//
 	bool isAttack;					//攻撃中かフラグ
 	Vector3 atkVec;					//攻撃方向
-	Vector3 atkOriginPos;			//攻撃の出現位置
-	float atkDist;					//攻撃の射出距離
+	float atkHeight;				//攻撃する高さ
+	float atkSpeed;					//攻撃の射出速度
 	Vector2 atkRange{};				//攻撃範囲
 	float atkSize;					//攻撃範囲の大きさ
 	uint32_t atkPower;				//攻撃力

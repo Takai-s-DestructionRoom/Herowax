@@ -4,6 +4,8 @@
 Wax::Wax():GameObject(),
 	waxOriginColor(0.8f, 0.6f, 0.35f, 1.f),
 	waxEndColor(0.8f,0.0f,0.f,1.f),
+	atkSpeed(1.f),
+	atkPower(1),
 	igniteTimer(0.25f),
 	burningTimer(1.0f),
 	extinguishTimer(0.5f),
@@ -19,13 +21,11 @@ void Wax::ChangeState(WaxState* newstate)
 	state = newstate;
 }
 
-void Wax::Init(uint32_t power, Vector3 vec, Vector3 originPos,
-	float dist, Vector2 range, float size,float time)
+void Wax::Init(uint32_t power, Vector3 vec,
+	float speed, Vector2 range, float size,float time)
 {
 	atkPower = power;
-	atkVec = vec;
-	atkOriginPos = originPos;
-	atkDist = dist;
+	atkVec = vec * speed;
 	atkRange = range;
 	atkSize = size;
 	atkTimer = time;
@@ -43,8 +43,26 @@ void Wax::Update()
 	SetScale(waxScale);									//大きさを反映
 
 	//出現位置と方向をもとに射出距離もかけて攻撃飛ばす
-	SetPos(atkOriginPos + atkVec * atkRange.y * atkDist *
-		Easing::OutBack(atkTimer.GetTimeRate()));
+	/*SetPos(atkVec * atkRange.y * atkSpeed *
+		Easing::OutBack(atkTimer.GetTimeRate()));*/
+
+	//空中にいる時だけ
+	if (isGround == false)
+	{
+		obj.mTransform.position += atkVec;
+
+		//重力加算
+		atkVec.y -= gravity;
+	}
+
+	//地面に埋ってたら
+	if (obj.mTransform.position.y - obj.mTransform.scale.y < 0.f)
+	{
+		//地面に触れるとこまで移動
+		obj.mTransform.position.y = 0.f + obj.mTransform.scale.y;
+		
+		isGround = true;
+	}
 
 	//燃焼周りのステートの更新
 	state->Update(this);

@@ -10,9 +10,10 @@
 #include "FireManager.h"
 
 Player::Player() :GameObject(),
-moveSpeed(1.f), isGraund(true), hp(0), maxHP(10),
+moveSpeed(1.f), isGround(true), hp(0), maxHP(10),
 isJumping(false), jumpTimer(0.2f), jumpHeight(0.f), maxJumpHeight(5.f), jumpPower(2.f), jumpSpeed(0.f),
-isAttack(false), atkDist(1.f), atkRange({ 3.f,5.f }), atkSize(0.f), atkPower(1), atkCoolTimer(0.3f), atkTimer(0.5f)
+isAttack(false), atkSpeed(1.f), atkRange({ 3.f,5.f }), atkSize(0.f), atkPower(1),
+atkCoolTimer(0.3f), atkTimer(0.5f), atkHeight(1.f)
 {
 	obj = ModelObj(Model::Load("./Resources/Model/Cube.obj", "Cube", true));
 
@@ -50,7 +51,7 @@ void Player::Update()
 		//地面に触れるとこまで移動
 		obj.mTransform.position.y = 0.f + obj.mTransform.scale.y;
 
-		isGraund = true;
+		isGround = true;
 		isJumping = false;
 	}
 
@@ -94,7 +95,8 @@ void Player::Update()
 	{
 		ImGui::Text("攻撃中か:%d", isAttack);
 		ImGui::SliderFloat("攻撃時間", &atkTimer.maxTime_, 0.f, 2.f);
-		ImGui::SliderFloat("射出距離", &atkDist, 0.f, 5.f);
+		ImGui::SliderFloat("射出速度", &atkSpeed, 0.f, 2.f);
+		ImGui::SliderFloat("射出高度", &atkHeight, 0.f, 3.f);
 		ImGui::SliderFloat("攻撃範囲X", &atkRange.x, 0.f, 10.f);
 		ImGui::SliderFloat("攻撃範囲Y", &atkRange.y, 0.f, 10.f);
 		ImGui::SliderFloat("クールタイム", &atkCoolTimer.maxTime_, 0.f, 2.f);
@@ -153,10 +155,10 @@ void Player::MovePad()
 	}
 
 	//接地時にAボタン押すと
-	if (isGraund && RInput::GetInstance()->GetPadButtonDown(XINPUT_GAMEPAD_A))
+	if (isGround && RInput::GetInstance()->GetPadButtonDown(XINPUT_GAMEPAD_A))
 	{
 		isJumping = true;
-		isGraund = false;
+		isGround = false;
 		jumpSpeed = jumpPower;	//速度に初速を代入
 		jumpTimer.Start();
 	}
@@ -226,10 +228,10 @@ void Player::MoveKey()
 	}
 
 	//接地時にAボタン押すと
-	if (isGraund && RInput::GetInstance()->GetKeyDown(DIK_SPACE))
+	if (isGround && RInput::GetInstance()->GetKeyDown(DIK_SPACE))
 	{
 		isJumping = true;
-		isGraund = false;
+		isGround = false;
 		jumpSpeed = jumpPower;	//速度に初速を代入
 		jumpTimer.Start();
 	}
@@ -274,13 +276,13 @@ void Player::Attack()
 			atkTimer.Start();
 
 			//入力時の出現位置と方向を記録
-			atkOriginPos = GetPos() + GetFrontVec();
 			atkVec = GetFrontVec();
+			atkVec.y = atkHeight;
 
 			//生成
 			WaxManager::GetInstance()->Create(
-				obj.mTransform, atkPower, atkVec, atkOriginPos,
-				atkDist, atkRange, atkSize, atkTimer.maxTime_);
+				obj.mTransform, atkPower, atkVec, 
+				atkSpeed, atkRange, atkSize, atkTimer.maxTime_);
 		}
 	}
 
