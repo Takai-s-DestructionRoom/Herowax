@@ -14,6 +14,7 @@ public:
 	Vector2 atkRange{};			//攻撃範囲
 	float atkSize;				//攻撃範囲の大きさ
 	Easing::EaseTimer atkTimer;	//攻撃時間計測用
+	float decelerationRate;		//足止めの減速率
 
 	//------------ 燃焼関連 ------------//
 	Color waxOriginColor;		//蝋の元の色

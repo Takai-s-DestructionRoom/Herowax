@@ -2,7 +2,7 @@
 #include "Camera.h"
 
 Enemy::Enemy(ModelObj* target_) : GameObject(),
-	moveSpeed(0.1f), isGraund(true), hp(0), maxHP(10)
+	moveSpeed(0.1f),speedMag(1.f), isGraund(true), hp(0), maxHP(10)
 {
 	obj = ModelObj(Model::Load("./Resources/Model/Sphere.obj", "Sphere", true));
 	target = target_;
@@ -20,7 +20,7 @@ void Enemy::Update()
 	pVec.Normalize();
 	pVec.y = 0;
 
-	obj.mTransform.position += pVec * moveSpeed;
+	obj.mTransform.position += pVec * moveSpeed * speedMag;
 
 	UpdateCollider();
 
@@ -44,6 +44,6 @@ void Enemy::Tracking()
 	pVec.Normalize();
 	pVec.y = 0;
 
-	obj.mTransform.position += pVec * moveSpeed;
+	obj.mTransform.position += pVec * moveSpeed * speedMag;
 }
 

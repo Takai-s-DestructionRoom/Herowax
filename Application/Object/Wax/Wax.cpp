@@ -10,7 +10,8 @@ Wax::Wax():GameObject(),
 	burningTimer(1.0f),
 	extinguishTimer(0.5f),
 	state(new WaxNormal),
-	solidTimer(1.f)
+	solidTimer(1.f),
+	decelerationRate(0.2f)
 {
 	obj = ModelObj(Model::Load("./Resources/Model/Sphere.obj", "Sphere", true));
 	obj.mTuneMaterial.mColor = waxOriginColor;

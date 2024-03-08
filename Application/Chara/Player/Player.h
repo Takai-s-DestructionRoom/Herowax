@@ -5,7 +5,7 @@
 
 class Player : public GameObject
 {
-public:
+private:
 	//------------ 移動関連 ------------//
 	Vector3 moveVec;			//移動ベクトル
 	float moveSpeed;			//移動速度
