@@ -10,7 +10,7 @@
 #include "FireManager.h"
 
 Player::Player() :GameObject(),
-moveSpeed(1.f), isGround(true), hp(0), maxHP(10),
+moveSpeed(1.f), moveAccelAmount(0.05f), isGround(true), hp(0), maxHP(10),
 isJumping(false), jumpTimer(0.2f), jumpHeight(0.f), maxJumpHeight(5.f), jumpPower(2.f), jumpSpeed(0.f),
 isAttack(false), atkSpeed(1.f), atkRange({ 3.f,5.f }), atkSize(0.f), atkPower(1),
 atkCoolTimer(0.3f), atkTimer(0.5f), atkHeight(1.f), solidTimer(5.f)
@@ -86,6 +86,7 @@ void Player::Update()
 		ImGui::Text("ジャンプの高さ:%f", jumpHeight);
 		ImGui::Text("ジャンプ速度:%f", jumpSpeed);
 		ImGui::SliderFloat("移動速度:%f", &moveSpeed, 0.f, 5.f);
+		ImGui::SliderFloat("移動加速度:%f", &moveAccelAmount, 0.f, 0.1f);
 		ImGui::SliderFloat("重力:%f", &gravity, 0.f, 0.2f);
 		ImGui::SliderFloat("ジャンプ力:%f", &jumpPower, 0.f, 5.f);
 
@@ -143,21 +144,29 @@ void Player::MovePad()
 		moveVec.Normalize();									//方向だけの情報なので正規化して
 		moveVec *= stick.Length();								//傾き具合を大きさに反映
 
-		moveVec *= moveSpeed;									//移動速度をかけ合わせたら完成
-		obj.mTransform.position += moveVec;						//完成したものを座標に足し合わせる
+		//入力中は加速度足し続ける
+		moveAccel += moveAccelAmount;
 
-		//エミッターの座標はプレイヤーの座標から移動方向の逆側にスケール分ずらしたもの
-		Vector3 emitterPos = obj.mTransform.position;
-		Vector2 mVelo = moveVec;	//moveVecを正規化すると実際の移動に支障が出るので一時変数に格納
-		emitterPos.x -= mVelo.Normalize().x * obj.mTransform.scale.x * 4.f;
-		emitterPos.z -= mVelo.Normalize().y * obj.mTransform.scale.z * 4.f;
+		////エミッターの座標はプレイヤーの座標から移動方向の逆側にスケール分ずらしたもの
+		//Vector3 emitterPos = obj.mTransform.position;
+		//Vector2 mVelo = moveVec;	//moveVecを正規化すると実際の移動に支障が出るので一時変数に格納
+		//emitterPos.x -= mVelo.Normalize().x * obj.mTransform.scale.x * 4.f;
+		//emitterPos.z -= mVelo.Normalize().y * obj.mTransform.scale.z * 4.f;
 
-		moveParticle.SetPos(emitterPos);
-		moveParticle.Add(
-			3, 0.7f, obj.mTuneMaterial.mColor, 0.1f, 0.6f,
-			{ -0.001f,0.01f,-0.001f }, { 0.001f,0.03f,0.001f },
-			0.01f, -Vector3::ONE * 0.1f, Vector3::ONE * 0.1f, 0.05f);
+		//moveParticle.SetPos(emitterPos);
+		//moveParticle.Add(
+		//	3, 0.7f, obj.mTuneMaterial.mColor, 0.1f, 0.6f,
+		//	{ -0.001f,0.01f,-0.001f }, { 0.001f,0.03f,0.001f },
+		//	0.01f, -Vector3::ONE * 0.1f, Vector3::ONE * 0.1f, 0.05f);
 	}
+	else
+	{
+		moveAccel -= moveAccelAmount;	//入力されてなければ徐々に減速
+	}
+
+	moveAccel = Util::Clamp(moveAccel, 0.f, moveVec.Length());
+	moveVec *= moveSpeed;									//移動速度をかけ合わせたら完成
+	obj.mTransform.position += moveVec;						//完成したものを座標に足し合わせる
 
 	//接地時にAボタン押すと
 	if (isGround && RInput::GetInstance()->GetPadButtonDown(XINPUT_GAMEPAD_A))
@@ -216,21 +225,29 @@ void Player::MoveKey()
 		moveVec *= Matrix4::RotationY(cameraRad + keyRad);		//カメラの角度から更にキーの入力角度を足して
 		moveVec.Normalize();									//方向だけの情報なので正規化して
 
-		moveVec *= moveSpeed;									//移動速度をかけ合わせたら完成
-		obj.mTransform.position += moveVec;						//完成したものを座標に足し合わせる
+		//入力中は加速度足し続ける
+		moveAccel += moveAccelAmount;
 
-		//エミッターの座標はプレイヤーの座標から移動方向の逆側にスケール分ずらしたもの
-		Vector3 emitterPos = obj.mTransform.position;
-		Vector2 mVelo = moveVec;	//moveVecを正規化すると実際の移動に支障が出るので一時変数に格納
-		emitterPos.x -= mVelo.Normalize().x * obj.mTransform.scale.x;
-		emitterPos.z -= mVelo.Normalize().y * obj.mTransform.scale.z;
+		////エミッターの座標はプレイヤーの座標から移動方向の逆側にスケール分ずらしたもの
+		//Vector3 emitterPos = obj.mTransform.position;
+		//Vector2 mVelo = moveVec;	//moveVecを正規化すると実際の移動に支障が出るので一時変数に格納
+		//emitterPos.x -= mVelo.Normalize().x * obj.mTransform.scale.x;
+		//emitterPos.z -= mVelo.Normalize().y * obj.mTransform.scale.z;
 
-		moveParticle.SetPos(emitterPos);
-		moveParticle.Add(
-			2, 0.5f, obj.mTuneMaterial.mColor, 0.3f, 0.7f,
-			{ -0.001f,0.01f,-0.001f }, { 0.001f,0.03f,0.001f },
-			0.01f, -Vector3::ONE * 0.1f, Vector3::ONE * 0.1f, 0.05f);
+		//moveParticle.SetPos(emitterPos);
+		//moveParticle.Add(
+		//	2, 0.5f, obj.mTuneMaterial.mColor, 0.3f, 0.7f,
+		//	{ -0.001f,0.01f,-0.001f }, { 0.001f,0.03f,0.001f },
+		//	0.01f, -Vector3::ONE * 0.1f, Vector3::ONE * 0.1f, 0.05f);
 	}
+	else
+	{
+		moveAccel -= moveAccelAmount;	//入力されてなければ徐々に減速
+	}
+
+	moveAccel = Util::Clamp(moveAccel, 0.f, moveVec.Length());
+	moveVec *= moveSpeed * moveAccel;						//移動速度をかけ合わせたら完成
+	obj.mTransform.position += moveVec;						//完成したものを座標に足し合わせる
 
 	//接地時にAボタン押すと
 	if (isGround && RInput::GetInstance()->GetKeyDown(DIK_SPACE))
