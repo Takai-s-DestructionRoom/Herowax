@@ -94,6 +94,10 @@ void Player::Update()
 	if (ImGui::TreeNode("攻撃系"))
 	{
 		ImGui::Text("攻撃中か:%d", isAttack);
+		ImGui::Text("攻撃中でも次の攻撃を出せるか:%d", isMugenAttack);
+		if (ImGui::Button("上記のフラグ変更")) {
+			isMugenAttack = !isMugenAttack;
+		}
 		ImGui::SliderFloat("攻撃時間", &atkTimer.maxTime_, 0.f, 2.f);
 		ImGui::SliderFloat("射出速度", &atkSpeed, 0.f, 2.f);
 		ImGui::SliderFloat("射出高度", &atkHeight, 0.f, 3.f);
@@ -268,10 +272,11 @@ void Player::MoveKey()
 
 void Player::Attack()
 {
-	if (isAttack == false)
+	if (isAttack == false || isMugenAttack)
 	{
-		if (RInput::GetInstance()->GetPadButtonDown(XINPUT_GAMEPAD_RIGHT_SHOULDER) ||
-			RInput::GetInstance()->GetMouseClickDown(1))
+		if ((RInput::GetInstance()->GetPadButton(XINPUT_GAMEPAD_RIGHT_SHOULDER) ||
+			RInput::GetInstance()->GetMouseClick(1)) && 
+			!atkCoolTimer.GetRun())
 		{
 			isAttack = true;
 			atkTimer.Start();
@@ -284,15 +289,19 @@ void Player::Attack()
 			WaxManager::GetInstance()->Create(
 				obj.mTransform, atkPower, atkVec, atkSpeed,
 				atkRange, atkSize, atkTimer.maxTime_, solidTimer.maxTime_);
+		
+			//すぐ攻撃のクールタイム始まるように
+			if (isMugenAttack)
+			{
+				atkCoolTimer.Start();
+				atkTimer.Reset();
+			}
 		}
 	}
 
 	//攻撃中は
-	if (isAttack)
-	{
-		atkTimer.Update();
-		atkCoolTimer.Update();
-	}
+	atkTimer.Update();
+	atkCoolTimer.Update();
 
 	//攻撃終わったらクールタイム開始
 	if (atkTimer.GetEnd())

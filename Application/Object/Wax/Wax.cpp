@@ -12,7 +12,7 @@ Wax::Wax():GameObject(),
 	state(new WaxNormal),
 	solidTimer(1.f)
 {
-	obj = ModelObj(Model::Load("./Resources/Model/Sphere.obj", "Sphere", true));
+	obj = ModelObj(Model::Load("./Resources/Model/wax/wax.obj", "wax", true));
 	obj.mTuneMaterial.mColor = waxOriginColor;
 }
 
@@ -70,7 +70,7 @@ void Wax::Update()
 	if (obj.mTransform.position.y - obj.mTransform.scale.y < 0.f)
 	{
 		//地面に触れるとこまで移動
-		obj.mTransform.position.y = 0.f + obj.mTransform.scale.y;
+		obj.mTransform.position.y = 0.f;
 		
 		isGround = true;
 	}
