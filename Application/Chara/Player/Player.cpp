@@ -85,6 +85,7 @@ void Player::Update()
 		//ImGui::Text("正面ベクトル:%f,%f,%f", frontVec.x, frontVec.y, frontVec.z);
 		ImGui::Text("ジャンプの高さ:%f", jumpHeight);
 		ImGui::Text("ジャンプ速度:%f", jumpSpeed);
+		ImGui::Text("加速度:%f", moveAccel);
 		ImGui::SliderFloat("移動速度:%f", &moveSpeed, 0.f, 5.f);
 		ImGui::SliderFloat("移動加速度:%f", &moveAccelAmount, 0.f, 0.1f);
 		ImGui::SliderFloat("重力:%f", &gravity, 0.f, 0.2f);
@@ -142,7 +143,7 @@ void Player::MovePad()
 		moveVec = { 0, 0, 1 };									//正面を基準に
 		moveVec *= Matrix4::RotationY(cameraRad + stickRad);	//カメラの角度から更にスティックの入力角度を足して
 		moveVec.Normalize();									//方向だけの情報なので正規化して
-		moveVec *= stick.Length();								//傾き具合を大きさに反映
+		moveVec *= stick.LengthSq();							//傾き具合を大きさに反映
 
 		//入力中は加速度足し続ける
 		moveAccel += moveAccelAmount;
@@ -164,8 +165,8 @@ void Player::MovePad()
 		moveAccel -= moveAccelAmount;	//入力されてなければ徐々に減速
 	}
 
-	moveAccel = Util::Clamp(moveAccel, 0.f, moveVec.Length());
-	moveVec *= moveSpeed;									//移動速度をかけ合わせたら完成
+	moveAccel = Util::Clamp(moveAccel, 0.f, 1.f);			//無限に増減しないよう抑える
+	moveVec *= moveSpeed * moveAccel;						//移動速度をかけ合わせたら完成
 	obj.mTransform.position += moveVec;						//完成したものを座標に足し合わせる
 
 	//接地時にAボタン押すと
@@ -245,7 +246,7 @@ void Player::MoveKey()
 		moveAccel -= moveAccelAmount;	//入力されてなければ徐々に減速
 	}
 
-	moveAccel = Util::Clamp(moveAccel, 0.f, moveVec.Length());
+	moveAccel = Util::Clamp(moveAccel, 0.f, moveVec.LengthSq());
 	moveVec *= moveSpeed * moveAccel;						//移動速度をかけ合わせたら完成
 	obj.mTransform.position += moveVec;						//完成したものを座標に足し合わせる
 
