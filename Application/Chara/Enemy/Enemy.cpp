@@ -26,7 +26,8 @@ void Enemy::Update()
 	state->Update(this);	//移動速度に関係するので移動の更新より前に置く
 
 	//減速率は大きいほどスピード下がるから1.0から引くようにしてる
-	obj.mTransform.position += pVec * moveSpeed * (1.f - slowMag);
+	obj.mTransform.position += pVec * moveSpeed * 
+		(1.f - slowMag) * (1.f - slowCoatingMag);
 	UpdateCollider();
 
 	//更新してからバッファに送る
@@ -50,7 +51,8 @@ void Enemy::Tracking()
 	pVec.y = 0;
 
 	//減速率は大きいほどスピード下がるから1.0から引くようにしてる
-	obj.mTransform.position += pVec * moveSpeed * (1.f - slowMag);
+	obj.mTransform.position += pVec * moveSpeed *
+		(1.f - slowMag) * (1.f - slowCoatingMag);
 }
 
 void Enemy::ChangeState(EnemyState* newstate)

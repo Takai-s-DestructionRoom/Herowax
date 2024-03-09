@@ -21,7 +21,8 @@ void EnemyManager::SetTarget(ModelObj* target_)
 
 void EnemyManager::Init()
 {
-	speedMag = 0.8f;
+	slowMag = 0.5f;
+	slowMag = 0.9f;
 }
 
 void EnemyManager::Update()
@@ -33,12 +34,13 @@ void EnemyManager::Update()
 	
 	for (auto& enemy : enemys)
 	{
-		enemy.SetSpeedMag(speedMag);	//移動速度倍率まとめて変更
+		enemy.SetSlowMag(slowMag);	//減速率まとめて変更
+		enemy.SetSlowCoatingMag(slowCoatingMag);	//蝋かかかった時の減速率まとめて変更
 		enemy.Update();
 	}
 	
 #pragma region ImGui
-	ImGui::SetNextWindowSize({ 300, 100 });
+	ImGui::SetNextWindowSize({ 300, 150 });
 
 	ImGuiWindowFlags window_flags = 0;
 	window_flags |= ImGuiWindowFlags_NoResize;
@@ -47,7 +49,8 @@ void EnemyManager::Update()
 
 	ImGui::Text("パッドのLボタンでタワーの位置に敵出現");
 	ImGui::Text("EnemyNum:%d", enemys.size());
-	ImGui::SliderFloat("移動速度倍率", &speedMag, 0.f, 1.f);
+	ImGui::SliderFloat("減速率", &slowMag, 0.f, 1.f);
+	ImGui::SliderFloat("ろうまみれ減速率", &slowCoatingMag, 0.f, 1.f);
 
 	if (ImGui::Button("Reset")) {
 		enemys.clear();

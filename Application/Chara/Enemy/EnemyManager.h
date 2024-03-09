@@ -10,7 +10,8 @@ public:
 	//敵リスト
 	std::list<Enemy> enemys;
 
-	float speedMag;		//共通の移動速度倍率
+	float slowMag;			//共通の減速率
+	float slowCoatingMag;	//共通の蝋かけられたときの減速率
 
 public:
 	static EnemyManager* GetInstance();

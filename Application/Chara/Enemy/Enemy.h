@@ -9,6 +9,7 @@ private:
 	Vector3 moveVec;			//移動ベクトル
 	float moveSpeed;			//移動速度
 	float slowMag;				//減速率
+	float slowCoatingMag;		//蝋かけられたときの減速率
 	bool isGraund;				//接地しているかフラグ
 
 	//------------ HP関連 ------------//
@@ -37,8 +38,10 @@ public:
 	std::string GetState() { return stateStr; }
 
 	// セッター //
-	//移動速度設定
-	void SetSpeedMag(float mag) { slowMag = mag; }
+	//減速率設定
+	void SetSlowMag(float mag) { slowMag = mag; }
+	//蝋かけられたときの減速率設定
+	void SetSlowCoatingMag(float mag) { slowCoatingMag = mag; }
 	//状態文字情報を設定
 	void SetStateStr(std::string str) { stateStr = str; }
 };

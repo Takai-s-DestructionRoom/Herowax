@@ -76,10 +76,23 @@ void ProtoScene::Update()
 		{
 			bool isCollision = ColPrimitive3D::CheckSphereToSphere(enemy.collider, wax->collider);
 
+			//すでに蝋がかかってる状態ならスルー
+			if (enemy.GetState() == "WaxCoating")
+			{
+				continue;
+			}
+
 			//液体の蝋に当たってたら
 			if (isCollision && wax->isSolid == false)
 			{
-				enemy.ChangeState(new EnemySlow());		//敵を足止め状態に
+				if (wax->isGround == false)
+				{
+					enemy.ChangeState(new EnemyWaxCoating());		//敵に蝋がかかった状態に
+				}
+				else
+				{
+					enemy.ChangeState(new EnemySlow());		//敵を足止め状態に
+				}
 			}
 			//足を取られてる状態で固体になったら
 			else if (isCollision && enemy.GetState() == "Slow" && wax->GetIsSolidNow())
