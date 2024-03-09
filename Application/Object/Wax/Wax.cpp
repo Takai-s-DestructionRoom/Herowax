@@ -87,7 +87,10 @@ void Wax::Update()
 		{
 			obj.mTuneMaterial.mColor = Color::kYellow;
 		}
-		
+	}
+	else
+	{
+		obj.mTuneMaterial.mColor = waxOriginColor;
 	}
 
 	//固まるまでの時間過ぎたら固まる

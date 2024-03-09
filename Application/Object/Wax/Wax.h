@@ -24,6 +24,7 @@ public:
 	Easing::EaseTimer extinguishTimer;	//蝋が燃え尽きて消えるまでの時間
 	
 	WaxState* state;			//燃焼の状態管理
+	std::string stateStr;		//状態を文字列に保存用
 
 	//------------ 固形関連 ------------//
 	bool isSolid;					//固形かフラグ
@@ -50,9 +51,16 @@ public:
 	bool IsBurning();
 	bool IsNormal();
 
+	//状態変更
 	void ChangeState(WaxState* newstate);
 
 	// ゲッター //
 	//固まった瞬間かどうかを返す
 	bool GetIsSolidNow();
+	//状態文字情報を設定
+	std::string GetState() { return stateStr; }
+
+	// セッター //
+	//状態文字情報を設定
+	void SetStateStr(std::string str) { stateStr = str; }
 };

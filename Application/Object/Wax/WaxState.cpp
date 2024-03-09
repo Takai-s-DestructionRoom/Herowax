@@ -6,7 +6,7 @@
 
 void WaxNormal::Update(Wax* wax)
 {
-	wax;
+	wax->SetStateStr("Normal");
 }
 
 WaxIgnite::WaxIgnite()
@@ -17,6 +17,8 @@ WaxIgnite::WaxIgnite()
 
 void WaxIgnite::Update(Wax* wax)
 {
+	wax->SetStateStr("Ignite");
+
 	if (!wax->igniteTimer.GetStarted())wax->igniteTimer.Start();
 	wax->igniteTimer.Update();
 
@@ -33,6 +35,11 @@ void WaxIgnite::Update(Wax* wax)
 
 void WaxBurning::Update(Wax* wax)
 {
+	wax->SetStateStr("Burning");
+
+	//色が変わる
+	wax->obj.mTuneMaterial.mColor = wax->waxEndColor;
+
 	//この状態になった瞬間、温度を上昇させる
 	if (!wax->burningTimer.GetStarted()) {
 		TemperatureManager::GetInstance()->TemperaturePlus(
@@ -50,6 +57,11 @@ void WaxBurning::Update(Wax* wax)
 
 void WaxExtinguish::Update(Wax* wax)
 {
+	wax->SetStateStr("Extinguish");
+
+	//色が変わる
+	wax->obj.mTuneMaterial.mColor = wax->waxEndColor;
+
 	if (!wax->extinguishTimer.GetStarted()) {
 		wax->extinguishTimer.Start();
 		saveScale = wax->GetScale();

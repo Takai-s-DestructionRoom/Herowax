@@ -100,7 +100,7 @@ void ProtoScene::Update()
 				enemy.ChangeState(new EnemyStop());		//敵を固定状態に
 			}
 			//固まってる状態じゃないなら
-			else if(enemy.GetState() != "Stop")
+			else if (enemy.GetState() != "Stop")
 			{
 				enemy.ChangeState(new EnemyNormal());	//敵を通常状態に
 			}
@@ -118,20 +118,35 @@ void ProtoScene::Update()
 	}
 	for (auto& wax1 : WaxManager::GetInstance()->waxs)
 	{
-		//燃えているなら
-		if (wax1->IsBurning())
+		
+		for (auto& wax2 : WaxManager::GetInstance()->waxs)
 		{
-			for (auto& wax2 : WaxManager::GetInstance()->waxs)
+			bool isCollision = ColPrimitive3D::CheckSphereToSphere(wax1->collider, wax2->collider);
+
+			//ぶつかっていて
+			if (isCollision)
 			{
-				//ぶつかっていて通常の状態なら
-				if (ColPrimitive3D::CheckSphereToSphere(wax1->collider, wax2->collider) &&
-					wax2->IsNormal())
+				//燃えているものと通常の状態なら
+				if (wax1->IsBurning() && wax2->IsNormal())
 				{
 					//燃えている状態へ遷移
 					wax2->ChangeState(new WaxIgnite());
 					//燃えたときに、すでに燃えている蝋の数に応じてボーナス
 					TemperatureManager::GetInstance()->TemperaturePlus(
 						WaxManager::GetInstance()->GetCalcHeatBonus());
+				}
+				//どっちも液体なら
+				else if (wax1->isSolid == false && wax2->isSolid == false)
+				{
+					//固まる時間が長い方に優先
+					if (wax1->solidTimer.nowTime_ > wax2->solidTimer.nowTime_)
+					{
+						wax1->solidTimer.nowTime_ = wax2->solidTimer.nowTime_;
+					}
+					else
+					{
+						wax2->solidTimer.nowTime_ = wax1->solidTimer.nowTime_;
+					}
 				}
 			}
 		}

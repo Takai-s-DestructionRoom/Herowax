@@ -31,7 +31,7 @@ public:
 
 	void Tracking();
 
-	//状態の
+	//状態変更
 	void ChangeState(EnemyState* newstate);
 
 	// ゲッター //
