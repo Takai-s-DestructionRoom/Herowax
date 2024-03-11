@@ -61,9 +61,18 @@ void MainTestScene::Draw()
 {
 	//skydome.Draw();
 
+	PipelineStateDesc desc = RDirectX::GetDefPipeline().mDesc;
+	desc.RasterizerState.FillMode = D3D12_FILL_MODE_WIREFRAME;
+	GraphicsPipeline pipe = GraphicsPipeline::GetOrCreate("WireObject", desc);
+
 	for (auto itr = testList.begin(); itr != testList.end();) {
 		Test& T = *itr;
-		T.model.Draw();
+		auto orders = T.model.GetRenderOrder();
+		for (RenderOrder& order : orders) {
+			order.pipelineState = pipe.mPtr.Get();
+			Renderer::DrawCall("Opaque", order);
+		}
+		//T.model.Draw();
 		itr++;
 	}
 

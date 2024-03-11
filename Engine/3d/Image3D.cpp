@@ -207,6 +207,26 @@ void Image3D::TransferBuffer(ViewProjection viewprojection)
 	mViewProjectionBuff->matrix = viewprojection.mMatrix;
 }
 
+std::vector<RenderOrder> Image3D::GetRenderOrder()
+{
+	std::vector<RenderOrder> result;
+
+	RenderOrder order;
+	order.pipelineState = GetPipeline().mPtr.Get();
+	order.vertBuff = mVertBuff;
+	order.indexBuff = mIndexBuff;
+	order.indexCount = 6;
+	order.rootData = {
+		{TextureManager::Get(mTexture).mGpuHandle},
+		{RootDataType::SRBUFFER_CBV, mMaterialBuff.mBuff },
+		{RootDataType::SRBUFFER_CBV, mTransformBuff.mBuff },
+		{RootDataType::SRBUFFER_CBV, mViewProjectionBuff.mBuff },
+		{RootDataType::LIGHT},
+	};
+
+	result.push_back(order);
+}
+
 void Image3D::Draw(std::string stageID)
 {
 	RenderOrder order;
