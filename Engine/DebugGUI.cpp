@@ -10,6 +10,7 @@
 #include <Renderer.h>
 #include <SpriteScene.h>
 #include <RAudio.h>
+#include <PaintScene.h>
 
 void DebugGUI::Show()
 {
@@ -21,7 +22,7 @@ void DebugGUI::Show()
 
 	ImGui::Text("SceneManager");
 	static int32_t sceneNum = 0;
-	const char* scenes[] = { "MainTest", "ControllerTest", "Sprite", "SoundTest" };
+	const char* scenes[] = { "MainTest", "ControllerTest", "Sprite", "SoundTest", "PaintTest"};
 	ImGui::Combo("##SceneNumCombo", &sceneNum, scenes, IM_ARRAYSIZE(scenes));
 	ImGui::SameLine();
 	if (ImGui::Button("Go!!!")) {
@@ -38,6 +39,9 @@ void DebugGUI::Show()
 				break;
 			case 3:
 				SceneManager::Change<SoundScene, SimpleSceneTransition>();
+				break;
+			case 4:
+				SceneManager::Change<PaintScene, SimpleSceneTransition>();
 				break;
 			}
 		}

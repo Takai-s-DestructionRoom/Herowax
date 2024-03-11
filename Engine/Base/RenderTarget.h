@@ -47,7 +47,7 @@ public:
 	static void SetToTexture(std::string name);
 	static void SetToTexture(std::vector<std::string> names);
 
-	static RenderTexture* CreateRenderTexture(const uint32_t width, const uint32_t height, const Color clearColor, TextureHandle name);
+	static RenderTexture* CreateRenderTexture(const uint32_t width, const uint32_t height, const Color clearColor, TextureHandle name = "");
 	static RenderTexture* GetRenderTexture(std::string name);
 	static D3D12_CPU_DESCRIPTOR_HANDLE GetRTVHandle(uint32_t index);
 	static D3D12_CPU_DESCRIPTOR_HANDLE GetDSVHandle(uint32_t index);

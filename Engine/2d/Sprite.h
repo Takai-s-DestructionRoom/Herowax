@@ -18,6 +18,7 @@
 #include "ViewProjection.h"
 #include "SRVertexBuffer.h"
 #include "SRIndexBuffer.h"
+#include "RenderOrder.h"
 #include <array>
 
 class Sprite
@@ -72,6 +73,12 @@ public:
 
 	//各データのバッファへの転送
 	void TransferBuffer();
+
+	//各データのバッファへの転送
+	//その際に頂点にかける変換を指定できるタイプ
+	void TransferBuffer(Matrix4 projection);
+
+	std::vector<RenderOrder> GetRenderOrder();
 
 	//描画要求をRendererへ積む
 	void Draw();

@@ -205,6 +205,7 @@ void Image3D::TransferBuffer(ViewProjection viewprojection)
 	mMaterial.Transfer(mMaterialBuff.Get());
 	mTransform.Transfer(mTransformBuff.Get());
 	mViewProjectionBuff->matrix = viewprojection.mMatrix;
+	mViewProjectionBuff->cameraPos = viewprojection.mEye;
 }
 
 std::vector<RenderOrder> Image3D::GetRenderOrder()
@@ -225,7 +226,6 @@ std::vector<RenderOrder> Image3D::GetRenderOrder()
 	};
 
 	result.push_back(order);
-
 	return result;
 }
 
