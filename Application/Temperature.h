@@ -1,24 +1,7 @@
 #pragma once
 #include "Vector2.h"
 #include "Easing.h"
-
-//温度描画UI
-class TemperatureUI
-{
-public:
-	Vector2 position;
-	Vector2 size;
-
-	float angle = -60.f;
-
-public:
-	TemperatureUI();
-
-	static void LoadResource();	//リソース読み込み
-
-	void Update();
-	void Draw();
-};
+#include "TemperatueUI.h"
 
 //温度を管理するクラス
 class TemperatureManager

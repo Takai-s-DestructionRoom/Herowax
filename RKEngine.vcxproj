@@ -206,6 +206,7 @@
     <ClCompile Include="Application\Object\SpawnerManager.cpp" />
     <ClCompile Include="Application\Parameter.cpp" />
     <ClCompile Include="Application\Scene\PaintScene.cpp" />
+    <ClCompile Include="Application\Object\TemperatueUI.cpp" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Shader\BasicPS.hlsl">
@@ -539,6 +540,7 @@
     <ClInclude Include="Application\Object\SpawnerManager.h" />
     <ClInclude Include="Application\Parameter.h" />
     <ClInclude Include="Application\Scene\PaintScene.h" />
+    <ClInclude Include="Application\Object\TemperatueUI.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Shader\Basic.hlsli">
