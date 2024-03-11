@@ -1,6 +1,7 @@
 #include "WaxManager.h"
 #include "ImGui.h"
 #include "Temperature.h"
+#include "Parameter.h"
 
 WaxManager* WaxManager::GetInstance()
 {
@@ -12,7 +13,10 @@ WaxManager::WaxManager() :
 	heatUpTemperature(10.f),
 	heatBonus(5.f)
 {
-
+	//生成時に変数をセーブデータから引っ張ってくる
+	std::map<std::string, std::string> extract = Parameter::Extract(fileName);
+	heatUpTemperature = std::stof(extract["ロウが燃えたときの上昇温度"]);
+	heatBonus = std::stof(extract["ボーナス上昇温度"]);
 }
 
 void WaxManager::Init()
@@ -57,6 +61,12 @@ void WaxManager::Update()
 
 	if (ImGui::Button("Reset")) {
 		Init();
+	}
+	if (ImGui::Button("セーブ")) {
+		Parameter::Begin(fileName);
+		Parameter::Save("ロウが燃えたときの上昇温度", heatUpTemperature);
+		Parameter::Save("ボーナス上昇温度", heatBonus);
+		Parameter::End();
 	}
 
 	ImGui::End();

@@ -27,7 +27,7 @@ public:
 	void Draw();
 
 private:
-	EnemyManager() {};
+	EnemyManager();
 	~EnemyManager() {};
 
 	//コピー禁止

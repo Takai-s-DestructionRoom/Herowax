@@ -3,6 +3,7 @@
 #include "InstantDrawer.h"
 #include "RImGui.h"
 #include "TimeManager.h"
+#include "Parameter.h"
 
 TemperatureManager* TemperatureManager::GetInstance()
 {
@@ -13,7 +14,15 @@ TemperatureManager* TemperatureManager::GetInstance()
 TemperatureManager::TemperatureManager() :
 	temperature(0),downSpeed(10)
 {
-
+	//生成時に変数をセーブデータから引っ張ってくる
+	std::map<std::string, std::string> extract = Parameter::Extract("Temperature");
+	downSpeed = stof(extract["一定時間(1秒)ごとの低下量"]);
+	MIN_TEMPERATURE = stof(extract["最低温度"]);
+	MAX_TEMPERATURE = stof(extract["最大温度"]);
+	ui.position.x = stof(extract["UI_X座標"]);
+	ui.position.y = stof(extract["UI_Y座標"]);
+	ui.size.y = stof(extract["UI_Xスケール"]);
+	ui.size.y = stof(extract["UI_Yスケール"]);
 }
 
 void TemperatureManager::Update()
@@ -50,6 +59,18 @@ void TemperatureManager::Update()
 		ImGui::SliderFloat("Yのスケール", &ui.size.y, 0, 10.f);
 
 		ImGui::TreePop();
+	}
+
+	if (ImGui::Button("セーブ")) {
+		Parameter::Begin("Temperature");
+		Parameter::Save("一定時間(1秒)ごとの低下量", downSpeed);
+		Parameter::Save("最低温度", MIN_TEMPERATURE);
+		Parameter::Save("最大温度", MAX_TEMPERATURE);
+		Parameter::Save("UI_X座標", ui.position.x);
+		Parameter::Save("UI_Y座標", ui.position.y);
+		Parameter::Save("UI_Xスケール", ui.size.x);
+		Parameter::Save("UI_Yスケール", ui.size.y);
+		Parameter::End();
 	}
 
 	ImGui::End();

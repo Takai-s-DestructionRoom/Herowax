@@ -184,6 +184,9 @@
     <Filter Include="ヘッダー ファイル\Application\Loader">
       <UniqueIdentifier>{ab289c2b-613f-44cb-b055-130c0e1b2b3b}</UniqueIdentifier>
     </Filter>
+    <Filter Include="ソース ファイル\Application\Parameter">
+      <UniqueIdentifier>{48df2fea-ba53-4dcf-8568-cff2652ba2ef}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Engine\2d\Sprite.cpp">
@@ -429,7 +432,7 @@
     <ClCompile Include="Application\Chara\Enemy\EnemyManager.cpp">
       <Filter>ソース ファイル\Application\Object\Chara\Enemy</Filter>
     </ClCompile>
-    <ClCompile Include="Application\EnemySpawner.cpp">
+    <ClCompile Include="Application\Object\EnemySpawner.cpp">
       <Filter>ソース ファイル\Application\Object\EnemySpawner</Filter>
     </ClCompile>
     <ClCompile Include="Application\Object\Wax\Wax.cpp">
@@ -453,19 +456,19 @@
     <ClCompile Include="Application\InstantDrawer.cpp">
       <Filter>ソース ファイル\Application\InstantDrawer</Filter>
     </ClCompile>
-    <ClCompile Include="Application\GameObject.cpp">
+    <ClCompile Include="Application\Object\GameObject.cpp">
       <Filter>ソース ファイル\Application\Object\GameObject</Filter>
     </ClCompile>
-    <ClCompile Include="Application\FireManager.cpp">
+    <ClCompile Include="Application\Object\FireManager.cpp">
       <Filter>ソース ファイル\Application\Object\Fire</Filter>
     </ClCompile>
-    <ClCompile Include="Application\Fire.cpp">
+    <ClCompile Include="Application\Object\Fire.cpp">
       <Filter>ソース ファイル\Application\Object\Fire</Filter>
     </ClCompile>
     <ClCompile Include="Application\Object\Wax\WaxState.cpp">
       <Filter>ソース ファイル\Application\Object\Wax</Filter>
     </ClCompile>
-    <ClCompile Include="Application\SpawnerManager.cpp">
+    <ClCompile Include="Application\Object\SpawnerManager.cpp">
       <Filter>ソース ファイル\Application\Object\EnemySpawner</Filter>
     </ClCompile>
     <ClCompile Include="Application\Level.cpp">
@@ -482,6 +485,9 @@
     </ClCompile>
     <ClCompile Include="Application\Chara\Enemy\EnemyState.cpp">
       <Filter>ソース ファイル\Application\Object\Chara\Enemy</Filter>
+    </ClCompile>
+    <ClCompile Include="Application\Parameter.cpp">
+      <Filter>ソース ファイル</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -868,7 +874,7 @@
     <ClInclude Include="Application\Chara\Enemy\EnemyManager.h">
       <Filter>ヘッダー ファイル\Application\Object\Chara\Enemy</Filter>
     </ClInclude>
-    <ClInclude Include="Application\EnemySpawner.h">
+    <ClInclude Include="Application\Object\EnemySpawner.h">
       <Filter>ヘッダー ファイル\Application\Object\EnemySpawner</Filter>
     </ClInclude>
     <ClInclude Include="Application\Object\Wax\Wax.h">
@@ -892,13 +898,13 @@
     <ClInclude Include="Application\InstantDrawer.h">
       <Filter>ヘッダー ファイル\Application\InstantDrawer</Filter>
     </ClInclude>
-    <ClInclude Include="Application\GameObject.h">
+    <ClInclude Include="Application\Object\GameObject.h">
       <Filter>ヘッダー ファイル\Application\Object\GameObject</Filter>
     </ClInclude>
-    <ClInclude Include="Application\Fire.h">
+    <ClInclude Include="Application\Object\Fire.h">
       <Filter>ヘッダー ファイル\Application\Object\Fire</Filter>
     </ClInclude>
-    <ClInclude Include="Application\FireManager.h">
+    <ClInclude Include="Application\Object\FireManager.h">
       <Filter>ヘッダー ファイル\Application\Object\Fire</Filter>
     </ClInclude>
     <ClInclude Include="Application\Object\Wax\WaxState.h">
@@ -913,7 +919,7 @@
     <ClInclude Include="Application\LevelLoader.h">
       <Filter>ヘッダー ファイル\Application\Loader</Filter>
     </ClInclude>
-    <ClInclude Include="Application\SpawnerManager.h">
+    <ClInclude Include="Application\Object\SpawnerManager.h">
       <Filter>ヘッダー ファイル\Application\Object\EnemySpawner</Filter>
     </ClInclude>
     <ClInclude Include="Application\Singleton.h">
@@ -921,6 +927,9 @@
     </ClInclude>
     <ClInclude Include="Application\Object\Wax\EnemyState.h">
       <Filter>ヘッダー ファイル\Application\Object\Chara\Enemy</Filter>
+    </ClInclude>
+    <ClInclude Include="Application\Parameter.h">
+      <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
