@@ -204,6 +204,7 @@
     <ClCompile Include="Application\Object\Wax\WaxState.cpp" />
     <ClCompile Include="Application\Singleton.cpp" />
     <ClCompile Include="Application\SpawnerManager.cpp" />
+    <ClCompile Include="Application\Scene\PaintScene.cpp" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Shader\BasicPS.hlsl">
@@ -535,6 +536,7 @@
     <ClInclude Include="Application\Level.h" />
     <ClInclude Include="Application\Singleton.h" />
     <ClInclude Include="Application\SpawnerManager.h" />
+    <ClInclude Include="Application\Scene\PaintScene.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Shader\Basic.hlsli">

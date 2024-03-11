@@ -112,6 +112,45 @@ void Sprite::TransferBuffer()
 	mViewProjectionBuff.Get()->matrix = matProjection;
 }
 
+void Sprite::TransferBuffer(Matrix4 projection)
+{
+	if (mChangeFlag) {
+		UpdateVertex();
+		mChangeFlag = false;
+	}
+
+	mMaterial.Transfer(mMaterialBuff.Get());
+	mTransform.Transfer(mTransformBuff.Get());
+
+	mViewProjectionBuff.Get()->matrix = projection;
+}
+
+std::vector<RenderOrder> Sprite::GetRenderOrder()
+{
+	std::vector<RenderOrder> result;
+
+	RenderOrder order;
+
+	order.anchorPoint = mTransform.position;
+	order.vertBuff = mVertBuff;
+	order.indexBuff = mIndexBuff;
+	order.indexCount = 6;
+
+	order.rootData = {
+		{TextureManager::Get(mTexture).mGpuHandle},
+		{RootDataType::SRBUFFER_CBV, mMaterialBuff.mBuff},
+		{RootDataType::SRBUFFER_CBV, mTransformBuff.mBuff},
+		{RootDataType::SRBUFFER_CBV, mViewProjectionBuff.mBuff},
+	};
+
+	int32_t blendMode = static_cast<int32_t>(mBlendMode);
+	order.mRootSignature = SpriteManager::GetInstance()->GetRootSignature().mPtr.Get();
+	order.pipelineState = SpriteManager::GetInstance()->GetGraphicsPipeline(blendMode).mPtr.Get();
+	result.push_back(order);
+
+	return result;
+}
+
 void Sprite::Draw()
 {
 	RenderOrder order;
@@ -170,8 +209,14 @@ void SpriteManager::Init()
 	mPipelineState.mDesc.DepthStencilState.DepthEnable = false;
 	mPipelineState.mDesc.pRootSignature = mRootSignature.mPtr.Get();
 
-	mPipelineState.Create();
 	mPipelineStates[0] = mPipelineState;
+	mPipelineStates[0].mDesc.BlendState.RenderTarget[0].BlendOpAlpha = D3D12_BLEND_OP_ADD;
+	mPipelineStates[0].mDesc.BlendState.RenderTarget[0].SrcBlendAlpha = D3D12_BLEND_SRC_ALPHA;
+	mPipelineStates[0].mDesc.BlendState.RenderTarget[0].DestBlendAlpha = D3D12_BLEND_ONE;
+	mPipelineStates[0].mDesc.BlendState.RenderTarget[0].BlendOp = D3D12_BLEND_OP_ADD;
+	mPipelineStates[0].mDesc.BlendState.RenderTarget[0].SrcBlend = D3D12_BLEND_SRC_ALPHA;
+	mPipelineStates[0].mDesc.BlendState.RenderTarget[0].DestBlend = D3D12_BLEND_INV_SRC_ALPHA;
+	mPipelineStates[0].Create();
 
 	mPipelineStates[1] = mPipelineState;
 	mPipelineStates[1].mDesc.BlendState.RenderTarget[0].BlendOpAlpha = D3D12_BLEND_OP_ADD;

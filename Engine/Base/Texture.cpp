@@ -293,7 +293,7 @@ TextureHandle TextureManager::LoadInternal(const std::string filepath, const std
 	// WICテクスチャのロード
 	result = LoadFromWICFile(
 		path.c_str(),
-		WIC_FLAGS_NONE,
+		WIC_FLAGS_FORCE_RGB,
 		&imgMetadata, scratchImg
 	);
 	if (FAILED(result)) {
@@ -645,8 +645,8 @@ void Texture::Copy(Texture* dest, RRect srcRect, Vector2 destPos)
 	D3D12_TEXTURE_COPY_LOCATION locA{};
 	locA.Type = D3D12_TEXTURE_COPY_TYPE_SUBRESOURCE_INDEX;
 	locA.pResource = mResource.Get();
-
 	locA.SubresourceIndex = 0;
+
 	D3D12_TEXTURE_COPY_LOCATION locB{};
 	locB.Type = D3D12_TEXTURE_COPY_TYPE_SUBRESOURCE_INDEX;
 	locB.pResource = dest->mResource.Get();

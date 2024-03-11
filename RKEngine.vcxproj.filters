@@ -483,6 +483,9 @@
     <ClCompile Include="Application\Chara\Enemy\EnemyState.cpp">
       <Filter>ソース ファイル\Application\Object\Chara\Enemy</Filter>
     </ClCompile>
+    <ClCompile Include="Application\Scene\PaintScene.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Shader\TestVS.hlsl">
@@ -921,6 +924,9 @@
     </ClInclude>
     <ClInclude Include="Application\Object\Wax\EnemyState.h">
       <Filter>ヘッダー ファイル\Application\Object\Chara\Enemy</Filter>
+    </ClInclude>
+    <ClInclude Include="Application\Scene\PaintScene.h">
+      <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
