@@ -29,10 +29,10 @@ public:
 	//各データのバッファへの転送
 	void TransferBuffer(ViewProjection viewprojection) override;
 
-	//描画要求をRendererへ
-	void Draw();
+	//描画要求を取得する(Rendererへは投げない)
+	std::vector<RenderOrder> GetRenderOrder() override;
 
-	//描画用のコマンドをまとめてコマンドリストに積む
-	void DrawCommands() override;
+	//描画要求をRendererへ
+	void Draw(std::string stageID = "");
 };
 

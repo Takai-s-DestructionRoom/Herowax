@@ -39,11 +39,11 @@ void BillboardImage::TransferBuffer(ViewProjection v) {
 	mImage.TransferBuffer(v);
 }
 
-void BillboardImage::Draw() {
-	mImage.Draw();
+std::vector<RenderOrder> BillboardImage::GetRenderOrder()
+{
+	return mImage.GetRenderOrder();
 }
 
-void BillboardImage::DrawCommands()
-{
-	mImage.DrawCommands();
+void BillboardImage::Draw(std::string stageID) {
+	mImage.Draw(stageID);
 }

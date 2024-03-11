@@ -28,7 +28,34 @@ void ModelObj::TransferBuffer(ViewProjection viewprojection)
 	//viewProjectionBuff.mConstMap->matrix = viewprojection.matrix;
 }
 
-void ModelObj::Draw()
+std::vector<RenderOrder> ModelObj::GetRenderOrder()
+{
+	std::vector<RenderOrder> result;
+
+	for (std::shared_ptr<ModelMesh> data : mModel->mData) {
+		std::vector<RootData> rootData = {
+			{ TextureManager::Get(data->mMaterial.mTexture).mGpuHandle },
+			{ RootDataType::SRBUFFER_CBV, mMaterialBuffMap[data->mMaterial.mName].mBuff },
+			{ RootDataType::SRBUFFER_CBV, mTransformBuff.mBuff },
+			{ RootDataType::SRBUFFER_CBV, mViewProjectionBuff.mBuff },
+			{ RootDataType::LIGHT } 
+		};
+
+		RenderOrder order;
+		order.mRootSignature = RDirectX::GetDefRootSignature().mPtr.Get();
+		order.pipelineState = RDirectX::GetDefPipeline().mPtr.Get();
+		order.vertView = &data->mVertBuff.mView;
+		order.indexView = &data->mIndexBuff.mView;
+		order.indexCount = static_cast<uint32_t>(data->mIndices.size());
+		order.rootData = rootData;
+
+		result.push_back(order);
+	}
+
+	return result;
+}
+
+void ModelObj::Draw(std::string stageID)
 {
 	for (std::shared_ptr<ModelMesh> data : mModel->mData) {
 		std::vector<RootData> rootData = {
@@ -40,9 +67,10 @@ void ModelObj::Draw()
 		};
 		
 
-		std::string stage = "Opaque";
-		if (data->mMaterial.mColor.a < 1.0f || mTuneMaterial.mColor.a < 1.0f) stage = "Transparent";
-		Renderer::DrawCall(stage, &data->mVertBuff.mView, &data->mIndexBuff.mView, static_cast<uint32_t>(data->mIndices.size()), rootData);
+		if (stageID.empty()) {
+			stageID = "Opaque";
+			if (data->mMaterial.mColor.a < 1.0f || mTuneMaterial.mColor.a < 1.0f) stageID = "Transparent";
+		}
+		Renderer::DrawCall(stageID, &data->mVertBuff.mView, &data->mIndexBuff.mView, static_cast<uint32_t>(data->mIndices.size()), rootData);
 	}
-	
 }
