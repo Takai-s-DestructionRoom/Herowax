@@ -29,8 +29,7 @@ void EnemyManager::SetTarget(ModelObj* target_)
 
 void EnemyManager::Init()
 {
-	slowMag = 0.5f;
-	slowMag = 0.9f;
+
 }
 
 void EnemyManager::Update()

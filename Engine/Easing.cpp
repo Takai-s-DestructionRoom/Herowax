@@ -202,6 +202,16 @@ void Easing::EaseTimer::ReverseStart()
 	reverse_ = true;
 }
 
+void Easing::EaseTimer::Stop()
+{
+	run_ = false;
+}
+
+void Easing::EaseTimer::ReStart()
+{
+	run_ = true;
+}
+
 void Easing::EaseTimer::Update(const float elapseTimer)
 {
 	if (run_) {

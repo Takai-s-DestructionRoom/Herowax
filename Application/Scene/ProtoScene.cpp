@@ -76,49 +76,61 @@ void ProtoScene::Update()
 		{
 			bool isCollision = ColPrimitive3D::CheckSphereToSphere(enemy.collider, wax->collider);
 
-			//すでに蝋がかかってる状態ならスルー
-			if (enemy.GetState() == "WaxCoating")
-			{
-				continue;
-			}
-
-			if (isCollision == false)
-			{
-				enemy.ChangeState(new EnemyNormal());	//敵を通常状態に
-
-				continue;
-			}
-
-			//液体の蝋に当たってたら
-			if (isCollision && wax->isSolid == false)
-			{
-				if (wax->isGround == false)
-				{
-					enemy.ChangeState(new EnemyWaxCoating());		//敵に蝋がかかった状態に
+			if (isCollision && wax->isSolid == false) {
+				//投げられてる蝋に当たった時は蝋固まり状態へ遷移
+				if (wax->isGround == false) {
+					enemy.ChangeState(new EnemyWaxCoating());
 				}
-				else
-				{
-					enemy.ChangeState(new EnemySlow());		//敵を足止め状態に
+				//地面に付いた蝋に当たった時は蝋足止め状態へ遷移
+				else {
+					enemy.ChangeState(new EnemySlow());
+					enemy.trappedWax = wax.get();
 				}
 			}
-			//足を取られてる状態で固体になったら
-			else if (isCollision && enemy.GetState() == "Slow" && wax->GetIsSolidNow())
-			{
-				enemy.ChangeState(new EnemyStop());		//敵を固定状態に
-				//付与する力が一度に固まる敵の数だけ強まる
-				EnemyManager::GetInstance()->IncrementSolidCombo();
-				//抜け出す力を付与する
-				enemy.SetEscapePower((float)EnemyManager::GetInstance()->GetSolidCombo());
-			}
-			//固まってる状態じゃないなら
-			else if (enemy.GetState() != "Stop")
-			{
-				enemy.ChangeState(new EnemyNormal());	//敵を通常状態に
-			}
-			else if (enemy.GetState() == "Stop" && enemy.GetIsEscape())
-			{
-				wax->Damage(enemy.GetEscapePower());
-			}
+
+			////すでに蝋がかかってる状態ならスルー
+			//if (enemy.GetState() == "WaxCoating")
+			//{
+			//	continue;
+			//}
+
+			//if (isCollision == false)
+			//{
+			//	enemy.ChangeState(new EnemyNormal());	//敵を通常状態に
+
+			//	continue;
+			//}
+
+			////液体の蝋に当たってたら
+			//if (isCollision && wax->isSolid == false)
+			//{
+			//	if (wax->isGround == false)
+			//	{
+			//		enemy.ChangeState(new EnemyWaxCoating());		//敵に蝋がかかった状態に
+			//	}
+			//	else
+			//	{
+			//		enemy.ChangeState(new EnemySlow());		//敵を足止め状態に
+			//	}
+			//}
+			////足を取られてる状態で固体になったら
+			//else if (isCollision && enemy.GetState() == "Slow" && wax->GetIsSolidNow())
+			//{
+			//	enemy.ChangeState(new EnemyStop());		//敵を固定状態に
+			//	//付与する力が一度に固まる敵の数だけ強まる
+			//	EnemyManager::GetInstance()->IncrementSolidCombo();
+			//	//抜け出す力を付与する
+			//	enemy.SetEscapePower((float)EnemyManager::GetInstance()->GetSolidCombo());
+			//}
+			////固まってる状態じゃないなら
+			//else if (enemy.GetState() != "Stop")
+			//{
+			//	enemy.ChangeState(new EnemyNormal());	//敵を通常状態に
+			//}
+			//else if (enemy.GetState() == "Stop" && enemy.GetIsEscape())
+			//{
+			//	wax->Damage(enemy.GetEscapePower());
+			//}
 		}
 	}
 	for (auto& fire : FireManager::GetInstance()->fires)

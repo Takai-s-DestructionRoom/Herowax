@@ -2,6 +2,7 @@
 #include "GameObject.h"
 #include "EnemyState.h"
 #include "Easing.h"
+#include "Wax.h"
 
 class Enemy : public GameObject
 {
@@ -34,6 +35,8 @@ private:
 	std::string stateStr;		//状態を文字列で保存
 
 public:
+	Wax* trappedWax;			//足を取られている対象の蝋を保持
+
 	Enemy(ModelObj* target_);
 	void Init() override;
 	void Update() override;

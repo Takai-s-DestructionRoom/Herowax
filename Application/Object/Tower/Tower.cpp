@@ -24,6 +24,10 @@ void Tower::Update()
 	{
 		isAlive = false;
 	}
+	else
+	{
+		isAlive = true;
+	}
 
 	obj.mTransform.UpdateMatrix();
 	obj.TransferBuffer(Camera::sNowCamera->mViewProjection);
@@ -37,7 +41,7 @@ void Tower::Update()
 	ImGui::Begin("Tower", NULL, window_flags);
 
 	
-	ImGui::Text("HP:%f", hp);
+	ImGui::Text("HP:%d", &hp, 1.0f);
 	if (ImGui::Button("HP減少")) {
 		Damage(1.f);
 	}
