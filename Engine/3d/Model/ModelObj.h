@@ -12,8 +12,6 @@
 #include "SRConstBuffer.h"
 #include <map>
 
-struct RenderOrder;
-
 class ModelObj : public Obj3D
 {
 public:
@@ -32,7 +30,10 @@ public:
 	//各データのバッファへの転送
 	void TransferBuffer(ViewProjection viewprojection) override;
 
+	//描画要求を取得する(Rendererへは投げない)
+	std::vector<RenderOrder> GetRenderOrder() override;
+
 	//描画要求をRendererへ
-	void Draw();
+	void Draw(std::string stageID = "") override;
 };
 

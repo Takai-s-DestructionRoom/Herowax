@@ -45,7 +45,7 @@ public:
 	void IncrementBurningCombo() { burningCombo++; burningComboTimer.Start(); }
 
 private:
-	EnemyManager() {};
+	EnemyManager();
 	~EnemyManager() {};
 
 	//コピー禁止

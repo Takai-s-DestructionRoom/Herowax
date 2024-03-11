@@ -64,7 +64,7 @@
       <ConformanceMode>false</ConformanceMode>
       <TreatWarningAsError>true</TreatWarningAsError>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
-      <AdditionalIncludeDirectories>$(ProjectDir)Application;$(ProjectDir)Application\BackGround;$(ProjectDir)Application\Scene;$(ProjectDir)Application\RhythmCore;$(ProjectDir)Application\Particle;$(ProjectDir)Engine;$(ProjectDir)Engine\2d;$(ProjectDir)Engine\3d;$(ProjectDir)Engine\3d\Model;$(ProjectDir)Engine\Base;$(ProjectDir)Engine\Camera;$(ProjectDir)Engine\Collision;$(ProjectDir)Engine\Light;$(ProjectDir)Engine\Math;$(ProjectDir)Engine\Scene;$(ProjectDir)Engine\PostEffect;$(ProjectDir)Engine\SimpleDrawer;$(ProjectDir)Engine\Renderer;$(ProjectDir)Application\Chara\Player;$(ProjectDir)Application\Object\Tower;$(ProjectDir)Application\Chara\Enemy;$(ProjectDir)Application\Object\Wax;$(ProjectDir)Engine\Particle;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)Application;$(ProjectDir)Application\BackGround;$(ProjectDir)Application\Scene;$(ProjectDir)Application\RhythmCore;$(ProjectDir)Application\Particle;$(ProjectDir)Engine;$(ProjectDir)Engine\2d;$(ProjectDir)Engine\3d;$(ProjectDir)Engine\3d\Model;$(ProjectDir)Engine\Base;$(ProjectDir)Engine\Camera;$(ProjectDir)Engine\Collision;$(ProjectDir)Engine\Light;$(ProjectDir)Engine\Math;$(ProjectDir)Engine\Scene;$(ProjectDir)Engine\PostEffect;$(ProjectDir)Engine\SimpleDrawer;$(ProjectDir)Engine\Renderer;$(ProjectDir)Application\Chara\Player;$(ProjectDir)Application\Object\Tower;$(ProjectDir)Application\Chara\Enemy;$(ProjectDir)Application\Object\Wax;$(ProjectDir)Engine\Particle;$(ProjectDir)Application\Object;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
@@ -103,7 +103,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="Application\EnemySpawner.cpp" />
+    <ClCompile Include="Application\Object\EnemySpawner.cpp" />
     <ClCompile Include="Application\InstantDrawer.cpp" />
     <ClCompile Include="Application\LevelData.cpp" />
     <ClCompile Include="Application\LevelLoader.cpp" />
@@ -147,9 +147,9 @@
     <ClCompile Include="Engine\Renderer\TestRenderStage.cpp" />
     <ClCompile Include="Engine\Renderer\TransparentRenderStage.cpp" />
     <ClCompile Include="Engine\Light\LightGroup.cpp" />
-    <ClCompile Include="Application\GameObject.cpp" />
-    <ClCompile Include="Application\Fire.cpp" />
-    <ClCompile Include="Application\FireManager.cpp" />
+    <ClCompile Include="Application\Object\GameObject.cpp" />
+    <ClCompile Include="Application\Object\Fire.cpp" />
+    <ClCompile Include="Application\Object\FireManager.cpp" />
     <ClCompile Include="Application\Level.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Engine\Base\Material.cpp" />
@@ -203,7 +203,8 @@
     <ClCompile Include="Application\Temperature.cpp" />
     <ClCompile Include="Application\Object\Wax\WaxState.cpp" />
     <ClCompile Include="Application\Singleton.cpp" />
-    <ClCompile Include="Application\SpawnerManager.cpp" />
+    <ClCompile Include="Application\Object\SpawnerManager.cpp" />
+    <ClCompile Include="Application\Parameter.cpp" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Shader\BasicPS.hlsl">
@@ -428,7 +429,7 @@
     </FxCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Application\EnemySpawner.h" />
+    <ClInclude Include="Application\Object\EnemySpawner.h" />
     <ClInclude Include="Application\InstantDrawer.h" />
     <ClInclude Include="Application\LevelData.h" />
     <ClInclude Include="Application\LevelLoader.h" />
@@ -528,13 +529,14 @@
     <ClInclude Include="Engine\Particle\ParticleManager.h" />
     <ClInclude Include="Engine\Particle\SimpleParticle.h" />
     <ClInclude Include="Application\Temperature.h" />
-    <ClInclude Include="Application\GameObject.h" />
-    <ClInclude Include="Application\Fire.h" />
-    <ClInclude Include="Application\FireManager.h" />
+    <ClInclude Include="Application\Object\GameObject.h" />
+    <ClInclude Include="Application\Object\Fire.h" />
+    <ClInclude Include="Application\Object\FireManager.h" />
     <ClInclude Include="Application\Object\Wax\WaxState.h" />
     <ClInclude Include="Application\Level.h" />
     <ClInclude Include="Application\Singleton.h" />
-    <ClInclude Include="Application\SpawnerManager.h" />
+    <ClInclude Include="Application\Object\SpawnerManager.h" />
+    <ClInclude Include="Application\Parameter.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Shader\Basic.hlsli">

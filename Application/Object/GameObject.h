@@ -10,6 +10,7 @@ public:
 
 	//------------ その他 ------------//
 	ModelObj obj;				//オブジェクト
+	ModelObj drawerObj;			//当たり判定描画オブジェクト
 	
 	ColPrimitive3D::Sphere collider;	//Sphereの当たり判定
 
@@ -41,6 +42,8 @@ public:
 protected:
 	//当たり判定の更新
 	void UpdateCollider();
+
+	void DrawCollider();
 
 private:
 	//コピー禁止

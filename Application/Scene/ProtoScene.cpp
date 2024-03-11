@@ -135,6 +135,9 @@ void ProtoScene::Update()
 	{
 		for (auto& wax2 : WaxManager::GetInstance()->waxs)
 		{
+			//同じ部分を指しているポインタなら同じものなのでスキップ
+			if (wax1 == wax2)continue;
+
 			bool isCollision = ColPrimitive3D::CheckSphereToSphere(wax1->collider, wax2->collider);
 
 			//ぶつかっていて

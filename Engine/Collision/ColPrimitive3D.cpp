@@ -6,7 +6,9 @@ using namespace ColPrimitive3D;
 bool ColPrimitive3D::CheckSphereToSphere(Sphere a, Sphere b)
 {
     Vector3 dis = b.pos - a.pos;
-    if (dis.LengthSq() <= a.r * a.r + b.r + b.r) {
+    float lf = dis.LengthSq();
+    float rf = (a.r + b.r) * (a.r + b.r);
+    if (lf <= rf) {
         return true;
     }
     return false;

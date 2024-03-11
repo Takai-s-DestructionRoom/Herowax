@@ -74,16 +74,22 @@ void Cube::TransferBuffer(ViewProjection viewprojection)
 	}
 }
 
-void Cube::Draw()
+std::vector<RenderOrder> Cube::GetRenderOrder()
 {
+	std::vector<RenderOrder> result;
+
 	for (int32_t i = 0; i < 6; i++) {
-		mFaces[i].Draw();
+		for (RenderOrder& order : mFaces[i].GetRenderOrder()) {
+			result.push_back(order);
+		}
 	}
+
+	return result;
 }
 
-void Cube::DrawCommands()
+void Cube::Draw(std::string stageID)
 {
 	for (int32_t i = 0; i < 6; i++) {
-		mFaces[i].DrawCommands();
+		mFaces[i].Draw(stageID);
 	}
 }

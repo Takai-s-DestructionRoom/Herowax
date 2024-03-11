@@ -174,4 +174,7 @@ namespace Util {
     /// <param name="t"></param>
     /// <returns></returns>
     Vector3 Spline(const std::vector<Vector3>& points, float t);
+
+    //文字列に指定した文字列が含まれていればtrue
+    bool ContainString(const std::string& str,const std::string& check);
 }

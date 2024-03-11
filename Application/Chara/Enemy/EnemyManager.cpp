@@ -1,11 +1,19 @@
 #include "EnemyManager.h"
 #include "RImGui.h"
 #include "Colliders.h"
+#include "Parameter.h"
 
 EnemyManager* EnemyManager::GetInstance()
 {
 	static EnemyManager instance;
 	return &instance;
+}
+
+EnemyManager::EnemyManager()
+{
+	std::map<std::string, std::string> extract = Parameter::Extract("Enemy");
+	slowMag = std::stof(extract["減速率"]);
+	slowCoatingMag = std::stof(extract["ろうまみれ減速率"]);
 }
 
 void EnemyManager::CreateEnemy(const Vector3 position)
@@ -63,6 +71,12 @@ void EnemyManager::Update()
 
 	if (ImGui::Button("Reset")) {
 		enemys.clear();
+	}
+	if (ImGui::Button("セーブ")) {
+		Parameter::Begin("Enemy");
+		Parameter::Save("減速率", slowMag);
+		Parameter::Save("ろうまみれ減速率", slowCoatingMag);
+		Parameter::End();
 	}
 
 	ImGui::End();

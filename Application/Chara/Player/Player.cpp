@@ -8,6 +8,7 @@
 #include "Quaternion.h"
 #include "RImGui.h"
 #include "FireManager.h"
+#include "Parameter.h"
 
 Player::Player() :GameObject(),
 moveSpeed(1.f), moveAccelAmount(0.05f), isGround(true), hp(0), maxHP(10.f),
@@ -22,6 +23,19 @@ atkCoolTimer(0.3f), atkTimer(0.5f), atkHeight(1.f), solidTimer(5.f)
 	ParticleManager::GetInstance()->AddEmitter(&moveParticle, "playerMove");
 	moveParticle.SetIsRotation(true);
 	moveParticle.SetIsGrowing(true);
+
+	std::map<std::string, std::string> extract = Parameter::Extract("Player");
+	moveSpeed = std::stof(extract["移動速度"]);
+	moveAccelAmount = std::stof(extract["移動加速度"]);
+	gravity = std::stof(extract["重力"]);
+	jumpPower = std::stof(extract["ジャンプ力"]);
+	atkTimer.maxTime_ = std::stof(extract["攻撃時間"]);
+	atkSpeed = std::stof(extract["射出速度"]);
+	atkHeight = std::stof(extract["射出高度"]);
+	atkRange.x = std::stof(extract["攻撃範囲X"]);
+	atkRange.y = std::stof(extract["攻撃範囲Y"]);
+	atkCoolTimer.maxTime_ = std::stof(extract["クールタイム"]);
+	solidTimer.maxTime_ = std::stof(extract["固まるまでの時間"]);
 }
 
 void Player::Init()
@@ -113,6 +127,21 @@ void Player::Update()
 
 	if (ImGui::Button("Reset")) {
 		SetPos({ 0, 0, 0 });
+	}
+	if (ImGui::Button("セーブ")) {
+		Parameter::Begin("Player");
+		Parameter::Save("移動速度", moveSpeed);
+		Parameter::Save("移動加速度", moveAccelAmount);
+		Parameter::Save("重力", gravity);
+		Parameter::Save("ジャンプ力", jumpPower);
+		Parameter::Save("攻撃時間", atkTimer.maxTime_);
+		Parameter::Save("射出速度", atkSpeed);
+		Parameter::Save("射出高度", atkHeight);
+		Parameter::Save("攻撃範囲X", atkRange.x);
+		Parameter::Save("攻撃範囲Y", atkRange.y);
+		Parameter::Save("クールタイム", atkCoolTimer.maxTime_);
+		Parameter::Save("固まるまでの時間", solidTimer.maxTime_);
+		Parameter::End();
 	}
 
 	ImGui::End();

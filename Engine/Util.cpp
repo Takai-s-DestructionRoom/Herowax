@@ -222,3 +222,8 @@ Vector3 Util::Spline(const std::vector<Vector3>& points, float t)
 		(p0 * 2 - p1 * 5 + p2 * 4 - p3) * t * t +
 		(-p0 + p1 * 3 - p2 * 3 + p3) * t * t * t) * 0.5f;
 }
+
+bool Util::ContainString(const std::string& str, const std::string& check)
+{
+	return str.find(check) != std::string::npos;
+}
