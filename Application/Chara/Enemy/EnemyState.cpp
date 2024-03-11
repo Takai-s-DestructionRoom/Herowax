@@ -62,6 +62,7 @@ void EnemyWaxCoating::Update(Enemy* enemy)
 void EnemyWaxStop::Update(Enemy* enemy)
 {
 	//蝋固まり状態で時間経過したら解除(当たり判定不要)
+	enemy;
 }
 
 
