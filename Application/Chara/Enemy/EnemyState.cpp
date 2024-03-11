@@ -1,5 +1,6 @@
 #include "EnemyState.h"
 #include "Enemy.h"
+#include "EnemyManager.h"
 
 void EnemyNormal::Update(Enemy* enemy)
 {
@@ -18,18 +19,22 @@ void EnemySlow::Update(Enemy* enemy)
 	//足とられた時の減速率はimguiでいじったものを基準とするのでここではいじらない
 	enemy->SetSlowCoatingMag(0.f);
 
+	//足がとられている蝋のポインタを持っておいて、固まっているかを調べる
 	if (enemy->trappedWax->isSolid)
 	{
+		//付与する力が一度に固まる敵の数だけ強まる
+		EnemyManager::GetInstance()->IncrementSolidCombo();
+		//抜け出す力を付与する
+		enemy->SetEscapePower((float)EnemyManager::GetInstance()->GetSolidCombo());
+
 		//遷移
-		enemy->ChangeState(new EnemyStop());
+		enemy->ChangeState(new EnemyFootStop());
 	}
-	//足とられ状態で蝋が固まったら次へ遷移(当たり判定必要)
-	//もしくは足がとられている蝋のポインタを持っておいて、固まっているかを調べる
 }
 
-void EnemyStop::Update(Enemy* enemy)
+void EnemyFootStop::Update(Enemy* enemy)
 {
-	enemy->SetStateStr("Stop");
+	enemy->SetStateStr("FootStop");
 	//減速率100%
 	enemy->SetSlowMag(1.f);
 
@@ -43,10 +48,17 @@ void EnemyStop::Update(Enemy* enemy)
 	else if (enemy->GetEscapeCoolTimer()->GetEnd())
 	{
 		enemy->SetIsEscape(true);	//脱出行動をする
+		enemy->trappedWax->Damage(enemy->GetEscapePower());
+
 		enemy->GetEscapeCoolTimer()->Reset();
 	}
 
-	//足とられ固まり状態で蝋のHPが0になったら次へ(当たり判定不要)
+	//抵抗して蝋のHPが0になったら次へ(当たり判定不要)
+	if (enemy->trappedWax->isAlive == false)
+	{
+		//遷移
+		enemy->ChangeState(new EnemyNormal());
+	}
 }
 
 void EnemyWaxCoating::Update(Enemy* enemy)
@@ -59,10 +71,31 @@ void EnemyWaxCoating::Update(Enemy* enemy)
 	//蝋まみれ状態で時間経過したら蝋固まり状態へ
 }
 
-void EnemyWaxStop::Update(Enemy* enemy)
+void EnemyAllStop::Update(Enemy* enemy)
 {
-	//蝋固まり状態で時間経過したら解除(当たり判定不要)
-	enemy;
+	enemy->SetStateStr("AllStop");
+
+	enemy->SetIsEscape(false);
+	//タイマーを回し続ける
+	enemy->GetEscapeCoolTimer()->Update();
+	if (enemy->GetEscapeCoolTimer()->GetStarted() == false)
+	{
+		enemy->GetEscapeCoolTimer()->Start();
+	}
+	else if (enemy->GetEscapeCoolTimer()->GetEnd())
+	{
+		enemy->SetIsEscape(true);	//脱出行動をする
+		enemy->trappedWax->Damage(enemy->GetEscapePower());
+
+		enemy->GetEscapeCoolTimer()->Reset();
+	}
+
+	//抵抗して蝋のHPが0になったら次へ(当たり判定不要)
+	if (enemy->trappedWax->isAlive == false)
+	{
+		//遷移
+		enemy->ChangeState(new EnemyNormal());
+	}
 }
 
 

@@ -30,15 +30,15 @@ public:
 	void Update(Enemy* enemy)override;
 };
 
-//蝋をかけられて固まった状態(前進に蝋がついているイメージ)
-class EnemyWaxStop : public EnemyState
+//全身硬化状態(全身に蝋がついているイメージ)
+class EnemyAllStop : public EnemyState
 {
 public:
 	void Update(Enemy* enemy)override;
 };
 
-//固まってしまった状態
-class EnemyStop : public EnemyState
+//足元硬化状態
+class EnemyFootStop : public EnemyState
 {
 public:
 	void Update(Enemy* enemy)override;
