@@ -225,6 +225,8 @@ std::vector<RenderOrder> Image3D::GetRenderOrder()
 	};
 
 	result.push_back(order);
+
+	return result;
 }
 
 void Image3D::Draw(std::string stageID)

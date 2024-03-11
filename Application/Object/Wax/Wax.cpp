@@ -14,7 +14,6 @@ Wax::Wax():GameObject(),
 {
 	obj = ModelObj(Model::Load("./Resources/Model/wax/wax.obj", "wax", true));
 	obj.mTuneMaterial.mColor = waxOriginColor;
-	InitCollider();
 }
 
 void Wax::ChangeState(WaxState* newstate)

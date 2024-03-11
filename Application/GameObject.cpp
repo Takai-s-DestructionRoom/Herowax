@@ -22,11 +22,6 @@ bool GameObject::GetIsAlive() const
 	return isAlive;
 }
 
-void GameObject::InitCollider()
-{
-	//drawerObj = ModelObj(Model::Load("./Resources/Model/Sphere.obj", "Sphere", true));
-}
-
 void GameObject::UpdateCollider()
 {
 	collider.pos = GetPos();
@@ -52,25 +47,8 @@ void GameObject::DrawCollider()
 	pipedesc.RasterizerState.FillMode = D3D12_FILL_MODE_WIREFRAME;
 
 	GraphicsPipeline pipe = GraphicsPipeline::GetOrCreate("WireObject", pipedesc);
-	for (std::shared_ptr<ModelMesh> data : drawerObj.mModel->mData) {
-		std::vector<RootData> rootData = {
-			{ TextureManager::Get(data->mMaterial.mTexture).mGpuHandle },
-			{ RootDataType::SRBUFFER_CBV, drawerObj.mMaterialBuffMap[data->mMaterial.mName].mBuff },
-			{ RootDataType::SRBUFFER_CBV, drawerObj.mTransformBuff.mBuff },
-			{ RootDataType::SRBUFFER_CBV, drawerObj.mViewProjectionBuff.mBuff },
-			{ RootDataType::LIGHT }
-		};
-
-		RenderOrder order;
-		order.mRootSignature = RDirectX::GetDefRootSignature().mPtr.Get();
+	for (RenderOrder& order : drawerObj.GetRenderOrder()) {
 		order.pipelineState = pipe.mPtr.Get();
-		order.vertView = &data->mVertBuff.mView;
-		order.indexView = &data->mIndexBuff.mView;
-		order.indexCount = static_cast<uint32_t>(data->mIndices.size());
-		order.rootData = rootData;
-
 		Renderer::DrawCall("Opaque", order);
 	}
-
-	//元の奴に戻す
 }
