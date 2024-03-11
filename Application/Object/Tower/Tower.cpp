@@ -2,7 +2,7 @@
 #include "Camera.h"
 #include "ImGui.h"
 
-Tower::Tower(): GameObject(),hp(0), maxHP(5)
+Tower::Tower(): GameObject(),hp(0), maxHP(5.f)
 {
 	obj = ModelObj(Model::Load("./Resources/Model/Birdnest/Birdnest.obj", "Birdnest", true));
 }
@@ -37,9 +37,9 @@ void Tower::Update()
 	ImGui::Begin("Tower", NULL, window_flags);
 
 	
-	ImGui::Text("HP:%d", hp);
+	ImGui::Text("HP:%f", hp);
 	if (ImGui::Button("HP減少")) {
-		Damage(1);
+		Damage(1.f);
 	}
 	if (ImGui::Button("Reset")) {
 		hp = maxHP;

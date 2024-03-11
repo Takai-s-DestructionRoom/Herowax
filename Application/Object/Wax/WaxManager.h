@@ -12,6 +12,8 @@ private:
 	//タカイが適当に解釈して適当にそれっぽくしてあります。
 	//後でよりそれっぽいシステムにしてくださいプランナーさん
 
+	std::string fileName = "Wax";
+
 public:
 	std::vector<std::unique_ptr<Wax>> waxs;	//蝋ども
 	const uint32_t kMaxWax = 128;	//最大弾数

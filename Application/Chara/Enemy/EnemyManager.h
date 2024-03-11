@@ -10,6 +10,12 @@ public:
 	//敵リスト
 	std::list<Enemy> enemys;
 
+private:
+	uint32_t solidCombo;	//連続で固まった敵の数カウント(これが多いと抜け出すまでの時間減る)
+	uint32_t burningCombo;	//連続で燃えた敵の数カウント(これが多いと温度爆上げ↑)
+
+	Easing::EaseTimer burningComboTimer;	//燃焼コンボの繋がる猶予
+
 	float slowMag;			//共通の減速率
 	float slowCoatingMag;	//共通の蝋かけられたときの減速率
 
@@ -26,8 +32,20 @@ public:
 	void Update();
 	void Draw();
 
+	// ゲッター //
+	//連続で固まった敵の数カウント取得
+	uint32_t GetSolidCombo() { return solidCombo; }
+	//連続で燃えた敵の数カウント取得
+	uint32_t GetBurningCombo() { return burningCombo; }
+
+	// セッター //
+	//連続で固まった敵の数カウント増やす
+	void IncrementSolidCombo() { solidCombo++; }
+	//連続で燃えた敵の数カウント増やす
+	void IncrementBurningCombo() { burningCombo++; burningComboTimer.Start(); }
+
 private:
-	EnemyManager() {};
+	EnemyManager();
 	~EnemyManager() {};
 
 	//コピー禁止

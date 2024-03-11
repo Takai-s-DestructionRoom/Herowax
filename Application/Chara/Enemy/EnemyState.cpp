@@ -22,6 +22,19 @@ void EnemyStop::Update(Enemy* enemy)
 	enemy->SetStateStr("Stop");
 	//減速率100%
 	enemy->SetSlowMag(1.f);
+
+	enemy->SetIsEscape(false);
+	//タイマーを回し続ける
+	enemy->GetEscapeCoolTimer()->Update();
+	if (enemy->GetEscapeCoolTimer()->GetStarted() == false)
+	{
+		enemy->GetEscapeCoolTimer()->Start();
+	}
+	else if (enemy->GetEscapeCoolTimer()->GetEnd())
+	{
+		enemy->SetIsEscape(true);	//脱出行動をする
+		enemy->GetEscapeCoolTimer()->Reset();
+	}
 }
 
 void EnemyWaxCoating::Update(Enemy* enemy)
