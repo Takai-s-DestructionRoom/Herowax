@@ -87,50 +87,6 @@ void ProtoScene::Update()
 					enemy.trappedWax = wax.get();
 				}
 			}
-
-			////すでに蝋がかかってる状態ならスルー
-			//if (enemy.GetState() == "WaxCoating")
-			//{
-			//	continue;
-			//}
-
-			//if (isCollision == false)
-			//{
-			//	enemy.ChangeState(new EnemyNormal());	//敵を通常状態に
-
-			//	continue;
-			//}
-
-			////液体の蝋に当たってたら
-			//if (isCollision && wax->isSolid == false)
-			//{
-			//	if (wax->isGround == false)
-			//	{
-			//		enemy.ChangeState(new EnemyWaxCoating());		//敵に蝋がかかった状態に
-			//	}
-			//	else
-			//	{
-			//		enemy.ChangeState(new EnemySlow());		//敵を足止め状態に
-			//	}
-			//}
-			////足を取られてる状態で固体になったら
-			//else if (isCollision && enemy.GetState() == "Slow" && wax->GetIsSolidNow())
-			//{
-			//	enemy.ChangeState(new EnemyStop());		//敵を固定状態に
-			//	//付与する力が一度に固まる敵の数だけ強まる
-			//	EnemyManager::GetInstance()->IncrementSolidCombo();
-			//	//抜け出す力を付与する
-			//	enemy.SetEscapePower((float)EnemyManager::GetInstance()->GetSolidCombo());
-			//}
-			////固まってる状態じゃないなら
-			//else if (enemy.GetState() != "Stop")
-			//{
-			//	enemy.ChangeState(new EnemyNormal());	//敵を通常状態に
-			//}
-			//else if (enemy.GetState() == "Stop" && enemy.GetIsEscape())
-			//{
-			//	wax->Damage(enemy.GetEscapePower());
-			//}
 		}
 	}
 	for (auto& fire : FireManager::GetInstance()->fires)
@@ -143,6 +99,12 @@ void ProtoScene::Update()
 			}
 		}
 	}
+	
+	player.Update();
+	level.Update();
+
+	//敵がロウを壊してから連鎖で壊れるため、敵の処理をしてからこの処理を行う
+#pragma region ロウ同士の当たり判定
 	for (auto& wax1 : WaxManager::GetInstance()->waxs)
 	{
 		for (auto& wax2 : WaxManager::GetInstance()->waxs)
@@ -155,6 +117,16 @@ void ProtoScene::Update()
 			//ぶつかっていて
 			if (isCollision)
 			{
+				//片方が死んでたらもう片方も殺す
+				if (wax1->GetIsAlive() == false)
+				{
+					wax2->SetIsAlive(false);
+				}
+				else if(wax2->GetIsAlive() == false)
+				{
+					wax1->SetIsAlive(false);
+				}
+
 				//燃えているものと通常の状態なら
 				if (wax1->IsBurning() && wax2->IsNormal())
 				{
@@ -180,10 +152,7 @@ void ProtoScene::Update()
 			}
 		}
 	}
-
-	player.Update();
-	level.Update();
-
+#pragma endregion
 	WaxManager::GetInstance()->Update();
 	FireManager::GetInstance()->Update();
 	TemperatureManager::GetInstance()->Update();
