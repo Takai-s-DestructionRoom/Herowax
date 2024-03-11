@@ -4,7 +4,7 @@
 #include "Util.h"
 
 EnemySpawner::EnemySpawner() : GameObject(),
-	hp(0), maxHP(5), spawnInterval(3.f), spawnNum(1),
+	hp(0), maxHP(5.f), spawnInterval(3.f), spawnNum(1),
 	spawnRandomPos(5.f)
 {
 	obj = ModelObj(Model::Load("./Resources/Model/stick.obj", "Stick", true));

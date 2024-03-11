@@ -22,8 +22,8 @@ private:
 	Vector3 frontVec{ 0,0,1 };		//正面ベクトル
 
 	//------------ HP関連 ------------//
-	uint32_t hp;				//現在のヒットポイント
-	uint32_t maxHP;				//最大HP
+	float hp;				//現在のヒットポイント
+	float maxHP;			//最大HP
 
 	//------------ 攻撃関連 ------------//
 	bool isAttack;					//攻撃中かフラグ

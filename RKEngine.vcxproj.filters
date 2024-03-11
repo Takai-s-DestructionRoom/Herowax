@@ -919,7 +919,7 @@
     <ClInclude Include="Application\Singleton.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Application\Object\Wax\EnemyState.h">
+    <ClInclude Include="Application\Chara\Enemy\EnemyState.h">
       <Filter>ヘッダー ファイル\Application\Object\Chara\Enemy</Filter>
     </ClInclude>
   </ItemGroup>

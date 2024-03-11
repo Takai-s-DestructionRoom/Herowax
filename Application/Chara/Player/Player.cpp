@@ -10,7 +10,7 @@
 #include "FireManager.h"
 
 Player::Player() :GameObject(),
-moveSpeed(1.f), moveAccelAmount(0.05f), isGround(true), hp(0), maxHP(10),
+moveSpeed(1.f), moveAccelAmount(0.05f), isGround(true), hp(0), maxHP(10.f),
 isJumping(false), jumpTimer(0.2f), jumpHeight(0.f), maxJumpHeight(5.f), jumpPower(2.f), jumpSpeed(0.f),
 isAttack(false), atkSpeed(1.f), atkRange({ 3.f,5.f }), atkSize(0.f), atkPower(1),
 atkCoolTimer(0.3f), atkTimer(0.5f), atkHeight(1.f), solidTimer(5.f)

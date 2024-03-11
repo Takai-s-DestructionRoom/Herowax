@@ -38,6 +38,15 @@ void EnemyManager::Update()
 		enemy.SetSlowCoatingMag(slowCoatingMag);	//蝋かかかった時の減速率まとめて変更
 		enemy.Update();
 	}
+
+	burningComboTimer.Update();
+	//猶予時間過ぎたらリセット
+	if (burningComboTimer.GetEnd())
+	{
+		burningCombo = 0;
+	}
+
+	solidCombo = 0;	//同フレームで固まった敵のみカウントするので逐一0に戻す
 	
 #pragma region ImGui
 	ImGui::SetNextWindowSize({ 300, 150 });

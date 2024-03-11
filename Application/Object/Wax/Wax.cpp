@@ -10,7 +10,8 @@ Wax::Wax():GameObject(),
 	burningTimer(1.0f),
 	extinguishTimer(0.5f),
 	state(new WaxNormal),
-	solidTimer(1.f)
+	solidTimer(1.f),
+	maxHP(10.f)
 {
 	obj = ModelObj(Model::Load("./Resources/Model/wax/wax.obj", "wax", true));
 	obj.mTuneMaterial.mColor = waxOriginColor;
@@ -34,6 +35,7 @@ bool Wax::GetIsSolidNow()
 void Wax::Init(uint32_t power, Vector3 vec,float speed,
 	Vector2 range, float size, float atkTime, float solidTime)
 {
+	hp = maxHP;
 	atkPower = power;
 	atkVec = vec * speed;
 	atkRange = range;
@@ -103,6 +105,12 @@ void Wax::Update()
 	//燃焼周りのステートの更新
 	state->Update(this);
 
+	//HPなくなったら死ぬ
+	if (hp <= 0)
+	{
+		isAlive = false;
+	}
+
 	UpdateCollider();
 
 	obj.mTransform.UpdateMatrix();
@@ -111,7 +119,10 @@ void Wax::Update()
 
 void Wax::Draw()
 {
-	obj.Draw();
+	if (isAlive)
+	{
+		obj.Draw();
+	}
 }
 
 bool Wax::IsBurning()

@@ -3,7 +3,9 @@
 
 Enemy::Enemy(ModelObj* target_) : GameObject(),
 	moveSpeed(0.1f),slowMag(0.8f),
-	isGraund(true), hp(0), maxHP(10),
+	isGraund(true), hp(0), maxHP(10.f),
+	isEscape(false),escapePower(0.f),escapeCoolTimer(1.f),
+	isAttack(false), atkPower(0.f), atkCoolTimer(1.f),
 	state(new EnemyNormal)
 {
 	obj = ModelObj(Model::Load("./Resources/Model/Sphere.obj", "Sphere", true));
@@ -24,6 +26,16 @@ void Enemy::Update()
 
 	//各ステート時の固有処理
 	state->Update(this);	//移動速度に関係するので移動の更新より前に置く
+
+	//抜け出そうとしてる時ピンクに
+	if (isEscape)
+	{
+		obj.mTuneMaterial.mColor = Color::kPink;
+	}
+	else
+	{
+		obj.mTuneMaterial.mColor = Color::kWhite;
+	}
 
 	//減速率は大きいほどスピード下がるから1.0から引くようにしてる
 	obj.mTransform.position += pVec * moveSpeed * 

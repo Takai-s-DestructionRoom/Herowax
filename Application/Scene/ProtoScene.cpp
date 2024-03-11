@@ -69,7 +69,7 @@ void ProtoScene::Update()
 		//タワーとの当たり判定
 		if (ColPrimitive3D::CheckSphereToSphere(enemy.collider, level.tower.collider)) {
 			enemy.SetIsAlive(false);
-			level.tower.Damage(1);
+			level.tower.Damage(1.f);
 		}
 		//蝋との当たり判定
 		for (auto& wax : WaxManager::GetInstance()->waxs)
@@ -79,6 +79,13 @@ void ProtoScene::Update()
 			//すでに蝋がかかってる状態ならスルー
 			if (enemy.GetState() == "WaxCoating")
 			{
+				continue;
+			}
+
+			if (isCollision == false)
+			{
+				enemy.ChangeState(new EnemyNormal());	//敵を通常状態に
+
 				continue;
 			}
 
@@ -98,11 +105,19 @@ void ProtoScene::Update()
 			else if (isCollision && enemy.GetState() == "Slow" && wax->GetIsSolidNow())
 			{
 				enemy.ChangeState(new EnemyStop());		//敵を固定状態に
+				//付与する力が一度に固まる敵の数だけ強まる
+				EnemyManager::GetInstance()->IncrementSolidCombo();
+				//抜け出す力を付与する
+				enemy.SetEscapePower((float)EnemyManager::GetInstance()->GetSolidCombo());
 			}
 			//固まってる状態じゃないなら
 			else if (enemy.GetState() != "Stop")
 			{
 				enemy.ChangeState(new EnemyNormal());	//敵を通常状態に
+			}
+			else if (enemy.GetState() == "Stop" && enemy.GetIsEscape())
+			{
+				wax->Damage(enemy.GetEscapePower());
 			}
 		}
 	}
@@ -118,7 +133,6 @@ void ProtoScene::Update()
 	}
 	for (auto& wax1 : WaxManager::GetInstance()->waxs)
 	{
-		
 		for (auto& wax2 : WaxManager::GetInstance()->waxs)
 		{
 			bool isCollision = ColPrimitive3D::CheckSphereToSphere(wax1->collider, wax2->collider);

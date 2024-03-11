@@ -439,7 +439,7 @@
     <ClInclude Include="Application\Scene\SpriteScene.h" />
     <ClInclude Include="Application\Chara\Enemy\Enemy.h" />
     <ClInclude Include="Application\Chara\Enemy\EnemyManager.h" />
-    <ClInclude Include="Application\Object\Wax\EnemyState.h" />
+    <ClInclude Include="Application\Chara\Enemy\EnemyState.h" />
     <ClInclude Include="Engine\Easing.h" />
     <ClInclude Include="Engine\Base\Rect.h" />
     <ClInclude Include="Engine\Base\RenderTarget.h" />
