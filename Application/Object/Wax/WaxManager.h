@@ -1,5 +1,6 @@
 #pragma once
 #include "Wax.h"
+#include "WaxGroup.h"
 
 // 蝋群管理 //
 class WaxManager final
@@ -16,7 +17,8 @@ private:
 
 public:
 	std::vector<std::unique_ptr<Wax>> waxs;	//蝋ども
-	const uint32_t kMaxWax = 128;	//最大弾数
+	std::vector<std::unique_ptr<WaxGroup>> waxGroups;	//蝋ども
+	const uint32_t kMaxWax = 128;	//最大グループ数
 
 	int isBurningNum = 0;
 	float heatUpTemperature;	//蝋が燃えたときに上がる温度
@@ -40,11 +42,13 @@ public:
 	//最初の要素削除
 	void EraceBegin();
 
+	void Move(uint32_t originNum,uint32_t moveNum);
+
 	//現在の温度ボーナスを返す(計算済み)
 	float GetCalcHeatBonus();
 
 	//満杯かどうか返す
-	bool GetIsEmpty() { return waxs.size() >= kMaxWax; }
+	bool GetIsFull() { return waxs.size() >= kMaxWax; }
 
 private:
 	//コンストラクタ

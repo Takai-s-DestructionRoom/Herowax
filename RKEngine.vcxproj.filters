@@ -504,6 +504,9 @@
     <ClCompile Include="Application\Object\TemperatueUI.cpp">
       <Filter>ソース ファイル\Application\Temperature</Filter>
     </ClCompile>
+    <ClCompile Include="Application\Object\Wax\WaxGroup.cpp">
+      <Filter>ソース ファイル\Application\Object\Wax</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Shader\TestVS.hlsl">
@@ -951,6 +954,9 @@
     </ClInclude>
     <ClInclude Include="Application\Object\TemperatueUI.h">
       <Filter>ヘッダー ファイル\Application\Tempareture</Filter>
+    </ClInclude>
+    <ClInclude Include="Application\Object\Wax\WaxGroup.h">
+      <Filter>ヘッダー ファイル\Application\Object\Wax</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

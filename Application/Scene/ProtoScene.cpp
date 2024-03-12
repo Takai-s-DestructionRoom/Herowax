@@ -118,16 +118,6 @@ void ProtoScene::Update()
 			//ぶつかっていて
 			if (isCollision)
 			{
-				//片方が死んでたらもう片方も殺す
-				if (wax1->GetIsAlive() == false)
-				{
-					wax2->SetIsAlive(false);
-				}
-				else if(wax2->GetIsAlive() == false)
-				{
-					wax1->SetIsAlive(false);
-				}
-
 				//燃えているものと通常の状態なら
 				if (wax1->IsBurning() && wax2->IsNormal())
 				{
@@ -140,6 +130,12 @@ void ProtoScene::Update()
 				//どっちも液体なら
 				else if (wax1->isSolid == false && wax2->isSolid == false)
 				{
+					//グループにまとめる
+					if (wax1->groupNum != wax2->groupNum)
+					{
+						WaxManager::GetInstance()->Move(wax1->groupNum, wax2->groupNum);
+					}
+
 					//固まる時間が長い方に優先
 					if (wax1->solidTimer.nowTime_ > wax2->solidTimer.nowTime_)
 					{

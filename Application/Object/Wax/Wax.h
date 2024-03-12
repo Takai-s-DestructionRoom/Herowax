@@ -32,13 +32,10 @@ public:
 	Easing::EaseTimer solidTimer;	//固形になるまでの時間
 	bool isFlashing;				//点滅フラグ
 
-	//------------ HP関連 ------------//
-	float hp;				//現在のヒットポイント
-	float maxHP;			//最大HP
-
 	//------------ その他 ------------//
 	float gravity = 0.098f;		//重力
 	bool isGround;				//接地してるかフラグ
+	uint32_t groupNum;			//所属グループの要素番号
 
 public:
 	Wax();
@@ -55,8 +52,8 @@ public:
 	bool IsBurning();
 	bool IsNormal();
 
-	//ダメージ受ける
-	void Damage(float damage) { hp -= damage; }
+	////ダメージ受ける
+	//void Damage(float damage) { hp -= damage; }
 
 	//状態変更
 	void ChangeState(WaxState* newstate);
