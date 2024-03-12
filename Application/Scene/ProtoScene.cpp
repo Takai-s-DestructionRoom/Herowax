@@ -127,11 +127,6 @@ void ProtoScene::Update()
 				//	wax1->SetIsAlive(false);
 				//}
 
-				if (wax1->groupNum != wax2->groupNum)
-				{
-					WaxManager::GetInstance()->Move(wax1->groupNum, wax2->groupNum);
-				}
-
 				//燃えているものと通常の状態なら
 				if (wax1->IsBurning() && wax2->IsNormal())
 				{
@@ -144,6 +139,12 @@ void ProtoScene::Update()
 				//どっちも液体なら
 				else if (wax1->isSolid == false && wax2->isSolid == false)
 				{
+					//グループにまとめる
+					if (wax1->groupNum != wax2->groupNum)
+					{
+						WaxManager::GetInstance()->Move(wax1->groupNum, wax2->groupNum);
+					}
+
 					//固まる時間が長い方に優先
 					if (wax1->solidTimer.nowTime_ > wax2->solidTimer.nowTime_)
 					{

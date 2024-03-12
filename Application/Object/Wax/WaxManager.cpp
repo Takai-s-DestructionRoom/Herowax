@@ -22,6 +22,7 @@ WaxManager::WaxManager() :
 void WaxManager::Init()
 {
 	waxs.clear();
+	waxGroups.clear();
 }
 
 void WaxManager::Update()
@@ -76,6 +77,11 @@ void WaxManager::Update()
 	ImGui::InputFloat("ボーナス上昇温度", &heatBonus, 1.0f);
 
 	ImGui::Text("ロウグループ数:%d", (int)waxGroups.size());
+	for (uint32_t i = 0; i < waxGroups.size(); i++)
+	{
+		ImGui::Text("グループ内のロウの数:%d", (int)waxGroups[i]->waxNums.size());
+	}
+
 	ImGui::PopItemWidth();
 
 	if (ImGui::Button("Reset")) {
