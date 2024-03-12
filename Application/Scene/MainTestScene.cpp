@@ -29,13 +29,13 @@ void MainTestScene::Init()
 
 void MainTestScene::Update()
 {
-	for (int i = 0; i < 10; i++) {
+	/*for (int i = 0; i < 10; i++) {
 		testList.emplace_back();
 		testList.back().model = ModelObj(Model::Load("Resources/Model/Sphere.obj", "Sphere", true));
 		testList.back().model.mTransform.scale = { 0.5f, 0.5f, 0.5f };
 		testList.back().model.mTuneMaterial.mColor = Color(Util::GetRand(0.0f, 1.0f), Util::GetRand(0.0f, 1.0f), Util::GetRand(0.0f, 1.0f), 1);
 		testList.back().vec = Vector3(Util::GetRand(-20.0f, 20.0f), Util::GetRand(-20.0f, 20.0f), Util::GetRand(-20.0f, 20.0f));
-	}
+	}*/
 	
 	for (auto itr = testList.begin(); itr != testList.end();) {
 		Test& T = *itr;

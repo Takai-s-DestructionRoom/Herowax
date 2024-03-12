@@ -96,7 +96,9 @@ void PaintScene::Update()
 			//1, 2, 3
 
 			for (int32_t j = 0; j < 4; j++) {
-				verts[j].pos *= hogeObj.mFaces[i].mTransform.matrix;
+				Float4 tp = verts[j].pos;
+				tp *= hogeObj.mFaces[i].mTransform.matrix;
+				verts[j].pos = tp;
 				Vector3 rot = hogeObj.mFaces[i].mTransform.rotation;
 				verts[j].normal *= Matrix4::RotationZXY(rot.x, rot.y, rot.z);
 			}

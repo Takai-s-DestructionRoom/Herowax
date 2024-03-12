@@ -365,9 +365,9 @@ Matrix4 Matrix4::Viewport(float x, float y, float width, float height, float min
 Vector3 operator*(const Vector3 vec, const Matrix4 mat)
 {
 	Vector3 temp = vec;
-	temp.x = vec.x * mat[0][0] + vec.y * mat[1][0] + vec.z * mat[2][0] + 1 * mat[3][0];
-	temp.y = vec.x * mat[0][1] + vec.y * mat[1][1] + vec.z * mat[2][1] + 1 * mat[3][1];
-	temp.z = vec.x * mat[0][2] + vec.y * mat[1][2] + vec.z * mat[2][2] + 1 * mat[3][2];
+	temp.x = vec.x * mat[0][0] + vec.y * mat[1][0] + vec.z * mat[2][0];
+	temp.y = vec.x * mat[0][1] + vec.y * mat[1][1] + vec.z * mat[2][1];
+	temp.z = vec.x * mat[0][2] + vec.y * mat[1][2] + vec.z * mat[2][2];
 	return temp;
 }
 
