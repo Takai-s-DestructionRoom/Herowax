@@ -2,6 +2,7 @@
 #include "Enemy.h"
 #include "EnemyManager.h"
 #include "Temperature.h"
+#include "WaxManager.h"
 
 void EnemyNormal::Update(Enemy* enemy)
 {
@@ -55,7 +56,8 @@ void EnemyFootStop::Update(Enemy* enemy)
 	else if (enemy->GetEscapeCoolTimer()->GetEnd())
 	{
 		enemy->SetIsEscape(true);	//脱出行動をする
-		enemy->trappedWax->Damage(enemy->GetEscapePower());
+		WaxManager::GetInstance()->
+			waxGroups[enemy->trappedWax->groupNum]->Damage(enemy->GetEscapePower());
 
 		enemy->GetEscapeCoolTimer()->Reset();
 	}
@@ -103,7 +105,8 @@ void EnemyAllStop::Update(Enemy* enemy)
 	else if (enemy->GetEscapeCoolTimer()->GetEnd())
 	{
 		enemy->SetIsEscape(true);	//脱出行動をする
-		enemy->trappedWax->Damage(enemy->GetEscapePower());
+		WaxManager::GetInstance()->
+			waxGroups[enemy->trappedWax->groupNum]->Damage(enemy->GetEscapePower());
 
 		enemy->GetEscapeCoolTimer()->Reset();
 	}
@@ -129,10 +132,12 @@ EnemyBurning::EnemyBurning()
 	//燃えている数カウントに+1
 	EnemyManager::GetInstance()->IncrementBurningCombo();
 
+	float hoge = TemperatureManager::GetInstance()->GetTemperature();
 	//燃え始めたときに、すでに燃えている数に応じて追加で温度上昇
 	TemperatureManager::GetInstance()->TemperaturePlus(
 		EnemyManager::GetInstance()->GetBurningCombo() * 
 		EnemyManager::GetInstance()->GetBurningBonus());
+	hoge = TemperatureManager::GetInstance()->GetTemperature();  
 }
 
 void EnemyBurning::Update(Enemy* enemy)
