@@ -12,6 +12,23 @@ Float4::operator Vector3() const
 	return Vector3(x, y, z);
 }
 
+Float4 Float4::operator*(const float& f) const
+{
+	Float4 temp = *this;
+	temp.x *= f;
+	temp.y *= f;
+	temp.z *= f;
+	temp.w *= f;
+	return temp;
+}
+
+Float4& Float4::operator*=(const float& f)
+{
+	Float4 temp = *this * f;
+	*this = temp;
+	return *this;
+}
+
 Float4 Float4::operator/(const float& f) const
 {
 	Float4 temp = *this;

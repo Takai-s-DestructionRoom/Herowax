@@ -25,6 +25,9 @@ public:
 	//w成分を捨ててVector3へキャスト
 	operator Vector3() const;
 
+	Float4 operator*(const float& f) const;
+	Float4& operator*=(const float& f);
+
 	Float4 operator/(const float& f) const;
 	Float4& operator/=(const float& f);
 };

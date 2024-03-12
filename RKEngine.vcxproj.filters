@@ -187,6 +187,12 @@
     <Filter Include="ソース ファイル\Application\Parameter">
       <UniqueIdentifier>{48df2fea-ba53-4dcf-8568-cff2652ba2ef}</UniqueIdentifier>
     </Filter>
+    <Filter Include="ソース ファイル\Application\Paint">
+      <UniqueIdentifier>{15f719ba-4c3d-4680-a383-05ac16035a55}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\Application\Paint">
+      <UniqueIdentifier>{b685b484-b56f-47fd-8808-42ab62ed0e88}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Engine\2d\Sprite.cpp">
@@ -490,7 +496,10 @@
       <Filter>ソース ファイル</Filter>
     </ClCompile>
     <ClCompile Include="Application\Scene\PaintScene.cpp">
-      <Filter>ソース ファイル</Filter>
+      <Filter>ソース ファイル\Application\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="Application\Paint\PaintUtil.cpp">
+      <Filter>ソース ファイル\Application\Paint</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -935,7 +944,10 @@
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
     <ClInclude Include="Application\Scene\PaintScene.h">
-      <Filter>ヘッダー ファイル</Filter>
+      <Filter>ヘッダー ファイル\Application\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="Application\Paint\PaintUtil.h">
+      <Filter>ヘッダー ファイル\Application\Paint</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

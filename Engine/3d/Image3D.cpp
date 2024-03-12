@@ -163,6 +163,28 @@ void Image3D::SetSize(Vector2 size, bool forceSize)
 	mChangeFlag = true;
 }
 	
+std::vector<VertexPNU> Image3D::GetVertices()
+{
+	Vector2 texSize = {
+		static_cast<float>(TextureManager::Get(mTexture).mResource->GetDesc().Width),
+		static_cast<float>(TextureManager::Get(mTexture).mResource->GetDesc().Height)
+	};
+
+	float uvLeft = mSrcPos.x / texSize.x;
+	float uvRight = (mSrcPos.x + mTexRect.x) / texSize.x;
+	float uvTop = mSrcPos.y / texSize.y;
+	float uvBottom = (mSrcPos.y + mTexRect.y) / texSize.y;
+
+	std::vector<VertexPNU> vertices = {
+		{{ -mAnchor.x * mSize.x, (1 - mAnchor.y) * mSize.y, 0.0f}, {0, 0, -1}, {uvLeft, uvTop}}, //左上
+		{{ -mAnchor.x * mSize.x, -mAnchor.y * mSize.y, 0.0f }, {0, 0, -1}, {uvLeft, uvBottom}}, //左下
+		{{ (1 - mAnchor.x) * mSize.x, (1 - mAnchor.y) * mSize.y, 0.0f }, {0, 0, -1}, {uvRight, uvTop}}, //右上
+		{{ (1 - mAnchor.x) * mSize.x, -mAnchor.y * mSize.y, 0.0f }, {0, 0, -1}, {uvRight, uvBottom}}, //右下
+	};
+
+	return vertices;
+}
+
 void Image3D::Init()
 {
 	//頂点インデックスデータ

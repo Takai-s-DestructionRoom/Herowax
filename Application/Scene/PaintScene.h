@@ -27,7 +27,12 @@ private:
 	LightGroup light;
 
 	ModelObj skydome;
+	ModelObj sphere;
 
 	Cube hogeObj;
 	Sprite sprite;
+
+	//customize
+	Color paintColor = { 1, 1, 1, 1 };
+	float paintSize = 300;
 };

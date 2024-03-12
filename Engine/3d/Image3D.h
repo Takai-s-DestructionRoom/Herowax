@@ -93,6 +93,8 @@ public:
 		return mSize;
 	}
 
+	std::vector<VertexPNU> GetVertices();
+
 	//初期化処理
 	void Init();
 
