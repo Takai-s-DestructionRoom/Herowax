@@ -87,8 +87,11 @@ void WaxManager::Update()
 	{
 		ImGui::Text("グループ内のロウの数:%d", (int)waxGroups[i]->waxNums.size());
 	}
-
 	ImGui::PopItemWidth();
+
+	if (ImGui::Button("当たり判定の描画")) {
+		isViewCol = !isViewCol;
+	}
 
 	if (ImGui::Button("Reset")) {
 		Init();
@@ -109,6 +112,9 @@ void WaxManager::Draw()
 	for (auto& wax : waxs)
 	{
 		wax->Draw();
+		if (isViewCol) {
+			wax->DrawCollider();
+		}
 	}
 }
 

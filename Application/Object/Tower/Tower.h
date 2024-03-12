@@ -8,6 +8,8 @@ public:
 	float hp;				//現在のヒットポイント
 	float maxHP;			//最大HP
 
+	bool isViewCol = false;
+
 public:
 	Tower();
 	void Init()override;

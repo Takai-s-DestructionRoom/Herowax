@@ -8,6 +8,8 @@ class WaxManager final
 private:
 	bool isWaxDead = false;
 
+	bool isViewCol = false;
+
 	float heatBonus;			//上記の同時燃焼数に応じたボーナス係数
 	//↑これは燃えた量が多ければ多いほど温度を保ちやすい、ってやつを
 	//タカイが適当に解釈して適当にそれっぽくしてあります。

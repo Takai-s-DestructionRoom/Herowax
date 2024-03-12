@@ -109,7 +109,6 @@ void Wax::Draw()
 	if (isAlive)
 	{
 		obj.Draw();
-		DrawCollider();
 	}
 }
 

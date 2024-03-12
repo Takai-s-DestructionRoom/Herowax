@@ -15,10 +15,7 @@ void Tower::Init()
 void Tower::Update()
 {
 	UpdateCollider();
-	//無理やり判定を足元にずらす(カスのコード)
-	//どっかで当たり判定可視化出来るようにしたいね
-	collider.pos.y = 0;
-
+	
 	//HP0になったら死ぬ
 	if (hp <= 0)
 	{
@@ -39,11 +36,13 @@ void Tower::Update()
 	window_flags |= ImGuiWindowFlags_NoResize;
 
 	ImGui::Begin("Tower", NULL, window_flags);
-
-	
-	ImGui::Text("HP:%d", &hp, 1.0f);
+	ImGui::Text("HP:%d", &hp);
 	if (ImGui::Button("HP減少")) {
 		Damage(1.f);
+	}
+
+	if (ImGui::Button("当たり判定の描画")) {
+		isViewCol = !isViewCol;
 	}
 	if (ImGui::Button("Reset")) {
 		hp = maxHP;
@@ -59,5 +58,8 @@ void Tower::Draw()
 	if (isAlive)
 	{
 		obj.Draw();
+		if (isViewCol) {
+			DrawCollider();
+		}
 	}
 }
