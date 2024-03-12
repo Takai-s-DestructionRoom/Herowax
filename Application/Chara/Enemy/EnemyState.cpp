@@ -48,7 +48,7 @@ void EnemyFootStop::Update(Enemy* enemy)
 	else if (enemy->GetEscapeCoolTimer()->GetEnd())
 	{
 		enemy->SetIsEscape(true);	//脱出行動をする
-		enemy->trappedWax->Damage(enemy->GetEscapePower());
+		//enemy->trappedWax->Damage(enemy->GetEscapePower());
 
 		enemy->GetEscapeCoolTimer()->Reset();
 	}
@@ -85,7 +85,7 @@ void EnemyAllStop::Update(Enemy* enemy)
 	else if (enemy->GetEscapeCoolTimer()->GetEnd())
 	{
 		enemy->SetIsEscape(true);	//脱出行動をする
-		enemy->trappedWax->Damage(enemy->GetEscapePower());
+		//enemy->trappedWax->Damage(enemy->GetEscapePower());
 
 		enemy->GetEscapeCoolTimer()->Reset();
 	}

@@ -9,7 +9,7 @@ WaxManager* WaxManager::GetInstance()
 	return &instance;
 }
 
-WaxManager::WaxManager() : 
+WaxManager::WaxManager() :
 	heatUpTemperature(10.f),
 	heatBonus(5.f)
 {
@@ -36,6 +36,23 @@ void WaxManager::Update()
 		}
 	}
 
+	for (uint32_t i = 0; i < waxGroups.size(); i++)
+	{
+		//ロウグループが空なら
+		if (waxGroups[i]->GetIsEmpty())
+		{
+			//要素削除
+			waxGroups.erase(waxGroups.begin() + i);
+			/*for (uint32_t j = 0; j < waxs.size(); j++)
+			{
+				if (waxs[j]->groupNum == i)
+				{
+					waxs[j]->isAlive = false;
+				}
+			}*/
+		}
+	}
+
 	//燃えている数を初期化
 	isBurningNum = 0;
 
@@ -55,8 +72,10 @@ void WaxManager::Update()
 	ImGui::Text("燃えているロウの数:%d", isBurningNum);
 	ImGui::Text("現在の温度:%f", TemperatureManager::GetInstance()->GetTemperature());
 	ImGui::PushItemWidth(100);
-	ImGui::InputFloat("ロウが燃えたときの上昇温度", &heatUpTemperature,1.0f);
+	ImGui::InputFloat("ロウが燃えたときの上昇温度", &heatUpTemperature, 1.0f);
 	ImGui::InputFloat("ボーナス上昇温度", &heatBonus, 1.0f);
+
+	ImGui::Text("ロウグループ数:%d", (int)waxGroups.size());
 	ImGui::PopItemWidth();
 
 	if (ImGui::Button("Reset")) {
@@ -87,6 +106,15 @@ void WaxManager::Create(Transform transform, uint32_t power, Vector3 vec,
 	//要素追加
 	waxs.emplace_back();
 	waxs.back() = std::make_unique<Wax>();
+	waxs.back()->groupNum = (uint32_t)waxGroups.size();
+
+	//ロウグループも逐一追加
+	waxGroups.emplace_back();
+	waxGroups.back() = std::make_unique<WaxGroup>();
+	//ロウグループが保持するロウの要素番号は今生成したばかりなのでsize-1
+	waxGroups.back()->waxNums.emplace_back();
+	waxGroups.back()->waxNums.back() = (uint32_t)waxs.size() - 1;
+
 
 	//指定された状態に
 	waxs.back()->obj.mTransform = transform;
@@ -97,6 +125,28 @@ void WaxManager::Create(Transform transform, uint32_t power, Vector3 vec,
 void WaxManager::EraceBegin()
 {
 	waxs.erase(waxs.begin());
+}
+
+void WaxManager::Move(uint32_t originNum, uint32_t moveNum)
+{
+	if (waxGroups[originNum]->waxNums.empty() == false &&
+		waxGroups[moveNum]->waxNums.empty() == false)
+	{
+		//要素の最後から移動させたい奴を全部詰める
+		waxGroups[originNum]->waxNums.insert(
+			waxGroups[originNum]->waxNums.end(),
+			waxGroups[moveNum]->waxNums.begin(),
+			waxGroups[moveNum]->waxNums.end());
+
+		//移動が終わったら移動元は消す
+		waxGroups[moveNum]->waxNums.clear();
+
+		//ロウに割り振られてるグループ番号を再設定
+		for (auto& num : waxGroups[originNum]->waxNums)
+		{
+			waxs[num]->groupNum = originNum;
+		}
+	}
 }
 
 float WaxManager::GetCalcHeatBonus()

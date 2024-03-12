@@ -117,14 +117,19 @@ void ProtoScene::Update()
 			//ぶつかっていて
 			if (isCollision)
 			{
-				//片方が死んでたらもう片方も殺す
-				if (wax1->GetIsAlive() == false)
+				////片方が死んでたらもう片方も殺す
+				//if (wax1->GetIsAlive() == false)
+				//{
+				//	wax2->SetIsAlive(false);
+				//}
+				//else if(wax2->GetIsAlive() == false)
+				//{
+				//	wax1->SetIsAlive(false);
+				//}
+
+				if (wax1->groupNum != wax2->groupNum)
 				{
-					wax2->SetIsAlive(false);
-				}
-				else if(wax2->GetIsAlive() == false)
-				{
-					wax1->SetIsAlive(false);
+					WaxManager::GetInstance()->Move(wax1->groupNum, wax2->groupNum);
 				}
 
 				//燃えているものと通常の状態なら
