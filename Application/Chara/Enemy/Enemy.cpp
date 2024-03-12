@@ -27,15 +27,7 @@ void Enemy::Update()
 	//各ステート時の固有処理
 	state->Update(this);	//移動速度に関係するので移動の更新より前に置く
 
-	//抜け出そうとしてる時ピンクに
-	if (isEscape)
-	{
-		obj.mTuneMaterial.mColor = Color::kPink;
-	}
-	else
-	{
-		obj.mTuneMaterial.mColor = Color::kWhite;
-	}
+	
 
 	//減速率は大きいほどスピード下がるから1.0から引くようにしてる
 	obj.mTransform.position += pVec * moveSpeed * 
@@ -71,4 +63,18 @@ void Enemy::ChangeState(EnemyState* newstate)
 {
 	delete state;
 	state = newstate;
+}
+
+void Enemy::SetIsEscape(bool flag)
+{
+	isEscape = flag;
+	//抜け出そうとしてる時ピンクに
+	if (isEscape)
+	{
+		obj.mTuneMaterial.mColor = Color::kPink;
+	}
+	else
+	{
+		obj.mTuneMaterial.mColor = Color::kWhite;
+	}
 }

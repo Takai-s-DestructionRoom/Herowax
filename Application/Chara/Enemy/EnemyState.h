@@ -1,4 +1,5 @@
 #pragma once
+#include "Easing.h"
 
 class Enemy;
 
@@ -48,5 +49,8 @@ public:
 class EnemyBurning : public EnemyState
 {
 public:
+	EnemyBurning();
 	void Update(Enemy* enemy)override;
+private:
+	Easing::EaseTimer timer = 1.0f;
 };

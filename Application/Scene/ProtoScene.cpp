@@ -81,6 +81,7 @@ void ProtoScene::Update()
 				//投げられてる蝋に当たった時は蝋固まり状態へ遷移
 				if (wax->isGround == false) {
 					enemy.ChangeState(new EnemyWaxCoating());
+					enemy.trappedWax = wax.get();
 				}
 				//地面に付いた蝋に当たった時は蝋足止め状態へ遷移
 				else {

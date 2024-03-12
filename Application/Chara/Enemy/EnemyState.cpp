@@ -1,6 +1,7 @@
 #include "EnemyState.h"
 #include "Enemy.h"
 #include "EnemyManager.h"
+#include "Temperature.h"
 
 void EnemyNormal::Update(Enemy* enemy)
 {
@@ -29,6 +30,12 @@ void EnemySlow::Update(Enemy* enemy)
 
 		//遷移
 		enemy->ChangeState(new EnemyFootStop());
+	}
+
+	std::string state = enemy->trappedWax->GetState();
+	if (state != "Normal")
+	{
+		enemy->ChangeState(new EnemyBurning);
 	}
 }
 
@@ -59,6 +66,12 @@ void EnemyFootStop::Update(Enemy* enemy)
 		//遷移
 		enemy->ChangeState(new EnemyNormal());
 	}
+
+	std::string state = enemy->trappedWax->GetState();
+	if (state != "Normal")
+	{
+		enemy->ChangeState(new EnemyBurning);
+	}
 }
 
 void EnemyWaxCoating::Update(Enemy* enemy)
@@ -69,6 +82,11 @@ void EnemyWaxCoating::Update(Enemy* enemy)
 	enemy->SetSlowMag(0.f);
 
 	//蝋まみれ状態で時間経過したら蝋固まり状態へ
+	std::string state = enemy->trappedWax->GetState();
+	if (state != "Normal")
+	{
+		enemy->ChangeState(new EnemyBurning);
+	}
 }
 
 void EnemyAllStop::Update(Enemy* enemy)
@@ -96,12 +114,42 @@ void EnemyAllStop::Update(Enemy* enemy)
 		//遷移
 		enemy->ChangeState(new EnemyNormal());
 	}
+
+	std::string state = enemy->trappedWax->GetState();
+	if (state != "Normal")
+	{
+		enemy->ChangeState(new EnemyBurning);
+	}
 }
 
+EnemyBurning::EnemyBurning()
+{
+	timer.Start();
+
+	//燃えている数カウントに+1
+	EnemyManager::GetInstance()->IncrementBurningCombo();
+
+	//燃え始めたときに、すでに燃えている数に応じて追加で温度上昇
+	TemperatureManager::GetInstance()->TemperaturePlus(
+		EnemyManager::GetInstance()->GetBurningCombo() * 
+		EnemyManager::GetInstance()->GetBurningBonus());
+}
 
 void EnemyBurning::Update(Enemy* enemy)
 {
+	timer.Update();
 	enemy->SetStateStr("Burning");
 
+	enemy->SetSlowMag(1.f);
+	enemy->SetSlowCoatingMag(1.f);
+
+	//色を赤に変更
+	enemy->obj.mTuneMaterial.mColor = Color::kRed;
+
 	//減速率いじるかわかんないので保留
+	
+	//燃えて死ぬ
+	if (timer.GetEnd()) {
+		enemy->isAlive = false;
+	}
 }

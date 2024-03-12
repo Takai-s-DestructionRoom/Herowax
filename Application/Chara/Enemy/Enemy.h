@@ -67,7 +67,7 @@ public:
 	//攻撃力設定
 	void SetAtkPower(float power) { atkPower = power; }
 	//脱出行動フラグ設定
-	void SetIsEscape(bool flag) { isEscape = flag; }
+	void SetIsEscape(bool flag);
 	//蝋から脱出する力設定
 	void SetEscapePower(float power) { escapePower = power; }
 	//状態文字情報を設定
