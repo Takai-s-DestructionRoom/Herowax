@@ -14,6 +14,7 @@ public:
 class WaxNormal : public WaxState
 {
 public:
+
 	void Update(Wax* wax)override;
 };
 

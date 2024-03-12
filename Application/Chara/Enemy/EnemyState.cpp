@@ -30,13 +30,13 @@ void EnemySlow::Update(Enemy* enemy)
 		enemy->SetEscapePower((float)EnemyManager::GetInstance()->GetSolidCombo());
 
 		//遷移
-		enemy->ChangeState(new EnemyFootStop());
+		enemy->ChangeState<EnemyFootStop>();
 	}
 
 	std::string state = enemy->trappedWax->GetState();
 	if (state != "Normal")
 	{
-		enemy->ChangeState(new EnemyBurning);
+		enemy->ChangeState<EnemyBurning>();
 	}
 }
 
@@ -66,13 +66,13 @@ void EnemyFootStop::Update(Enemy* enemy)
 	if (enemy->trappedWax->isAlive == false)
 	{
 		//遷移
-		enemy->ChangeState(new EnemyNormal());
+		enemy->ChangeState<EnemyNormal>();
 	}
 
 	std::string state = enemy->trappedWax->GetState();
 	if (state != "Normal")
 	{
-		enemy->ChangeState(new EnemyBurning);
+		enemy->ChangeState<EnemyBurning>();
 	}
 }
 
@@ -87,7 +87,7 @@ void EnemyWaxCoating::Update(Enemy* enemy)
 	std::string state = enemy->trappedWax->GetState();
 	if (state != "Normal")
 	{
-		enemy->ChangeState(new EnemyBurning);
+		enemy->ChangeState<EnemyBurning>();
 	}
 }
 
@@ -115,13 +115,13 @@ void EnemyAllStop::Update(Enemy* enemy)
 	if (enemy->trappedWax->isAlive == false)
 	{
 		//遷移
-		enemy->ChangeState(new EnemyNormal());
+		enemy->ChangeState<EnemyNormal>();
 	}
 
 	std::string state = enemy->trappedWax->GetState();
 	if (state != "Normal")
 	{
-		enemy->ChangeState(new EnemyBurning);
+		enemy->ChangeState<EnemyBurning>();
 	}
 }
 

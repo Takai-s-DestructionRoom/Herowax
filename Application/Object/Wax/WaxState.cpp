@@ -34,7 +34,7 @@ void WaxIgnite::Update(Wax* wax)
 
 	//次へ
 	if (wax->igniteTimer.GetEnd()) {
-		wax->ChangeState(new WaxBurning());
+		wax->ChangeState<WaxBurning>();
 	}
 }
 
@@ -58,7 +58,7 @@ void WaxBurning::Update(Wax* wax)
 
 	//次へ
 	if (wax->burningTimer.GetEnd()) {
-		wax->ChangeState(new WaxExtinguish());
+		wax->ChangeState<WaxExtinguish>();
 	}
 }
 

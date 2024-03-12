@@ -23,7 +23,7 @@ public:
 	Easing::EaseTimer burningTimer;	//蝋が燃え尽きるまでの時間
 	Easing::EaseTimer extinguishTimer;	//蝋が燃え尽きて消えるまでの時間
 	
-	WaxState* state;			//燃焼の状態管理
+	std::unique_ptr<WaxState> state;			//燃焼の状態管理
 	std::string stateStr;		//状態を文字列に保存用
 
 	//------------ 固形関連 ------------//
@@ -56,7 +56,10 @@ public:
 	//void Damage(float damage) { hp -= damage; }
 
 	//状態変更
-	void ChangeState(WaxState* newstate);
+	template <typename ChangeWaxState>
+	void ChangeState() {
+		state = std::make_unique<ChangeWaxState>();
+	};
 
 	// ゲッター //
 	//固まった瞬間かどうかを返す

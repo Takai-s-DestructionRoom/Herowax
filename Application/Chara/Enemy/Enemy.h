@@ -31,13 +31,14 @@ private:
 	//追跡する対象(タワーを入れる)
 	ModelObj* target = nullptr;
 
-	EnemyState* state;			//状態管理
+ 	std::unique_ptr<EnemyState> state;			//状態管理
 	std::string stateStr;		//状態を文字列で保存
 
 public:
 	Wax* trappedWax;			//足を取られている対象の蝋を保持
 
 	Enemy(ModelObj* target_);
+	~Enemy();
 	void Init() override;
 	void Update() override;
 	void Draw() override;
@@ -45,7 +46,10 @@ public:
 	void Tracking();
 
 	//状態変更
-	void ChangeState(EnemyState* newstate);
+	template <typename ChangeEnemyState>
+	void ChangeState() {
+		state = std::make_unique<ChangeEnemyState>();
+	};
 
 	// ゲッター //
 	//状態文字情報を取得

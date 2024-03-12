@@ -80,12 +80,12 @@ void ProtoScene::Update()
 			if (isCollision && wax->isSolid == false) {
 				//投げられてる蝋に当たった時は蝋固まり状態へ遷移
 				if (wax->isGround == false) {
-					enemy.ChangeState(new EnemyWaxCoating());
+					enemy.ChangeState<EnemyWaxCoating>();
 					enemy.trappedWax = wax.get();
 				}
 				//地面に付いた蝋に当たった時は蝋足止め状態へ遷移
 				else {
-					enemy.ChangeState(new EnemySlow());
+					enemy.ChangeState<EnemySlow>();
 					enemy.trappedWax = wax.get();
 				}
 			}
@@ -97,7 +97,7 @@ void ProtoScene::Update()
 		{
 			if (ColPrimitive3D::CheckSphereToSphere(wax->collider, fire.collider)) {
 				fire.SetIsAlive(false);
-				wax->ChangeState(new WaxIgnite());
+				wax->ChangeState<WaxIgnite>();
 			}
 		}
 	}
@@ -123,7 +123,7 @@ void ProtoScene::Update()
 				if (wax1->IsBurning() && wax2->IsNormal())
 				{
 					//燃えている状態へ遷移
-					wax2->ChangeState(new WaxIgnite());
+					wax2->ChangeState<WaxIgnite>();
 				}
 				//どっちも液体なら
 				else if (wax1->isSolid == false && wax2->isSolid == false)

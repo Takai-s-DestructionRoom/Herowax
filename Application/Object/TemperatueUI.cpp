@@ -91,17 +91,20 @@ void TemperatureUI::Draw()
 		position.y + frameSize.y / 2, 0, frameColor, true);
 
 	//ゲージ本体
-	SimpleDrawer::DrawBox(position.x, position.y - size.y / 2,
+	SimpleDrawer::DrawBox(position.x, 
+		position.y - size.y / 2,
 		position.x + burningPos.x * size.x - 
 		TemperatureManager::GetInstance()->MIN_TEMPERATURE * size.x,
 		position.y + size.y / 2, 0, burningColor, true);
 
-	SimpleDrawer::DrawBox(position.x, position.y - size.y / 2,
+	SimpleDrawer::DrawBox(position.x,
+		position.y - size.y / 2,
 		position.x + hotPos.x * size.x - 
 		TemperatureManager::GetInstance()->MIN_TEMPERATURE * size.x,
 		position.y + size.y / 2, 0, hotColor, true);
 
-	SimpleDrawer::DrawBox(position.x, position.y - size.y / 2,
+	SimpleDrawer::DrawBox(position.x,
+		position.y - size.y / 2,
 		position.x + coldPos.x * size.x - 
 		TemperatureManager::GetInstance()->MIN_TEMPERATURE * size.x,
 		position.y + size.y / 2, 0, coldColor, true);

@@ -5,11 +5,16 @@ Enemy::Enemy(ModelObj* target_) : GameObject(),
 	moveSpeed(0.1f),slowMag(0.8f),
 	isGraund(true), hp(0), maxHP(10.f),
 	isEscape(false),escapePower(0.f),escapeCoolTimer(1.f),
-	isAttack(false), atkPower(0.f), atkCoolTimer(1.f),
-	state(new EnemyNormal)
+	isAttack(false), atkPower(0.f), atkCoolTimer(1.f)
 {
+	state = std::make_unique<EnemyNormal>();
 	obj = ModelObj(Model::Load("./Resources/Model/Sphere.obj", "Sphere", true));
 	target = target_;
+}
+
+Enemy::~Enemy()
+{
+	
 }
 
 void Enemy::Init()
@@ -26,8 +31,6 @@ void Enemy::Update()
 
 	//各ステート時の固有処理
 	state->Update(this);	//移動速度に関係するので移動の更新より前に置く
-
-	
 
 	//減速率は大きいほどスピード下がるから1.0から引くようにしてる
 	obj.mTransform.position += pVec * moveSpeed * 
@@ -57,12 +60,6 @@ void Enemy::Tracking()
 	//減速率は大きいほどスピード下がるから1.0から引くようにしてる
 	obj.mTransform.position += pVec * moveSpeed *
 		(1.f - slowMag) * (1.f - slowCoatingMag);
-}
-
-void Enemy::ChangeState(EnemyState* newstate)
-{
-	delete state;
-	state = newstate;
 }
 
 void Enemy::SetIsEscape(bool flag)

@@ -9,17 +9,11 @@ Wax::Wax():GameObject(),
 	igniteTimer(0.25f),
 	burningTimer(1.0f),
 	extinguishTimer(0.5f),
-	state(new WaxNormal),
 	solidTimer(1.f)
 {
+	state = std::make_unique<WaxNormal>();
 	obj = ModelObj(Model::Load("./Resources/Model/wax/wax.obj", "wax", true));
 	obj.mTuneMaterial.mColor = waxOriginColor;
-}
-
-void Wax::ChangeState(WaxState* newstate)
-{
-	delete state;
-	state = newstate;
 }
 
 bool Wax::GetIsSolidNow()
