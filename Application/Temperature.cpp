@@ -4,6 +4,8 @@
 #include "RImGui.h"
 #include "TimeManager.h"
 #include "Parameter.h"
+#include "SceneManager.h"
+#include "ResultScene.h"
 
 TemperatureManager* TemperatureManager::GetInstance()
 {
@@ -24,6 +26,12 @@ TemperatureManager::TemperatureManager() :
 	MAX_TEMPERATURE = stof(extract["最大温度"]);
 }
 
+void TemperatureManager::Init()
+{
+	clearTimer.Reset();
+	temperature = MIN_TEMPERATURE;
+}
+
 void TemperatureManager::Update()
 {
 	temperature -= downSpeed * TimeManager::deltaTime;
@@ -42,6 +50,7 @@ void TemperatureManager::Update()
 	if (clearTimer.GetEnd())
 	{
 		//クリアのフラグとか立てる
+		SceneManager::GetInstance()->Change<ResultScene>();
 	}
 	clearTimer.Update();
 

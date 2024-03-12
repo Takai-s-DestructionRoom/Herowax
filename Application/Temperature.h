@@ -13,6 +13,7 @@ public:
 	float GetTemperature() {return temperature;};
 	void TemperaturePlus(float value) { temperature += value; };
 
+	void Init();
 	void Update();
 	void Draw();
 

@@ -40,6 +40,7 @@ void ProtoScene::Init()
 
 	WaxManager::GetInstance()->Init();
 	FireManager::GetInstance()->Init();
+	TemperatureManager::GetInstance()->Init();
 
 	//とりあえず最初のステージを設定しておく
 	level.Extract("test");
