@@ -104,12 +104,6 @@ void Wax::Update()
 	//燃焼周りのステートの更新
 	state->Update(this);
 
-	////HPなくなったら死ぬ
-	//if (hp <= 0)
-	//{
-	//	isAlive = false;
-	//}
-
 	UpdateCollider();
 
 	obj.mTransform.UpdateMatrix();

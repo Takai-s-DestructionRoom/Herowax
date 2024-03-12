@@ -1,19 +1,23 @@
 #include "WaxGroup.h"
 #include "WaxManager.h"
 
+WaxGroup::WaxGroup():hp(10.f),maxHP(10.f),damageSustained(0)
+{
+}
+
 void WaxGroup::Init()
 {
+	hp = maxHP;
 }
 
 void WaxGroup::Update()
 {
-	//死んだ蝋がいたら全削除
-	for (uint32_t i = 0; i < waxNums.size(); i++)
+	hp = maxHP - damageSustained;
+
+	//HPなくなったら死ぬ
+	if (hp <= 0)
 	{
-		if (WaxManager::GetInstance()->waxs[waxNums[i]]->GetIsAlive() == false)
-		{
-			waxNums.clear();
-		}
+		waxNums.clear();
 	}
 }
 

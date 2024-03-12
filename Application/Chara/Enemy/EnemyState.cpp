@@ -1,6 +1,7 @@
 #include "EnemyState.h"
 #include "Enemy.h"
 #include "EnemyManager.h"
+#include "WaxManager.h"
 
 void EnemyNormal::Update(Enemy* enemy)
 {
@@ -48,7 +49,8 @@ void EnemyFootStop::Update(Enemy* enemy)
 	else if (enemy->GetEscapeCoolTimer()->GetEnd())
 	{
 		enemy->SetIsEscape(true);	//脱出行動をする
-		//enemy->trappedWax->Damage(enemy->GetEscapePower());
+		WaxManager::GetInstance()->
+			waxGroups[enemy->trappedWax->groupNum]->Damage(enemy->GetEscapePower());
 
 		enemy->GetEscapeCoolTimer()->Reset();
 	}
@@ -85,7 +87,8 @@ void EnemyAllStop::Update(Enemy* enemy)
 	else if (enemy->GetEscapeCoolTimer()->GetEnd())
 	{
 		enemy->SetIsEscape(true);	//脱出行動をする
-		//enemy->trappedWax->Damage(enemy->GetEscapePower());
+		WaxManager::GetInstance()->
+			waxGroups[enemy->trappedWax->groupNum]->Damage(enemy->GetEscapePower());
 
 		enemy->GetEscapeCoolTimer()->Reset();
 	}

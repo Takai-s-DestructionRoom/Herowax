@@ -13,17 +13,24 @@ private:
 	//------------ HP関連 ------------//
 	float hp;				//現在のヒットポイント
 	float maxHP;			//最大HP
+	float damageSustained;	//くらったダメージ
 
 public:
+	WaxGroup();
 	void Init();
 	void Update();
 	void Draw();
 
 	//ダメージ受ける
-	void Damage(float damage) { hp -= damage; }
+	void Damage(float damage) { damageSustained += damage; }
 
+	// ゲッター //
 	//満杯かどうか返す
 	bool GetIsFull() { return waxNums.size() >= kMaxWax; }
 	//空っぽかどうか返す
 	bool GetIsEmpty() { return waxNums.empty(); }
+
+	// セッター //
+	//HP設定
+	void SetHP(float hitPoint) { maxHP = hitPoint; hp = hitPoint; }
 };

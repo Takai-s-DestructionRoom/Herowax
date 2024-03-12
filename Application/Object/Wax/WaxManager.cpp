@@ -42,15 +42,16 @@ void WaxManager::Update()
 		//ロウグループが空なら
 		if (waxGroups[i]->GetIsEmpty())
 		{
-			//要素削除
-			waxGroups.erase(waxGroups.begin() + i);
-			/*for (uint32_t j = 0; j < waxs.size(); j++)
+			//そのロウグループに所属してるロウ皆殺し
+			for (uint32_t j = 0; j < waxs.size(); j++)
 			{
 				if (waxs[j]->groupNum == i)
 				{
 					waxs[j]->isAlive = false;
 				}
-			}*/
+			}
+			//要素削除
+			waxGroups.erase(waxGroups.begin() + i);
 		}
 	}
 
@@ -60,6 +61,11 @@ void WaxManager::Update()
 	for (auto& wax : waxs)
 	{
 		wax->Update();
+	}
+
+	for (auto& waxGroup : waxGroups)
+	{
+		waxGroup->Update();
 	}
 
 #pragma region ImGui
@@ -146,6 +152,9 @@ void WaxManager::Move(uint32_t originNum, uint32_t moveNum)
 
 		//移動が終わったら移動元は消す
 		waxGroups[moveNum]->waxNums.clear();
+
+		//くっついてるロウの数だけHP増やす
+		waxGroups[originNum]->SetHP(waxGroups[originNum]->waxNums.size() * 10.f);
 
 		//ロウに割り振られてるグループ番号を再設定
 		for (auto& num : waxGroups[originNum]->waxNums)

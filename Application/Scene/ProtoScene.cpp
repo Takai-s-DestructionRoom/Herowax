@@ -117,16 +117,6 @@ void ProtoScene::Update()
 			//ぶつかっていて
 			if (isCollision)
 			{
-				////片方が死んでたらもう片方も殺す
-				//if (wax1->GetIsAlive() == false)
-				//{
-				//	wax2->SetIsAlive(false);
-				//}
-				//else if(wax2->GetIsAlive() == false)
-				//{
-				//	wax1->SetIsAlive(false);
-				//}
-
 				//燃えているものと通常の状態なら
 				if (wax1->IsBurning() && wax2->IsNormal())
 				{
