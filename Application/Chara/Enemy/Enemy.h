@@ -2,6 +2,7 @@
 #include "GameObject.h"
 #include "EnemyState.h"
 #include "Easing.h"
+#include "Wax.h"
 
 class Enemy : public GameObject
 {
@@ -34,6 +35,8 @@ private:
 	std::string stateStr;		//状態を文字列で保存
 
 public:
+	Wax* trappedWax;			//足を取られている対象の蝋を保持
+
 	Enemy(ModelObj* target_);
 	void Init() override;
 	void Update() override;
@@ -64,7 +67,7 @@ public:
 	//攻撃力設定
 	void SetAtkPower(float power) { atkPower = power; }
 	//脱出行動フラグ設定
-	void SetIsEscape(bool flag) { isEscape = flag; }
+	void SetIsEscape(bool flag);
 	//蝋から脱出する力設定
 	void SetEscapePower(float power) { escapePower = power; }
 	//状態文字情報を設定

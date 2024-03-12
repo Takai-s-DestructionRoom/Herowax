@@ -1,5 +1,6 @@
 #pragma once
 #include "Vector3.h"
+#include "Easing.h"
 
 class Wax;
 
@@ -33,5 +34,6 @@ class WaxExtinguish : public WaxState
 {
 public:
 	void Update(Wax* wax)override;
+private:
 	Vector3 saveScale = { 0,0,0 };
 };

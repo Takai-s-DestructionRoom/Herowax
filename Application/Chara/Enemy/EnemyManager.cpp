@@ -14,6 +14,7 @@ EnemyManager::EnemyManager()
 	std::map<std::string, std::string> extract = Parameter::Extract("Enemy");
 	slowMag = std::stof(extract["減速率"]);
 	slowCoatingMag = std::stof(extract["ろうまみれ減速率"]);
+	burningBonus = std::stof(extract["敵が燃えたときのボーナス上昇温度"]);
 }
 
 void EnemyManager::CreateEnemy(const Vector3 position)
@@ -29,8 +30,7 @@ void EnemyManager::SetTarget(ModelObj* target_)
 
 void EnemyManager::Init()
 {
-	slowMag = 0.5f;
-	slowMag = 0.9f;
+
 }
 
 void EnemyManager::Update()
@@ -39,7 +39,7 @@ void EnemyManager::Update()
 	enemys.remove_if([](Enemy& enemy) {
 		return !enemy.GetIsAlive();
 		});
-	
+
 	for (auto& enemy : enemys)
 	{
 		enemy.SetSlowMag(slowMag);	//減速率まとめて変更
@@ -68,6 +68,9 @@ void EnemyManager::Update()
 	ImGui::Text("EnemyNum:%d", enemys.size());
 	ImGui::SliderFloat("減速率", &slowMag, 0.f, 1.f);
 	ImGui::SliderFloat("ろうまみれ減速率", &slowCoatingMag, 0.f, 1.f);
+	ImGui::PushItemWidth(100);
+	ImGui::InputFloat("敵が燃えたときのボーナス上昇温度", &burningBonus, 1.f);
+	ImGui::PopItemWidth();
 
 	if (ImGui::Button("Reset")) {
 		enemys.clear();
@@ -76,6 +79,7 @@ void EnemyManager::Update()
 		Parameter::Begin("Enemy");
 		Parameter::Save("減速率", slowMag);
 		Parameter::Save("ろうまみれ減速率", slowCoatingMag);
+		Parameter::Save("敵が燃えたときのボーナス上昇温度", burningBonus);
 		Parameter::End();
 	}
 

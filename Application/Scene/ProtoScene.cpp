@@ -40,6 +40,7 @@ void ProtoScene::Init()
 
 	WaxManager::GetInstance()->Init();
 	FireManager::GetInstance()->Init();
+	TemperatureManager::GetInstance()->Init();
 
 	//とりあえず最初のステージを設定しておく
 	level.Extract("test");
@@ -76,48 +77,17 @@ void ProtoScene::Update()
 		{
 			bool isCollision = ColPrimitive3D::CheckSphereToSphere(enemy.collider, wax->collider);
 
-			//すでに蝋がかかってる状態ならスルー
-			if (enemy.GetState() == "WaxCoating")
-			{
-				continue;
-			}
-
-			if (isCollision == false)
-			{
-				enemy.ChangeState(new EnemyNormal());	//敵を通常状態に
-
-				continue;
-			}
-
-			//液体の蝋に当たってたら
-			if (isCollision && wax->isSolid == false)
-			{
-				if (wax->isGround == false)
-				{
-					enemy.ChangeState(new EnemyWaxCoating());		//敵に蝋がかかった状態に
+			if (isCollision && wax->isSolid == false) {
+				//投げられてる蝋に当たった時は蝋固まり状態へ遷移
+				if (wax->isGround == false) {
+					enemy.ChangeState(new EnemyWaxCoating());
+					enemy.trappedWax = wax.get();
 				}
-				else
-				{
-					enemy.ChangeState(new EnemySlow());		//敵を足止め状態に
+				//地面に付いた蝋に当たった時は蝋足止め状態へ遷移
+				else {
+					enemy.ChangeState(new EnemySlow());
+					enemy.trappedWax = wax.get();
 				}
-			}
-			//足を取られてる状態で固体になったら
-			else if (isCollision && enemy.GetState() == "Slow" && wax->GetIsSolidNow())
-			{
-				enemy.ChangeState(new EnemyStop());		//敵を固定状態に
-				//付与する力が一度に固まる敵の数だけ強まる
-				EnemyManager::GetInstance()->IncrementSolidCombo();
-				//抜け出す力を付与する
-				enemy.SetEscapePower((float)EnemyManager::GetInstance()->GetSolidCombo());
-			}
-			//固まってる状態じゃないなら
-			else if (enemy.GetState() != "Stop")
-			{
-				enemy.ChangeState(new EnemyNormal());	//敵を通常状態に
-			}
-			else if (enemy.GetState() == "Stop" && enemy.GetIsEscape())
-			{
-				wax->Damage(enemy.GetEscapePower());
 			}
 		}
 	}
@@ -131,6 +101,12 @@ void ProtoScene::Update()
 			}
 		}
 	}
+	
+	player.Update();
+	level.Update();
+
+	//敵がロウを壊してから連鎖で壊れるため、敵の処理をしてからこの処理を行う
+#pragma region ロウ同士の当たり判定
 	for (auto& wax1 : WaxManager::GetInstance()->waxs)
 	{
 		for (auto& wax2 : WaxManager::GetInstance()->waxs)
@@ -148,13 +124,16 @@ void ProtoScene::Update()
 				{
 					//燃えている状態へ遷移
 					wax2->ChangeState(new WaxIgnite());
-					//燃えたときに、すでに燃えている蝋の数に応じてボーナス
-					TemperatureManager::GetInstance()->TemperaturePlus(
-						WaxManager::GetInstance()->GetCalcHeatBonus());
 				}
 				//どっちも液体なら
 				else if (wax1->isSolid == false && wax2->isSolid == false)
 				{
+					//グループにまとめる
+					if (wax1->groupNum != wax2->groupNum)
+					{
+						WaxManager::GetInstance()->Move(wax1->groupNum, wax2->groupNum);
+					}
+
 					//固まる時間が長い方に優先
 					if (wax1->solidTimer.nowTime_ > wax2->solidTimer.nowTime_)
 					{
@@ -168,10 +147,7 @@ void ProtoScene::Update()
 			}
 		}
 	}
-
-	player.Update();
-	level.Update();
-
+#pragma endregion
 	WaxManager::GetInstance()->Update();
 	FireManager::GetInstance()->Update();
 	TemperatureManager::GetInstance()->Update();

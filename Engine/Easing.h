@@ -93,6 +93,10 @@ namespace Easing
 		void Start();
 		//呼び出したらタイマーが後退
 		void ReverseStart();
+		//呼び出したらタイマーをストップ
+		void Stop();
+		//呼び出したらタイマーを起動(初期化しない)
+		void ReStart();
 		//経過時間を更新
 		void Update(const float elapseTimer = 1.0f);
 		//タイマー更新+無限ループ

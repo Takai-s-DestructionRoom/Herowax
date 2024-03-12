@@ -187,6 +187,15 @@
     <Filter Include="ソース ファイル\Application\Parameter">
       <UniqueIdentifier>{48df2fea-ba53-4dcf-8568-cff2652ba2ef}</UniqueIdentifier>
     </Filter>
+    <Filter Include="ヘッダー ファイル\Application\Parameter">
+      <UniqueIdentifier>{a8d22c5f-4ded-4318-9e87-03fbec445c39}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\Application\Singleton">
+      <UniqueIdentifier>{414680d6-d1e6-434a-8b58-f415edb1bb1e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\Application\Singleton">
+      <UniqueIdentifier>{c08bcb37-9e99-4911-99c0-5eacfc01eaf6}</UniqueIdentifier>
+    </Filter>
     <Filter Include="ソース ファイル\Application\Paint">
       <UniqueIdentifier>{15f719ba-4c3d-4680-a383-05ac16035a55}</UniqueIdentifier>
     </Filter>
@@ -486,17 +495,23 @@
     <ClCompile Include="Application\LevelLoader.cpp">
       <Filter>ソース ファイル\Application\Loader</Filter>
     </ClCompile>
-    <ClCompile Include="Application\Singleton.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
     <ClCompile Include="Application\Chara\Enemy\EnemyState.cpp">
       <Filter>ソース ファイル\Application\Object\Chara\Enemy</Filter>
     </ClCompile>
     <ClCompile Include="Application\Parameter.cpp">
-      <Filter>ソース ファイル</Filter>
+      <Filter>ソース ファイル\Application\Parameter</Filter>
+    </ClCompile>
+    <ClCompile Include="Application\Singleton.cpp">
+      <Filter>ソース ファイル\Application\Singleton</Filter>
     </ClCompile>
     <ClCompile Include="Application\Scene\PaintScene.cpp">
       <Filter>ソース ファイル\Application\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="Application\Object\TemperatueUI.cpp">
+      <Filter>ソース ファイル\Application\Temperature</Filter>
+    </ClCompile>
+    <ClCompile Include="Application\Object\Wax\WaxGroup.cpp">
+      <Filter>ソース ファイル\Application\Object\Wax</Filter>
     </ClCompile>
     <ClCompile Include="Application\Paint\PaintUtil.cpp">
       <Filter>ソース ファイル\Application\Paint</Filter>
@@ -934,17 +949,23 @@
     <ClInclude Include="Application\Object\SpawnerManager.h">
       <Filter>ヘッダー ファイル\Application\Object\EnemySpawner</Filter>
     </ClInclude>
-    <ClInclude Include="Application\Singleton.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
     <ClInclude Include="Application\Chara\Enemy\EnemyState.h">
       <Filter>ヘッダー ファイル\Application\Object\Chara\Enemy</Filter>
     </ClInclude>
     <ClInclude Include="Application\Parameter.h">
-      <Filter>ヘッダー ファイル</Filter>
+      <Filter>ヘッダー ファイル\Application\Parameter</Filter>
+    </ClInclude>
+    <ClInclude Include="Application\Singleton.h">
+      <Filter>ヘッダー ファイル\Application\Singleton</Filter>
     </ClInclude>
     <ClInclude Include="Application\Scene\PaintScene.h">
       <Filter>ヘッダー ファイル\Application\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="Application\Object\TemperatueUI.h">
+      <Filter>ヘッダー ファイル\Application\Tempareture</Filter>
+    </ClInclude>
+    <ClInclude Include="Application\Object\Wax\WaxGroup.h">
+      <Filter>ヘッダー ファイル\Application\Object\Wax</Filter>
     </ClInclude>
     <ClInclude Include="Application\Paint\PaintUtil.h">
       <Filter>ヘッダー ファイル\Application\Paint</Filter>

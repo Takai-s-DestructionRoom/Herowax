@@ -1,4 +1,5 @@
 #pragma once
+#include "Easing.h"
 
 class Enemy;
 
@@ -30,8 +31,15 @@ public:
 	void Update(Enemy* enemy)override;
 };
 
-//固まってしまった状態
-class EnemyStop : public EnemyState
+//全身硬化状態(全身に蝋がついているイメージ)
+class EnemyAllStop : public EnemyState
+{
+public:
+	void Update(Enemy* enemy)override;
+};
+
+//足元硬化状態
+class EnemyFootStop : public EnemyState
 {
 public:
 	void Update(Enemy* enemy)override;
@@ -41,5 +49,8 @@ public:
 class EnemyBurning : public EnemyState
 {
 public:
+	EnemyBurning();
 	void Update(Enemy* enemy)override;
+private:
+	Easing::EaseTimer timer = 1.0f;
 };

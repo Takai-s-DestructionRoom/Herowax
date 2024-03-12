@@ -13,6 +13,11 @@ WaxIgnite::WaxIgnite()
 {
 	//燃えている数カウントに+1
 	WaxManager::GetInstance()->isBurningNum++;
+	//燃えたときに、すでに燃えている蝋の数に応じてボーナス
+	float hoge = TemperatureManager::GetInstance()->GetTemperature();
+	TemperatureManager::GetInstance()->TemperaturePlus(
+		WaxManager::GetInstance()->GetCalcHeatBonus());
+	hoge = TemperatureManager::GetInstance()->GetTemperature();
 }
 
 void WaxIgnite::Update(Wax* wax)
@@ -42,8 +47,10 @@ void WaxBurning::Update(Wax* wax)
 
 	//この状態になった瞬間、温度を上昇させる
 	if (!wax->burningTimer.GetStarted()) {
+		float hoge = TemperatureManager::GetInstance()->GetTemperature();
 		TemperatureManager::GetInstance()->TemperaturePlus(
 			WaxManager::GetInstance()->heatUpTemperature);
+		hoge = TemperatureManager::GetInstance()->GetTemperature();
 		wax->burningTimer.Start();
 	}
 	wax->burningTimer.Update();

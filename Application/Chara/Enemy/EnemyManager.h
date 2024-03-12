@@ -15,6 +15,7 @@ private:
 	uint32_t burningCombo;	//連続で燃えた敵の数カウント(これが多いと温度爆上げ↑)
 
 	Easing::EaseTimer burningComboTimer;	//燃焼コンボの繋がる猶予
+	float burningBonus;						//燃焼コンボの上昇量
 
 	float slowMag;			//共通の減速率
 	float slowCoatingMag;	//共通の蝋かけられたときの減速率
@@ -37,6 +38,8 @@ public:
 	uint32_t GetSolidCombo() { return solidCombo; }
 	//連続で燃えた敵の数カウント取得
 	uint32_t GetBurningCombo() { return burningCombo; }
+	//燃えた敵に応じて上昇するボーナスを取得
+	float GetBurningBonus() { return burningBonus; }
 
 	// セッター //
 	//連続で固まった敵の数カウント増やす

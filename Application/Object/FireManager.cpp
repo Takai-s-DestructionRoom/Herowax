@@ -1,5 +1,7 @@
 #include "FireManager.h"
 #include "Camera.h"
+#include "RImGui.h"
+#include "Parameter.h"
 
 FireManager* FireManager::GetInstance()
 {
@@ -8,11 +10,15 @@ FireManager* FireManager::GetInstance()
 }
 
 FireManager::FireManager() :
-	fireRange(10.f), fireImpactTime(2.0f), predictionSpawnTimer(0.4f)
+	fireRange(10.f), fireImpactTime(1.0f), predictionSpawnTimer(0.4f)
 {
 	predictionSpawnTimer.Start();
 
 	targetCircle = ModelObj(Model::Load("./Resources/Model/targetMark/targetMark.obj", "targetMark"));
+
+	std::map<std::string, std::string> extract = Parameter::Extract("Fire");
+	fireRange = std::stof(extract["炎の着弾位置"]);
+	fireImpactTime = std::stof(extract["炎を着弾時間"]);
 }
 
 void FireManager::Init()
@@ -54,6 +60,26 @@ void FireManager::Update()
 
 	targetCircle.mTransform.UpdateMatrix();
 	targetCircle.TransferBuffer(Camera::sNowCamera->mViewProjection);
+
+#pragma region ImGui
+	ImGui::SetNextWindowSize({ 300, 150 });
+
+	ImGuiWindowFlags window_flags = 0;
+	window_flags |= ImGuiWindowFlags_NoResize;
+	ImGui::Begin("炎", NULL, window_flags);
+
+	ImGui::SliderFloat("炎の着弾位置", &fireRange, -20.f, 20.f);
+	ImGui::InputFloat("炎を着弾時間", &fireImpactTime, 0.1f);
+
+	if (ImGui::Button("セーブ")) {
+		Parameter::Begin("Fire");
+		Parameter::Save("炎の着弾位置", fireRange);
+		Parameter::Save("炎を着弾時間", fireImpactTime);
+		Parameter::End();
+	}
+
+	ImGui::End();
+#pragma endregion
 }
 
 void FireManager::Draw()
