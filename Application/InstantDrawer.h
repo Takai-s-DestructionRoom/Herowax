@@ -2,12 +2,19 @@
 #include "Sprite.h"
 #include "Color.h"
 #include <list>
+#include "BillboardImage.h"
 
 /*! InstantDrawer
 	DxLibライクな描画関数を利用できるクラス
 */
 
 class InstantSprite : public Sprite
+{
+public:
+	bool isUse = false;
+};
+
+class InstantBillboard : public BillboardImage
 {
 public:
 	bool isUse = false;
@@ -46,6 +53,15 @@ public:
 		const std::string& handle, const Anchor& anchor = Anchor::CENTER);
 
 	/// <summary>
+	/// ビルボードで描画する
+	/// </summary>
+	/// <param name="pos"></param>
+	/// <param name="width"></param>
+	/// <param name="height"></param>
+	/// <param name="handle"></param>
+	static void DrawGraph3D(const Vector3& pos, float width, float height, const std::string& handle,const Color& color = {1,1,1,1});
+
+	/// <summary>
 	/// 全更新
 	/// </summary>
 	static void AllUpdate();
@@ -67,4 +83,6 @@ private:
 	//この描画クラスで1画面に同時に描画できる最大数
 	static const int SP_MAX = 100;
 	std::list<InstantSprite> sSprites;
+	static const int BILL_MAX = 100;
+	std::list<InstantBillboard> sBills;
 };

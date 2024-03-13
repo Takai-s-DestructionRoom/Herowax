@@ -22,6 +22,7 @@ ProtoScene::ProtoScene()
 	camera.mViewProjection.UpdateMatrix();
 
 	TemperatureUI::LoadResource();
+	EnemyManager::LoadResource();
 	InstantDrawer::PreCreate();
 
 	level.Load();
@@ -82,6 +83,9 @@ void ProtoScene::Update()
 				if (wax->isGround == false) {
 					enemy.ChangeState<EnemyWaxCoating>();
 					enemy.trappedWax = wax.get();
+					//enemyにダメージ
+					enemy.DealDamage(WaxManager::GetInstance()->waxDamage);
+					
 				}
 				//地面に付いた蝋に当たった時は蝋足止め状態へ遷移
 				else {

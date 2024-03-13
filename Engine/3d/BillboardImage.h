@@ -15,7 +15,9 @@ public:
 	Image3D mImage;
 	bool mUseBillboardY = false;
 
-	BillboardImage() {};
+	BillboardImage() {
+		Init("", { 1, 1 });
+	};
 	BillboardImage(TextureHandle texture, Vector2 size = {1, 1})
 	{
 		Init(texture, size);

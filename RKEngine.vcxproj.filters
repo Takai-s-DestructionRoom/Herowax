@@ -516,6 +516,9 @@
     <ClCompile Include="Application\Paint\PaintUtil.cpp">
       <Filter>ソース ファイル\Application\Paint</Filter>
     </ClCompile>
+    <ClCompile Include="Application\Object\EnemyUI.cpp">
+      <Filter>ソース ファイル\Application\Object\Chara\Enemy</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Shader\TestVS.hlsl">
@@ -969,6 +972,9 @@
     </ClInclude>
     <ClInclude Include="Application\Paint\PaintUtil.h">
       <Filter>ヘッダー ファイル\Application\Paint</Filter>
+    </ClInclude>
+    <ClInclude Include="Application\Object\EnemyUI.h">
+      <Filter>ヘッダー ファイル\Application\Object\Chara\Enemy</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

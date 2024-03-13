@@ -3,6 +3,7 @@
 #include "EnemyState.h"
 #include "Easing.h"
 #include "Wax.h"
+#include "EnemyUI.h"
 
 class Enemy : public GameObject
 {
@@ -34,8 +35,12 @@ private:
  	std::unique_ptr<EnemyState> state;			//状態管理
 	std::string stateStr;		//状態を文字列で保存
 
+	EnemyUI ui;
+
 public:
 	Wax* trappedWax;			//足を取られている対象の蝋を保持
+
+public:
 
 	Enemy(ModelObj* target_);
 	~Enemy();
@@ -60,6 +65,9 @@ public:
 	float GetEscapePower() { return escapePower; }
 	//脱出行動のクールタイム取得
 	Easing::EaseTimer* GetEscapeCoolTimer() { return &escapeCoolTimer; }
+	//HPの取得
+	float GetHP() { return hp; };
+	float GetMaxHP() { return maxHP; };
 
 	// セッター //
 	//減速率設定
@@ -76,5 +84,9 @@ public:
 	void SetEscapePower(float power) { escapePower = power; }
 	//状態文字情報を設定
 	void SetStateStr(std::string str) { stateStr = str; }
+	//ダメージを与える
+	void DealDamage(uint32_t damage);
+	//強制的に死亡させる
+	void SetDeath();
 };
 

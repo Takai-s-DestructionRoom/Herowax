@@ -21,11 +21,17 @@ void EnemyManager::CreateEnemy(const Vector3 position)
 {
 	enemys.emplace_back(target);
 	enemys.back().SetPos(position);
+	enemys.back().Init();
 }
 
 void EnemyManager::SetTarget(ModelObj* target_)
 {
 	target = target_;
+}
+
+void EnemyManager::LoadResource()
+{
+	EnemyUI::LoadResource();
 }
 
 void EnemyManager::Init()

@@ -22,8 +22,9 @@ public:
 	std::vector<std::unique_ptr<WaxGroup>> waxGroups;	//蝋ども
 	const uint32_t kMaxWax = 128;	//最大グループ数
 
-	int isBurningNum = 0;
+	uint32_t isBurningNum = 0;
 	float heatUpTemperature;	//蝋が燃えたときに上がる温度
+	uint32_t waxDamage;
 
 public:
 	//シングルトンインスタンス取得

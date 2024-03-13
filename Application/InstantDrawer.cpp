@@ -1,4 +1,5 @@
 #include "InstantDrawer.h"
+#include "Camera.h"
 #include <minmax.h>
 
 void InstantDrawer::DrawInit()
@@ -12,6 +13,14 @@ void InstantDrawer::DrawInit()
 			instant.mTransform.position = { -100,-100,-100 };
 			instant.mTransform.scale = { 0,0,0 };
 			instant.mTransform.rotation = { 0,0,0 };
+		}
+	}
+	for (auto& instant : Get()->sBills)
+	{
+		if (instant.isUse)
+		{
+			instant.isUse = false;
+			instant.mTransform.position = { -100,-100,-100 };
 		}
 	}
 }
@@ -55,6 +64,27 @@ void InstantDrawer::DrawGraph(const float& x, const float& y,
 	}
 }
 
+void InstantDrawer::DrawGraph3D(const Vector3& pos, float width, float height, 
+	const std::string& handle, const Color& color)
+{
+	//ハンドルが空なら描画をキャンセル
+	if (handle == "")return;
+
+	for (auto& instant : Get()->sBills)
+	{
+		if (!instant.isUse)
+		{
+			instant.isUse = true;
+			//instant.Init(handle,Vector2(width,height));
+			instant.mImage.SetTexture(handle);
+			instant.mImage.SetSize({ width, height });
+			instant.mTransform.position = pos;
+			instant.mImage.mMaterial.mColor = color;
+			break;
+		}
+	}
+}
+
 void InstantDrawer::AllUpdate()
 {
 	for (auto& sprite : Get()->sSprites)
@@ -63,6 +93,13 @@ void InstantDrawer::AllUpdate()
 		{
 			sprite.mTransform.UpdateMatrix();
 			sprite.TransferBuffer();
+		}
+	}
+	for (auto& bill : Get()->sBills)
+	{
+		if (bill.isUse)
+		{
+			bill.Update(Camera::sNowCamera->mViewProjection);
 		}
 	}
 }
@@ -78,6 +115,13 @@ void InstantDrawer::AllDraw2D()
 			sprite.Draw();
 		}
 	}
+	for (auto& bill : Get()->sBills)
+	{
+		if (bill.isUse)
+		{
+			bill.Draw();
+		}
+	}
 }
 
 void InstantDrawer::PreCreate()
@@ -85,5 +129,9 @@ void InstantDrawer::PreCreate()
 	for (int32_t i = 0; i < SP_MAX; i++)
 	{
 		Get()->sSprites.emplace_back();
+	}
+	for (int32_t i = 0; i < BILL_MAX; i++)
+	{
+		Get()->sBills.emplace_back();
 	}
 }

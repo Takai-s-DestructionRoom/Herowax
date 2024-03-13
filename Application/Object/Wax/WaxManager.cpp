@@ -11,7 +11,8 @@ WaxManager* WaxManager::GetInstance()
 
 WaxManager::WaxManager() :
 	heatUpTemperature(10.f),
-	heatBonus(5.f)
+	heatBonus(5.f),
+	waxDamage(1)
 {
 	//生成時に変数をセーブデータから引っ張ってくる
 	std::map<std::string, std::string> extract = Parameter::Extract(fileName);

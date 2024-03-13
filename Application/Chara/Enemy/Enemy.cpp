@@ -32,6 +32,10 @@ void Enemy::Update()
 	//各ステート時の固有処理
 	state->Update(this);	//移動速度に関係するので移動の更新より前に置く
 
+	if (hp <= 0) {
+		SetDeath();
+	}
+
 	//減速率は大きいほどスピード下がるから1.0から引くようにしてる
 	obj.mTransform.position += pVec * moveSpeed * 
 		(1.f - slowMag) * (1.f - slowCoatingMag);
@@ -40,6 +44,8 @@ void Enemy::Update()
 	//更新してからバッファに送る
 	obj.mTransform.UpdateMatrix();
 	obj.TransferBuffer(Camera::sNowCamera->mViewProjection);
+
+	ui.Update(this);
 }
 
 void Enemy::Draw()
@@ -47,6 +53,7 @@ void Enemy::Draw()
 	if (isAlive)
 	{
 		obj.Draw();
+		ui.Draw();
 	}
 }
 
@@ -74,4 +81,14 @@ void Enemy::SetIsEscape(bool flag)
 	{
 		obj.mTuneMaterial.mColor = Color::kWhite;
 	}
+}
+
+void Enemy::DealDamage(uint32_t damage)
+{
+	hp -= damage;
+}
+
+void Enemy::SetDeath()
+{
+	isAlive = false;
 }
