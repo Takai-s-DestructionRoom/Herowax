@@ -69,6 +69,11 @@ void Enemy::Tracking()
 		(1.f - slowMag) * (1.f - slowCoatingMag);
 }
 
+void Enemy::SetTarget(ModelObj* target_)
+{
+	target = target_;
+}
+
 void Enemy::SetIsEscape(bool flag)
 {
 	isEscape = flag;

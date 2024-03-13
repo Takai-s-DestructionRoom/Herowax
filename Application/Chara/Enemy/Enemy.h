@@ -50,6 +50,9 @@ public:
 
 	void Tracking();
 
+	//追いかける対象を変更
+	void SetTarget(ModelObj* target_);
+
 	//状態変更
 	template <typename ChangeEnemyState>
 	void ChangeState() {

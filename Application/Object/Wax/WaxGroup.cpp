@@ -27,9 +27,16 @@ void WaxGroup::Update()
 		isAlive = false;
 	}
 
+	int32_t empCount = 0;
 	//死んでいるロウがあれば消す
 	for (auto itr = waxs.begin(); itr != waxs.end();)
 	{
+		//もし中身がないならカウントして次へ
+		if (*itr == nullptr) {
+			empCount++;
+			itr++;
+			continue;
+		}
 		if (!(*itr)->GetIsAlive())
 		{
 			itr = waxs.erase(itr);
@@ -38,6 +45,10 @@ void WaxGroup::Update()
 		{
 			itr++;
 		}
+	}
+	//もし中身が全部空なら中身をなくす
+	if (empCount >= waxs.size()) {
+		waxs.clear();
 	}
 
 	for (auto& wax : waxs)

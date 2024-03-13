@@ -110,10 +110,8 @@ void Player::Update()
 	if (ImGui::TreeNode("攻撃系"))
 	{
 		ImGui::Text("攻撃中か:%d", isAttack);
-		ImGui::Text("攻撃中でも次の攻撃を出せるか:%d", isMugenAttack);
-		if (ImGui::Button("上記のフラグ変更")) {
-			isMugenAttack = !isMugenAttack;
-		}
+		ImGui::Checkbox("攻撃中でも次の攻撃を出せるか", &isMugenAttack);
+		
 		ImGui::SliderFloat("攻撃時間", &atkTimer.maxTime_, 0.f, 2.f);
 		ImGui::SliderFloat("射出速度", &atkSpeed, 0.f, 2.f);
 		ImGui::SliderFloat("射出高度", &atkHeight, 0.f, 3.f);
@@ -121,6 +119,12 @@ void Player::Update()
 		ImGui::SliderFloat("攻撃範囲Y", &atkRange.y, 0.f, 10.f);
 		ImGui::SliderFloat("クールタイム", &atkCoolTimer.maxTime_, 0.f, 2.f);
 		ImGui::SliderFloat("固まるまでの時間", &solidTimer.maxTime_, 0.f, 10.f);
+
+		ImGui::TreePop();
+	}
+	if (ImGui::TreeNode("お試し実装:自分の方に来る"))
+	{
+		ImGui::Checkbox("攻撃した相手が自分を攻撃するか", &isTauntMode);
 
 		ImGui::TreePop();
 	}

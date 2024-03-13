@@ -38,6 +38,9 @@ private:
 	Easing::EaseTimer solidTimer;	//固まるまでの時間(調整用)
 
 	bool isMugenAttack = false;		//攻撃中でも次の攻撃を出せるフラグ
+	
+	//----------- 挑発関連 ------------//
+	bool isTauntMode = false;		//ロウを直接当てると敵の追いかける対象が自分に変わるモード
 
 	//------------ その他 ------------//
 	SimpleParticle moveParticle;
@@ -59,4 +62,7 @@ public:
 	void Fire();
 
 	Vector3 GetFrontVec();
+
+	//お試し実装:殴った相手が自分を追っかけてくるモード
+	bool GetTauntMode() { return isTauntMode; };
 };
