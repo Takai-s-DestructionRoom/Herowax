@@ -14,6 +14,7 @@ private:
 	float hp;				//現在のヒットポイント
 	float maxHP;			//最大HP
 	float damageSustained;	//くらったダメージ
+	bool isAlive;			//生存フラグ
 
 public:
 	WaxGroup();
@@ -25,6 +26,8 @@ public:
 	void Damage(float damage) { damageSustained += damage; }
 
 	// ゲッター //
+	//生存フラグ取得
+	bool GetIsAlive() { return isAlive; }
 	//満杯かどうか返す
 	bool GetIsFull() { return waxNums.size() >= kMaxWax; }
 	//空っぽかどうか返す

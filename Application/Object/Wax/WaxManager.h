@@ -47,6 +47,8 @@ public:
 
 	void Move(uint32_t originNum,uint32_t moveNum);
 
+	void Sort(uint32_t eraseNum);
+
 	//現在の温度ボーナスを返す(計算済み)
 	float GetCalcHeatBonus();
 
