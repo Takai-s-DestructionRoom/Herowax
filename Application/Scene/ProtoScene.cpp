@@ -99,7 +99,7 @@ void ProtoScene::Update()
 	{
 		for (auto& wax : WaxManager::GetInstance()->waxs)
 		{
-			if (ColPrimitive3D::CheckSphereToSphere(wax->collider, fire.collider)) {
+			if (ColPrimitive3D::CheckSphereToSphere(wax->collider, fire.collider)&& wax->isGround) {
 				fire.SetIsAlive(false);
 				wax->ChangeState<WaxIgnite>();
 			}
@@ -133,9 +133,12 @@ void ProtoScene::Update()
 				else if (wax1->isSolid == false && wax2->isSolid == false)
 				{
 					//グループにまとめる
-					if (wax1->groupNum != wax2->groupNum)
+					if (wax1->groupNum != wax2->groupNum && wax1->isGround && wax2->isGround)
 					{
-						WaxManager::GetInstance()->Move(wax1->groupNum, wax2->groupNum);
+						if (wax1->GetState() == "Normal" && wax2->GetState() == "Normal")
+						{
+							WaxManager::GetInstance()->Move(wax1->groupNum, wax2->groupNum);
+						}
 					}
 
 					//固まる時間が長い方に優先
