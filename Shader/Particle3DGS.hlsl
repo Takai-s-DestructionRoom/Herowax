@@ -159,7 +159,7 @@ void main(
         offset = mul(matX, offset);
         offset = mul(matY, offset);
         
-        float4x4 rotMat = world;
+        float4x4 rotMat = matWorld;
         rotMat = mul(matZ, rotMat);
         rotMat = mul(matX, rotMat);
         rotMat = mul(matY, rotMat);
@@ -169,8 +169,8 @@ void main(
         float4 svpos = input[0].pos + offset;
         
         //ÉrÉÖÅ[ÅAéÀâeïœä∑
-        svpos = mul(viewproj, svpos);
-        float4 wpos = mul(world, input[0].pos + offset);
+        svpos = mul(matViewProjection, svpos);
+        float4 wpos = mul(matWorld, input[0].pos + offset);
         element.svpos = svpos;
         element.worldpos = wpos;
         element.color = input[0].color;

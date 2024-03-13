@@ -1,70 +1,55 @@
-cbuffer cbuff0 : register(b0)
+// ワールド変換行列
+cbuffer ConstBufferDataTransform : register(b0)
 {
-    matrix viewproj;    // ビュープロジェクション行列
-    matrix world;       // ワールド行列
-    float3 cameraPos;   // カメラ座標(ワールド座標)
+    matrix matWorld;
 };
 
-//平行光源の数
-static const uint DIRLIGHT_NUM = 3;
-
-//平行光源
-struct DirLight
+// ビュー&射影変換行列
+cbuffer ConstBufferDataViewProjection : register(b1)
 {
-    float3 lightv;      //ライトへの方向の単位ベクトル
-    float3 lightcolor;  //ライトの色(RGB)
+    matrix matViewProjection : packoffset(c0);
+    float3 cameraPos : packoffset(c4);
+};
+
+// 平行光源型
+struct DirectionalLight
+{
     uint active;
+    float3 lightVec;
+    float3 lightColor;
 };
 
-//点光源の数
-static const uint POINTLIGHT_NUM = 128;
-
-//点光源
+//点光源型
 struct PointLight
 {
-    float3 lightpos;    //ライト座標
-    float3 lightcolor;  //ライトの色(RGB)
-    float3 lightatten;  //ライトの距離減衰係数
     uint active;
+    float3 pos;
+    float3 color;
+    float3 atten;
 };
 
-//スポットライトの数
-static const uint SPOTLIGHT_NUM = 3;
-
-//スポットライト
+//スポットライト型
 struct SpotLight
 {
-    float3 lightv;              //ライトの光線方向の逆ベクトル
-    float3 lightpos;            //ライト座標
-    float3 lightcolor;          //ライトの色(RGB)
-    float3 lightatten;          //ライトの距離減衰係数
-    float2 lightfactoranglecos; //ライトの距離減衰角度のコサイン
     uint active;
+    float3 pos;
+    float3 dir;
+    float3 color;
+    float3 atten;
+    float2 factorAngleCos;
 };
 
-//丸影の数
-static const uint CIRCLESHADOW_NUM = 2;
-
-//丸影
-struct CircleShadow
-{
-    float3 dir;                 //投影方向の逆ベクトル
-    float3 casterPos;           //ライト座標
-    float distanceCasterLight;  //キャスターとライトの距離
-    float3 atten;               //距離減衰係数
-    float2 factoranglecos;      //減衰角度のコサイン
-    uint active;
-};
-
-cbuffer cbuff1 : register(b1)
+// 光源情報
+static const int DIRECTIONAL_LIGHT_NUM = 8;
+static const int POINT_LIGHT_NUM = 8;
+static const int SPOT_LIGHT_NUM = 8;
+cbuffer ConstBufferDataLight : register(b2)
 {
     float3 ambientColor;
-    DirLight dirLights[DIRLIGHT_NUM];
-    PointLight pointLights[POINTLIGHT_NUM];
-    SpotLight spotLights[SPOTLIGHT_NUM];
-    CircleShadow circleShadows[CIRCLESHADOW_NUM];
+    DirectionalLight directionalLights[DIRECTIONAL_LIGHT_NUM];
+    PointLight pointLights[POINT_LIGHT_NUM];
+    SpotLight spotLights[SPOT_LIGHT_NUM];
 };
-
 
 // 頂点シェーダーからピクセルシェーダーへのやり取りに使用する構造体
 struct VSOutput

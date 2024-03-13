@@ -141,6 +141,44 @@ void IEmitter3D::Draw()
 	pipedesc.RasterizerState.FillMode = D3D12_FILL_MODE_SOLID;
 	pipedesc.BlendState.AlphaToCoverageEnable = false;
 
+	// 頂点レイアウト
+	pipedesc.InputLayout =
+	{
+		//座標
+		{
+			"POSITION",										//セマンティック名
+			0,												//同名のセマンティックがあるとき使うインデックス
+			DXGI_FORMAT_R32G32B32_FLOAT,					//要素数とビット数を表す
+			0,												//入力スロットインデックス
+			D3D12_APPEND_ALIGNED_ELEMENT,					//データのオフセット地(左のは自動設定)
+			D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA,		//入力データ種別
+			0												//一度に描画するインスタンス数(0でよい)
+		},// (1行で書いたほうが見やすい)
+		//座標以外に色、テクスチャUVなどを渡す場合はさらに続ける
+		//回転情報
+		{
+			"ROT",0,
+			DXGI_FORMAT_R32G32B32_FLOAT,0,
+			D3D12_APPEND_ALIGNED_ELEMENT,
+			D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA,0
+		},
+		//色
+		{
+			"COLOR",0,
+			DXGI_FORMAT_R32G32B32A32_FLOAT,0,
+			D3D12_APPEND_ALIGNED_ELEMENT,
+			D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA,0
+		},
+		//大きさ
+		{
+			"TEXCOORD", 0,
+			DXGI_FORMAT_R32_FLOAT, 0,
+			D3D12_APPEND_ALIGNED_ELEMENT,
+			D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0
+		}
+	};
+	pipedesc.PrimitiveTopologyType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_POINT;
+
 	GraphicsPipeline pipe = GraphicsPipeline::GetOrCreate("Particle3D", pipedesc);
 	RenderOrder order;
 	order.pipelineState = pipe.mPtr.Get();
@@ -150,7 +188,7 @@ void IEmitter3D::Draw()
 		{RootDataType::SRBUFFER_CBV, viewProjectionBuff.mBuff },
 		{RootDataType::LIGHT},
 	};
-	
+
 	Renderer::DrawCall("Opaque", order);
 }
 
