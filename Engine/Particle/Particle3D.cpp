@@ -11,9 +11,8 @@ IEmitter3D::IEmitter3D()
 
 void IEmitter3D::Init()
 {
-	pos_ = Vector3::ZERO;
-	rot_ = Vector3::ZERO;
-	scale_ = { 0.1f,0.1f,0.1f };
+	transform.scale = { 0.1f,0.1f,0.1f };
+	transform.Transfer(transformBuff.Get());
 
 	addInterval_ = 0;
 	maxScale_ = 0;
@@ -60,9 +59,8 @@ void IEmitter3D::Update()
 		}
 		else
 		{
-			scale = Easing::lerp(particle.startScale, particle.endScale, particle.easeTimer.GetTimeRate());
+			particle.scale = Easing::lerp(particle.startScale, particle.endScale, particle.easeTimer.GetTimeRate());
 		}
-		particle.obj.mTransform.scale = { scale ,scale ,scale };	//オブジェクトのスケールに代入
 
 		//加速度を速度に加算
 		particle.velo += particle.accel;
@@ -70,22 +68,22 @@ void IEmitter3D::Update()
 		//初期のランダム角度をもとに回す
 		if (isRotation_)
 		{
-			particle.obj.mTransform.rotation += particle.plusRot * elapseSpeed_;
+			particle.rot += particle.plusRot * elapseSpeed_;
 
 			//一回転したら0に戻してあげる
-			if (abs(particle.obj.mTransform.rotation.x) >= Util::PI2)
+			if (abs(particle.rot.x) >= Util::PI2)
 			{
-				particle.obj.mTransform.rotation.x = 0.0f;
+				particle.rot.x = 0.0f;
 			}
 
-			if (abs(particle.obj.mTransform.rotation.y) >= Util::PI2)
+			if (abs(particle.rot.y) >= Util::PI2)
 			{
-				particle.obj.mTransform.rotation.y = 0.0f;
+				particle.rot.y = 0.0f;
 			}
 
-			if (abs(particle.obj.mTransform.rotation.z) >= Util::PI2)
+			if (abs(particle.rot.z) >= Util::PI2)
 			{
-				particle.obj.mTransform.rotation.z = 0.0f;
+				particle.rot.z = 0.0f;
 			}
 		}
 
@@ -96,8 +94,9 @@ void IEmitter3D::Update()
 		}
 
 		//速度による移動
-		particle.obj.mTransform.position += particle.velo * elapseSpeed_;
+		particle.pos += particle.velo * elapseSpeed_;
 
+		//バッファにデータ送信
 		particle.obj.TransferBuffer(Camera::sNowCamera->mViewProjection);
 		particle.obj.mTransform.UpdateMatrix();
 	}
@@ -126,12 +125,11 @@ void IEmitter3D::Add(uint32_t addNum, float life, Color color, float minScale, f
 		particles_.emplace_back();
 		//追加した要素の参照
 		Particle3D& p = particles_.back();
-		p.obj = ModelObj(Model::Load("./Resources/Model/Cube.obj", "Cube", true));
 
 		//エミッターの中からランダムで座標を決定
-		float pX = Util::GetRand(-scale_.x, scale_.x);
-		float pY = Util::GetRand(-scale_.y, scale_.y);
-		float pZ = Util::GetRand(-scale_.z, scale_.z);
+		float pX = Util::GetRand(-transform.scale.x, transform.scale.x);
+		float pY = Util::GetRand(-transform.scale.y, transform.scale.y);
+		float pZ = Util::GetRand(-transform.scale.z, transform.scale.z);
 		Vector3 randomPos(pX, pY, pZ);
 		//引数の範囲から大きさランダムで決定
 		float sX = Util::GetRand(minScale, maxScale);
@@ -150,10 +148,10 @@ void IEmitter3D::Add(uint32_t addNum, float life, Color color, float minScale, f
 		Vector3 randomRot(rX, rY, rZ);
 
 		//決まった座標にエミッター自体の座標を足して正しい位置に
-		p.obj.mTransform.position = randomPos + pos_;
+		p.pos = randomPos + transform.position;
 		//飛んでく方向に合わせて回転
-		p.obj.mTransform.rotation = randomRot;
-		p.plusRot = p.obj.mTransform.rotation;
+		p.rot = randomRot;
+		p.plusRot = p.rot;
 		p.velo = randomVelo;
 		p.accel = randomVelo * accelPower;
 		p.aliveTimer = life;
@@ -161,7 +159,7 @@ void IEmitter3D::Add(uint32_t addNum, float life, Color color, float minScale, f
 		p.scale = sX;
 		p.startScale = p.scale;
 		p.endScale = 0.0f;
-		p.obj.mTuneMaterial.mColor = color;
+		p.color = color;
 		//イージング用のタイマーを設定、開始
 		p.easeTimer.maxTime_ = life - growingTimer;	//全体の時間がずれないように最初の拡大部分を引く
 		p.easeTimer.Start();
@@ -172,8 +170,8 @@ void IEmitter3D::Add(uint32_t addNum, float life, Color color, float minScale, f
 
 void IEmitter3D::SetScale(const Vector3& scale)
 {
-	scale_ = scale;
-	originalScale_ = scale_;			//拡縮用に元のサイズを保管
+	transform.scale = scale;
+	originalScale_ = scale;		//拡縮用に元のサイズを保管
 }
 
 void IEmitter3D::SetScalingTimer(float easeTimer)
