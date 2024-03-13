@@ -4,6 +4,7 @@
 #include "SRConstBuffer.h"
 #include "SRVertexBuffer.h"
 #include "VertexBuffer.h"
+#include "ViewProjection.h"
 #include "Easing.h"
 #include "Util.h"
 

@@ -1,5 +1,6 @@
 #include "Particle3D.h"
 #include "Camera.h"
+#include <Renderer.h>
 #include "Util.h"
 
 //LightGroup* IEmitter3D::sLightGroup = nullptr;
@@ -22,6 +23,11 @@ void IEmitter3D::Init()
 	isActive_ = true;	//生成時には有効フラグ立てる
 
 	elapseSpeed_ = 1.f;
+
+	//更新処理でサイズが変わっちゃうから、あらかじめ最大数分作る
+	vertices.resize(maxParticle_);
+	//それによってバッファの初期化をする
+	vertBuff.Init(vertices);
 }
 
 void IEmitter3D::Update()
@@ -125,10 +131,27 @@ void IEmitter3D::Update()
 
 void IEmitter3D::Draw()
 {
-	for (auto& p:particles_)
-	{
-		p.obj.Draw();
-	}
+	//パイプライン
+	PipelineStateDesc pipedesc = RDirectX::GetDefPipeline().mDesc;
+	pipedesc.VS = Shader::GetOrCreate("Particle3D_VS", "Shader/Particle3DVS.hlsl", "main", "vs_5_0");
+	pipedesc.PS = Shader::GetOrCreate("Particle3D_PS", "Shader/Particle3DPS.hlsl", "main", "ps_5_0");
+	pipedesc.GS = Shader::GetOrCreate("Particle3D_GS", "Shader/Particle3DGS.hlsl", "main", "gs_5_0");
+
+	pipedesc.RasterizerState.CullMode = D3D12_CULL_MODE_NONE;
+	pipedesc.RasterizerState.FillMode = D3D12_FILL_MODE_SOLID;
+	pipedesc.BlendState.AlphaToCoverageEnable = false;
+
+	GraphicsPipeline pipe = GraphicsPipeline::GetOrCreate("Particle3D", pipedesc);
+	RenderOrder order;
+	order.pipelineState = pipe.mPtr.Get();
+	order.vertBuff = vertBuff;
+	order.rootData = {
+		{RootDataType::SRBUFFER_CBV, transformBuff.mBuff },
+		{RootDataType::SRBUFFER_CBV, viewProjectionBuff.mBuff },
+		{RootDataType::LIGHT},
+	};
+	
+	Renderer::DrawCall("Opaque", order);
 }
 
 void IEmitter3D::TransferBuffer(ViewProjection viewprojection)
