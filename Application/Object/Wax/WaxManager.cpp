@@ -32,7 +32,18 @@ void WaxManager::Update()
 	{
 		if (waxs[i]->GetIsAlive() == false)
 		{
+			for (uint32_t j = 0; j < waxGroups[waxs[i]->groupNum]->waxNums.size(); j++)
+			{
+				if (waxGroups[waxs[i]->groupNum]->waxNums[j] == i)
+				{
+					waxGroups[waxs[i]->groupNum]->waxNums.erase(waxGroups[waxs[i]->groupNum]->waxNums.begin() + j);
+					break;
+				}
+			}
 			waxs.erase(waxs.begin() + i);
+
+			Sort(i);
+
 			i--;
 		}
 	}
@@ -40,7 +51,7 @@ void WaxManager::Update()
 	for (uint32_t i = 0; i < waxGroups.size(); i++)
 	{
 		//ロウグループが空なら
-		if (waxGroups[i]->GetIsEmpty())
+		if (waxGroups[i]->GetIsEmpty() || waxGroups[i]->GetIsAlive() == false)
 		{
 			//そのロウグループに所属してるロウ皆殺し
 			for (uint32_t j = 0; j < waxs.size(); j++)
@@ -50,9 +61,18 @@ void WaxManager::Update()
 					waxs[j]->isAlive = false;
 				}
 			}
-			//要素削除
-			waxGroups.erase(waxGroups.begin() + i);
+
+			if (waxGroups[i]->GetIsEmpty())
+			{
+				//要素削除
+				waxGroups.erase(waxGroups.begin() + i);
+			}
 		}
+	}
+
+	if (waxs.empty())
+	{
+		waxGroups.clear();
 	}
 
 	//燃えている数を初期化
@@ -141,6 +161,7 @@ void WaxManager::EraceBegin()
 
 void WaxManager::Move(uint32_t originNum, uint32_t moveNum)
 {
+	//どちらにも中身がある場合
 	if (waxGroups[originNum]->waxNums.empty() == false &&
 		waxGroups[moveNum]->waxNums.empty() == false)
 	{
@@ -160,6 +181,24 @@ void WaxManager::Move(uint32_t originNum, uint32_t moveNum)
 		for (auto& num : waxGroups[originNum]->waxNums)
 		{
 			waxs[num]->groupNum = originNum;
+		}
+	}
+}
+
+void WaxManager::Sort(uint32_t eraseNum)
+{
+	for (uint32_t i = 0; i < waxGroups.size(); i++)
+	{
+		for (uint32_t j = 0; j < waxGroups[i]->waxNums.size(); j++)
+		{
+			if (waxGroups[i]->waxNums[j] > eraseNum)
+			{
+				waxGroups[i]->waxNums[j]--;
+				if (waxs[waxGroups[i]->waxNums[j]]->groupNum > 0)
+				{
+					waxs[waxGroups[i]->waxNums[j]]->groupNum--;
+				}
+			}
 		}
 	}
 }
