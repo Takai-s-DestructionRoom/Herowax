@@ -25,17 +25,17 @@ atkCoolTimer(0.3f), atkTimer(0.5f), atkHeight(1.f), solidTimer(5.f)
 	moveParticle.SetIsGrowing(true);
 
 	std::map<std::string, std::string> extract = Parameter::Extract("Player");
-	moveSpeed = std::stof(extract["移動速度"]);
-	moveAccelAmount = std::stof(extract["移動加速度"]);
-	gravity = std::stof(extract["重力"]);
-	jumpPower = std::stof(extract["ジャンプ力"]);
-	atkTimer.maxTime_ = std::stof(extract["攻撃時間"]);
-	atkSpeed = std::stof(extract["射出速度"]);
-	atkHeight = std::stof(extract["射出高度"]);
-	atkRange.x = std::stof(extract["攻撃範囲X"]);
-	atkRange.y = std::stof(extract["攻撃範囲Y"]);
-	atkCoolTimer.maxTime_ = std::stof(extract["クールタイム"]);
-	solidTimer.maxTime_ = std::stof(extract["固まるまでの時間"]);
+	moveSpeed = Parameter::GetParam(extract,"移動速度",1.f);
+	moveAccelAmount = Parameter::GetParam(extract, "移動加速度",0.05f);
+	gravity = Parameter::GetParam(extract, "重力",0.098f);
+	jumpPower = Parameter::GetParam(extract, "ジャンプ力",2.0f);
+	atkTimer.maxTime_ = Parameter::GetParam(extract, "攻撃時間",0.5f);
+	atkSpeed = Parameter::GetParam(extract, "射出速度",1.f);
+	atkHeight = Parameter::GetParam(extract, "射出高度",1.f);
+	atkRange.x = Parameter::GetParam(extract,"攻撃範囲X",3.f);
+	atkRange.y = Parameter::GetParam(extract,"攻撃範囲Y",5.f);
+	atkCoolTimer.maxTime_ = Parameter::GetParam(extract,"クールタイム",0.3f);
+	solidTimer.maxTime_ = Parameter::GetParam(extract,"固まるまでの時間",5.f);
 }
 
 void Player::Init()

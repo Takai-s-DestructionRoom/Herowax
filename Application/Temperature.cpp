@@ -19,14 +19,14 @@ TemperatureManager::TemperatureManager() :
 {
 	//生成時に変数をセーブデータから引っ張ってくる
 	std::map<std::string, std::string> extract = Parameter::Extract("Temperature");
-	downSpeed = stof(extract["一定時間(1秒)ごとの低下量"]);
-	boaderTemperature = stof(extract["ボーダーライン"]);
-	clearTimer.maxTime_ = stof(extract["クリアにかかる時間"]);
+	downSpeed = Parameter::GetParam(extract, "一定時間(1秒)ごとの低下量",10.f);
+	boaderTemperature = Parameter::GetParam(extract, "ボーダーライン",60.f);
+	clearTimer.maxTime_ = Parameter::GetParam(extract, "クリアにかかる時間",60.f);
 
-	MIN_TEMPERATURE = stof(extract["最低温度"]);
-	MAX_TEMPERATURE = stof(extract["最大温度"]);
-	coldBorder = stof(extract["冷えてる状態のボーダー"]);
-	hotBorder = stof(extract["温かい状態のボーダー"]);
+	MIN_TEMPERATURE = Parameter::GetParam(extract,"最低温度",40.f);
+	MAX_TEMPERATURE = Parameter::GetParam(extract,"最大温度",100.f);
+	coldBorder = Parameter::GetParam(extract, "冷えてる状態のボーダー",50.f);
+	hotBorder = Parameter::GetParam(extract, "温かい状態のボーダー",80.f);
 }
 
 void TemperatureManager::Init()

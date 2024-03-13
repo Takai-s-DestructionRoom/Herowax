@@ -12,16 +12,16 @@ TemperatureUI::TemperatureUI() :
 {
 	std::map<std::string, std::string> extract = Parameter::Extract("TemperatureUI");
 
-	position.x = std::stof(extract["UI_X座標"]);
-	position.y = std::stof(extract["UI_Y座標"]);
-	size.x = std::stof(extract["UI_Xスケール"]);
-	size.y = std::stof(extract["UI_Yスケール"]);
-	frameSize.x = std::stof(extract["フレームのサイズX"]);
-	frameSize.y = std::stof(extract["フレームのサイズY"]);
-	frameColor.r = std::stof(extract["背景色_R"]);
-	frameColor.g = std::stof(extract["背景色_G"]);
-	frameColor.b = std::stof(extract["背景色_B"]);
-	frameColor.a = std::stof(extract["背景色_A"]);
+	position.x = Parameter::GetParam(extract, "UI_X座標", 880.f);
+	position.y = Parameter::GetParam(extract, "UI_Y座標",680.f);
+	size.x = Parameter::GetParam(extract,"UI_Xスケール",6.f);
+	size.y = Parameter::GetParam(extract,"UI_Yスケール",20.f);
+	frameSize.x = Parameter::GetParam(extract,"フレームのサイズX",15.f);
+	frameSize.y = Parameter::GetParam(extract,"フレームのサイズY",30.f);
+	frameColor.r = Parameter::GetParam(extract,"背景色_R", 0.147679f);
+	frameColor.g = Parameter::GetParam(extract,"背景色_G", 0.147679f);
+	frameColor.b = Parameter::GetParam(extract,"背景色_B", 0.147679f);
+	frameColor.a = Parameter::GetParam(extract,"背景色_A",1.f);
 }
 
 void TemperatureUI::LoadResource()

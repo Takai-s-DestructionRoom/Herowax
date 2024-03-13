@@ -31,7 +31,7 @@ public:
 	/// floatだけよく入れるので用意
 	/// <param name="handle">ファイルの中で手前に付く名前。ImGuiのラベルと同じ感じで使ってください。</param>
 	/// <param name="data">保存したいデータ<</param>
-	static void Save(std::string handle, float data);
+	static void Save(const std::string& handle, float data);
 
 	/// <summary>
 	/// ImGui::Endとほぼ同じ使用感
@@ -45,9 +45,18 @@ public:
 	/// </summary>
 	/// <param name="filename">開きたいファイル名</param>
 	/// <returns></returns>
-	static std::map<std::string, std::string> Extract(std::string filename);
+	static std::map<std::string, std::string> Extract(const std::string& filename);
+
+	/// <summary>
+	/// Extractで取得したデータから特定のハンドルのデータを取り出す関数
+	/// もしデータが存在しない場合は引数のデータを入れる
+	/// </summary>
+	/// <param name="extractData">extractで取り出したデータ</param>
+	/// <param name="handle">取り出したいデータのハンドル(saveの時に入れたhandleを入れる)</param>
+	/// <param name="defaultData">データが存在しない場合に返す値</param>
+	/// <returns></returns>
+	static float GetParam(std::map<std::string, std::string>& extractData, const std::string& handle,float defaultData);
 
 private:
 	static std::ofstream writing_file;
 };
-

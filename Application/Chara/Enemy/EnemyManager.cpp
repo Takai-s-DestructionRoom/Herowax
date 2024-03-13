@@ -12,9 +12,9 @@ EnemyManager* EnemyManager::GetInstance()
 EnemyManager::EnemyManager()
 {
 	std::map<std::string, std::string> extract = Parameter::Extract("Enemy");
-	slowMag = std::stof(extract["減速率"]);
-	slowCoatingMag = std::stof(extract["ろうまみれ減速率"]);
-	burningBonus = std::stof(extract["敵が燃えたときのボーナス上昇温度"]);
+	slowMag = Parameter::GetParam(extract,"減速率", 0.75f);
+	slowCoatingMag = Parameter::GetParam(extract,"ろうまみれ減速率", 0.9f);
+	burningBonus = Parameter::GetParam(extract,"敵が燃えたときのボーナス上昇温度",2.f);
 }
 
 void EnemyManager::CreateEnemy(const Vector3 position)

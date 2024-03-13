@@ -45,8 +45,8 @@ WaxManager::WaxManager() :
 {
 	//生成時に変数をセーブデータから引っ張ってくる
 	std::map<std::string, std::string> extract = Parameter::Extract(fileName);
-	heatUpTemperature = std::stof(extract["ロウが燃えたときの上昇温度"]);
-	heatBonus = std::stof(extract["ボーナス上昇温度"]);
+	heatUpTemperature = Parameter::GetParam(extract, "ロウが燃えたときの上昇温度",5.f);
+	heatBonus = Parameter::GetParam(extract, "ボーナス上昇温度",2.f);
 }
 
 void WaxManager::Init()
