@@ -2,6 +2,7 @@
 #include "Transform.h"
 #include "LightGroup.h"
 #include "SRConstBuffer.h"
+#include "SRVertexBuffer.h"
 #include "VertexBuffer.h"
 #include "Easing.h"
 #include "Util.h"
@@ -53,6 +54,10 @@ class IEmitter3D
 private:
 	Transform transform;
 	SRConstBuffer<TransformBuffer> transformBuff;
+	SRConstBuffer<ViewProjectionBuffer> viewProjectionBuff;
+
+	std::vector<VertexParticle> vertices;
+	SRVertexBuffer vertBuff;
 
 	float minScale_;	//パーティクルの最小サイズ
 	float maxScale_;	//パーティクルの最大サイズ
@@ -98,6 +103,9 @@ public:
 	virtual void Update();
 	//描画
 	void Draw();
+
+	//定数バッファへ送信
+	void TransferBuffer(ViewProjection viewprojection);
 
 	//パーティクル追加(固有処理にしたかったらoverrideで上書きする)
 	//life:秒数指定なので注意

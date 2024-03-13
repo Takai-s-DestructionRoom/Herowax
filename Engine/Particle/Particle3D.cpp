@@ -95,11 +95,32 @@ void IEmitter3D::Update()
 
 		//速度による移動
 		particle.pos += particle.velo * elapseSpeed_;
-
-		//バッファにデータ送信
-		particle.obj.TransferBuffer(Camera::sNowCamera->mViewProjection);
-		particle.obj.mTransform.UpdateMatrix();
 	}
+
+	//頂点バッファへデータ転送
+	//パーティクルの情報を1つずつ反映
+	for (size_t i = 0; i < particles_.size(); i++)
+	{
+		VertexParticle vertex;
+
+		//座標
+		vertex.pos = particles_[i].pos;
+		//回転
+		vertex.rot = particles_[i].rot;
+		//色
+		vertex.color = particles_[i].color;
+		//スケール
+		vertex.scale = particles_[i].scale;
+
+		vertices.at(i) = vertex;
+	}
+
+	//毎回頂点数が変わるので初期化しなおす
+	vertBuff.Update(vertices);
+
+	//バッファにデータ送信
+	TransferBuffer(Camera::sNowCamera->mViewProjection);
+	transform.UpdateMatrix();
 }
 
 void IEmitter3D::Draw()
@@ -108,6 +129,13 @@ void IEmitter3D::Draw()
 	{
 		p.obj.Draw();
 	}
+}
+
+void IEmitter3D::TransferBuffer(ViewProjection viewprojection)
+{
+	transform.Transfer(transformBuff.Get());
+	viewProjectionBuff->matrix = viewprojection.mMatrix;
+	viewProjectionBuff->cameraPos = viewprojection.mEye;
 }
 
 void IEmitter3D::Add(uint32_t addNum, float life, Color color, float minScale, float maxScale,
