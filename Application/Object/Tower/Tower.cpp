@@ -15,11 +15,11 @@ void Tower::Init()
 
 void Tower::Update()
 {
-	if (TemperatureManager::GetInstance()->GetTemperature() >= TemperatureManager::GetInstance()->MAX_TEMPERATURE)
+	if (TemperatureManager::GetInstance()->GetTemperature() >= TemperatureManager::GetInstance()->GetHotBorder())
 	{
 		obj.mTuneMaterial.mColor = Color::kRed;
 	}
-	else if (TemperatureManager::GetInstance()->GetTemperature() <= TemperatureManager::GetInstance()->MIN_TEMPERATURE)
+	else if (TemperatureManager::GetInstance()->GetTemperature() <= TemperatureManager::GetInstance()->GetColdBorder())
 	{
 		obj.mTuneMaterial.mColor = Color::kBlue;
 	}
