@@ -8,7 +8,6 @@
 
 TemperatureUI::TemperatureUI() :
 	position(200, 200), size(0.5f, 0.5f),
-	coldBorder(50),hotBorder(80), burningBorder(100),
 	frameSize(1.f,1.f)
 {
 	std::map<std::string, std::string> extract = Parameter::Extract("TemperatureUI");
@@ -17,8 +16,6 @@ TemperatureUI::TemperatureUI() :
 	position.y = std::stof(extract["UI_Y座標"]);
 	size.x = std::stof(extract["UI_Xスケール"]);
 	size.y = std::stof(extract["UI_Yスケール"]);
-	coldBorder = std::stof(extract["冷えてる状態のボーダー"]);
-	hotBorder = std::stof(extract["温かい状態のボーダー"]);
 	frameSize.x = std::stof(extract["フレームのサイズX"]);
 	frameSize.y = std::stof(extract["フレームのサイズY"]);
 	frameColor.r = std::stof(extract["背景色_R"]);
@@ -38,8 +35,6 @@ void TemperatureUI::Update()
 	angle = TemperatureManager::GetInstance()->GetTemperature() -
 		TemperatureManager::GetInstance()->MAX_TEMPERATURE / 2;
 
-	burningBorder = TemperatureManager::GetInstance()->MAX_TEMPERATURE;
-
 	//枠の色が今の色
 	//中身の色は線でハッキリ分かれてる
 	ImGui::Begin("温度UI");
@@ -47,12 +42,6 @@ void TemperatureUI::Update()
 	ImGui::SliderFloat("Y座標", &position.y, 0, Util::WIN_HEIGHT);
 	ImGui::SliderFloat("Xのスケール", &size.x, 0, 10);
 	ImGui::SliderFloat("Yのスケール", &size.y, 0, 100.f);
-	ImGui::SliderFloat("冷えてる状態のボーダー", &coldBorder, 
-		TemperatureManager::GetInstance()->MIN_TEMPERATURE,
-		TemperatureManager::GetInstance()->MAX_TEMPERATURE);
-	ImGui::SliderFloat("温かい状態のボーダー", &hotBorder, 
-		TemperatureManager::GetInstance()->MIN_TEMPERATURE,
-		TemperatureManager::GetInstance()->MAX_TEMPERATURE);
 	ImGui::SliderFloat("フレームのサイズX", &frameSize.x, 0,100);
 	ImGui::SliderFloat("フレームのサイズY", &frameSize.y, 0,100);
 	float hoge[4] = { frameColor.r,frameColor.g ,frameColor.b,frameColor.a };
@@ -69,15 +58,15 @@ void TemperatureUI::Update()
 
 	//minからcoldborderまでがこの色になってほしい
 	//結局同じスピードで3つ重ねて動かすのが一番早いんじゃないか？
-	//ボー🈱―でクランプする感じで
+	//ボーダーでクランプする感じで
 	coldPos.x = TemperatureManager::GetInstance()->GetTemperature();
-	coldPos.x = Util::Clamp(coldPos.x,0.f, coldBorder);
+	coldPos.x = Util::Clamp(coldPos.x,0.f, TemperatureManager::GetInstance()->GetColdBorder());
 
 	hotPos.x = TemperatureManager::GetInstance()->GetTemperature();
-	hotPos.x = Util::Clamp(hotPos.x, 0.f, hotBorder);
+	hotPos.x = Util::Clamp(hotPos.x, 0.f, TemperatureManager::GetInstance()->GetHotBorder());
 	
 	burningPos.x = TemperatureManager::GetInstance()->GetTemperature();
-	burningPos.x = Util::Clamp(burningPos.x, 0.f, burningBorder);
+	burningPos.x = Util::Clamp(burningPos.x, 0.f, TemperatureManager::GetInstance()->GetBurningBorder());
 }
 
 void TemperatureUI::Draw()
@@ -117,8 +106,6 @@ void TemperatureUI::Save()
 	Parameter::Save("UI_Y座標", position.y);
 	Parameter::Save("UI_Xスケール", size.x);
 	Parameter::Save("UI_Yスケール", size.y);
-	Parameter::Save("冷えてる状態のボーダー", coldBorder);
-	Parameter::Save("温かい状態のボーダー", hotBorder);
 	Parameter::Save("フレームのサイズX", frameSize.x);
 	Parameter::Save("フレームのサイズY", frameSize.y);
 	Parameter::Save("背景色_R", frameColor.r);

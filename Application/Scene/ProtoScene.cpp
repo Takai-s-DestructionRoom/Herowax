@@ -71,7 +71,8 @@ void ProtoScene::Update()
 		//タワーとの当たり判定
 		if (ColPrimitive3D::CheckSphereToSphere(enemy.collider, level.tower.collider)) {
 			enemy.SetIsAlive(false);
-			level.tower.Damage(1.f);
+			Vector3 vec = level.tower.GetPos() - enemy.GetPos();
+			level.tower.Damage(1.f,vec);
 		}
 		//蝋との当たり判定
 		for (auto& group : WaxManager::GetInstance()->waxGroups)
