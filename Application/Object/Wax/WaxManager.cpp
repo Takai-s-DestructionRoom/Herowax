@@ -2,11 +2,36 @@
 #include "ImGui.h"
 #include "Temperature.h"
 #include "Parameter.h"
+#include "ColPrimitive3D.h"
 
 WaxManager* WaxManager::GetInstance()
 {
 	static WaxManager instance;
 	return &instance;
+}
+
+bool WaxManager::CheckHitWaxGroups(std::unique_ptr<WaxGroup>& group1,
+	std::unique_ptr<WaxGroup>& group2)
+{
+	//一応内部で同じかどうか確認
+	if (group1 == group2) {
+		return false;
+	}
+	for (auto& wax1 : group1->waxs) {
+		for (auto& wax2 : group2->waxs) {
+			
+			//どちらも地面にいないとダメ
+			if (wax1->GetState() == "Normal" && wax2->GetState() == "Normal")
+			{
+				//どれか一つでも当たっていたら
+				if (ColPrimitive3D::CheckSphereToSphere(wax1->collider, wax2->collider))
+				{
+					return true;
+				}
+			}
+		}
+	}
+	return false;
 }
 
 WaxManager::WaxManager() :
@@ -22,67 +47,18 @@ WaxManager::WaxManager() :
 
 void WaxManager::Init()
 {
-	waxs.clear();
 	waxGroups.clear();
 }
 
 void WaxManager::Update()
 {
-	//寿命が尽きた蝋を全削除
-	for (uint32_t i = 0; i < waxs.size(); i++)
-	{
-		if (waxs[i]->GetIsAlive() == false)
-		{
-			for (uint32_t j = 0; j < waxGroups[waxs[i]->groupNum]->waxNums.size(); j++)
-			{
-				if (waxGroups[waxs[i]->groupNum]->waxNums[j] == i)
-				{
-					waxGroups[waxs[i]->groupNum]->waxNums.erase(waxGroups[waxs[i]->groupNum]->waxNums.begin() + j);
-					break;
-				}
-			}
-			waxs.erase(waxs.begin() + i);
-
-			Sort(i);
-
-			i--;
-		}
-	}
-
-	for (uint32_t i = 0; i < waxGroups.size(); i++)
-	{
-		//ロウグループが空なら
-		if (waxGroups[i]->GetIsEmpty() || waxGroups[i]->GetIsAlive() == false)
-		{
-			//そのロウグループに所属してるロウ皆殺し
-			for (uint32_t j = 0; j < waxs.size(); j++)
-			{
-				if (waxs[j]->groupNum == i)
-				{
-					waxs[j]->isAlive = false;
-				}
-			}
-
-			if (waxGroups[i]->GetIsEmpty())
-			{
-				//要素削除
-				waxGroups.erase(waxGroups.begin() + i);
-			}
-		}
-	}
-
-	if (waxs.empty())
-	{
-		waxGroups.clear();
-	}
-
 	//燃えている数を初期化
 	isBurningNum = 0;
 
-	for (auto& wax : waxs)
-	{
-		wax->Update();
-	}
+	//死んでいるグループがあれば消す
+	waxGroups.remove_if([](std::unique_ptr<WaxGroup>& wax) {
+		return !wax->GetIsAlive();
+		});
 
 	for (auto& waxGroup : waxGroups)
 	{
@@ -96,7 +72,7 @@ void WaxManager::Update()
 	window_flags |= ImGuiWindowFlags_NoResize;
 
 	ImGui::Begin("Wax", NULL, window_flags);
-	ImGui::Text("存在しているロウの数:%d", (int)waxs.size());
+	ImGui::Text("存在しているロウの数:%d", (int)GetWaxNum());
 	ImGui::Text("燃えているロウの数:%d", isBurningNum);
 	ImGui::Text("現在の温度:%f", TemperatureManager::GetInstance()->GetTemperature());
 	ImGui::PushItemWidth(100);
@@ -104,10 +80,10 @@ void WaxManager::Update()
 	ImGui::InputFloat("ボーナス上昇温度", &heatBonus, 1.0f);
 
 	ImGui::Text("ロウグループ数:%d", (int)waxGroups.size());
-	for (uint32_t i = 0; i < waxGroups.size(); i++)
+	/*for (uint32_t i = 0; i < waxGroups.size(); i++)
 	{
 		ImGui::Text("グループ内のロウの数:%d", (int)waxGroups[i]->waxNums.size());
-	}
+	}*/
 	ImGui::PopItemWidth();
 
 	if (ImGui::Button("当たり判定の描画")) {
@@ -130,11 +106,15 @@ void WaxManager::Update()
 
 void WaxManager::Draw()
 {
-	for (auto& wax : waxs)
+	for (auto& group : waxGroups)
 	{
-		wax->Draw();
-		if (isViewCol) {
-			wax->DrawCollider();
+		group->Draw();
+		for (auto& wax : group->waxs)
+		{
+			wax->Draw();
+			if (isViewCol) {
+				wax->DrawCollider();
+			}
 		}
 	}
 }
@@ -142,75 +122,30 @@ void WaxManager::Draw()
 void WaxManager::Create(Transform transform, uint32_t power, Vector3 vec,
 	float speed, Vector2 range, float size, float atkTime, float solidTime)
 {
-	//要素追加
-	waxs.emplace_back();
-	waxs.back() = std::make_unique<Wax>();
-	waxs.back()->groupNum = (uint32_t)waxGroups.size();
-
-	//ロウグループも逐一追加
+	//生成時にグループ作成
 	waxGroups.emplace_back();
 	waxGroups.back() = std::make_unique<WaxGroup>();
-	//ロウグループが保持するロウの要素番号は今生成したばかりなのでsize-1
-	waxGroups.back()->waxNums.emplace_back();
-	waxGroups.back()->waxNums.back() = (uint32_t)waxs.size() - 1;
-
+	//生成したロウをグループへ格納
+	waxGroups.back()->waxs.emplace_back();
+	waxGroups.back()->waxs.back() = std::make_unique<Wax>();
 
 	//指定された状態に
-	waxs.back()->obj.mTransform = transform;
+	waxGroups.back()->waxs.back()->obj.mTransform = transform;
 	//情報を受け取って格納
-	waxs.back()->Init(power, vec, speed, range, size, atkTime, solidTime);
-}
-
-void WaxManager::EraceBegin()
-{
-	waxs.erase(waxs.begin());
-}
-
-void WaxManager::Move(uint32_t originNum, uint32_t moveNum)
-{
-	//どちらにも中身がある場合
-	if (waxGroups[originNum]->waxNums.empty() == false &&
-		waxGroups[moveNum]->waxNums.empty() == false)
-	{
-		//要素の最後から移動させたい奴を全部詰める
-		waxGroups[originNum]->waxNums.insert(
-			waxGroups[originNum]->waxNums.end(),
-			waxGroups[moveNum]->waxNums.begin(),
-			waxGroups[moveNum]->waxNums.end());
-
-		//移動が終わったら移動元は消す
-		waxGroups[moveNum]->waxNums.clear();
-
-		//くっついてるロウの数だけHP増やす
-		waxGroups[originNum]->SetHP(waxGroups[originNum]->waxNums.size() * 10.f);
-
-		//ロウに割り振られてるグループ番号を再設定
-		for (auto& num : waxGroups[originNum]->waxNums)
-		{
-			waxs[num]->groupNum = originNum;
-		}
-	}
-}
-
-void WaxManager::Sort(uint32_t eraseNum)
-{
-	for (uint32_t i = 0; i < waxGroups.size(); i++)
-	{
-		for (uint32_t j = 0; j < waxGroups[i]->waxNums.size(); j++)
-		{
-			if (waxGroups[i]->waxNums[j] > eraseNum)
-			{
-				waxGroups[i]->waxNums[j]--;
-				if (waxs[waxGroups[i]->waxNums[j]]->groupNum > 0)
-				{
-					waxs[waxGroups[i]->waxNums[j]]->groupNum--;
-				}
-			}
-		}
-	}
+	waxGroups.back()->waxs.back()->Init(power, vec, speed, range, size, atkTime, solidTime);
 }
 
 float WaxManager::GetCalcHeatBonus()
 {
 	return heatBonus * (float)isBurningNum;
+}
+
+uint32_t WaxManager::GetWaxNum()
+{
+	int32_t waxNum = 0;
+	for (auto& group : waxGroups)
+	{
+		waxNum += (uint32_t)group->waxs.size();
+	}
+	return waxNum;
 }

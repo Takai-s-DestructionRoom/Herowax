@@ -56,8 +56,8 @@ void EnemyFootStop::Update(Enemy* enemy)
 	else if (enemy->GetEscapeCoolTimer()->GetEnd())
 	{
 		enemy->SetIsEscape(true);	//脱出行動をする
-		WaxManager::GetInstance()->
-			waxGroups[enemy->trappedWax->groupNum]->Damage(enemy->GetEscapePower());
+		/*WaxManager::GetInstance()->
+			waxGroups[enemy->trappedWax->groupNum]->Damage(enemy->GetEscapePower());*/
 
 		enemy->GetEscapeCoolTimer()->Reset();
 	}
@@ -105,8 +105,8 @@ void EnemyAllStop::Update(Enemy* enemy)
 	else if (enemy->GetEscapeCoolTimer()->GetEnd())
 	{
 		enemy->SetIsEscape(true);	//脱出行動をする
-		WaxManager::GetInstance()->
-			waxGroups[enemy->trappedWax->groupNum]->Damage(enemy->GetEscapePower());
+		/*WaxManager::GetInstance()->
+			waxGroups[enemy->trappedWax->groupNum]->Damage(enemy->GetEscapePower());*/
 
 		enemy->GetEscapeCoolTimer()->Reset();
 	}

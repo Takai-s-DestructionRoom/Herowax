@@ -1,11 +1,13 @@
 #pragma once
 #include <cstdint>
 #include <vector>
+#include <memory>
+#include "Wax.h"
 
 class WaxGroup
 {
 public:
-	std::vector<uint32_t> waxNums;	//所属してるロウの要素番号
+	std::vector<std::unique_ptr<Wax>> waxs;	//所属してるロウの要素番号
 
 private:
 	const uint32_t kMaxWax = 128;	//最大ロウ数
@@ -21,6 +23,7 @@ public:
 	void Init();
 	void Update();
 	void Draw();
+	void DrawCollider();
 
 	//ダメージ受ける
 	void Damage(float damage) { damageSustained += damage; }
@@ -28,10 +31,13 @@ public:
 	// ゲッター //
 	//生存フラグ取得
 	bool GetIsAlive() { return isAlive; }
-	//満杯かどうか返す
-	bool GetIsFull() { return waxNums.size() >= kMaxWax; }
-	//空っぽかどうか返す
-	bool GetIsEmpty() { return waxNums.empty(); }
+	//生存フラグ変更
+	void SetIsAlive(bool isAlive_) { isAlive = isAlive_; }
+
+	////満杯かどうか返す
+	//bool GetIsFull() { return waxNums.size() >= kMaxWax; }
+	////空っぽかどうか返す
+	//bool GetIsEmpty() { return waxNums.empty(); }
 
 	// セッター //
 	//HP設定

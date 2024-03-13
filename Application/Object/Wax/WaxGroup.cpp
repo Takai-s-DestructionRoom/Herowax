@@ -21,8 +21,29 @@ void WaxGroup::Update()
 	{
 		isAlive = false;
 	}
+
+	for (auto& wax : waxs)
+	{
+		wax->Update();
+	}
 }
 
 void WaxGroup::Draw()
 {
+	for (auto& wax : waxs)
+	{
+		if (wax->isAlive) {
+			wax->Draw();
+		}
+	}
+}
+
+void WaxGroup::DrawCollider()
+{
+	for (auto& wax : waxs)
+	{
+		if (wax->isAlive) {
+			wax->DrawCollider();
+		}
+	}
 }
