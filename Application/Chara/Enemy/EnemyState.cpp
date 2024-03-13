@@ -22,7 +22,7 @@ void EnemySlow::Update(Enemy* enemy)
 	enemy->SetSlowCoatingMag(0.f);
 
 	//足がとられている蝋のポインタを持っておいて、固まっているかを調べる
-	if (enemy->trappedWax->isSolid)
+	if (enemy->trappedWaxGroup->waxs.back()->isSolid)
 	{
 		//付与する力が一度に固まる敵の数だけ強まる
 		EnemyManager::GetInstance()->IncrementSolidCombo();
@@ -31,12 +31,6 @@ void EnemySlow::Update(Enemy* enemy)
 
 		//遷移
 		enemy->ChangeState<EnemyFootStop>();
-	}
-
-	std::string state = enemy->trappedWax->GetState();
-	if (state != "Normal")
-	{
-		enemy->ChangeState<EnemyBurning>();
 	}
 }
 
@@ -56,20 +50,19 @@ void EnemyFootStop::Update(Enemy* enemy)
 	else if (enemy->GetEscapeCoolTimer()->GetEnd())
 	{
 		enemy->SetIsEscape(true);	//脱出行動をする
-		/*WaxManager::GetInstance()->
-			waxGroups[enemy->trappedWax->groupNum]->Damage(enemy->GetEscapePower());*/
+		enemy->trappedWaxGroup->Damage(enemy->GetEscapePower());
 
 		enemy->GetEscapeCoolTimer()->Reset();
 	}
 
 	//抵抗して蝋のHPが0になったら次へ(当たり判定不要)
-	if (enemy->trappedWax->isAlive == false)
+	if (enemy->trappedWaxGroup->GetIsAlive() == false)
 	{
 		//遷移
 		enemy->ChangeState<EnemyNormal>();
 	}
 
-	std::string state = enemy->trappedWax->GetState();
+	std::string state = enemy->trappedWaxGroup->waxs.back()->GetState();
 	if (state != "Normal")
 	{
 		enemy->ChangeState<EnemyBurning>();
@@ -82,13 +75,6 @@ void EnemyWaxCoating::Update(Enemy* enemy)
 
 	//蝋まみれの減速率はimguiでいじったものを基準とするのでここではいじらない
 	enemy->SetSlowMag(0.f);
-
-	//蝋まみれ状態で時間経過したら蝋固まり状態へ
-	std::string state = enemy->trappedWax->GetState();
-	if (state != "Normal")
-	{
-		enemy->ChangeState<EnemyBurning>();
-	}
 }
 
 void EnemyAllStop::Update(Enemy* enemy)
@@ -105,23 +91,16 @@ void EnemyAllStop::Update(Enemy* enemy)
 	else if (enemy->GetEscapeCoolTimer()->GetEnd())
 	{
 		enemy->SetIsEscape(true);	//脱出行動をする
-		/*WaxManager::GetInstance()->
-			waxGroups[enemy->trappedWax->groupNum]->Damage(enemy->GetEscapePower());*/
+		enemy->trappedWaxGroup->Damage(enemy->GetEscapePower());
 
 		enemy->GetEscapeCoolTimer()->Reset();
 	}
 
 	//抵抗して蝋のHPが0になったら次へ(当たり判定不要)
-	if (enemy->trappedWax->isAlive == false)
+	if (enemy->trappedWaxGroup->GetIsAlive() == false)
 	{
 		//遷移
 		enemy->ChangeState<EnemyNormal>();
-	}
-
-	std::string state = enemy->trappedWax->GetState();
-	if (state != "Normal")
-	{
-		enemy->ChangeState<EnemyBurning>();
 	}
 }
 

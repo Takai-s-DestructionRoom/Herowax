@@ -71,7 +71,7 @@ void Wax::Update()
 	}
 
 	//もう少しで固まりそうなら
-	if (solidTimer.GetTimeRate() > 0.7f)
+	if (GetIsSolidLine())
 	{
 		//もう1色は更新し続け
 		obj.mTuneMaterial.mColor = Color::kWhite;
@@ -122,4 +122,9 @@ bool Wax::IsNormal()
 	return !igniteTimer.GetStarted() &&
 		!burningTimer.GetStarted() && 
 		!extinguishTimer.GetStarted();
+}
+
+bool Wax::GetIsSolidLine()
+{
+	return solidTimer.GetTimeRate() > 0.7f;
 }

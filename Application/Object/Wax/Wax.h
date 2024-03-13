@@ -52,6 +52,9 @@ public:
 	bool IsBurning();
 	bool IsNormal();
 
+	//固まり始めて点滅し始めているかどうか
+	bool GetIsSolidLine();
+
 	////ダメージ受ける
 	//void Damage(float damage) { hp -= damage; }
 

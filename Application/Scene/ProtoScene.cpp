@@ -83,15 +83,20 @@ void ProtoScene::Update()
 					//投げられてる蝋に当たった時は蝋固まり状態へ遷移
 					if (wax->isGround == false) {
 						enemy.ChangeState<EnemyWaxCoating>();
-						enemy.trappedWax = wax.get();
+						enemy.trappedWaxGroup = group.get();
 						//enemyにダメージ
 						enemy.DealDamage(WaxManager::GetInstance()->waxDamage);
-
 					}
 					//地面に付いた蝋に当たった時は蝋足止め状態へ遷移
 					else {
 						enemy.ChangeState<EnemySlow>();
-						enemy.trappedWax = wax.get();
+						enemy.trappedWaxGroup = group.get();
+
+						//そのロウが燃えているなら一緒に燃える
+						if (wax->GetState() != "Normal")
+						{
+							enemy.ChangeState<EnemyBurning>();
+						}
 					}
 				}
 			}
@@ -115,51 +120,41 @@ void ProtoScene::Update()
 
 	//敵がロウを壊してから連鎖で壊れるため、敵の処理をしてからこの処理を行う
 #pragma region ロウ同士の当たり判定
+	std::list<std::unique_ptr<WaxGroup>>* wGroups = &WaxManager::GetInstance()->waxGroups;
+
 	//同一グループ内のロウが当たった時の処理
-	for (auto& group : WaxManager::GetInstance()->waxGroups)
+	for (auto& group1 : *wGroups)
 	{
-		for (auto& wax1 : group->waxs) {
-			for (auto& wax2 : group->waxs)
-			{
-				//同じ部分を指しているポインタなら同じものなのでスキップ
-				if (wax1 == wax2)continue;
-
-				bool isCollision = ColPrimitive3D::CheckSphereToSphere(wax1->collider, wax2->collider);
-
-				//ぶつかっていて
-				if (isCollision)
+		for (auto& group2 : *wGroups)
+		{
+			for (auto& wax1 : group1->waxs) {
+				for (auto& wax2 : group2->waxs)
 				{
-					//燃えているものと通常の状態なら
-					if (wax1->IsBurning() && wax2->IsNormal())
-					{
-						//燃えている状態へ遷移
-						wax2->ChangeState<WaxIgnite>();
-					}
-					////どっちも液体なら
-					//else if (wax1->isSolid == false && wax2->isSolid == false)
-					//{
-					//	
+					//同じ部分を指しているポインタなら同じものなのでスキップ
+					if (wax1 == wax2)continue;
 
-			//ここの処理は下のグループ移動の時に行う
-					//	//固まる時間が長い方に優先
-					//	if (wax1->solidTimer.nowTime_ > wax2->solidTimer.nowTime_)
-					//	{
-					//		wax1->solidTimer.nowTime_ = wax2->solidTimer.nowTime_;
-					//	}
-					//	else
-					//	{
-					//		wax2->solidTimer.nowTime_ = wax1->solidTimer.nowTime_;
-					//	}
-					//}
+					bool isCollision = ColPrimitive3D::CheckSphereToSphere(wax1->collider, wax2->collider);
+
+					//ぶつかっていて
+					if (isCollision)
+					{
+						//燃えているものと通常の状態なら
+						if (wax1->IsBurning() && wax2->IsNormal())
+						{
+							//燃えている状態へ遷移
+							wax2->ChangeState<WaxIgnite>();
+						}
+					}
 				}
 			}
 		}
 	}
+	
+
 	//別グループ内のロウが当たった時の処理
-	std::list<std::unique_ptr<WaxGroup>>* hoge = &WaxManager::GetInstance()->waxGroups;
-	for (auto& group1 : *hoge)
+	for (auto& group1 : *wGroups)
 	{
-		for (auto& group2 : *hoge)
+		for (auto& group2 : *wGroups)
 		{
 			if (group1 == group2)continue;
 			//nullチェック
@@ -188,6 +183,7 @@ void ProtoScene::Update()
 				//どれか一つがぶつかったなら、グループすべてが移動する
 				group1->waxs.reserve(group1->waxs.size() + group2->waxs.size());
 				std::move(group2->waxs.begin(), group2->waxs.end(), std::back_inserter(group1->waxs));
+				group1->SetSameSolidTime();
 			}
 		}
 	}

@@ -7,7 +7,10 @@
 class WaxGroup
 {
 public:
-	std::vector<std::unique_ptr<Wax>> waxs;	//所属してるロウの要素番号
+	std::vector<std::unique_ptr<Wax>> waxs;	//所属してるロウ
+
+	//所属しているロウの中で最大の時間
+	float smallestTime = 1000.0f;
 
 private:
 	const uint32_t kMaxWax = 128;	//最大ロウ数
@@ -27,6 +30,9 @@ public:
 
 	//ダメージ受ける
 	void Damage(float damage) { damageSustained += damage; }
+
+	//グループ内の蝋の固まるまでの時間を指定した時間に合わせる
+	void SetSameSolidTime();
 
 	// ゲッター //
 	//生存フラグ取得

@@ -2,7 +2,7 @@
 #include "GameObject.h"
 #include "EnemyState.h"
 #include "Easing.h"
-#include "Wax.h"
+#include "WaxGroup.h"
 #include "EnemyUI.h"
 
 class Enemy : public GameObject
@@ -38,7 +38,7 @@ private:
 	EnemyUI ui;
 
 public:
-	Wax* trappedWax;			//足を取られている対象の蝋を保持
+	WaxGroup* trappedWaxGroup;			//足を取られている対象の蝋を保持
 
 public:
 

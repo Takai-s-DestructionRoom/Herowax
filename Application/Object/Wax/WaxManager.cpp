@@ -20,13 +20,17 @@ bool WaxManager::CheckHitWaxGroups(std::unique_ptr<WaxGroup>& group1,
 	for (auto& wax1 : group1->waxs) {
 		for (auto& wax2 : group2->waxs) {
 			
-			//どちらも地面にいないとダメ
-			if (wax1->GetState() == "Normal" && wax2->GetState() == "Normal")
+			//どっちも固まり始めておらず
+			if (!wax1->isSolid && !wax2->isSolid)
 			{
-				//どれか一つでも当たっていたら
-				if (ColPrimitive3D::CheckSphereToSphere(wax1->collider, wax2->collider))
+				//どちらも地面にいないとダメ
+				if (wax1->isGround && wax2->isGround)
 				{
-					return true;
+					//どれか一つでも当たっていたら
+					if (ColPrimitive3D::CheckSphereToSphere(wax1->collider, wax2->collider))
+					{
+						return true;
+					}
 				}
 			}
 		}
@@ -80,10 +84,12 @@ void WaxManager::Update()
 	ImGui::InputFloat("ボーナス上昇温度", &heatBonus, 1.0f);
 
 	ImGui::Text("ロウグループ数:%d", (int)waxGroups.size());
-	/*for (uint32_t i = 0; i < waxGroups.size(); i++)
+	for (auto& group : waxGroups)
 	{
-		ImGui::Text("グループ内のロウの数:%d", (int)waxGroups[i]->waxNums.size());
-	}*/
+		ImGui::Text("グループ内のロウの数:%d", (int)group->waxs.size());
+		ImGui::Text("グループの中で最長の固まる時間:%f", group->smallestTime);
+		
+	}
 	ImGui::PopItemWidth();
 
 	if (ImGui::Button("当たり判定の描画")) {
