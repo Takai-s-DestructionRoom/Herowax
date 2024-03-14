@@ -141,6 +141,26 @@ void IEmitter3D::Draw()
 	pipedesc.RasterizerState.FillMode = D3D12_FILL_MODE_SOLID;
 	pipedesc.BlendState.AlphaToCoverageEnable = false;
 
+
+	RootSignature mRootSignature = RDirectX::GetDefRootSignature();
+
+	// ルートパラメータの設定
+	RootParamaters rootParams(2);
+	//定数バッファ0番(Transform)
+	rootParams[0].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV; //定数バッファビュー
+	rootParams[0].Descriptor.ShaderRegister = 0; //定数バッファ番号
+	rootParams[0].Descriptor.RegisterSpace = 0; //デフォルト値
+	rootParams[0].ShaderVisibility = D3D12_SHADER_VISIBILITY_ALL; //全シェーダから見える
+	//定数バッファ2番(ViewProjection)
+	rootParams[1].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV; //定数バッファビュー
+	rootParams[1].Descriptor.ShaderRegister = 1; //定数バッファ番号
+	rootParams[1].Descriptor.RegisterSpace = 0; //デフォルト値
+	rootParams[1].ShaderVisibility = D3D12_SHADER_VISIBILITY_ALL; //全シェーダから見える
+
+	mRootSignature.mDesc.RootParamaters = rootParams;
+	mRootSignature.Create();
+	pipedesc.pRootSignature = mRootSignature.mPtr.Get();
+
 	// 頂点レイアウト
 	pipedesc.InputLayout =
 	{

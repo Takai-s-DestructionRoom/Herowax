@@ -3,16 +3,8 @@
 Texture2D<float4> tex : register(t0);  // 0番スロットに設定されたテクスチャ
 SamplerState smp : register(s0);      // 0番スロットに設定されたサンプラー
 
-struct PSOutput
-{
-    float4 target0 : SV_TARGET0;
-    float4 target1 : SV_TARGET1;
-};
-
 float4 main(GSOutput input) : SV_TARGET
 {
-    PSOutput output;
-    
     float m_ambient = 0.3f;
     float m_diffuse = 0.8f;
     float m_specular = 0.5f;
