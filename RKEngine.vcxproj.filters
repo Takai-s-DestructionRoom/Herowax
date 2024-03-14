@@ -519,6 +519,9 @@
     <ClCompile Include="Application\Object\EnemyUI.cpp">
       <Filter>ソース ファイル\Application\Object\Chara\Enemy</Filter>
     </ClCompile>
+    <ClCompile Include="Application\Chara\Player\PlayerState.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Shader\TestVS.hlsl">
@@ -977,6 +980,9 @@
     </ClInclude>
     <ClInclude Include="Application\Object\EnemyUI.h">
       <Filter>ヘッダー ファイル\Application\Object\Chara\Enemy</Filter>
+    </ClInclude>
+    <ClInclude Include="Application\Chara\Player\PlayerState.h">
+      <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

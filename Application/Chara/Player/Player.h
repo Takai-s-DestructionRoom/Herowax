@@ -2,10 +2,11 @@
 #include "GameObject.h"
 #include "SimpleParticle.h"
 #include "Easing.h"
-
+#include "PlayerState.h"
+ 
 class Player : public GameObject
 {
-private:
+public:
 	//------------ 移動関連 ------------//
 	Vector3 moveVec;			//移動ベクトル
 	float moveSpeed;			//移動速度
@@ -42,7 +43,14 @@ private:
 	//----------- 挑発関連 ------------//
 	bool isTauntMode = false;		//ロウを直接当てると敵の追いかける対象が自分に変わるモード
 
+	//----------- 新攻撃(パブロ攻撃)関連 -------------//
+	float pabloRange;			//最大射程
+	float pabloSeparator;		//射程の分割数
+	float pabloSpeedMag;		//パブロ攻撃時の移動速度
+	float shotDeadZone = 1.0f;
+
 	//------------ その他 ------------//
+	std::unique_ptr<PlayerState> attackState;
 	SimpleParticle moveParticle;
 
 public:
@@ -55,7 +63,7 @@ public:
 	void MovePad();
 	void MoveKey();
 
-	//攻撃
+	//攻撃(ステートに移動)
 	void Attack();
 
 	//ﾌｧｲｱ
@@ -65,4 +73,10 @@ public:
 
 	//お試し実装:殴った相手が自分を追っかけてくるモード
 	bool GetTauntMode() { return isTauntMode; };
+
+	//状態変更
+	template <typename ChangePlayerState>
+	void ChangeState() {
+		state = std::make_unique<ChangePlayerState>();
+	};
 };

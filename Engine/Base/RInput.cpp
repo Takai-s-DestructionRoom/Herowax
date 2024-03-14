@@ -207,6 +207,33 @@ bool RInput::GetRTriggerDown()
 	return false;
 }
 
+bool RInput::GetLTriggerUp()
+{
+	if (mOldXInputState.Gamepad.bLeftTrigger >= 128 && mXInputState.Gamepad.bLeftTrigger < 128)
+	{
+		return true;
+	}
+	return false;
+}
+
+bool RInput::GetRTriggerUp()
+{
+	if (mOldXInputState.Gamepad.bRightTrigger >= 128 && mXInputState.Gamepad.bRightTrigger < 128)
+	{
+		return true;
+	}
+	return false;
+}
+
+bool RInput::GetRTrigger()
+{
+	if (mXInputState.Gamepad.bRightTrigger >= 128)
+	{
+		return true;
+	}
+	return false;
+}
+
 bool RInput::GetLStickUp()
 {
 	if (mOldXInputState.Gamepad.sThumbLY < XINPUT_GAMEPAD_LEFT_THUMB_DEADZONE &&

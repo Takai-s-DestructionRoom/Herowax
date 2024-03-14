@@ -36,6 +36,12 @@ atkCoolTimer(0.3f), atkTimer(0.5f), atkHeight(1.f), solidTimer(5.f)
 	atkRange.y = Parameter::GetParam(extract,"攻撃範囲Y",5.f);
 	atkCoolTimer.maxTime_ = Parameter::GetParam(extract,"クールタイム",0.3f);
 	solidTimer.maxTime_ = Parameter::GetParam(extract,"固まるまでの時間",5.f);
+
+	pabloRange = Parameter::GetParam(extract, "パブロ攻撃の広がり", 1.f);
+	pabloSpeedMag = Parameter::GetParam(extract, "パブロ攻撃時の移動速度低下係数", 0.2f);
+	shotDeadZone = Parameter::GetParam(extract, "ショットが出る基準", 0.5f);
+
+	attackState = std::make_unique<PlayerNormal>();
 }
 
 void Player::Init()
@@ -55,7 +61,7 @@ void Player::Update()
 		MoveKey();
 	}
 
-	Attack();
+	attackState->Update(this);
 
 	Fire();
 
@@ -91,7 +97,7 @@ void Player::Update()
 
 	ImGui::Text("Lスティック移動、Aボタンジャンプ、Rで攻撃");
 	ImGui::Text("WASD移動、スペースジャンプ、右クリで攻撃");
-
+	
 	if (ImGui::TreeNode("移動系"))
 	{
 		ImGui::Text("座標:%f,%f,%f", GetPos().x, GetPos().y, GetPos().z);
@@ -119,12 +125,21 @@ void Player::Update()
 		ImGui::SliderFloat("攻撃範囲Y", &atkRange.y, 0.f, 10.f);
 		ImGui::SliderFloat("クールタイム", &atkCoolTimer.maxTime_, 0.f, 2.f);
 		ImGui::SliderFloat("固まるまでの時間", &solidTimer.maxTime_, 0.f, 10.f);
-
+		
 		ImGui::TreePop();
 	}
 	if (ImGui::TreeNode("お試し実装:自分の方に来る"))
 	{
 		ImGui::Checkbox("攻撃した相手が自分を攻撃するか", &isTauntMode);
+
+		ImGui::TreePop();
+	}
+	if (ImGui::TreeNode("お試し実装:パブロアタック"))
+	{
+		ImGui::Text("スティックの入力:%f", abs(RInput::GetInstance()->GetPadLStick().LengthSq()));
+		ImGui::SliderFloat("ショットが出る基準", &shotDeadZone,-2.0f,2.0f);
+		ImGui::SliderFloat("広がり", &pabloRange,0.0f,10.f);
+		ImGui::SliderFloat("パブロ攻撃時の移動速度低下係数", &pabloSpeedMag,0.0f,1.0f);
 
 		ImGui::TreePop();
 	}
@@ -145,6 +160,9 @@ void Player::Update()
 		Parameter::Save("攻撃範囲Y", atkRange.y);
 		Parameter::Save("クールタイム", atkCoolTimer.maxTime_);
 		Parameter::Save("固まるまでの時間", solidTimer.maxTime_);
+		Parameter::Save("パブロ攻撃の広がり", pabloRange);
+		Parameter::Save("パブロ攻撃時の移動速度低下係数", pabloSpeedMag);
+		Parameter::Save("ショットが出る基準", shotDeadZone);
 		Parameter::End();
 	}
 
