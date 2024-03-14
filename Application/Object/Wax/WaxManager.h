@@ -53,7 +53,9 @@ public:
 	bool CheckHitWaxGroups(std::unique_ptr<WaxGroup>& group1,
 		std::unique_ptr<WaxGroup>& group2);
 
+	GraphicsPipeline CreateDisolvePipeLine();
 private:
+
 	//コンストラクタ
 	WaxManager();
 	//コピー禁止

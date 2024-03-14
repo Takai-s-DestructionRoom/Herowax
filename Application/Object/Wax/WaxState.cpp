@@ -77,9 +77,9 @@ void WaxExtinguish::Update(Wax* wax)
 	}
 	wax->extinguishTimer.Update();
 	//縮小する
-	wax->obj.mTransform.scale.x = Easing::OutQuad(saveScale.x, 0, wax->extinguishTimer.GetTimeRate());
-	wax->obj.mTransform.scale.y = Easing::OutQuad(saveScale.y, 0, wax->extinguishTimer.GetTimeRate());
-	wax->obj.mTransform.scale.z = Easing::OutQuad(saveScale.z, 0, wax->extinguishTimer.GetTimeRate());
+	//wax->obj.mTransform.scale.x = Easing::OutQuad(saveScale.x, 0, wax->extinguishTimer.GetTimeRate());
+	//wax->obj.mTransform.scale.y = Easing::OutQuad(saveScale.y, 0, wax->extinguishTimer.GetTimeRate());
+	//wax->obj.mTransform.scale.z = Easing::OutQuad(saveScale.z, 0, wax->extinguishTimer.GetTimeRate());
 
 	//終わったら死亡
 	if (wax->extinguishTimer.GetEnd()) {
