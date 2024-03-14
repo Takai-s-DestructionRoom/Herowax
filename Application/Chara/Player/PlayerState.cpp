@@ -82,17 +82,13 @@ void PlayerPablo::Update(Player* player)
 			player->atkHeight,
 			RInput::GetInstance()->GetPadLStick().y);
 
-		Vector3 sideVec = pabloVec;
-		sideVec.Normalize();
-		sideVec.y = 0;
-		spawnTrans.position -= sideVec * player->pabloRange;
+		player->atkVec = pabloVec;
 
 		WaxManager::GetInstance()->Create(
 			spawnTrans, player->atkPower,
-			pabloVec, player->atkSpeed,
+			player->atkVec, player->atkSpeed,
 			player->atkRange, player->atkSize,
 			player->atkTimer.maxTime_, player->solidTimer.maxTime_);
-		spawnTrans.position += sideVec * player->pabloRange;
 	}
 
 	oldLength = RInput::GetInstance()->GetPadLStick().LengthSq();

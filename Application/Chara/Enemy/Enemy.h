@@ -14,6 +14,11 @@ private:
 	float slowMag;				//減速率
 	float slowCoatingMag;		//蝋かけられたときの減速率
 	bool isGraund;				//接地しているかフラグ
+	float gravity;				//重力
+	float groundPos;			//地面座標
+	Vector3 knockbackVecS;		//ノックバックする方向
+	Vector3 knockbackVecE;		//ノックバックする方向
+	Easing::EaseTimer knockbackTimer;	//ノックバックする時間
 
 	//------------ 攻撃関連 ------------//
 	bool isAttack;						//攻撃してるかフラグ
@@ -53,6 +58,8 @@ public:
 	//追いかける対象を変更
 	void SetTarget(ModelObj* target_);
 
+	void SetGroundPos(float groundPos_) {groundPos = groundPos_;}
+
 	//状態変更
 	template <typename ChangeEnemyState>
 	void ChangeState() {
@@ -89,6 +96,8 @@ public:
 	void SetStateStr(std::string str) { stateStr = str; }
 	//ダメージを与える
 	void DealDamage(uint32_t damage);
+	//引数があればノックバックもする
+	void DealDamage(uint32_t damage,const Vector3& dir);
 	//強制的に死亡させる
 	void SetDeath();
 };

@@ -15,6 +15,7 @@ EnemyManager::EnemyManager()
 	slowMag = Parameter::GetParam(extract,"減速率", 0.75f);
 	slowCoatingMag = Parameter::GetParam(extract,"ろうまみれ減速率", 0.9f);
 	burningBonus = Parameter::GetParam(extract,"敵が燃えたときのボーナス上昇温度",2.f);
+	knockback = Parameter::GetParam(extract, "ノックバック距離", 10.f);
 }
 
 void EnemyManager::CreateEnemy(const Vector3 position)
@@ -22,11 +23,17 @@ void EnemyManager::CreateEnemy(const Vector3 position)
 	enemys.emplace_back(target);
 	enemys.back().SetPos(position);
 	enemys.back().Init();
+	enemys.back().SetGroundPos(ground->mTransform.position.y);
 }
 
 void EnemyManager::SetTarget(ModelObj* target_)
 {
 	target = target_;
+}
+
+void EnemyManager::SetGround(ModelObj* ground_)
+{
+	ground = ground_;
 }
 
 void EnemyManager::LoadResource()
@@ -86,6 +93,7 @@ void EnemyManager::Update()
 		Parameter::Save("減速率", slowMag);
 		Parameter::Save("ろうまみれ減速率", slowCoatingMag);
 		Parameter::Save("敵が燃えたときのボーナス上昇温度", burningBonus);
+		Parameter::Save("ノックバック距離", knockback);
 		Parameter::End();
 	}
 
