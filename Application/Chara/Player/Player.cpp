@@ -199,17 +199,18 @@ void Player::MovePad()
 		//入力中は加速度足し続ける
 		moveAccel += moveAccelAmount;
 
-		////エミッターの座標はプレイヤーの座標から移動方向の逆側にスケール分ずらしたもの
-		//Vector3 emitterPos = obj.mTransform.position;
-		//Vector2 mVelo = moveVec;	//moveVecを正規化すると実際の移動に支障が出るので一時変数に格納
-		//emitterPos.x -= mVelo.Normalize().x * obj.mTransform.scale.x * 4.f;
-		//emitterPos.z -= mVelo.Normalize().y * obj.mTransform.scale.z * 4.f;
+		//エミッターの座標はプレイヤーの座標から移動方向の逆側にスケール分ずらしたもの
+		Vector3 emitterPos = obj.mTransform.position;
+		Vector2 mVelo = { -moveVec.x,-moveVec.z };	//moveVecを正規化すると実際の移動に支障が出るので一時変数に格納
+		mVelo.Normalize();
+		emitterPos.x += mVelo.x * obj.mTransform.scale.x;
+		emitterPos.z += mVelo.y * obj.mTransform.scale.z;
 
-		//moveParticle.SetPos(emitterPos);
-		//moveParticle.Add(
-		//	3, 0.7f, obj.mTuneMaterial.mColor, 0.1f, 0.6f,
-		//	{ -0.001f,0.01f,-0.001f }, { 0.001f,0.03f,0.001f },
-		//	0.01f, -Vector3::ONE * 0.1f, Vector3::ONE * 0.1f, 0.05f);
+		moveParticle.SetPos(emitterPos);
+		moveParticle.Add(
+			2, 0.5f, obj.mTuneMaterial.mColor, 0.3f, 0.7f,
+			{ -0.001f,0.01f,-0.001f }, { 0.001f,0.03f,0.001f },
+			0.01f, -Vector3::ONE * 0.1f, Vector3::ONE * 0.1f, 0.05f);
 	}
 	else
 	{
@@ -280,17 +281,18 @@ void Player::MoveKey()
 		//入力中は加速度足し続ける
 		moveAccel += moveAccelAmount;
 
-		////エミッターの座標はプレイヤーの座標から移動方向の逆側にスケール分ずらしたもの
-		//Vector3 emitterPos = obj.mTransform.position;
-		//Vector2 mVelo = moveVec;	//moveVecを正規化すると実際の移動に支障が出るので一時変数に格納
-		//emitterPos.x -= mVelo.Normalize().x * obj.mTransform.scale.x;
-		//emitterPos.z -= mVelo.Normalize().y * obj.mTransform.scale.z;
+		//エミッターの座標はプレイヤーの座標から移動方向の逆側にスケール分ずらしたもの
+		Vector3 emitterPos = obj.mTransform.position;
+		Vector2 mVelo = { -moveVec.x,-moveVec.z };	//moveVecを正規化すると実際の移動に支障が出るので一時変数に格納
+		mVelo.Normalize();
+		emitterPos.x += mVelo.x * obj.mTransform.scale.x;
+		emitterPos.z += mVelo.y * obj.mTransform.scale.z;
 
-		//moveParticle.SetPos(emitterPos);
-		//moveParticle.Add(
-		//	2, 0.5f, obj.mTuneMaterial.mColor, 0.3f, 0.7f,
-		//	{ -0.001f,0.01f,-0.001f }, { 0.001f,0.03f,0.001f },
-		//	0.01f, -Vector3::ONE * 0.1f, Vector3::ONE * 0.1f, 0.05f);
+		moveParticle.SetPos(emitterPos);
+		moveParticle.Add(
+			2, 0.5f, obj.mTuneMaterial.mColor, 0.3f, 0.7f,
+			{ -0.001f,0.01f,-0.001f }, { 0.001f,0.03f,0.001f },
+			0.01f, -Vector3::ONE * 0.1f, Vector3::ONE * 0.1f, 0.05f);
 	}
 	else
 	{

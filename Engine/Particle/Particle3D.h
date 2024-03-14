@@ -1,8 +1,10 @@
 #pragma once
-#include "ModelObj.h"
+#include "Transform.h"
 #include "LightGroup.h"
 #include "SRConstBuffer.h"
+#include "SRVertexBuffer.h"
 #include "VertexBuffer.h"
+#include "ViewProjection.h"
 #include "Easing.h"
 #include "Util.h"
 
@@ -20,12 +22,14 @@ class IEmitter3D
 	//粒子1粒
 	struct Particle3D
 	{
-		ModelObj obj;
+		//座標
+		Vector3 pos;
 		//大きさ
 		float scale;
 		float startScale;	//開始時の大きさ
 		float endScale;		//終了時の大きさ
 		//角度
+		Vector3 rot;
 		Vector3 plusRot;	//更新処理で回転させるときに使う用
 		//速度
 		Vector3 velo;
@@ -34,6 +38,8 @@ class IEmitter3D
 		//重力
 		float gravity = 0.98f;
 
+		//色
+		Color color;
 		//生存時間
 		Easing::EaseTimer aliveTimer;
 
@@ -47,12 +53,13 @@ class IEmitter3D
 	};
 
 private:
-	//座標
-	Vector3 pos_{};
-	//角度
-	Vector3 rot_{};
-	//大きさ
-	Vector3 scale_{ 0.1f,0.1f,0.1f };	//これ0にするといかれる(原因不明)
+	Transform transform;
+	SRConstBuffer<TransformBuffer> transformBuff;
+	SRConstBuffer<ViewProjectionBuffer> viewProjectionBuff;
+
+	std::vector<VertexParticle> vertices;
+	SRVertexBuffer vertBuff;
+
 	float minScale_;	//パーティクルの最小サイズ
 	float maxScale_;	//パーティクルの最大サイズ
 	//元の大きさ
@@ -98,6 +105,9 @@ public:
 	//描画
 	void Draw();
 
+	//定数バッファへ送信
+	void TransferBuffer(ViewProjection viewprojection);
+
 	//パーティクル追加(固有処理にしたかったらoverrideで上書きする)
 	//life:秒数指定なので注意
 	virtual void Add(uint32_t addNum, float life, Color color, float minScale, float maxScale,
@@ -107,9 +117,9 @@ public:
 
 	//ゲッター//
 	//座標取得
-	Vector3 GetPos()const { return pos_; }
+	Vector3 GetPos()const { return transform.position; }
 	//大きさ取得
-	Vector3 GetScale()const { return scale_; }
+	Vector3 GetScale()const { return transform.scale; }
 	//パーティクル全部死んだか取得
 	bool GetParticlesDead()const { return particles_.empty(); }
 	//何個パーティクルあるか取得
@@ -121,9 +131,9 @@ public:
 
 	//セッター//
 	//座標設定
-	void SetPos(float x, float y, float z) { pos_ = { x,y,z }; }
+	void SetPos(float x, float y, float z) { transform.position = { x,y,z }; }
 	//座標設定
-	void SetPos(const Vector3& pos) { pos_ = pos; }
+	void SetPos(const Vector3& pos) { transform.position = pos; }
 	//大きさ設定
 	void SetScale(const Vector3& scale);
 	////角度設定

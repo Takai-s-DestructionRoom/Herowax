@@ -638,6 +638,15 @@
     <FxCompile Include="Shader\MultiRenderTestBVS.hlsl">
       <Filter>シェーダー ファイル</Filter>
     </FxCompile>
+    <FxCompile Include="Shader\Particle3DGS.hlsl">
+      <Filter>シェーダー ファイル</Filter>
+    </FxCompile>
+    <FxCompile Include="Shader\Particle3DPS.hlsl">
+      <Filter>シェーダー ファイル</Filter>
+    </FxCompile>
+    <FxCompile Include="Shader\Particle3DVS.hlsl">
+      <Filter>シェーダー ファイル</Filter>
+    </FxCompile>
     <FxCompile Include="Shader\DisolvePS.hlsl" />
     <FxCompile Include="Shader\DisolveVS.hlsl" />
   </ItemGroup>
@@ -1035,6 +1044,9 @@
       <Filter>シェーダー ファイル</Filter>
     </None>
     <None Include="Shader\MultiRenderTest.hlsli">
+      <Filter>シェーダー ファイル</Filter>
+    </None>
+    <None Include="Shader\Particle3D.hlsli">
       <Filter>シェーダー ファイル</Filter>
     </None>
     <None Include="Shader\Disolve.hlsli" />
