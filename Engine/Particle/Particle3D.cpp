@@ -145,17 +145,33 @@ void IEmitter3D::Draw()
 	RootSignature mRootSignature = RDirectX::GetDefRootSignature();
 
 	// ルートパラメータの設定
-	RootParamaters rootParams(2);
+
+	DescriptorRange descriptorRange{};
+	descriptorRange.NumDescriptors = 1; //一度の描画に使うテクスチャが1枚なので1
+	descriptorRange.RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_SRV;
+	descriptorRange.BaseShaderRegister = 0; //テクスチャレジスタ0番
+	descriptorRange.OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND;
+
+	RootParamaters rootParams(4);
 	//定数バッファ0番(Transform)
 	rootParams[0].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV; //定数バッファビュー
 	rootParams[0].Descriptor.ShaderRegister = 0; //定数バッファ番号
 	rootParams[0].Descriptor.RegisterSpace = 0; //デフォルト値
 	rootParams[0].ShaderVisibility = D3D12_SHADER_VISIBILITY_ALL; //全シェーダから見える
-	//定数バッファ2番(ViewProjection)
+	//定数バッファ1番(ViewProjection)
 	rootParams[1].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV; //定数バッファビュー
 	rootParams[1].Descriptor.ShaderRegister = 1; //定数バッファ番号
 	rootParams[1].Descriptor.RegisterSpace = 0; //デフォルト値
 	rootParams[1].ShaderVisibility = D3D12_SHADER_VISIBILITY_ALL; //全シェーダから見える
+	//定数バッファ2番(Light)
+	rootParams[2].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV; //定数バッファビュー
+	rootParams[2].Descriptor.ShaderRegister = 2; //定数バッファ番号
+	rootParams[2].Descriptor.RegisterSpace = 0; //デフォルト値
+	rootParams[2].ShaderVisibility = D3D12_SHADER_VISIBILITY_ALL; //全シェーダから見える
+	//テクスチャ
+	rootParams[3].ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;
+	rootParams[3].DescriptorTable = DescriptorRanges{descriptorRange};
+	rootParams[3].ShaderVisibility = D3D12_SHADER_VISIBILITY_ALL;
 
 	mRootSignature.mDesc.RootParamaters = rootParams;
 	mRootSignature.Create();
@@ -201,12 +217,15 @@ void IEmitter3D::Draw()
 
 	GraphicsPipeline pipe = GraphicsPipeline::GetOrCreate("Particle3D", pipedesc);
 	RenderOrder order;
+	order.mRootSignature = mRootSignature.mPtr.Get();
 	order.pipelineState = pipe.mPtr.Get();
+	order.primitiveTopology = D3D_PRIMITIVE_TOPOLOGY_POINTLIST;
 	order.vertBuff = vertBuff;
 	order.rootData = {
 		{RootDataType::SRBUFFER_CBV, transformBuff.mBuff },
 		{RootDataType::SRBUFFER_CBV, viewProjectionBuff.mBuff },
 		{RootDataType::LIGHT},
+		{TextureManager::Get("").mGpuHandle}
 	};
 
 	Renderer::DrawCall("Opaque", order);
