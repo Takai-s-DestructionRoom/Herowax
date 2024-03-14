@@ -221,6 +221,7 @@ void IEmitter3D::Draw()
 	order.pipelineState = pipe.mPtr.Get();
 	order.primitiveTopology = D3D_PRIMITIVE_TOPOLOGY_POINTLIST;
 	order.vertBuff = vertBuff;
+	order.indexCount = static_cast<uint32_t>(vertices.size());
 	order.rootData = {
 		{RootDataType::SRBUFFER_CBV, transformBuff.mBuff },
 		{RootDataType::SRBUFFER_CBV, viewProjectionBuff.mBuff },
