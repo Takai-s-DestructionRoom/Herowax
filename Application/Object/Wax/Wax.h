@@ -3,6 +3,11 @@
 #include "Easing.h"
 #include "WaxState.h"
 
+struct DisolveBuffer
+{
+	float disolveValue;
+};
+
 //蝋
 class Wax : public GameObject
 {
@@ -36,6 +41,10 @@ public:
 	float gravity = 0.098f;		//重力
 	bool isGround;				//接地してるかフラグ
 	uint32_t groupNum;			//所属グループの要素番号
+	float disolveValue;			//ディゾルブの強さ
+
+private:
+	SRConstBuffer<DisolveBuffer> mDisolveBuff;
 
 public:
 	Wax();

@@ -66,6 +66,8 @@ void WaxExtinguish::Update(Wax* wax)
 {
 	wax->SetStateStr("Extinguish");
 
+	wax->disolveValue = wax->extinguishTimer.GetTimeRate();
+
 	//色が変わる
 	wax->obj.mTuneMaterial.mColor = wax->waxEndColor;
 

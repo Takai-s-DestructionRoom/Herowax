@@ -635,6 +635,8 @@
     <FxCompile Include="Shader\MultiRenderTestBVS.hlsl">
       <Filter>シェーダー ファイル</Filter>
     </FxCompile>
+    <FxCompile Include="Shader\DisolvePS.hlsl" />
+    <FxCompile Include="Shader\DisolveVS.hlsl" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\2d\Sprite.h">
@@ -1029,6 +1031,7 @@
     <None Include="Shader\MultiRenderTest.hlsli">
       <Filter>シェーダー ファイル</Filter>
     </None>
+    <None Include="Shader\Disolve.hlsli" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="hogehoge.txt" />
