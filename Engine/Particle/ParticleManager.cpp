@@ -1,5 +1,6 @@
 #include "ParticleManager.h"
 #include "Particle3D.h"
+#include "RImGui.h"
 
 ParticleManager* ParticleManager::GetInstance()
 {
@@ -41,6 +42,23 @@ void ParticleManager::Update()
 			emitter.second->Update();
 		}
 	}
+
+#pragma region ImGui
+	ImGui::SetNextWindowSize({ 150, 70 });
+
+	ImGuiWindowFlags window_flags = 0;
+	window_flags |= ImGuiWindowFlags_NoResize;
+
+	// パーティクル //
+	ImGui::Begin("Particle", NULL, window_flags);
+
+	for (auto& emitter : emitters_)
+	{
+		ImGui::Text("生存個体数:%d", emitter.second->GetParticlesSize());
+	}
+
+	ImGui::End();
+#pragma endregion
 }
 
 void ParticleManager::Draw()

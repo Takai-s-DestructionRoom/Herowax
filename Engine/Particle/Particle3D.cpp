@@ -51,16 +51,15 @@ void IEmitter3D::Update()
 		particle.growingTimer.Update(elapseSpeed_);
 
 		//スケールの線形補間
-		float scale;
 		if (isGrowing_)	//発生時に拡大する場合
 		{
 			if (particle.growingTimer.GetRun())	//拡大タイマーが動いてたら
 			{
-				scale = Easing::lerp(0.f, particle.startScale, particle.growingTimer.GetTimeRate());
+				particle.scale = Easing::lerp(0.f, particle.startScale, particle.growingTimer.GetTimeRate());
 			}
 			else
 			{
-				scale = Easing::lerp(particle.startScale, particle.endScale, particle.easeTimer.GetTimeRate());
+				particle.scale = Easing::lerp(particle.startScale, particle.endScale, particle.easeTimer.GetTimeRate());
 			}
 		}
 		else
@@ -103,6 +102,14 @@ void IEmitter3D::Update()
 		particle.pos += particle.velo * elapseSpeed_;
 	}
 
+	//頂点情報がリセットされないので更新時には毎フレームリセット
+	for (auto& v : vertices)
+	{
+		v.pos = Vector3::ZERO;
+		v.rot = Vector3::ZERO;
+		v.scale = 0.f;
+	}
+
 	//頂点バッファへデータ転送
 	//パーティクルの情報を1つずつ反映
 	for (size_t i = 0; i < particles_.size(); i++)
@@ -121,7 +128,7 @@ void IEmitter3D::Update()
 		vertices.at(i) = vertex;
 	}
 
-	//毎回頂点数が変わるので初期化しなおす
+	//毎回頂点情報が変わるので更新する
 	vertBuff.Update(vertices);
 
 	//バッファにデータ送信
@@ -141,11 +148,9 @@ void IEmitter3D::Draw()
 	pipedesc.RasterizerState.FillMode = D3D12_FILL_MODE_SOLID;
 	pipedesc.BlendState.AlphaToCoverageEnable = false;
 
-
 	RootSignature mRootSignature = RDirectX::GetDefRootSignature();
 
 	// ルートパラメータの設定
-
 	DescriptorRange descriptorRange{};
 	descriptorRange.NumDescriptors = 1; //一度の描画に使うテクスチャが1枚なので1
 	descriptorRange.RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_SRV;
