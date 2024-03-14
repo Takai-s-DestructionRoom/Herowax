@@ -33,8 +33,4 @@ private:
 	Color coldColor = Color::kLightblue;	//冷えてる時の色
 	Color hotColor = Color::kYellow;		//暖かい時の色
 	Color burningColor = Color::kRed;		//めっちゃ熱い時の色
-
-	float coldBorder;			//冷えてる色のボーダー
-	float hotBorder;			//暖かい色のボーダー
-	float burningBorder;		//めっちゃ熱い色のボーダー
 };

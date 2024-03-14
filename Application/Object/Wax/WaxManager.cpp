@@ -2,6 +2,7 @@
 #include "ImGui.h"
 #include "Temperature.h"
 #include "Parameter.h"
+#include "ColPrimitive3D.h"
 
 WaxManager* WaxManager::GetInstance()
 {
@@ -9,59 +10,122 @@ WaxManager* WaxManager::GetInstance()
 	return &instance;
 }
 
+bool WaxManager::CheckHitWaxGroups(std::unique_ptr<WaxGroup>& group1,
+	std::unique_ptr<WaxGroup>& group2)
+{
+	//一応内部で同じかどうか確認
+	if (group1 == group2) {
+		return false;
+	}
+	for (auto& wax1 : group1->waxs) {
+		for (auto& wax2 : group2->waxs) {
+			
+			//どっちも固まり始めておらず
+			if (!wax1->isSolid && !wax2->isSolid)
+			{
+				//どちらも地面にいないとダメ
+				if (wax1->isGround && wax2->isGround)
+				{
+					//どれか一つでも当たっていたら
+					if (ColPrimitive3D::CheckSphereToSphere(wax1->collider, wax2->collider))
+					{
+						return true;
+					}
+				}
+			}
+		}
+	}
+	return false;
+}
+
+GraphicsPipeline WaxManager::CreateDisolvePipeLine()
+{
+	DescriptorRange descriptorRange{};
+	descriptorRange.NumDescriptors = 1; //一度の描画に使うテクスチャが1枚なので1
+	descriptorRange.RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_SRV;
+	descriptorRange.BaseShaderRegister = 0; //テクスチャレジスタ0番
+	descriptorRange.OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND;
+
+	PipelineStateDesc pipedesc = RDirectX::GetDefPipeline().mDesc;
+	pipedesc.VS = Shader::GetOrCreate("DisolveVS", "Shader/DisolveVS.hlsl", "main", "vs_5_0");
+	pipedesc.PS = Shader::GetOrCreate("DisolvePS", "Shader/DisolvePS.hlsl", "main", "ps_5_0");
+
+	RootParamaters rootParams(7);
+	//マテリアル
+	rootParams[0].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV; //定数バッファビュー
+	rootParams[0].Descriptor.ShaderRegister = 0; //定数バッファ番号
+	rootParams[0].Descriptor.RegisterSpace = 0; //デフォルト値
+	rootParams[0].ShaderVisibility = D3D12_SHADER_VISIBILITY_ALL; //全シェーダから見える
+	//定数バッファ1番(Transform)
+	rootParams[1].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV; //定数バッファビュー
+	rootParams[1].Descriptor.ShaderRegister = 1; //定数バッファ番号
+	rootParams[1].Descriptor.RegisterSpace = 0; //デフォルト値
+	rootParams[1].ShaderVisibility = D3D12_SHADER_VISIBILITY_ALL; //全シェーダから見える
+	//定数バッファ2番(ViewProjection)
+	rootParams[2].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV; //定数バッファビュー
+	rootParams[2].Descriptor.ShaderRegister = 2; //定数バッファ番号
+	rootParams[2].Descriptor.RegisterSpace = 0; //デフォルト値
+	rootParams[2].ShaderVisibility = D3D12_SHADER_VISIBILITY_ALL; //全シェーダから見える
+	//定数バッファ3番(Light)
+	rootParams[3].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV; //定数バッファビュー
+	rootParams[3].Descriptor.ShaderRegister = 3; //定数バッファ番号
+	rootParams[3].Descriptor.RegisterSpace = 0; //デフォルト値
+	rootParams[3].ShaderVisibility = D3D12_SHADER_VISIBILITY_ALL; //全シェーダから見える
+	//テクスチャ(本体テクスチャ)
+	descriptorRange.BaseShaderRegister = 0;	//テクスチャレジスタ1番
+	rootParams[4].ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;
+	rootParams[4].DescriptorTable = DescriptorRanges{ descriptorRange };
+	rootParams[4].ShaderVisibility = D3D12_SHADER_VISIBILITY_ALL;
+	//テクスチャ(マスクテクスチャ)
+	descriptorRange.BaseShaderRegister = 1;	//テクスチャレジスタ1番
+	rootParams[5].ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;
+	rootParams[5].DescriptorTable = DescriptorRanges{ descriptorRange };
+	rootParams[5].ShaderVisibility = D3D12_SHADER_VISIBILITY_ALL;
+	//定数バッファ4番(disolve)
+	rootParams[6].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV; //定数バッファビュー
+	rootParams[6].Descriptor.ShaderRegister = 4; //定数バッファ番号
+	rootParams[6].Descriptor.RegisterSpace = 0; //デフォルト値
+	rootParams[6].ShaderVisibility = D3D12_SHADER_VISIBILITY_ALL; //全シェーダから見える
+
+	RootSignatureDesc rootDesc = RDirectX::GetDefRootSignature().mDesc;
+	rootDesc.RootParamaters = rootParams;
+	RootSignature mRootSig = RootSignature::GetOrCreate("disolveSignature", rootDesc);
+
+	pipedesc.pRootSignature = mRootSig.mPtr.Get();
+
+	GraphicsPipeline pipe = GraphicsPipeline::GetOrCreate("Disolve", pipedesc);
+
+	return pipe;
+}
+
 WaxManager::WaxManager() :
 	heatUpTemperature(10.f),
-	heatBonus(5.f)
+	heatBonus(5.f),
+	waxDamage(1)
 {
 	//生成時に変数をセーブデータから引っ張ってくる
 	std::map<std::string, std::string> extract = Parameter::Extract(fileName);
-	heatUpTemperature = std::stof(extract["ロウが燃えたときの上昇温度"]);
-	heatBonus = std::stof(extract["ボーナス上昇温度"]);
+	heatUpTemperature = Parameter::GetParam(extract, "ロウが燃えたときの上昇温度",5.f);
+	heatBonus = Parameter::GetParam(extract, "ボーナス上昇温度",2.f);
+
+	//ディゾルブで使うパイプラインを生成する
+	CreateDisolvePipeLine();
 }
 
 void WaxManager::Init()
 {
-	waxs.clear();
 	waxGroups.clear();
 }
 
 void WaxManager::Update()
 {
-	//寿命が尽きた蝋を全削除
-	for (uint32_t i = 0; i < waxs.size(); i++)
-	{
-		if (waxs[i]->GetIsAlive() == false)
-		{
-			waxs.erase(waxs.begin() + i);
-			i--;
-		}
-	}
-
-	for (uint32_t i = 0; i < waxGroups.size(); i++)
-	{
-		//ロウグループが空なら
-		if (waxGroups[i]->GetIsEmpty())
-		{
-			//そのロウグループに所属してるロウ皆殺し
-			for (uint32_t j = 0; j < waxs.size(); j++)
-			{
-				if (waxs[j]->groupNum == i)
-				{
-					waxs[j]->isAlive = false;
-				}
-			}
-			//要素削除
-			waxGroups.erase(waxGroups.begin() + i);
-		}
-	}
-
 	//燃えている数を初期化
 	isBurningNum = 0;
 
-	for (auto& wax : waxs)
-	{
-		wax->Update();
-	}
+	//死んでいるグループがあれば消す
+	waxGroups.remove_if([](std::unique_ptr<WaxGroup>& wax) {
+		return !wax->GetIsAlive();
+		});
 
 	for (auto& waxGroup : waxGroups)
 	{
@@ -75,7 +139,7 @@ void WaxManager::Update()
 	window_flags |= ImGuiWindowFlags_NoResize;
 
 	ImGui::Begin("Wax", NULL, window_flags);
-	ImGui::Text("存在しているロウの数:%d", (int)waxs.size());
+	ImGui::Text("存在しているロウの数:%d", (int)GetWaxNum());
 	ImGui::Text("燃えているロウの数:%d", isBurningNum);
 	ImGui::Text("現在の温度:%f", TemperatureManager::GetInstance()->GetTemperature());
 	ImGui::PushItemWidth(100);
@@ -83,12 +147,17 @@ void WaxManager::Update()
 	ImGui::InputFloat("ボーナス上昇温度", &heatBonus, 1.0f);
 
 	ImGui::Text("ロウグループ数:%d", (int)waxGroups.size());
-	for (uint32_t i = 0; i < waxGroups.size(); i++)
+	for (auto& group : waxGroups)
 	{
-		ImGui::Text("グループ内のロウの数:%d", (int)waxGroups[i]->waxNums.size());
+		ImGui::Text("グループ内のロウの数:%d", (int)group->waxs.size());
+		ImGui::Text("グループの中で最長の固まる時間:%f", group->smallestTime);
+		
 	}
-
 	ImGui::PopItemWidth();
+
+	if (ImGui::Button("当たり判定の描画")) {
+		isViewCol = !isViewCol;
+	}
 
 	if (ImGui::Button("Reset")) {
 		Init();
@@ -106,65 +175,46 @@ void WaxManager::Update()
 
 void WaxManager::Draw()
 {
-	for (auto& wax : waxs)
+	for (auto& group : waxGroups)
 	{
-		wax->Draw();
+		group->Draw();
+		for (auto& wax : group->waxs)
+		{
+			wax->Draw();
+			if (isViewCol) {
+				wax->DrawCollider();
+			}
+		}
 	}
 }
 
 void WaxManager::Create(Transform transform, uint32_t power, Vector3 vec,
 	float speed, Vector2 range, float size, float atkTime, float solidTime)
 {
-	//要素追加
-	waxs.emplace_back();
-	waxs.back() = std::make_unique<Wax>();
-	waxs.back()->groupNum = (uint32_t)waxGroups.size();
-
-	//ロウグループも逐一追加
+	//生成時にグループ作成
 	waxGroups.emplace_back();
 	waxGroups.back() = std::make_unique<WaxGroup>();
-	//ロウグループが保持するロウの要素番号は今生成したばかりなのでsize-1
-	waxGroups.back()->waxNums.emplace_back();
-	waxGroups.back()->waxNums.back() = (uint32_t)waxs.size() - 1;
-
+	//生成したロウをグループへ格納
+	waxGroups.back()->waxs.emplace_back();
+	waxGroups.back()->waxs.back() = std::make_unique<Wax>();
 
 	//指定された状態に
-	waxs.back()->obj.mTransform = transform;
+	waxGroups.back()->waxs.back()->obj.mTransform = transform;
 	//情報を受け取って格納
-	waxs.back()->Init(power, vec, speed, range, size, atkTime, solidTime);
-}
-
-void WaxManager::EraceBegin()
-{
-	waxs.erase(waxs.begin());
-}
-
-void WaxManager::Move(uint32_t originNum, uint32_t moveNum)
-{
-	if (waxGroups[originNum]->waxNums.empty() == false &&
-		waxGroups[moveNum]->waxNums.empty() == false)
-	{
-		//要素の最後から移動させたい奴を全部詰める
-		waxGroups[originNum]->waxNums.insert(
-			waxGroups[originNum]->waxNums.end(),
-			waxGroups[moveNum]->waxNums.begin(),
-			waxGroups[moveNum]->waxNums.end());
-
-		//移動が終わったら移動元は消す
-		waxGroups[moveNum]->waxNums.clear();
-
-		//くっついてるロウの数だけHP増やす
-		waxGroups[originNum]->SetHP(waxGroups[originNum]->waxNums.size() * 10.f);
-
-		//ロウに割り振られてるグループ番号を再設定
-		for (auto& num : waxGroups[originNum]->waxNums)
-		{
-			waxs[num]->groupNum = originNum;
-		}
-	}
+	waxGroups.back()->waxs.back()->Init(power, vec, speed, range, size, atkTime, solidTime);
 }
 
 float WaxManager::GetCalcHeatBonus()
 {
 	return heatBonus * (float)isBurningNum;
+}
+
+uint32_t WaxManager::GetWaxNum()
+{
+	int32_t waxNum = 0;
+	for (auto& group : waxGroups)
+	{
+		waxNum += (uint32_t)group->waxs.size();
+	}
+	return waxNum;
 }

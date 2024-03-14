@@ -3,6 +3,11 @@
 #include "Easing.h"
 #include "WaxState.h"
 
+struct DisolveBuffer
+{
+	float disolveValue;
+};
+
 //蝋
 class Wax : public GameObject
 {
@@ -23,7 +28,7 @@ public:
 	Easing::EaseTimer burningTimer;	//蝋が燃え尽きるまでの時間
 	Easing::EaseTimer extinguishTimer;	//蝋が燃え尽きて消えるまでの時間
 	
-	WaxState* state;			//燃焼の状態管理
+	std::unique_ptr<WaxState> state;			//燃焼の状態管理
 	std::string stateStr;		//状態を文字列に保存用
 
 	//------------ 固形関連 ------------//
@@ -36,6 +41,10 @@ public:
 	float gravity = 0.098f;		//重力
 	bool isGround;				//接地してるかフラグ
 	uint32_t groupNum;			//所属グループの要素番号
+	float disolveValue;			//ディゾルブの強さ
+
+private:
+	SRConstBuffer<DisolveBuffer> mDisolveBuff;
 
 public:
 	Wax();
@@ -52,11 +61,17 @@ public:
 	bool IsBurning();
 	bool IsNormal();
 
+	//固まり始めて点滅し始めているかどうか
+	bool GetIsSolidLine();
+
 	////ダメージ受ける
 	//void Damage(float damage) { hp -= damage; }
 
 	//状態変更
-	void ChangeState(WaxState* newstate);
+	template <typename ChangeWaxState>
+	void ChangeState() {
+		state = std::make_unique<ChangeWaxState>();
+	};
 
 	// ゲッター //
 	//固まった瞬間かどうかを返す

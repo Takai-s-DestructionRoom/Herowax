@@ -118,9 +118,6 @@
     <Filter Include="ヘッダー ファイル\Application\Object\Tower">
       <UniqueIdentifier>{1d506580-ad2a-47f4-aebd-9adddac14fdb}</UniqueIdentifier>
     </Filter>
-    <Filter Include="ソース ファイル\Application\Object\EnemySpawner">
-      <UniqueIdentifier>{82fc10b4-caf4-4682-bcca-a7a23bf0b7fc}</UniqueIdentifier>
-    </Filter>
     <Filter Include="ヘッダー ファイル\Application\Object\EnemySpawner">
       <UniqueIdentifier>{65e2e1d4-60aa-4f58-a8a8-413f2ab72128}</UniqueIdentifier>
     </Filter>
@@ -201,6 +198,9 @@
     </Filter>
     <Filter Include="ヘッダー ファイル\Application\Paint">
       <UniqueIdentifier>{b685b484-b56f-47fd-8808-42ab62ed0e88}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\Application\Object\EnemySpawner">
+      <UniqueIdentifier>{82fc10b4-caf4-4682-bcca-a7a23bf0b7fc}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -516,6 +516,12 @@
     <ClCompile Include="Application\Paint\PaintUtil.cpp">
       <Filter>ソース ファイル\Application\Paint</Filter>
     </ClCompile>
+    <ClCompile Include="Application\Object\EnemyUI.cpp">
+      <Filter>ソース ファイル\Application\Object\Chara\Enemy</Filter>
+    </ClCompile>
+    <ClCompile Include="Application\Chara\Player\PlayerState.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
     <ClCompile Include="Application\Paint\PaintableModelObj.cpp">
       <Filter>ソース ファイル\Application\Paint</Filter>
     </ClCompile>
@@ -635,6 +641,17 @@
     <FxCompile Include="Shader\MultiRenderTestBVS.hlsl">
       <Filter>シェーダー ファイル</Filter>
     </FxCompile>
+    <FxCompile Include="Shader\Particle3DGS.hlsl">
+      <Filter>シェーダー ファイル</Filter>
+    </FxCompile>
+    <FxCompile Include="Shader\Particle3DPS.hlsl">
+      <Filter>シェーダー ファイル</Filter>
+    </FxCompile>
+    <FxCompile Include="Shader\Particle3DVS.hlsl">
+      <Filter>シェーダー ファイル</Filter>
+    </FxCompile>
+    <FxCompile Include="Shader\DisolvePS.hlsl" />
+    <FxCompile Include="Shader\DisolveVS.hlsl" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\2d\Sprite.h">
@@ -973,6 +990,12 @@
     <ClInclude Include="Application\Paint\PaintUtil.h">
       <Filter>ヘッダー ファイル\Application\Paint</Filter>
     </ClInclude>
+    <ClInclude Include="Application\Object\EnemyUI.h">
+      <Filter>ヘッダー ファイル\Application\Object\Chara\Enemy</Filter>
+    </ClInclude>
+    <ClInclude Include="Application\Chara\Player\PlayerState.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
     <ClInclude Include="Application\Paint\PaintableModelObj.h">
       <Filter>ヘッダー ファイル\Application\Paint</Filter>
     </ClInclude>
@@ -1029,6 +1052,10 @@
     <None Include="Shader\MultiRenderTest.hlsli">
       <Filter>シェーダー ファイル</Filter>
     </None>
+    <None Include="Shader\Particle3D.hlsli">
+      <Filter>シェーダー ファイル</Filter>
+    </None>
+    <None Include="Shader\Disolve.hlsli" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="hogehoge.txt" />

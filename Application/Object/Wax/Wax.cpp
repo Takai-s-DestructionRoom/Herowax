@@ -1,5 +1,7 @@
 #include "Wax.h"
 #include "Camera.h"
+#include "Renderer.h"
+#include "WaxManager.h"
 
 Wax::Wax():GameObject(),
 	waxOriginColor(0.8f, 0.6f, 0.35f, 1.f),
@@ -9,17 +11,14 @@ Wax::Wax():GameObject(),
 	igniteTimer(0.25f),
 	burningTimer(1.0f),
 	extinguishTimer(0.5f),
-	state(new WaxNormal),
-	solidTimer(1.f)
+	solidTimer(1.f),
+	disolveValue(0.f)
 {
+	state = std::make_unique<WaxNormal>();
 	obj = ModelObj(Model::Load("./Resources/Model/wax/wax.obj", "wax", true));
 	obj.mTuneMaterial.mColor = waxOriginColor;
-}
 
-void Wax::ChangeState(WaxState* newstate)
-{
-	delete state;
-	state = newstate;
+	TextureManager::Load("./Resources/DissolveMap.png","DissolveMap");
 }
 
 bool Wax::GetIsSolidNow()
@@ -77,7 +76,7 @@ void Wax::Update()
 	}
 
 	//もう少しで固まりそうなら
-	if (solidTimer.GetTimeRate() > 0.7f)
+	if (GetIsSolidLine())
 	{
 		//もう1色は更新し続け
 		obj.mTuneMaterial.mColor = Color::kWhite;
@@ -106,6 +105,8 @@ void Wax::Update()
 
 	UpdateCollider();
 
+	mDisolveBuff->disolveValue = disolveValue;
+
 	obj.mTransform.UpdateMatrix();
 	obj.TransferBuffer(Camera::sNowCamera->mViewProjection);
 }
@@ -114,8 +115,29 @@ void Wax::Draw()
 {
 	if (isAlive)
 	{
-		obj.Draw();
-		DrawCollider();
+		GraphicsPipeline pipe = WaxManager::GetInstance()->CreateDisolvePipeLine();
+
+		for (std::shared_ptr<ModelMesh> data : obj.mModel->mData) {
+			std::vector<RootData> rootData = {
+				{ RootDataType::SRBUFFER_CBV, obj.mMaterialBuffMap[data->mMaterial.mName].mBuff },
+				{ RootDataType::SRBUFFER_CBV, obj.mTransformBuff.mBuff },
+				{ RootDataType::SRBUFFER_CBV, obj.mViewProjectionBuff.mBuff },
+				{ RootDataType::LIGHT },
+				{ TextureManager::Get(data->mMaterial.mTexture).mGpuHandle },
+				{ TextureManager::Get("DissolveMap").mGpuHandle},
+				{ RootDataType::SRBUFFER_CBV ,mDisolveBuff.mBuff}
+			};
+
+			RenderOrder order;
+			order.mRootSignature = pipe.mDesc.pRootSignature;
+			order.pipelineState = pipe.mPtr.Get();
+			order.rootData = rootData;
+			order.vertView = &data->mVertBuff.mView;
+			order.indexView = &data->mIndexBuff.mView;
+			order.indexCount = static_cast<uint32_t>(data->mIndices.size());
+
+			Renderer::DrawCall("Opaque", order);
+		}
 	}
 }
 
@@ -129,4 +151,9 @@ bool Wax::IsNormal()
 	return !igniteTimer.GetStarted() &&
 		!burningTimer.GetStarted() && 
 		!extinguishTimer.GetStarted();
+}
+
+bool Wax::GetIsSolidLine()
+{
+	return solidTimer.GetTimeRate() > 0.7f;
 }

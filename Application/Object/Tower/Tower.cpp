@@ -1,8 +1,9 @@
 #include "Tower.h"
+#include "Temperature.h"
 #include "Camera.h"
 #include "ImGui.h"
 
-Tower::Tower(): GameObject(),hp(0), maxHP(5.f)
+Tower::Tower() : GameObject(), hp(0), maxHP(10.f),shakeTimer(0.3f),shakePower(1.5f)
 {
 	obj = ModelObj(Model::Load("./Resources/Model/Birdnest/Birdnest.obj", "Birdnest", true));
 }
@@ -14,10 +15,22 @@ void Tower::Init()
 
 void Tower::Update()
 {
+	if (TemperatureManager::GetInstance()->GetTemperature() >= TemperatureManager::GetInstance()->GetHotBorder())
+	{
+		obj.mTuneMaterial.mColor = Color::kRed;
+	}
+	else if (TemperatureManager::GetInstance()->GetTemperature() <= TemperatureManager::GetInstance()->GetColdBorder())
+	{
+		obj.mTuneMaterial.mColor = Color::kBlue;
+	}
+	else
+	{
+		obj.mTuneMaterial.mColor = Color::kWhite;
+	}
+
+	Shake();
+
 	UpdateCollider();
-	//無理やり判定を足元にずらす(カスのコード)
-	//どっかで当たり判定可視化出来るようにしたいね
-	collider.pos.y = 0;
 
 	//HP0になったら死ぬ
 	if (hp <= 0)
@@ -39,11 +52,15 @@ void Tower::Update()
 	window_flags |= ImGuiWindowFlags_NoResize;
 
 	ImGui::Begin("Tower", NULL, window_flags);
-
-	
-	ImGui::Text("HP:%d", &hp, 1.0f);
+	ImGui::Text("HP:%f", &hp);
+	ImGui::SliderFloat("最大HP", &maxHP,0.f,100.f);
+	ImGui::SliderFloat("揺れる力", &shakePower,0.f,5.f);
 	if (ImGui::Button("HP減少")) {
-		Damage(1.f);
+		Damage(1.f,Vector3::ONE);
+	}
+
+	if (ImGui::Button("当たり判定の描画")) {
+		isViewCol = !isViewCol;
 	}
 	if (ImGui::Button("Reset")) {
 		hp = maxHP;
@@ -59,5 +76,42 @@ void Tower::Draw()
 	if (isAlive)
 	{
 		obj.Draw();
+		if (isViewCol) {
+			DrawCollider();
+		}
 	}
+}
+
+void Tower::Shake()
+{
+	shakeTimer.Update();
+
+	if (shakeTimer.GetStarted() == false)
+	{
+		oriPos = obj.mTransform.position;
+	}
+
+	if (shakeTimer.GetStarted())
+	{
+		//大きさかけて、タイマーが進むごとに揺れ小さくなってく
+		shakeVec *= shakePower * (Easing::OutBack(1.f,0.f,shakeTimer.GetTimeRate()));
+
+		obj.mTransform.position = oriPos + shakeVec;
+	}
+
+	if (shakeTimer.GetEnd())
+	{
+		//終わったら揺れる前の位置に戻してあげて、揺れの値も0に
+		shakeVec = Vector3::ZERO;
+		obj.mTransform.position = oriPos;
+
+		shakeTimer.Reset();
+	}
+}
+
+void Tower::Damage(float damage, Vector3 vec)
+{
+	hp -= damage;
+	shakeVec = vec.Normalize();
+	shakeTimer.Start();
 }

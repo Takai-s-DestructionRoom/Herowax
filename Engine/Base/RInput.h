@@ -81,6 +81,15 @@ public:
 	//右トリガーを押し込んだ瞬間か
 	bool GetRTriggerDown();
 
+	//左トリガーを離した瞬間か
+	bool GetLTriggerUp();
+
+	//右トリガーを離した瞬間か
+	bool GetRTriggerUp();
+
+	//右トリガーを押し込んでいるか
+	bool GetRTrigger();
+
 	//左スティックを上に倒した瞬間か
 	bool GetLStickUp();
 

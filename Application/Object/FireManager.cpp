@@ -17,8 +17,8 @@ FireManager::FireManager() :
 	targetCircle = ModelObj(Model::Load("./Resources/Model/targetMark/targetMark.obj", "targetMark"));
 
 	std::map<std::string, std::string> extract = Parameter::Extract("Fire");
-	fireRange = std::stof(extract["炎の着弾位置"]);
-	fireImpactTime = std::stof(extract["炎を着弾時間"]);
+	fireRange = Parameter::GetParam(extract,"炎の着弾位置",10.0f);
+	fireImpactTime = Parameter::GetParam(extract,"炎の着弾時間",1.f);
 }
 
 void FireManager::Init()
@@ -69,12 +69,12 @@ void FireManager::Update()
 	ImGui::Begin("炎", NULL, window_flags);
 
 	ImGui::SliderFloat("炎の着弾位置", &fireRange, -20.f, 20.f);
-	ImGui::InputFloat("炎を着弾時間", &fireImpactTime, 0.1f);
+	ImGui::InputFloat("炎の着弾時間", &fireImpactTime, 0.1f);
 
 	if (ImGui::Button("セーブ")) {
 		Parameter::Begin("Fire");
 		Parameter::Save("炎の着弾位置", fireRange);
-		Parameter::Save("炎を着弾時間", fireImpactTime);
+		Parameter::Save("炎の着弾時間", fireImpactTime);
 		Parameter::End();
 	}
 

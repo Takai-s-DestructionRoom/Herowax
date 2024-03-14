@@ -2,7 +2,8 @@
 #include "GameObject.h"
 #include "EnemyState.h"
 #include "Easing.h"
-#include "Wax.h"
+#include "WaxGroup.h"
+#include "EnemyUI.h"
 
 class Enemy : public GameObject
 {
@@ -31,21 +32,32 @@ private:
 	//追跡する対象(タワーを入れる)
 	ModelObj* target = nullptr;
 
-	EnemyState* state;			//状態管理
+ 	std::unique_ptr<EnemyState> state;			//状態管理
 	std::string stateStr;		//状態を文字列で保存
 
+	EnemyUI ui;
+
 public:
-	Wax* trappedWax;			//足を取られている対象の蝋を保持
+	WaxGroup* trappedWaxGroup;			//足を取られている対象の蝋を保持
+
+public:
 
 	Enemy(ModelObj* target_);
+	~Enemy();
 	void Init() override;
 	void Update() override;
 	void Draw() override;
 
 	void Tracking();
 
+	//追いかける対象を変更
+	void SetTarget(ModelObj* target_);
+
 	//状態変更
-	void ChangeState(EnemyState* newstate);
+	template <typename ChangeEnemyState>
+	void ChangeState() {
+		state = std::make_unique<ChangeEnemyState>();
+	};
 
 	// ゲッター //
 	//状態文字情報を取得
@@ -56,6 +68,9 @@ public:
 	float GetEscapePower() { return escapePower; }
 	//脱出行動のクールタイム取得
 	Easing::EaseTimer* GetEscapeCoolTimer() { return &escapeCoolTimer; }
+	//HPの取得
+	float GetHP() { return hp; };
+	float GetMaxHP() { return maxHP; };
 
 	// セッター //
 	//減速率設定
@@ -72,5 +87,9 @@ public:
 	void SetEscapePower(float power) { escapePower = power; }
 	//状態文字情報を設定
 	void SetStateStr(std::string str) { stateStr = str; }
+	//ダメージを与える
+	void DealDamage(uint32_t damage);
+	//強制的に死亡させる
+	void SetDeath();
 };
 

@@ -27,6 +27,7 @@ public:
 public:
 	LevelData* nowLevel = nullptr;
 
+	std::list<ModelObj> objects;	//オブジェクトたち
 	ModelObj ground;	//地面
 	Tower tower;		//タワー
 	SpawnerManager* spawnerManager = SpawnerManager::GetInstance();	//スポナー

@@ -14,16 +14,19 @@ TemperatureManager* TemperatureManager::GetInstance()
 }
 
 TemperatureManager::TemperatureManager() :
-	temperature(0),downSpeed(10), boaderTemperature(60), clearTimer(60)
+	temperature(0),downSpeed(10), boaderTemperature(60), clearTimer(60),
+	coldBorder(50), hotBorder(80), burningBorder(100)
 {
 	//生成時に変数をセーブデータから引っ張ってくる
 	std::map<std::string, std::string> extract = Parameter::Extract("Temperature");
-	downSpeed = stof(extract["一定時間(1秒)ごとの低下量"]);
-	boaderTemperature = stof(extract["ボーダーライン"]);
-	clearTimer.maxTime_ = stof(extract["クリアにかかる時間"]);
+	downSpeed = Parameter::GetParam(extract, "一定時間(1秒)ごとの低下量",10.f);
+	boaderTemperature = Parameter::GetParam(extract, "ボーダーライン",60.f);
+	clearTimer.maxTime_ = Parameter::GetParam(extract, "クリアにかかる時間",60.f);
 
-	MIN_TEMPERATURE = stof(extract["最低温度"]);
-	MAX_TEMPERATURE = stof(extract["最大温度"]);
+	MIN_TEMPERATURE = Parameter::GetParam(extract,"最低温度",40.f);
+	MAX_TEMPERATURE = Parameter::GetParam(extract,"最大温度",100.f);
+	coldBorder = Parameter::GetParam(extract, "冷えてる状態のボーダー",50.f);
+	hotBorder = Parameter::GetParam(extract, "温かい状態のボーダー",80.f);
 }
 
 void TemperatureManager::Init()
@@ -36,6 +39,8 @@ void TemperatureManager::Update()
 {
 	temperature -= downSpeed * TimeManager::deltaTime;
 	temperature = Util::Clamp(temperature, MIN_TEMPERATURE, MAX_TEMPERATURE);
+
+	burningBorder = TemperatureManager::GetInstance()->MAX_TEMPERATURE;
 
 	ui.Update();
 
@@ -74,6 +79,12 @@ void TemperatureManager::Update()
 		ImGui::InputFloat("最低温度", &MIN_TEMPERATURE,1.f);
 		ImGui::InputFloat("最大温度", &MAX_TEMPERATURE,1.f);
 
+		ImGui::SliderFloat("冷えてる状態のボーダー", &coldBorder,
+			TemperatureManager::GetInstance()->MIN_TEMPERATURE,
+			TemperatureManager::GetInstance()->MAX_TEMPERATURE);
+		ImGui::SliderFloat("温かい状態のボーダー", &hotBorder,
+			TemperatureManager::GetInstance()->MIN_TEMPERATURE,
+			TemperatureManager::GetInstance()->MAX_TEMPERATURE);
 		ImGui::TreePop();
 	}
 
@@ -94,6 +105,8 @@ void TemperatureManager::Save()
 
 	Parameter::Save("最低温度", MIN_TEMPERATURE);
 	Parameter::Save("最大温度", MAX_TEMPERATURE);
+	Parameter::Save("冷えてる状態のボーダー", coldBorder);
+	Parameter::Save("温かい状態のボーダー", hotBorder);
 	Parameter::End();
 }
 

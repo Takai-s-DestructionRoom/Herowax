@@ -21,6 +21,9 @@ public:
 	virtual void Update() = 0;
 	virtual void Draw() = 0;
 
+	//当たり判定の描画
+	void DrawCollider();
+
 	// ゲッター //
 	//座標取得
 	Vector3 GetPos()const;
@@ -42,8 +45,6 @@ public:
 protected:
 	//当たり判定の更新
 	void UpdateCollider();
-
-	void DrawCollider();
 
 private:
 	//コピー禁止

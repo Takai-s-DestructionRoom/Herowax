@@ -25,17 +25,23 @@ atkCoolTimer(0.3f), atkTimer(0.5f), atkHeight(1.f), solidTimer(5.f)
 	moveParticle.SetIsGrowing(true);
 
 	std::map<std::string, std::string> extract = Parameter::Extract("Player");
-	moveSpeed = std::stof(extract["移動速度"]);
-	moveAccelAmount = std::stof(extract["移動加速度"]);
-	gravity = std::stof(extract["重力"]);
-	jumpPower = std::stof(extract["ジャンプ力"]);
-	atkTimer.maxTime_ = std::stof(extract["攻撃時間"]);
-	atkSpeed = std::stof(extract["射出速度"]);
-	atkHeight = std::stof(extract["射出高度"]);
-	atkRange.x = std::stof(extract["攻撃範囲X"]);
-	atkRange.y = std::stof(extract["攻撃範囲Y"]);
-	atkCoolTimer.maxTime_ = std::stof(extract["クールタイム"]);
-	solidTimer.maxTime_ = std::stof(extract["固まるまでの時間"]);
+	moveSpeed = Parameter::GetParam(extract,"移動速度",1.f);
+	moveAccelAmount = Parameter::GetParam(extract, "移動加速度",0.05f);
+	gravity = Parameter::GetParam(extract, "重力",0.098f);
+	jumpPower = Parameter::GetParam(extract, "ジャンプ力",2.0f);
+	atkTimer.maxTime_ = Parameter::GetParam(extract, "攻撃時間",0.5f);
+	atkSpeed = Parameter::GetParam(extract, "射出速度",1.f);
+	atkHeight = Parameter::GetParam(extract, "射出高度",1.f);
+	atkRange.x = Parameter::GetParam(extract,"攻撃範囲X",3.f);
+	atkRange.y = Parameter::GetParam(extract,"攻撃範囲Y",5.f);
+	atkCoolTimer.maxTime_ = Parameter::GetParam(extract,"クールタイム",0.3f);
+	solidTimer.maxTime_ = Parameter::GetParam(extract,"固まるまでの時間",5.f);
+
+	pabloRange = Parameter::GetParam(extract, "パブロ攻撃の広がり", 1.f);
+	pabloSpeedMag = Parameter::GetParam(extract, "パブロ攻撃時の移動速度低下係数", 0.2f);
+	shotDeadZone = Parameter::GetParam(extract, "ショットが出る基準", 0.5f);
+
+	attackState = std::make_unique<PlayerNormal>();
 }
 
 void Player::Init()
@@ -55,7 +61,7 @@ void Player::Update()
 		MoveKey();
 	}
 
-	Attack();
+	attackState->Update(this);
 
 	Fire();
 
@@ -91,7 +97,7 @@ void Player::Update()
 
 	ImGui::Text("Lスティック移動、Aボタンジャンプ、Rで攻撃");
 	ImGui::Text("WASD移動、スペースジャンプ、右クリで攻撃");
-
+	
 	if (ImGui::TreeNode("移動系"))
 	{
 		ImGui::Text("座標:%f,%f,%f", GetPos().x, GetPos().y, GetPos().z);
@@ -110,10 +116,8 @@ void Player::Update()
 	if (ImGui::TreeNode("攻撃系"))
 	{
 		ImGui::Text("攻撃中か:%d", isAttack);
-		ImGui::Text("攻撃中でも次の攻撃を出せるか:%d", isMugenAttack);
-		if (ImGui::Button("上記のフラグ変更")) {
-			isMugenAttack = !isMugenAttack;
-		}
+		ImGui::Checkbox("攻撃中でも次の攻撃を出せるか", &isMugenAttack);
+		
 		ImGui::SliderFloat("攻撃時間", &atkTimer.maxTime_, 0.f, 2.f);
 		ImGui::SliderFloat("射出速度", &atkSpeed, 0.f, 2.f);
 		ImGui::SliderFloat("射出高度", &atkHeight, 0.f, 3.f);
@@ -121,6 +125,21 @@ void Player::Update()
 		ImGui::SliderFloat("攻撃範囲Y", &atkRange.y, 0.f, 10.f);
 		ImGui::SliderFloat("クールタイム", &atkCoolTimer.maxTime_, 0.f, 2.f);
 		ImGui::SliderFloat("固まるまでの時間", &solidTimer.maxTime_, 0.f, 10.f);
+		
+		ImGui::TreePop();
+	}
+	if (ImGui::TreeNode("お試し実装:自分の方に来る"))
+	{
+		ImGui::Checkbox("攻撃した相手が自分を攻撃するか", &isTauntMode);
+
+		ImGui::TreePop();
+	}
+	if (ImGui::TreeNode("お試し実装:パブロアタック"))
+	{
+		ImGui::Text("スティックの入力:%f", abs(RInput::GetInstance()->GetPadLStick().LengthSq()));
+		ImGui::SliderFloat("ショットが出る基準", &shotDeadZone,-2.0f,2.0f);
+		ImGui::SliderFloat("広がり", &pabloRange,0.0f,10.f);
+		ImGui::SliderFloat("パブロ攻撃時の移動速度低下係数", &pabloSpeedMag,0.0f,1.0f);
 
 		ImGui::TreePop();
 	}
@@ -141,6 +160,9 @@ void Player::Update()
 		Parameter::Save("攻撃範囲Y", atkRange.y);
 		Parameter::Save("クールタイム", atkCoolTimer.maxTime_);
 		Parameter::Save("固まるまでの時間", solidTimer.maxTime_);
+		Parameter::Save("パブロ攻撃の広がり", pabloRange);
+		Parameter::Save("パブロ攻撃時の移動速度低下係数", pabloSpeedMag);
+		Parameter::Save("ショットが出る基準", shotDeadZone);
 		Parameter::End();
 	}
 
@@ -177,17 +199,18 @@ void Player::MovePad()
 		//入力中は加速度足し続ける
 		moveAccel += moveAccelAmount;
 
-		////エミッターの座標はプレイヤーの座標から移動方向の逆側にスケール分ずらしたもの
-		//Vector3 emitterPos = obj.mTransform.position;
-		//Vector2 mVelo = moveVec;	//moveVecを正規化すると実際の移動に支障が出るので一時変数に格納
-		//emitterPos.x -= mVelo.Normalize().x * obj.mTransform.scale.x * 4.f;
-		//emitterPos.z -= mVelo.Normalize().y * obj.mTransform.scale.z * 4.f;
+		//エミッターの座標はプレイヤーの座標から移動方向の逆側にスケール分ずらしたもの
+		Vector3 emitterPos = obj.mTransform.position;
+		Vector2 mVelo = { -moveVec.x,-moveVec.z };	//moveVecを正規化すると実際の移動に支障が出るので一時変数に格納
+		mVelo.Normalize();
+		emitterPos.x += mVelo.x * obj.mTransform.scale.x;
+		emitterPos.z += mVelo.y * obj.mTransform.scale.z;
 
-		//moveParticle.SetPos(emitterPos);
-		//moveParticle.Add(
-		//	3, 0.7f, obj.mTuneMaterial.mColor, 0.1f, 0.6f,
-		//	{ -0.001f,0.01f,-0.001f }, { 0.001f,0.03f,0.001f },
-		//	0.01f, -Vector3::ONE * 0.1f, Vector3::ONE * 0.1f, 0.05f);
+		moveParticle.SetPos(emitterPos);
+		moveParticle.Add(
+			2, 0.5f, obj.mTuneMaterial.mColor, 0.3f, 0.7f,
+			{ -0.001f,0.01f,-0.001f }, { 0.001f,0.03f,0.001f },
+			0.01f, -Vector3::ONE * 0.1f, Vector3::ONE * 0.1f, 0.05f);
 	}
 	else
 	{
@@ -258,17 +281,18 @@ void Player::MoveKey()
 		//入力中は加速度足し続ける
 		moveAccel += moveAccelAmount;
 
-		////エミッターの座標はプレイヤーの座標から移動方向の逆側にスケール分ずらしたもの
-		//Vector3 emitterPos = obj.mTransform.position;
-		//Vector2 mVelo = moveVec;	//moveVecを正規化すると実際の移動に支障が出るので一時変数に格納
-		//emitterPos.x -= mVelo.Normalize().x * obj.mTransform.scale.x;
-		//emitterPos.z -= mVelo.Normalize().y * obj.mTransform.scale.z;
+		//エミッターの座標はプレイヤーの座標から移動方向の逆側にスケール分ずらしたもの
+		Vector3 emitterPos = obj.mTransform.position;
+		Vector2 mVelo = { -moveVec.x,-moveVec.z };	//moveVecを正規化すると実際の移動に支障が出るので一時変数に格納
+		mVelo.Normalize();
+		emitterPos.x += mVelo.x * obj.mTransform.scale.x;
+		emitterPos.z += mVelo.y * obj.mTransform.scale.z;
 
-		//moveParticle.SetPos(emitterPos);
-		//moveParticle.Add(
-		//	2, 0.5f, obj.mTuneMaterial.mColor, 0.3f, 0.7f,
-		//	{ -0.001f,0.01f,-0.001f }, { 0.001f,0.03f,0.001f },
-		//	0.01f, -Vector3::ONE * 0.1f, Vector3::ONE * 0.1f, 0.05f);
+		moveParticle.SetPos(emitterPos);
+		moveParticle.Add(
+			2, 0.5f, obj.mTuneMaterial.mColor, 0.3f, 0.7f,
+			{ -0.001f,0.01f,-0.001f }, { 0.001f,0.03f,0.001f },
+			0.01f, -Vector3::ONE * 0.1f, Vector3::ONE * 0.1f, 0.05f);
 	}
 	else
 	{

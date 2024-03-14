@@ -8,6 +8,8 @@ class WaxManager final
 private:
 	bool isWaxDead = false;
 
+	bool isViewCol = false;
+
 	float heatBonus;			//上記の同時燃焼数に応じたボーナス係数
 	//↑これは燃えた量が多ければ多いほど温度を保ちやすい、ってやつを
 	//タカイが適当に解釈して適当にそれっぽくしてあります。
@@ -16,12 +18,13 @@ private:
 	std::string fileName = "Wax";
 
 public:
-	std::vector<std::unique_ptr<Wax>> waxs;	//蝋ども
-	std::vector<std::unique_ptr<WaxGroup>> waxGroups;	//蝋ども
+	//std::vector<std::unique_ptr<Wax>> waxs;	//蝋ども
+	std::list<std::unique_ptr<WaxGroup>> waxGroups;	//蝋ども
 	const uint32_t kMaxWax = 128;	//最大グループ数
 
-	int isBurningNum = 0;
+	uint32_t isBurningNum = 0;
 	float heatUpTemperature;	//蝋が燃えたときに上がる温度
+	uint32_t waxDamage;
 
 public:
 	//シングルトンインスタンス取得
@@ -39,18 +42,20 @@ public:
 		Transform transform, uint32_t power, Vector3 vec,
 		float speed, Vector2 range, float size,float atkTime, float solidTime);
 
-	//最初の要素削除
-	void EraceBegin();
-
-	void Move(uint32_t originNum,uint32_t moveNum);
-
 	//現在の温度ボーナスを返す(計算済み)
 	float GetCalcHeatBonus();
+	
+	uint32_t GetWaxNum();
 
 	//満杯かどうか返す
-	bool GetIsFull() { return waxs.size() >= kMaxWax; }
+	bool GetIsFull() { return GetWaxNum() >= kMaxWax; }
 
+	bool CheckHitWaxGroups(std::unique_ptr<WaxGroup>& group1,
+		std::unique_ptr<WaxGroup>& group2);
+
+	GraphicsPipeline CreateDisolvePipeLine();
 private:
+
 	//コンストラクタ
 	WaxManager();
 	//コピー禁止

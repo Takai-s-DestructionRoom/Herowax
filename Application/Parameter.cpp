@@ -27,7 +27,7 @@ void Parameter::Begin(std::string filename)
 	writing_file.open(path, std::ios::out);
 }
 
-void Parameter::Save(std::string handle, float data)
+void Parameter::Save(const std::string& handle, float data)
 {
 	//ハンドル側に":"を入れるなほげが
 	if (Util::ContainString(handle, ":"))
@@ -42,7 +42,7 @@ void Parameter::End()
 	writing_file.close();
 }
 
-std::map<std::string, std::string> Parameter::Extract(std::string filename)
+std::map<std::string, std::string> Parameter::Extract(const std::string& filename)
 {
 	std::string outputName = "";
 	outputName = "./Resources/Parameter/" + filename + ".txt";
@@ -67,4 +67,18 @@ std::map<std::string, std::string> Parameter::Extract(std::string filename)
 	}
 
 	return result;
+}
+
+float Parameter::GetParam(std::map<std::string, std::string>& extractData, 
+	const std::string& handle,float defaultData)
+{
+	//ここでファイルの中に指定した名前のハンドルがあるかをチェックする
+	//ない場合デフォルトデータを返す
+	if (extractData.find(handle) == std::end(extractData))
+	{
+		return defaultData;
+	}
+
+	//ある場合その要素を返す
+	return std::stof(extractData[handle]);
 }

@@ -29,6 +29,8 @@ public:
 	//敵の追跡対象を変更(プレイヤーを入れるのを想定)
 	void SetTarget(ModelObj* target_);
 	
+	static void LoadResource();
+
 	void Init();
 	void Update();
 	void Draw();

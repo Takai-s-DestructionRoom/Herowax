@@ -1,5 +1,6 @@
 #include "Particle3D.h"
 #include "Camera.h"
+#include <Renderer.h>
 #include "Util.h"
 
 //LightGroup* IEmitter3D::sLightGroup = nullptr;
@@ -11,9 +12,8 @@ IEmitter3D::IEmitter3D()
 
 void IEmitter3D::Init()
 {
-	pos_ = Vector3::ZERO;
-	rot_ = Vector3::ZERO;
-	scale_ = { 0.1f,0.1f,0.1f };
+	transform.scale = { 0.1f,0.1f,0.1f };
+	transform.Transfer(transformBuff.Get());
 
 	addInterval_ = 0;
 	maxScale_ = 0;
@@ -23,6 +23,11 @@ void IEmitter3D::Init()
 	isActive_ = true;	//生成時には有効フラグ立てる
 
 	elapseSpeed_ = 1.f;
+
+	//更新処理でサイズが変わっちゃうから、あらかじめ最大数分作る
+	vertices.resize(maxParticle_);
+	//それによってバッファの初期化をする
+	vertBuff.Init(vertices);
 }
 
 void IEmitter3D::Update()
@@ -46,23 +51,21 @@ void IEmitter3D::Update()
 		particle.growingTimer.Update(elapseSpeed_);
 
 		//スケールの線形補間
-		float scale;
 		if (isGrowing_)	//発生時に拡大する場合
 		{
 			if (particle.growingTimer.GetRun())	//拡大タイマーが動いてたら
 			{
-				scale = Easing::lerp(0.f, particle.startScale, particle.growingTimer.GetTimeRate());
+				particle.scale = Easing::lerp(0.f, particle.startScale, particle.growingTimer.GetTimeRate());
 			}
 			else
 			{
-				scale = Easing::lerp(particle.startScale, particle.endScale, particle.easeTimer.GetTimeRate());
+				particle.scale = Easing::lerp(particle.startScale, particle.endScale, particle.easeTimer.GetTimeRate());
 			}
 		}
 		else
 		{
-			scale = Easing::lerp(particle.startScale, particle.endScale, particle.easeTimer.GetTimeRate());
+			particle.scale = Easing::lerp(particle.startScale, particle.endScale, particle.easeTimer.GetTimeRate());
 		}
-		particle.obj.mTransform.scale = { scale ,scale ,scale };	//オブジェクトのスケールに代入
 
 		//加速度を速度に加算
 		particle.velo += particle.accel;
@@ -70,22 +73,22 @@ void IEmitter3D::Update()
 		//初期のランダム角度をもとに回す
 		if (isRotation_)
 		{
-			particle.obj.mTransform.rotation += particle.plusRot * elapseSpeed_;
+			particle.rot += particle.plusRot * elapseSpeed_;
 
 			//一回転したら0に戻してあげる
-			if (abs(particle.obj.mTransform.rotation.x) >= Util::PI2)
+			if (abs(particle.rot.x) >= Util::PI2)
 			{
-				particle.obj.mTransform.rotation.x = 0.0f;
+				particle.rot.x = 0.0f;
 			}
 
-			if (abs(particle.obj.mTransform.rotation.y) >= Util::PI2)
+			if (abs(particle.rot.y) >= Util::PI2)
 			{
-				particle.obj.mTransform.rotation.y = 0.0f;
+				particle.rot.y = 0.0f;
 			}
 
-			if (abs(particle.obj.mTransform.rotation.z) >= Util::PI2)
+			if (abs(particle.rot.z) >= Util::PI2)
 			{
-				particle.obj.mTransform.rotation.z = 0.0f;
+				particle.rot.z = 0.0f;
 			}
 		}
 
@@ -96,19 +99,149 @@ void IEmitter3D::Update()
 		}
 
 		//速度による移動
-		particle.obj.mTransform.position += particle.velo * elapseSpeed_;
-
-		particle.obj.TransferBuffer(Camera::sNowCamera->mViewProjection);
-		particle.obj.mTransform.UpdateMatrix();
+		particle.pos += particle.velo * elapseSpeed_;
 	}
+
+	//頂点情報がリセットされないので更新時には毎フレームリセット
+	for (auto& v : vertices)
+	{
+		v.pos = Vector3::ZERO;
+		v.rot = Vector3::ZERO;
+		v.scale = 0.f;
+	}
+
+	//頂点バッファへデータ転送
+	//パーティクルの情報を1つずつ反映
+	for (size_t i = 0; i < particles_.size(); i++)
+	{
+		VertexParticle vertex;
+
+		//座標
+		vertex.pos = particles_[i].pos;
+		//回転
+		vertex.rot = particles_[i].rot;
+		//色
+		vertex.color = particles_[i].color;
+		//スケール
+		vertex.scale = particles_[i].scale;
+
+		vertices.at(i) = vertex;
+	}
+
+	//毎回頂点情報が変わるので更新する
+	vertBuff.Update(vertices);
+
+	//バッファにデータ送信
+	TransferBuffer(Camera::sNowCamera->mViewProjection);
+	transform.UpdateMatrix();
 }
 
 void IEmitter3D::Draw()
 {
-	for (auto& p:particles_)
+	//パイプライン
+	PipelineStateDesc pipedesc = RDirectX::GetDefPipeline().mDesc;
+	pipedesc.VS = Shader::GetOrCreate("Particle3D_VS", "Shader/Particle3DVS.hlsl", "main", "vs_5_0");
+	pipedesc.PS = Shader::GetOrCreate("Particle3D_PS", "Shader/Particle3DPS.hlsl", "main", "ps_5_0");
+	pipedesc.GS = Shader::GetOrCreate("Particle3D_GS", "Shader/Particle3DGS.hlsl", "main", "gs_5_0");
+
+	pipedesc.RasterizerState.CullMode = D3D12_CULL_MODE_NONE;
+	pipedesc.RasterizerState.FillMode = D3D12_FILL_MODE_SOLID;
+	pipedesc.BlendState.AlphaToCoverageEnable = false;
+
+	RootSignature mRootSignature = RDirectX::GetDefRootSignature();
+
+	// ルートパラメータの設定
+	DescriptorRange descriptorRange{};
+	descriptorRange.NumDescriptors = 1; //一度の描画に使うテクスチャが1枚なので1
+	descriptorRange.RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_SRV;
+	descriptorRange.BaseShaderRegister = 0; //テクスチャレジスタ0番
+	descriptorRange.OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND;
+
+	RootParamaters rootParams(4);
+	//定数バッファ0番(Transform)
+	rootParams[0].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV; //定数バッファビュー
+	rootParams[0].Descriptor.ShaderRegister = 0; //定数バッファ番号
+	rootParams[0].Descriptor.RegisterSpace = 0; //デフォルト値
+	rootParams[0].ShaderVisibility = D3D12_SHADER_VISIBILITY_ALL; //全シェーダから見える
+	//定数バッファ1番(ViewProjection)
+	rootParams[1].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV; //定数バッファビュー
+	rootParams[1].Descriptor.ShaderRegister = 1; //定数バッファ番号
+	rootParams[1].Descriptor.RegisterSpace = 0; //デフォルト値
+	rootParams[1].ShaderVisibility = D3D12_SHADER_VISIBILITY_ALL; //全シェーダから見える
+	//定数バッファ2番(Light)
+	rootParams[2].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV; //定数バッファビュー
+	rootParams[2].Descriptor.ShaderRegister = 2; //定数バッファ番号
+	rootParams[2].Descriptor.RegisterSpace = 0; //デフォルト値
+	rootParams[2].ShaderVisibility = D3D12_SHADER_VISIBILITY_ALL; //全シェーダから見える
+	//テクスチャ
+	rootParams[3].ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;
+	rootParams[3].DescriptorTable = DescriptorRanges{descriptorRange};
+	rootParams[3].ShaderVisibility = D3D12_SHADER_VISIBILITY_ALL;
+
+	mRootSignature.mDesc.RootParamaters = rootParams;
+	mRootSignature.Create();
+	pipedesc.pRootSignature = mRootSignature.mPtr.Get();
+
+	// 頂点レイアウト
+	pipedesc.InputLayout =
 	{
-		p.obj.Draw();
-	}
+		//座標
+		{
+			"POSITION",										//セマンティック名
+			0,												//同名のセマンティックがあるとき使うインデックス
+			DXGI_FORMAT_R32G32B32_FLOAT,					//要素数とビット数を表す
+			0,												//入力スロットインデックス
+			D3D12_APPEND_ALIGNED_ELEMENT,					//データのオフセット地(左のは自動設定)
+			D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA,		//入力データ種別
+			0												//一度に描画するインスタンス数(0でよい)
+		},// (1行で書いたほうが見やすい)
+		//座標以外に色、テクスチャUVなどを渡す場合はさらに続ける
+		//回転情報
+		{
+			"ROT",0,
+			DXGI_FORMAT_R32G32B32_FLOAT,0,
+			D3D12_APPEND_ALIGNED_ELEMENT,
+			D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA,0
+		},
+		//色
+		{
+			"COLOR",0,
+			DXGI_FORMAT_R32G32B32A32_FLOAT,0,
+			D3D12_APPEND_ALIGNED_ELEMENT,
+			D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA,0
+		},
+		//大きさ
+		{
+			"TEXCOORD", 0,
+			DXGI_FORMAT_R32_FLOAT, 0,
+			D3D12_APPEND_ALIGNED_ELEMENT,
+			D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0
+		}
+	};
+	pipedesc.PrimitiveTopologyType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_POINT;
+
+	GraphicsPipeline pipe = GraphicsPipeline::GetOrCreate("Particle3D", pipedesc);
+	RenderOrder order;
+	order.mRootSignature = mRootSignature.mPtr.Get();
+	order.pipelineState = pipe.mPtr.Get();
+	order.primitiveTopology = D3D_PRIMITIVE_TOPOLOGY_POINTLIST;
+	order.vertBuff = vertBuff;
+	order.indexCount = static_cast<uint32_t>(vertices.size());
+	order.rootData = {
+		{RootDataType::SRBUFFER_CBV, transformBuff.mBuff },
+		{RootDataType::SRBUFFER_CBV, viewProjectionBuff.mBuff },
+		{RootDataType::LIGHT},
+		{TextureManager::Get("").mGpuHandle}
+	};
+
+	Renderer::DrawCall("Opaque", order);
+}
+
+void IEmitter3D::TransferBuffer(ViewProjection viewprojection)
+{
+	transform.Transfer(transformBuff.Get());
+	viewProjectionBuff->matrix = viewprojection.mMatrix;
+	viewProjectionBuff->cameraPos = viewprojection.mEye;
 }
 
 void IEmitter3D::Add(uint32_t addNum, float life, Color color, float minScale, float maxScale,
@@ -126,12 +259,11 @@ void IEmitter3D::Add(uint32_t addNum, float life, Color color, float minScale, f
 		particles_.emplace_back();
 		//追加した要素の参照
 		Particle3D& p = particles_.back();
-		p.obj = ModelObj(Model::Load("./Resources/Model/Cube.obj", "Cube", true));
 
 		//エミッターの中からランダムで座標を決定
-		float pX = Util::GetRand(-scale_.x, scale_.x);
-		float pY = Util::GetRand(-scale_.y, scale_.y);
-		float pZ = Util::GetRand(-scale_.z, scale_.z);
+		float pX = Util::GetRand(-transform.scale.x, transform.scale.x);
+		float pY = Util::GetRand(-transform.scale.y, transform.scale.y);
+		float pZ = Util::GetRand(-transform.scale.z, transform.scale.z);
 		Vector3 randomPos(pX, pY, pZ);
 		//引数の範囲から大きさランダムで決定
 		float sX = Util::GetRand(minScale, maxScale);
@@ -150,10 +282,10 @@ void IEmitter3D::Add(uint32_t addNum, float life, Color color, float minScale, f
 		Vector3 randomRot(rX, rY, rZ);
 
 		//決まった座標にエミッター自体の座標を足して正しい位置に
-		p.obj.mTransform.position = randomPos + pos_;
+		p.pos = randomPos + transform.position;
 		//飛んでく方向に合わせて回転
-		p.obj.mTransform.rotation = randomRot;
-		p.plusRot = p.obj.mTransform.rotation;
+		p.rot = randomRot;
+		p.plusRot = p.rot;
 		p.velo = randomVelo;
 		p.accel = randomVelo * accelPower;
 		p.aliveTimer = life;
@@ -161,7 +293,7 @@ void IEmitter3D::Add(uint32_t addNum, float life, Color color, float minScale, f
 		p.scale = sX;
 		p.startScale = p.scale;
 		p.endScale = 0.0f;
-		p.obj.mTuneMaterial.mColor = color;
+		p.color = color;
 		//イージング用のタイマーを設定、開始
 		p.easeTimer.maxTime_ = life - growingTimer;	//全体の時間がずれないように最初の拡大部分を引く
 		p.easeTimer.Start();
@@ -172,8 +304,8 @@ void IEmitter3D::Add(uint32_t addNum, float life, Color color, float minScale, f
 
 void IEmitter3D::SetScale(const Vector3& scale)
 {
-	scale_ = scale;
-	originalScale_ = scale_;			//拡縮用に元のサイズを保管
+	transform.scale = scale;
+	originalScale_ = scale;		//拡縮用に元のサイズを保管
 }
 
 void IEmitter3D::SetScalingTimer(float easeTimer)
