@@ -3,6 +3,8 @@
 #include "EnemyManager.h"
 #include "RInput.h"
 #include "Camera.h"
+#include "Util.h"
+#include "PaintUtil.h"
 
 Level::Level()
 {
@@ -11,6 +13,7 @@ Level::Level()
 void Level::Load()
 {
 	LevelLoader::Get()->Load("./Level/test.json", "test");
+	Model::Load("./Resources/Model/Cube.obj", "Cube", true);
 }
 
 void Level::Reset()
@@ -19,6 +22,7 @@ void Level::Reset()
 	tower.Init();
 	EnemyManager::GetInstance()->Init();
 	EnemyManager::GetInstance()->SetTarget(&tower.obj);
+	objects.clear();
 }
 
 void Level::Reload()
@@ -33,6 +37,12 @@ void Level::Update()
 	if (RInput::GetInstance()->GetKeyDown(DIK_R))
 	{
 		Reload();
+	}
+
+	for (auto& obj : objects)
+	{
+		obj.mTransform.UpdateMatrix();
+		obj.TransferBuffer(Camera::sNowCamera->mViewProjection);
 	}
 
 	spawnerManager->Update();
@@ -51,6 +61,11 @@ void Level::Draw()
 	EnemyManager::GetInstance()->Draw();
 	ground.Draw();
 	tower.Draw();
+
+	for (auto& obj : objects)
+	{
+		obj.Draw();
+	}
 }
 
 void Level::Extract(const std::string& handle)
@@ -84,6 +99,17 @@ void Level::Extract(const std::string& handle)
 			tower.SetPos(objectData->translation);
 			tower.SetScale(objectData->scaling);
 			tower.SetRota(objectData->rotation);
+		}
+		//後ろに_Objがついているものであれば適用
+		//書式として[ハンドル名]+[_Obj]になっていないとエラーとなる
+		if (Util::ContainString(objectData->setObjectName, "_Obj"))
+		{
+			std::vector<std::string> objHandle = Util::StringSplit(objectData->setObjectName,"_");
+			objects.emplace_back(ModelObj(objHandle[0]));
+
+			objects.back().mTransform.position = objectData->translation;
+			objects.back().mTransform.scale = objectData->scaling;
+			objects.back().mTransform.rotation = objectData->rotation;
 		}
 	}
 }
