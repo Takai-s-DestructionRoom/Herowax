@@ -66,7 +66,7 @@ private:
 
 	void CreateHeaps();
 
-	static const uint32_t sNUM_DESCRIPTORS = 512;
+	static const uint32_t sNUM_DESCRIPTORS = 2048;
 	std::recursive_mutex mMutex;
 	Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> mRtvHeap;
 	Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> mDsvHeap;

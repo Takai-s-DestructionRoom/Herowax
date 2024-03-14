@@ -209,6 +209,7 @@
     <ClCompile Include="Application\Scene\PaintScene.cpp" />
     <ClCompile Include="Application\Object\Wax\WaxGroup.cpp" />
     <ClCompile Include="Application\Object\TemperatueUI.cpp" />
+    <ClCompile Include="Application\Paint\PaintableModelObj.cpp" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Shader\BasicPS.hlsl">
@@ -545,6 +546,7 @@
     <ClInclude Include="Application\Scene\PaintScene.h" />
     <ClInclude Include="Application\Object\Wax\WaxGroup.h" />
     <ClInclude Include="Application\Object\TemperatueUI.h" />
+    <ClInclude Include="Application\Paint\PaintableModelObj.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Shader\Basic.hlsli">

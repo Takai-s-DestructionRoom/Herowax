@@ -41,11 +41,17 @@ Texture TextureManager::GetEmptyTexture()
 	const size_t textureWidth = 100;
 	const size_t textureHeight = 100;
 	const size_t imageDataCount = textureWidth * textureHeight;
-	vector<Color> imageData;
+	struct UNORMCOLOR {
+		uint8_t r;
+		uint8_t g;
+		uint8_t b;
+		uint8_t a;
+	};
+	vector<UNORMCOLOR> imageData;
 	imageData.resize(imageDataCount);
 
 	for (size_t i = 0; i < imageDataCount; i++) {
-		imageData[i] = Color(1, 1, 1, 1);
+		imageData[i] = { 255, 255, 255, 255 };
 	}
 
 	// テクスチャバッファ
@@ -58,7 +64,7 @@ Texture TextureManager::GetEmptyTexture()
 	// リソース設定
 	D3D12_RESOURCE_DESC textureResourceDesc{};
 	textureResourceDesc.Dimension = D3D12_RESOURCE_DIMENSION_TEXTURE2D;
-	textureResourceDesc.Format = DXGI_FORMAT_R32G32B32A32_FLOAT;
+	textureResourceDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM_SRGB;
 	textureResourceDesc.Width = textureWidth;
 	textureResourceDesc.Height = textureHeight;
 	textureResourceDesc.DepthOrArraySize = 1;
@@ -80,8 +86,8 @@ Texture TextureManager::GetEmptyTexture()
 		0,
 		nullptr,
 		&imageData[0],
-		sizeof(Color) * textureWidth,
-		sizeof(Color) * imageDataCount
+		sizeof(UNORMCOLOR) * textureWidth,
+		sizeof(UNORMCOLOR) * imageDataCount
 	);
 
 	return texture;

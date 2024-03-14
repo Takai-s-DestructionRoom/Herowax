@@ -11,6 +11,7 @@
 #include "Sprite.h"
 #include "SRConstBuffer.h"
 #include <Cube.h>
+#include <PaintableModelObj.h>
 
 class PaintScene : public IScene
 {
@@ -26,11 +27,13 @@ private:
 	DebugCamera camera = DebugCamera({ 0, 0, -5 });
 	LightGroup light;
 
-	ModelObj skydome;
-	ModelObj sphere;
+	PaintableModelObj skydome;
 
 	Cube hogeObj;
 	Sprite sprite;
+
+	PaintableModelObj objA;
+	PaintableModelObj objB;
 
 	//customize
 	Color paintColor = { 1, 1, 1, 1 };

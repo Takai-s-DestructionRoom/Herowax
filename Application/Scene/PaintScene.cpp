@@ -12,11 +12,20 @@
 
 PaintScene::PaintScene()
 {
-	skydome = ModelObj(Model::Load("./Resources/Model/Skydome/Skydome.obj", "Skydome", true));
+	skydome = PaintableModelObj(Model::Load("./Resources/Model/Skydome/Skydome.obj", "Skydome", true));
 
-	sphere = ModelObj(Model::Load("./Resources/Model/Sphere.obj", "Sphere", true));
 	hogeObj = Cube(TextureManager::Load("./Resources/conflict.jpg", "conflict"), {3, 3});
 	sprite = Sprite(TextureManager::Load("./Resources/Brush.png", "brush"), { 0.5f, 0.5f });
+
+	objA = PaintableModelObj(Model::Load("./Resources/Model/sphere.obj", "Sphere", true));
+	objA.mTuneMaterial.mDiffuse = { 0, 1, 0 };
+	objA.mTransform.position = { -3, 1, 2 };
+	objA.mTransform.UpdateMatrix();
+	objB = PaintableModelObj(Model::Load("./Resources/Model/sphere.obj", "Sphere", true));
+	objB.mTuneMaterial.mDiffuse = { 1, 0, 1 };
+	objB.mTransform.position = { 4, 2, 3 };
+	objB.mTransform.scale = { 3.0f, 3.0f, 3.0f };
+	objB.mTransform.UpdateMatrix();
 
 	camera.mViewProjection.mEye = { 0, 0, -10 };
 	camera.mViewProjection.mTarget = { 0, 0, 0 };
@@ -32,6 +41,10 @@ void PaintScene::Init()
 {
 	Camera::sNowCamera = &camera;
 	LightGroup::sNowLight = &light;
+
+	skydome.SetupPaint();
+	objA.SetupPaint();
+	objB.SetupPaint();
 
 	for (int32_t i = 0; i < 6; i++) {
 		Texture tex = TextureManager::Get(hogeObj.mFaces[i].GetTexture());
@@ -66,9 +79,7 @@ void PaintScene::Update()
 	hogeObj.UpdateFaces();
 	hogeObj.TransferBuffer(camera.mViewProjection);
 
-	sphere.mTransform.scale = { 0.2f, 0.2f, 0.2f };
-
-	if (RInput::GetMouseClick(0)) {
+	if (!ImGui::GetIO().WantCaptureMouse && RInput::GetMouseClick(0)) {
 		Float4 mousePosA = RInput::GetMousePos();
 		Float4 mousePosB = RInput::GetMousePos();
 		mousePosB.z = 1;
@@ -84,6 +95,10 @@ void PaintScene::Update()
 		mousePosB *= -camera.mViewProjection.mView;
 
 		ColPrimitive3D::Ray ray{ mousePosA, (Vector3(mousePosB) - Vector3(mousePosA)).GetNormalize()};
+
+		skydome.Paint(ray, "brush", paintColor, Vector2(paintSize, paintSize), camera.mViewProjection.mMatrix);
+		objA.Paint(ray, "brush", paintColor, Vector2(paintSize, paintSize), camera.mViewProjection.mMatrix);
+		objB.Paint(ray, "brush", paintColor, Vector2(paintSize, paintSize), camera.mViewProjection.mMatrix);
 
 		int32_t hitFace = 0;
 		float closestDis = FLT_MAX;
@@ -135,8 +150,6 @@ void PaintScene::Update()
 		}
 
 		if (closestDis != FLT_MAX) {
-			sphere.mTransform.position = closestPos;
-
 			float width = static_cast<float>(TextureManager::Get(hogeObj.mFaces[hitFace].GetTexture()).mResource.Get()->GetDesc().Width);
 			float height = static_cast<float>(TextureManager::Get(hogeObj.mFaces[hitFace].GetTexture()).mResource.Get()->GetDesc().Height);
 			sprite.mTransform.position = {
@@ -156,13 +169,7 @@ void PaintScene::Update()
 				Renderer::DrawCall("Sprite", order);
 			}
 		}
-		else {
-			sphere.mTransform.position = { 114514, 114514, 0 };
-		}
 	}
-
-	sphere.mTransform.UpdateMatrix();
-	sphere.TransferBuffer(camera.mViewProjection);
 
 	if (RInput::GetKey(DIK_P)) {
 		int hoge = Util::GetRand(0, 5);
@@ -186,9 +193,12 @@ void PaintScene::Update()
 
 void PaintScene::Draw()
 {
-	//skydome.Draw();
+	skydome.Draw("Opaque");
 
-	sphere.Draw();
+	objA.TransferBuffer(camera.mViewProjection);
+	objA.Draw("Opaque");
+	objB.TransferBuffer(camera.mViewProjection);
+	objB.Draw("Opaque");
 
 	PipelineStateDesc desc = RDirectX::GetDefPipeline().mDesc;
 	desc.RasterizerState.CullMode = D3D12_CULL_MODE_BACK;

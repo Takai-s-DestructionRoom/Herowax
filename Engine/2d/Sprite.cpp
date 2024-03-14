@@ -187,7 +187,7 @@ void SpriteManager::Init()
 	samplerDesc.AddressV = D3D12_TEXTURE_ADDRESS_MODE_BORDER;
 	samplerDesc.AddressW = D3D12_TEXTURE_ADDRESS_MODE_BORDER;
 	samplerDesc.BorderColor = D3D12_STATIC_BORDER_COLOR_TRANSPARENT_BLACK; //ボーダーの時は黒
-	samplerDesc.Filter = D3D12_FILTER_MIN_MAG_MIP_LINEAR; //リニア補間
+	samplerDesc.Filter = D3D12_FILTER_MIN_MAG_MIP_POINT;
 	samplerDesc.MaxLOD = D3D12_FLOAT32_MAX; //ミップマップ最大値
 	samplerDesc.MinLOD = 0.0f; //ミップマップ最小値
 	samplerDesc.ComparisonFunc = D3D12_COMPARISON_FUNC_NEVER;
