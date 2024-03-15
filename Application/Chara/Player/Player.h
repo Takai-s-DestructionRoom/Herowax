@@ -46,6 +46,7 @@ public:
 
 	//----------- 新攻撃(パブロ攻撃)関連 -------------//
 	float pabloRange;			//最大射程
+	float pabloSideRange;		//横の射程
 	float pabloSeparator;		//射程の分割数
 	float pabloSpeedMag;		//パブロ攻撃時の移動速度
 	float shotDeadZone = 1.0f;

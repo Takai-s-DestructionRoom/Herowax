@@ -653,8 +653,12 @@
     <FxCompile Include="Shader\Particle3DVS.hlsl">
       <Filter>シェーダー ファイル</Filter>
     </FxCompile>
-    <FxCompile Include="Shader\DisolvePS.hlsl" />
-    <FxCompile Include="Shader\DisolveVS.hlsl" />
+    <FxCompile Include="Shader\DisolvePS.hlsl">
+      <Filter>シェーダー ファイル</Filter>
+    </FxCompile>
+    <FxCompile Include="Shader\DisolveVS.hlsl">
+      <Filter>シェーダー ファイル</Filter>
+    </FxCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\2d\Sprite.h">
@@ -1061,7 +1065,9 @@
     <None Include="Shader\Particle3D.hlsli">
       <Filter>シェーダー ファイル</Filter>
     </None>
-    <None Include="Shader\Disolve.hlsli" />
+    <None Include="Shader\Disolve.hlsli">
+      <Filter>シェーダー ファイル</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Text Include="hogehoge.txt" />

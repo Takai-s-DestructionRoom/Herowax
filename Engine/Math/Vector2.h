@@ -66,6 +66,9 @@ public:
 	//（このインスタンスは書き換えずに別のインスタンスとして取得する）
 	Vector2 GetNormalize() const;
 
+	//指定した角度分回転させたベクトルを返す
+	Vector2 Rotation(float radian);
+
 	//z成分を0としてVector3にキャスト
 	operator Vector3() const;
 	//z成分を0, w成分を1としてFloat4にキャスト

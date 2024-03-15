@@ -101,7 +101,9 @@ bool WaxGroup::IsSolid()
 {
 	int32_t solidCount = 0;
 	//最大ロウ数より多い数が入ってたらだいたいアウトなのでfalse
-	if (waxs.size() > kMaxWax)return false;
+	if (waxs.size() > kMaxWax) {
+		return false;
+	}
 
 	for (auto& wax : waxs)
 	{

@@ -42,7 +42,8 @@ atkCoolTimer(0.3f), atkTimer(0.5f), atkHeight(1.f), solidTimer(5.f)
 	atkCoolTimer.maxTime_ = Parameter::GetParam(extract, "クールタイム", 0.3f);
 	solidTimer.maxTime_ = Parameter::GetParam(extract, "固まるまでの時間", 5.f);
 
-	pabloRange = Parameter::GetParam(extract, "パブロ攻撃の広がり", 1.f);
+	pabloRange = Parameter::GetParam(extract, "パブロ攻撃の広がり", 5.f);
+	pabloSideRange = Parameter::GetParam(extract, "パブロ攻撃の横の広がり", 5.f);
 	pabloSpeedMag = Parameter::GetParam(extract, "パブロ攻撃時の移動速度低下係数", 0.2f);
 	shotDeadZone = Parameter::GetParam(extract, "ショットが出る基準", 0.5f);
 
@@ -122,7 +123,7 @@ void Player::Update()
 	obj.TransferBuffer(Camera::sNowCamera->mViewProjection);
 
 #pragma region ImGui
-	ImGui::SetNextWindowSize({ 400, 250 });
+	ImGui::SetNextWindowSize({ 600, 250 });
 
 	ImGuiWindowFlags window_flags = 0;
 	window_flags |= ImGuiWindowFlags_NoResize;
@@ -171,9 +172,10 @@ void Player::Update()
 	if (ImGui::TreeNode("お試し実装:パブロアタック"))
 	{
 		ImGui::Text("スティックの入力:%f", abs(RInput::GetInstance()->GetPadLStick().LengthSq()));
-		ImGui::SliderFloat("ショットが出る基準", &shotDeadZone, -2.0f, 2.0f);
-		ImGui::SliderFloat("広がり", &pabloRange, 0.0f, 10.f);
-		ImGui::SliderFloat("パブロ攻撃時の移動速度低下係数", &pabloSpeedMag, 0.0f, 1.0f);
+		ImGui::SliderFloat("ショットが出る基準", &shotDeadZone,0.0f,2.0f);
+		ImGui::SliderFloat("広がり", &pabloRange,0.0f,10.f);
+		ImGui::SliderFloat("横の広がり", &pabloSideRange,0.0f,10.f);
+		ImGui::SliderFloat("パブロ攻撃時の移動速度低下係数", &pabloSpeedMag,0.0f,1.0f);
 
 		ImGui::TreePop();
 	}
@@ -195,6 +197,7 @@ void Player::Update()
 		Parameter::Save("クールタイム", atkCoolTimer.maxTime_);
 		Parameter::Save("固まるまでの時間", solidTimer.maxTime_);
 		Parameter::Save("パブロ攻撃の広がり", pabloRange);
+		Parameter::Save("パブロ攻撃の横の広がり", pabloSideRange);
 		Parameter::Save("パブロ攻撃時の移動速度低下係数", pabloSpeedMag);
 		Parameter::Save("ショットが出る基準", shotDeadZone);
 		Parameter::End();
@@ -429,8 +432,6 @@ void Player::PabloAttack()
 	if (atkCoolTimer.GetRun())return;
 	atkCoolTimer.Start();
 
-	Transform spawnTrans = obj.mTransform;
-
 	Vector3 pabloVec = { 0,0,0 };
 	//入力があるならそっちへ
 	if (abs(RInput::GetInstance()->GetPadLStick().LengthSq()) >= shotDeadZone)
@@ -448,11 +449,52 @@ void Player::PabloAttack()
 
 	atkVec = pabloVec;
 
-	WaxManager::GetInstance()->Create(
-		spawnTrans, atkPower,
-		atkVec, atkSpeed,
-		atkRange, atkSize,
-		atkTimer.maxTime_, solidTimer.maxTime_);
+	Vector2 rotaVec = { pabloVec.x,pabloVec.z };
+	rotaVec = rotaVec.Rotation(-Util::PI / 2);
+
+	//pabloVecの横ベクトルを取る
+	Vector3 sidePabloVec = { rotaVec.x,0,rotaVec.y };
+	sidePabloVec.Normalize();
+	
+	//発射数の半分(切り捨て)はマイナス横ベクトル方向へずらす
+	int32_t waxNum = 3;
+	
+	//imguiでいじれるようにするのと、前方向へのランダムを作る
+
+	//発射数分ロウを生成、座標を生成するたびプラス横ベクトル方向へずらす
+	//座標を生成するたびプラス正面ベクトル方向へずらす
+	Vector3 sideRandMin = -sidePabloVec * pabloSideRange;
+	Vector3 sideRandMax = sidePabloVec * pabloSideRange;
+	
+	//もしminの方が大きくなってしまっていたら入れ替える
+	if (sideRandMin.x > sideRandMax.x) {
+		float save = sideRandMin.x;
+		sideRandMin.x = sideRandMax.x;
+		sideRandMax.x = save;
+	}
+
+	if (sideRandMin.z > sideRandMax.z) {
+		float save = sideRandMin.z;
+		sideRandMin.z = sideRandMax.z;
+		sideRandMax.z = save;
+	}
+
+	for (int32_t i = 0; i < waxNum; i++)
+	{
+		Transform spawnTrans = obj.mTransform;
+		//横のランダムを決定
+		spawnTrans.position.x += Util::GetRand(sideRandMin.x, sideRandMax.x);
+		spawnTrans.position.z += Util::GetRand(sideRandMin.z, sideRandMax.z);
+		
+		//前に(幅 / 数)分進める(多少ランダムにしたい)
+		spawnTrans.position += (pabloVec * pabloRange / (float)waxNum) * (float)i;
+
+		WaxManager::GetInstance()->Create(
+			spawnTrans, atkPower,
+			atkVec, atkSpeed,
+			atkRange, atkSize,
+			atkTimer.maxTime_, solidTimer.maxTime_);
+	}
 }
 
 void Player::Fire()
