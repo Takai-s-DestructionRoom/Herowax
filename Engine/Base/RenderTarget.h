@@ -48,6 +48,11 @@ public:
 	static void SetToTexture(std::vector<std::string> names);
 
 	static RenderTexture* CreateRenderTexture(const uint32_t width, const uint32_t height, const Color clearColor, TextureHandle name = "");
+	static void DeleteRenderTexture(std::string name);
+	static void DeleteRenderTexture(RenderTexture* tex);
+	static void DeleteRenderTextureAtEndFrame(std::string name);
+	static void DeleteRenderTextureAtEndFrame(RenderTexture* tex);
+	static void EndFrameProcess();
 	static RenderTexture* GetRenderTexture(std::string name);
 	static D3D12_CPU_DESCRIPTOR_HANDLE GetRTVHandle(uint32_t index);
 	static D3D12_CPU_DESCRIPTOR_HANDLE GetDSVHandle(uint32_t index);
@@ -73,5 +78,6 @@ private:
 
 	std::vector<std::string> mCurrentRenderTargets;
 	std::map<std::string, RenderTexture> mRenderTargetMap;
+	std::list<std::string> mDeleteScheduledList; //DeleteAtEndFrame予定リスト
 };
 

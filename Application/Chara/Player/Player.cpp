@@ -104,9 +104,8 @@ void Player::Update()
 			emitterPos.y -= obj.mTransform.scale.y;
 
 			jumpParticle.SetPos(emitterPos);
-			jumpParticle.AddRing(16, 0.3f, obj.mTuneMaterial.mColor, 1.f, 0.3f, 0.6f,
-				{ -0.001f,0.01f,-0.001f }, { 0.001f,0.03f,0.001f },
-				0.01f, -Vector3::ONE * 0.1f, Vector3::ONE * 0.1f, 0.05f);
+			jumpParticle.AddRing(16, 0.3f, obj.mTuneMaterial.mColor, 0.7f, 1.2f, 0.3f, 0.6f,
+				0.01f, 0.05f, -Vector3::ONE * 0.1f, Vector3::ONE * 0.1f, 0.05f);
 		}
 		isJumping = false;
 	}
@@ -272,9 +271,8 @@ void Player::MovePad()
 		emitterPos.y -= obj.mTransform.scale.y;
 
 		jumpParticle.SetPos(emitterPos);
-		jumpParticle.AddRing(20, 0.8f, obj.mTuneMaterial.mColor, 1.5f, 0.5f, 0.8f,
-			{ -0.001f,0.01f,-0.001f }, { 0.001f,0.03f,0.001f },
-			0.01f, -Vector3::ONE * 0.1f, Vector3::ONE * 0.1f, 0.05f);
+		jumpParticle.AddRing(20, 0.5f, obj.mTuneMaterial.mColor, 1.f, 2.5f, 0.5f, 0.8f,
+			0.01f, 0.05f, -Vector3::ONE * 0.1f, Vector3::ONE * 0.1f, 0.05f);
 	}
 
 	//ジャンプ中は
@@ -350,9 +348,8 @@ void Player::MoveKey()
 		emitterPos.y -= obj.mTransform.scale.y;
 
 		jumpParticle.SetPos(emitterPos);
-		jumpParticle.AddRing(20, 0.8f, obj.mTuneMaterial.mColor, 1.5f, 0.5f, 0.8f,
-			{ -0.001f,0.01f,-0.001f }, { 0.001f,0.03f,0.001f },
-			0.01f, -Vector3::ONE * 0.1f, Vector3::ONE * 0.1f, 0.05f);
+		jumpParticle.AddRing(16, 0.5f, obj.mTuneMaterial.mColor, 1.f, 2.5f, 0.5f, 0.8f,
+			0.01f, 0.03f, -Vector3::ONE * 0.1f, Vector3::ONE * 0.1f, 0.05f);
 	}
 
 	//ジャンプ中は

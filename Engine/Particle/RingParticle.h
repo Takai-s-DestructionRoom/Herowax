@@ -11,6 +11,6 @@ public:
 	//更新処理
 	void Update() override;
 	//パーティクルの追加
-	void AddRing(uint32_t addNum, float life, Color color, float radius, float minScale, float maxScale,
-		Vector3 minVelo, Vector3 maxVelo, float accelPower = 0.f, Vector3 minRot = {}, Vector3 maxRot = {}, float growingTimer = 0.f) override;
+	void AddRing(uint32_t addNum, float life, Color color, float startRadius, float endRadius, float minScale, float maxScale,
+		float minVeloY, float maxVeloY, Vector3 minRot = {}, Vector3 maxRot = {}, float growingTimer = 0.f) override;
 };

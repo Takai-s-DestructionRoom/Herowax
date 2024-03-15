@@ -659,6 +659,12 @@
     <FxCompile Include="Shader\DisolveVS.hlsl">
       <Filter>シェーダー ファイル</Filter>
     </FxCompile>
+    <FxCompile Include="Shader\PaintedBasicPS.hlsl">
+      <Filter>シェーダー ファイル</Filter>
+    </FxCompile>
+    <FxCompile Include="Shader\PaintedBasicVS.hlsl">
+      <Filter>シェーダー ファイル</Filter>
+    </FxCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\2d\Sprite.h">
@@ -1066,6 +1072,9 @@
       <Filter>シェーダー ファイル</Filter>
     </None>
     <None Include="Shader\Disolve.hlsli">
+      <Filter>シェーダー ファイル</Filter>
+    </None>
+    <None Include="Shader\PaintedBasic.hlsli">
       <Filter>シェーダー ファイル</Filter>
     </None>
   </ItemGroup>
