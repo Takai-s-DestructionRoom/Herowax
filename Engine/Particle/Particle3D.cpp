@@ -67,9 +67,6 @@ void IEmitter3D::Update()
 			particle.scale = Easing::lerp(particle.startScale, particle.endScale, particle.easeTimer.GetTimeRate());
 		}
 
-		//加速度を速度に加算
-		particle.velo += particle.accel;
-
 		//初期のランダム角度をもとに回す
 		if (isRotation_)
 		{
@@ -95,11 +92,8 @@ void IEmitter3D::Update()
 		//重力加算
 		if (isGravity_)
 		{
-			particle.velo.y += particle.gravity * elapseSpeed_;
+			particle.pos.y -= particle.gravity * elapseSpeed_;
 		}
-
-		//速度による移動
-		particle.pos += particle.velo * elapseSpeed_;
 	}
 
 	//頂点情報がリセットされないので更新時には毎フレームリセット
@@ -302,8 +296,8 @@ void IEmitter3D::Add(uint32_t addNum, float life, Color color, float minScale, f
 	}
 }
 
-void IEmitter3D::AddRing(uint32_t addNum, float life, Color color, float radius, float minScale, float maxScale,
-	Vector3 minVelo, Vector3 maxVelo, float accelPower, Vector3 minRot, Vector3 maxRot, float growingTimer)
+void IEmitter3D::AddRing(uint32_t addNum, float life, Color color, float startRadius, float endRadius, float minScale, float maxScale,
+	float minVeloY, float maxVeloY, Vector3 minRot, Vector3 maxRot, float growingTimer)
 {
 	//キレイに一周させたいので指定した数が最大数超えてたら修正
 	uint32_t addNumClamp = Util::Clamp(addNum, 0, maxParticle_);
@@ -322,20 +316,17 @@ void IEmitter3D::AddRing(uint32_t addNum, float life, Color color, float radius,
 		Particle3D& p = particles_.back();
 
 		//エミッターを中心と指定された半径をもとに初期座標設定
-		float pX = transform.position.x + radius * cosf(Util::AngleToRadian((360.f / (float)addNumClamp) * (float)i));
+		float pX = transform.position.x + startRadius * cosf(Util::AngleToRadian((360.f / (float)addNumClamp) * (float)i));
 		float pY = transform.position.y;
-		float pZ = transform.position.z + radius * sinf(Util::AngleToRadian((360.f / (float)addNumClamp) * (float)i));
+		float pZ = transform.position.z + startRadius * sinf(Util::AngleToRadian((360.f / (float)addNumClamp) * (float)i));
 		Vector3 pos(pX, pY, pZ);
+		//引数の範囲から飛ばす方向ランダムで決定
+		float vY = Util::GetRand(minVeloY, maxVeloY);
 		//引数の範囲から大きさランダムで決定
 		float sX = Util::GetRand(minScale, maxScale);
 		float sY = Util::GetRand(minScale, maxScale);
 		float sZ = Util::GetRand(minScale, maxScale);
 		Vector3 randomScale(sX, sY, sZ);
-		//引数の範囲から飛ばす方向ランダムで決定
-		float vX = Util::GetRand(minVelo.x, maxVelo.x);
-		float vY = Util::GetRand(minVelo.y, maxVelo.y);
-		float vZ = Util::GetRand(minVelo.z, maxVelo.z);
-		Vector3 randomVelo(vX, vY, vZ);
 		//引数の範囲から回転をランダムで決定
 		float rX = Util::GetRand(minRot.x, maxRot.x);
 		float rY = Util::GetRand(minRot.y, maxRot.y);
@@ -347,12 +338,13 @@ void IEmitter3D::AddRing(uint32_t addNum, float life, Color color, float radius,
 		//飛んでく方向に合わせて回転
 		p.rot = randomRot;
 		p.plusRot = p.rot;
-		p.velo = randomVelo;
-		p.accel = randomVelo * accelPower;
+		p.velo.y = vY;
 		p.aliveTimer = life;
 		p.aliveTimer.Start();
 		p.scale = sX;
 		p.startScale = p.scale;
+		p.radius = startRadius;
+		p.endRadius = endRadius;
 		p.endScale = 0.0f;
 		p.color = color;
 		//イージング用のタイマーを設定、開始

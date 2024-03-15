@@ -36,7 +36,7 @@ class IEmitter3D
 		//加速度
 		Vector3 accel;
 		//重力
-		float gravity = 0.98f;
+		float gravity = 0.098f;
 
 		//色
 		Color color;
@@ -48,11 +48,12 @@ class IEmitter3D
 		Easing::EaseTimer growingTimer = 0.1f;
 
 		//エミッター座標からの距離
-		float radius = 0;
-		float startRadius = 0;	//開始時の距離
+		float radius = 0.f;
+		float startRadius = 0.f;	//開始時の距離
+		float endRadius = 0.f;		//終了時の距離
 	};
 
-private:
+protected:
 	Transform transform;
 	SRConstBuffer<TransformBuffer> transformBuff;
 	SRConstBuffer<ViewProjectionBuffer> viewProjectionBuff;
@@ -99,7 +100,7 @@ public:
 	//初期化
 	//このままの処理を呼びたいなら継承先でこれを呼ぶ
 	virtual void Init();
-	//更新
+	//更新(共通部分)
 	//このままの処理を呼びたいなら継承先でこれを呼ぶ
 	virtual void Update();
 	//描画
@@ -115,8 +116,8 @@ public:
 
 	//リング状パーティクル追加(固有処理にしたかったらoverrideで上書きする)
 	//life:秒数指定なので注意
-	virtual void AddRing(uint32_t addNum, float life, Color color, float radius, float minScale, float maxScale,
-		Vector3 minVelo, Vector3 maxVelo, float accelPower = 0.f, Vector3 minRot = {}, Vector3 maxRot = {}, float growingTimer = 0.f);
+	virtual void AddRing(uint32_t addNum, float life, Color color, float startRadius, float endRadius, float minScale, float maxScale,
+		float minVeloY, float maxVeloY, Vector3 minRot = {}, Vector3 maxRot = {}, float growingTimer = 0.f);
 
 	//パーティクル全消し
 	void ClearParticles() { particles_.clear(); }
