@@ -71,6 +71,12 @@ public:
 	//（このインスタンスは書き換えずに別のインスタンスとして取得する）
 	Vector3 GetNormalize() const;
 
+	/// <summary>
+	/// 2つのベクトルのなす角(Radian)を取得
+	/// 激おもらしいので多様厳禁
+	/// </summary>
+	float Radian(const Vector3& a) const;
+
 	//z成分を捨ててVector2へキャスト
 	operator Vector2() const;
 

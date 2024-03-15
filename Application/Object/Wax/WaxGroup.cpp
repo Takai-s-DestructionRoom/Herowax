@@ -96,3 +96,27 @@ void WaxGroup::SetSameSolidTime()
 		}
 	}
 }
+
+bool WaxGroup::IsSolid()
+{
+	int32_t solidCount = 0;
+	//最大ロウ数より多い数が入ってたらだいたいアウトなのでfalse
+	if (waxs.size() > kMaxWax)return false;
+
+	for (auto& wax : waxs)
+	{
+		if (wax->isSolid) {
+			solidCount += 1;
+		}
+	}
+	//少なくともワックスを一つでも保持していて
+	if (waxs.size() >= 1)
+	{
+		//すべてのロウが固まっているならtrue
+		if (solidCount >= waxs.size()) {
+			return true;
+		}
+	}
+	//そうでないならfalse
+	return false;
+}

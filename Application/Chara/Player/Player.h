@@ -70,6 +70,9 @@ public:
 	//攻撃(ステートに移動)
 	void Attack();
 
+	//パブロ攻撃処理のまとめ
+	void PabloAttack();
+
 	//ﾌｧｲｱ
 	void Fire();
 

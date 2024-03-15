@@ -68,6 +68,24 @@ void Player::Update()
 
 	attackState->Update(this);
 
+	//-----------クールタイム管理-----------//
+	atkTimer.Update();
+	atkCoolTimer.Update();
+
+	//攻撃終わったらクールタイム開始
+	if (atkTimer.GetEnd())
+	{
+		atkCoolTimer.Start();
+		atkTimer.Reset();
+	}
+
+	//クールタイム終わったら攻撃再びできるように
+	if (atkCoolTimer.GetEnd())
+	{
+		isAttack = false;
+		atkCoolTimer.Reset();
+	}
+
 	Fire();
 
 	//地面に埋ってたら
@@ -406,24 +424,38 @@ void Player::Attack()
 			}
 		}
 	}
+}
 
-	//攻撃中は
-	atkTimer.Update();
-	atkCoolTimer.Update();
+void Player::PabloAttack()
+{
+	//攻撃中なら次の攻撃が出せない
+	if (atkCoolTimer.GetRun())return;
+	atkCoolTimer.Start();
 
-	//攻撃終わったらクールタイム開始
-	if (atkTimer.GetEnd())
+	Transform spawnTrans = obj.mTransform;
+
+	Vector3 pabloVec = { 0,0,0 };
+	//入力があるならそっちへ
+	if (abs(RInput::GetInstance()->GetPadLStick().LengthSq()) >= shotDeadZone)
 	{
-		atkCoolTimer.Start();
-		atkTimer.Reset();
+		pabloVec = Vector3(RInput::GetInstance()->GetPadLStick().x,
+			atkHeight,
+			RInput::GetInstance()->GetPadLStick().y);
+	}
+	//ないなら正面へ
+	else
+	{
+		pabloVec = GetFrontVec();
+		pabloVec.y = atkHeight;
 	}
 
-	//クールタイム終わったら攻撃再びできるように
-	if (atkCoolTimer.GetEnd())
-	{
-		isAttack = false;
-		atkCoolTimer.Reset();
-	}
+	atkVec = pabloVec;
+
+	WaxManager::GetInstance()->Create(
+		spawnTrans, atkPower,
+		atkVec, atkSpeed,
+		atkRange, atkSize,
+		atkTimer.maxTime_, solidTimer.maxTime_);
 }
 
 void Player::Fire()

@@ -140,6 +140,14 @@ Vector3 Vector3::GetNormalize() const {
 	return Vector3(dx, dy, dz);
 }
 
+float Vector3::Radian(const Vector3& a) const
+{
+	Vector3 na = this->GetNormalize();
+	Vector3 nb = a.GetNormalize();
+	float dot = na.Dot(nb); //長さ1同士のベクトルの内積はcosθとなる...
+	return acosf(dot); //sqrtより重いまであるから気を付けた方が良い
+}
+
 Vector3::operator Vector2() const
 {
 	return Vector2(x, y);

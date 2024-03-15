@@ -22,7 +22,7 @@ void EnemySlow::Update(Enemy* enemy)
 	enemy->SetSlowCoatingMag(0.f);
 
 	//足がとられている蝋のポインタを持っておいて、固まっているかを調べる
-	if (enemy->trappedWaxGroup->waxs.back()->isSolid)
+	if (enemy->trappedWaxGroup->IsSolid())
 	{
 		//付与する力が一度に固まる敵の数だけ強まる
 		EnemyManager::GetInstance()->IncrementSolidCombo();

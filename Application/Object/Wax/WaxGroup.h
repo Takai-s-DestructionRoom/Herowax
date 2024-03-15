@@ -39,6 +39,8 @@ public:
 	bool GetIsAlive() { return isAlive; }
 	//生存フラグ変更
 	void SetIsAlive(bool isAlive_) { isAlive = isAlive_; }
+	//グループ内のロウが固まっているか返す
+	bool IsSolid();
 
 	////満杯かどうか返す
 	//bool GetIsFull() { return waxNums.size() >= kMaxWax; }
