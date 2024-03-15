@@ -109,6 +109,12 @@ void ProtoScene::Update()
 							enemy.ChangeState<EnemyBurning>();
 						}
 					}
+
+					/*if (group) {
+						if(group->waxs.size() > group->)
+						size_t hoge = ;
+						hoge;
+					}*/
 				}
 			}
 		}

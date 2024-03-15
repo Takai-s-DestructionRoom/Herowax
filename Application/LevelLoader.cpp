@@ -112,9 +112,9 @@ void LevelLoader::ObjectLoad(LevelData& levelData,nlohmann::json& object)
 		objectData.rotation.z = (float)Util::AngleToRadian(transform["rotation"][1]);
 
 		//スケーリング
-		objectData.scaling.x = (float)transform["scaling"][0];
-		objectData.scaling.y = (float)transform["scaling"][2];
-		objectData.scaling.z = (float)transform["scaling"][1];
+		objectData.scaling.x = (float)transform["scaling"][0] * 2;
+		objectData.scaling.y = (float)transform["scaling"][2] * 2;
+		objectData.scaling.z = (float)transform["scaling"][1] * 2;
 
 		//collider
 		nlohmann::json& collider = object["collider"];
