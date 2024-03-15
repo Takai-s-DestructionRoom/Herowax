@@ -525,6 +525,9 @@
     <ClCompile Include="Application\Paint\PaintableModelObj.cpp">
       <Filter>ソース ファイル\Application\Paint</Filter>
     </ClCompile>
+    <ClCompile Include="Engine\Particle\RingParticle.cpp">
+      <Filter>ソース ファイル\Engine\Particle</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Shader\TestVS.hlsl">
@@ -998,6 +1001,9 @@
     </ClInclude>
     <ClInclude Include="Application\Paint\PaintableModelObj.h">
       <Filter>ヘッダー ファイル\Application\Paint</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Particle\RingParticle.h">
+      <Filter>ヘッダー ファイル\Engine\Particle</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
