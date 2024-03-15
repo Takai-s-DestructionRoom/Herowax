@@ -1,6 +1,7 @@
 #pragma once
 #include "GameObject.h"
 #include "SimpleParticle.h"
+#include "RingParticle.h"
 #include "Easing.h"
 #include "PlayerState.h"
  
@@ -50,9 +51,12 @@ public:
 	float pabloSpeedMag;		//パブロ攻撃時の移動速度
 	float shotDeadZone = 1.0f;
 
+	//------------ パーティクル関連 ------------//
+	SimpleParticle moveParticle;
+	RingParticle jumpParticle;
+
 	//------------ その他 ------------//
 	std::unique_ptr<PlayerState> attackState;
-	SimpleParticle moveParticle;
 
 public:
 	Player();
