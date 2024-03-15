@@ -63,6 +63,9 @@ public:
 	void Update() override;
 	void Draw() override;
 
+	//ノックバック処理をまとめた
+	void KnockBack(const Vector3& pVec);
+
 	//追いかける対象を変更
 	void SetTarget(ModelObj* target_);
 

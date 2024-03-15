@@ -59,56 +59,8 @@ void Enemy::Update()
 	//無敵時間さん!?の更新
 	mutekiTimer.Update();
 
-	//ノックバック時間の更新
-	knockbackTimer.Update();
-
-	//ノックバックを加算
-	moveVec += knockbackVec * knockbackSpeed;
-	
-	//ノックバックを減少
-	knockbackSpeed = Easing::OutQuad(knockbackRange, 0, knockbackTimer.GetTimeRate());
-
-	//攻撃されたら
-	if (attackTarget) {
-		//プレイヤーに向かって移動するAI
-		Vector3 aVec = attackTarget->mTransform.position - obj.mTransform.position;
-		aVec.Normalize();
-		aVec.y = 0;
-
-		//ターゲットの方向を向いてくれる
-		Quaternion aLookat = Quaternion::LookAt(aVec);
-		//モデルが90度ずれた方向を向いているので無理やり修正(モデル変更時にチェック)
-		aLookat *= Quaternion::AngleAxis({ 0,1,0 }, -Util::PI / 2);
-	
-		//喰らい時のモーション遷移
-		knockRadianX = Easing::InQuad(knockRadianStart.x, 0, knockbackTimer.GetTimeRate());
-		knockRadianZ = Easing::InQuad(knockRadianStart.z, 0, knockbackTimer.GetTimeRate());
-
-		Quaternion knockQuaterX = Quaternion::AngleAxis({ 1,0,0 }, knockRadianX);
-		Quaternion knockQuaterZ = Quaternion::AngleAxis({ 0,0,1 }, knockRadianZ);
-
-		//計算した向きをかける
-		aLookat = aLookat * knockQuaterX * knockQuaterZ;
-
-		//euler軸へ変換
-		obj.mTransform.rotation = aLookat.ToEuler();
-		//ノックバックが終わったら
-		if (knockbackTimer.GetEnd()) {
-			//ターゲットを解除
-			attackTarget = nullptr;
-		}
-	}
-	else
-	{
-		//普段はターゲットの方向を向く
-		//ターゲットの方向を向いてくれる
-		Quaternion pLookat = Quaternion::LookAt(pVec);
-		//モデルが90度ずれた方向を向いているので無理やり修正(モデル変更時にチェック)
-		pLookat *= Quaternion::AngleAxis({ 0,1,0 }, -Util::PI / 2);
-
-		//euler軸へ変換
-		obj.mTransform.rotation = pLookat.ToEuler();
-	}
+	//ノックバックとかのけぞりとか
+	KnockBack(pVec);
 
 	//ノックバック中でないなら重力をかける
 	if (!knockbackTimer.GetRun()) {
@@ -142,6 +94,60 @@ void Enemy::Draw()
 		obj.Draw();
 		ui.Draw();
 		//DrawCollider();
+	}
+}
+
+void Enemy::KnockBack(const Vector3& pVec)
+{
+	//ノックバック時間の更新
+	knockbackTimer.Update();
+
+	//ノックバックを加算
+	moveVec += knockbackVec * knockbackSpeed;
+
+	//ノックバックを減少
+	knockbackSpeed = Easing::OutQuad(knockbackRange, 0, knockbackTimer.GetTimeRate());
+
+	//攻撃されたら
+	if (attackTarget) {
+		//プレイヤーに向かって移動するAI
+		Vector3 aVec = attackTarget->mTransform.position - obj.mTransform.position;
+		aVec.Normalize();
+		aVec.y = 0;
+
+		//ターゲットの方向を向いてくれる
+		Quaternion aLookat = Quaternion::LookAt(aVec);
+		//モデルが90度ずれた方向を向いているので無理やり修正(モデル変更時にチェック)
+		aLookat *= Quaternion::AngleAxis({ 0,1,0 }, -Util::PI / 2);
+
+		//喰らい時のモーション遷移
+		knockRadianX = Easing::InQuad(knockRadianStart.x, 0, knockbackTimer.GetTimeRate());
+		knockRadianZ = Easing::InQuad(knockRadianStart.z, 0, knockbackTimer.GetTimeRate());
+
+		Quaternion knockQuaterX = Quaternion::AngleAxis({ 1,0,0 }, knockRadianX);
+		Quaternion knockQuaterZ = Quaternion::AngleAxis({ 0,0,1 }, knockRadianZ);
+
+		//計算した向きをかける
+		aLookat = aLookat * knockQuaterX * knockQuaterZ;
+
+		//euler軸へ変換
+		obj.mTransform.rotation = aLookat.ToEuler();
+		//ノックバックが終わったら
+		if (knockbackTimer.GetEnd()) {
+			//ターゲットを解除
+			attackTarget = nullptr;
+		}
+	}
+	else
+	{
+		//普段はターゲットの方向を向く
+		//ターゲットの方向を向いてくれる
+		Quaternion pLookat = Quaternion::LookAt(pVec);
+		//モデルが90度ずれた方向を向いているので無理やり修正(モデル変更時にチェック)
+		pLookat *= Quaternion::AngleAxis({ 0,1,0 }, -Util::PI / 2);
+
+		//euler軸へ変換
+		obj.mTransform.rotation = pLookat.ToEuler();
 	}
 }
 
