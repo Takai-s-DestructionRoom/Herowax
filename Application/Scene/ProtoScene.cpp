@@ -89,8 +89,10 @@ void ProtoScene::Update()
 						enemy.trappedWaxGroup = group.get();
 						
 						//enemyにダメージ
+						Vector3 knockVec = player.atkVec;
+						knockVec.y = 0;
 						enemy.DealDamage(WaxManager::GetInstance()->waxDamage,
-							player.atkVec);
+							knockVec, &player.obj);
 						//お試し実装:自分が攻撃を当てた相手が自分を追いかけてくる
 						if (player.GetTauntMode()) {
 							enemy.SetTarget(&player.obj);
