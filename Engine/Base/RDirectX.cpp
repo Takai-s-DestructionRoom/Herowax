@@ -504,5 +504,6 @@ void RDirectX::RunDraw() {
 	assert(SUCCEEDED(result));
 
 	TextureManager::EndFrameProcess();
+	RenderTarget::EndFrameProcess();
 	SimpleDrawer::ClearData();
 }

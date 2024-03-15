@@ -29,7 +29,6 @@ private:
 
 	PaintableModelObj skydome;
 
-	Cube hogeObj;
 	Sprite sprite;
 
 	PaintableModelObj objA;

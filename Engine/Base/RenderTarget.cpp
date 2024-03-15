@@ -234,6 +234,42 @@ RenderTexture* RenderTarget::CreateRenderTexture(const uint32_t width, const uin
 	return &manager->mRenderTargetMap[name];
 }
 
+void RenderTarget::DeleteRenderTexture(std::string name)
+{
+	DeleteRenderTexture(GetRenderTexture(name));
+}
+
+void RenderTarget::DeleteRenderTexture(RenderTexture* tex)
+{
+	RenderTarget* manager = GetInstance();
+	std::lock_guard<std::recursive_mutex> lock(manager->mMutex);
+	manager->mRenderTargetMap.erase(tex->mName);
+}
+
+void RenderTarget::DeleteRenderTextureAtEndFrame(std::string name)
+{
+	RenderTarget* manager = GetInstance();
+	std::lock_guard<std::recursive_mutex> lock(manager->mMutex);
+	manager->mDeleteScheduledList.push_back(name);
+}
+
+void RenderTarget::DeleteRenderTextureAtEndFrame(RenderTexture* tex)
+{
+	RenderTarget* manager = GetInstance();
+	std::lock_guard<std::recursive_mutex> lock(manager->mMutex);
+	manager->mDeleteScheduledList.push_back(tex->mName);
+}
+
+void RenderTarget::EndFrameProcess()
+{
+	RenderTarget* manager = GetInstance();
+	std::lock_guard<std::recursive_mutex> lock(manager->mMutex);
+	for (auto& name : manager->mDeleteScheduledList) {
+		manager->mRenderTargetMap.erase(name);
+	}
+	manager->mDeleteScheduledList.clear();
+}
+
 RenderTexture* RenderTarget::GetRenderTexture(std::string name) {
 	RenderTarget* manager = GetInstance();
 	std::lock_guard<std::recursive_mutex> lock(manager->mMutex);
