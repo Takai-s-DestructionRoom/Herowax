@@ -4,6 +4,7 @@
 #include "Easing.h"
 #include "WaxGroup.h"
 #include "EnemyUI.h"
+#include "Quaternion.h"
 
 class Enemy : public GameObject
 {
@@ -14,6 +15,18 @@ private:
 	float slowMag;				//減速率
 	float slowCoatingMag;		//蝋かけられたときの減速率
 	bool isGraund;				//接地しているかフラグ
+	float gravity;				//重力
+	float groundPos;			//地面座標
+	
+	//---- ノックバック関連 ----//
+	Vector3 knockbackVec;		//ノックバックする方向
+	float knockbackSpeed;		//ノックバックさせる変数(速度に加算、タイマーに合わせて減少)
+	float knockbackRange;		//ノックバックする距離
+	Vector3 knockRadianStart;		
+	float knockRadianX;
+	float knockRadianZ;
+
+	Easing::EaseTimer knockbackTimer;	//ノックバックする時間
 
 	//------------ 攻撃関連 ------------//
 	bool isAttack;						//攻撃してるかフラグ
@@ -27,10 +40,12 @@ private:
 	//------------ HP関連 ------------//
 	float hp;				//現在のヒットポイント
 	float maxHP;			//最大HP
+	Easing::EaseTimer mutekiTimer;		//無敵時間さん
 
 	//------------ その他 ------------//
-	//追跡する対象(タワーを入れる)
 	ModelObj* target = nullptr;
+	//攻撃してきた対象
+	ModelObj* attackTarget = nullptr;
 
  	std::unique_ptr<EnemyState> state;			//状態管理
 	std::string stateStr;		//状態を文字列で保存
@@ -48,10 +63,13 @@ public:
 	void Update() override;
 	void Draw() override;
 
-	void Tracking();
+	//ノックバック処理をまとめた
+	void KnockBack(const Vector3& pVec);
 
 	//追いかける対象を変更
 	void SetTarget(ModelObj* target_);
+
+	void SetGroundPos(float groundPos_) {groundPos = groundPos_;}
 
 	//状態変更
 	template <typename ChangeEnemyState>
@@ -87,8 +105,16 @@ public:
 	void SetEscapePower(float power) { escapePower = power; }
 	//状態文字情報を設定
 	void SetStateStr(std::string str) { stateStr = str; }
+	//ノックバック距離を設定
+	void SetKnockRange(float knockRange) { knockbackRange = knockRange; };
+	//ノックバック時間を設定
+	void SetKnockTime(float knockTime) { knockbackTimer.maxTime_ = knockTime; };
+	//無敵時間さん!?を設定
+	void SetMutekiTime(float mutekiTime) { mutekiTimer.maxTime_ = mutekiTime; };
 	//ダメージを与える
 	void DealDamage(uint32_t damage);
+	//引数があればノックバックもする(その方向を向かせるために攻撃対象も入れる)
+	void DealDamage(uint32_t damage,const Vector3& dir,ModelObj* target_);
 	//強制的に死亡させる
 	void SetDeath();
 };

@@ -19,25 +19,31 @@ atkCoolTimer(0.3f), atkTimer(0.5f), atkHeight(1.f), solidTimer(5.f)
 	obj = ModelObj(Model::Load("./Resources/Model/Cube.obj", "Cube", true));
 
 	ParticleManager::GetInstance()->EraseEmitter("playerMove");
-	moveParticle.SetShapeType((uint32_t)ShapeType::Polygon);
+	//moveParticle.SetShapeType((uint32_t)ShapeType::Cube);
 	ParticleManager::GetInstance()->AddEmitter(&moveParticle, "playerMove");
 	moveParticle.SetIsRotation(true);
 	moveParticle.SetIsGrowing(true);
 
-	std::map<std::string, std::string> extract = Parameter::Extract("Player");
-	moveSpeed = Parameter::GetParam(extract,"移動速度",1.f);
-	moveAccelAmount = Parameter::GetParam(extract, "移動加速度",0.05f);
-	gravity = Parameter::GetParam(extract, "重力",0.098f);
-	jumpPower = Parameter::GetParam(extract, "ジャンプ力",2.0f);
-	atkTimer.maxTime_ = Parameter::GetParam(extract, "攻撃時間",0.5f);
-	atkSpeed = Parameter::GetParam(extract, "射出速度",1.f);
-	atkHeight = Parameter::GetParam(extract, "射出高度",1.f);
-	atkRange.x = Parameter::GetParam(extract,"攻撃範囲X",3.f);
-	atkRange.y = Parameter::GetParam(extract,"攻撃範囲Y",5.f);
-	atkCoolTimer.maxTime_ = Parameter::GetParam(extract,"クールタイム",0.3f);
-	solidTimer.maxTime_ = Parameter::GetParam(extract,"固まるまでの時間",5.f);
+	//jumpParticle.SetShapeType((uint32_t)ShapeType::Cube);
+	ParticleManager::GetInstance()->AddEmitter(&jumpParticle, "playerJump");
+	jumpParticle.SetIsRotation(true);
+	jumpParticle.SetIsGrowing(true);
 
-	pabloRange = Parameter::GetParam(extract, "パブロ攻撃の広がり", 1.f);
+	std::map<std::string, std::string> extract = Parameter::Extract("Player");
+	moveSpeed = Parameter::GetParam(extract, "移動速度", 1.f);
+	moveAccelAmount = Parameter::GetParam(extract, "移動加速度", 0.05f);
+	gravity = Parameter::GetParam(extract, "重力", 0.098f);
+	jumpPower = Parameter::GetParam(extract, "ジャンプ力", 2.0f);
+	atkTimer.maxTime_ = Parameter::GetParam(extract, "攻撃時間", 0.5f);
+	atkSpeed = Parameter::GetParam(extract, "射出速度", 1.f);
+	atkHeight = Parameter::GetParam(extract, "射出高度", 1.f);
+	atkRange.x = Parameter::GetParam(extract, "攻撃範囲X", 3.f);
+	atkRange.y = Parameter::GetParam(extract, "攻撃範囲Y", 5.f);
+	atkCoolTimer.maxTime_ = Parameter::GetParam(extract, "クールタイム", 0.3f);
+	solidTimer.maxTime_ = Parameter::GetParam(extract, "固まるまでの時間", 5.f);
+
+	pabloRange = Parameter::GetParam(extract, "パブロ攻撃の広がり", 5.f);
+	pabloSideRange = Parameter::GetParam(extract, "パブロ攻撃の横の広がり", 5.f);
 	pabloSpeedMag = Parameter::GetParam(extract, "パブロ攻撃時の移動速度低下係数", 0.2f);
 	shotDeadZone = Parameter::GetParam(extract, "ショットが出る基準", 0.5f);
 
@@ -63,6 +69,24 @@ void Player::Update()
 
 	attackState->Update(this);
 
+	//-----------クールタイム管理-----------//
+	atkTimer.Update();
+	atkCoolTimer.Update();
+
+	//攻撃終わったらクールタイム開始
+	if (atkTimer.GetEnd())
+	{
+		atkCoolTimer.Start();
+		atkTimer.Reset();
+	}
+
+	//クールタイム終わったら攻撃再びできるように
+	if (atkCoolTimer.GetEnd())
+	{
+		isAttack = false;
+		atkCoolTimer.Reset();
+	}
+
 	Fire();
 
 	//地面に埋ってたら
@@ -71,7 +95,18 @@ void Player::Update()
 		//地面に触れるとこまで移動
 		obj.mTransform.position.y = 0.f + obj.mTransform.scale.y;
 
-		isGround = true;
+		if (isGround == false)
+		{
+			isGround = true;
+
+			//エミッターの座標はプレイヤーの座標からY座標だけにスケール分ずらしたもの
+			Vector3 emitterPos = obj.mTransform.position;
+			emitterPos.y -= obj.mTransform.scale.y;
+
+			jumpParticle.SetPos(emitterPos);
+			jumpParticle.AddRing(16, 0.3f, obj.mTuneMaterial.mColor, 0.7f, 1.2f, 0.3f, 0.6f,
+				0.01f, 0.05f, -Vector3::ONE * 0.1f, Vector3::ONE * 0.1f, 0.05f);
+		}
 		isJumping = false;
 	}
 
@@ -88,7 +123,7 @@ void Player::Update()
 	obj.TransferBuffer(Camera::sNowCamera->mViewProjection);
 
 #pragma region ImGui
-	ImGui::SetNextWindowSize({ 400, 250 });
+	ImGui::SetNextWindowSize({ 600, 250 });
 
 	ImGuiWindowFlags window_flags = 0;
 	window_flags |= ImGuiWindowFlags_NoResize;
@@ -97,7 +132,7 @@ void Player::Update()
 
 	ImGui::Text("Lスティック移動、Aボタンジャンプ、Rで攻撃");
 	ImGui::Text("WASD移動、スペースジャンプ、右クリで攻撃");
-	
+
 	if (ImGui::TreeNode("移動系"))
 	{
 		ImGui::Text("座標:%f,%f,%f", GetPos().x, GetPos().y, GetPos().z);
@@ -117,7 +152,7 @@ void Player::Update()
 	{
 		ImGui::Text("攻撃中か:%d", isAttack);
 		ImGui::Checkbox("攻撃中でも次の攻撃を出せるか", &isMugenAttack);
-		
+
 		ImGui::SliderFloat("攻撃時間", &atkTimer.maxTime_, 0.f, 2.f);
 		ImGui::SliderFloat("射出速度", &atkSpeed, 0.f, 2.f);
 		ImGui::SliderFloat("射出高度", &atkHeight, 0.f, 3.f);
@@ -125,7 +160,7 @@ void Player::Update()
 		ImGui::SliderFloat("攻撃範囲Y", &atkRange.y, 0.f, 10.f);
 		ImGui::SliderFloat("クールタイム", &atkCoolTimer.maxTime_, 0.f, 2.f);
 		ImGui::SliderFloat("固まるまでの時間", &solidTimer.maxTime_, 0.f, 10.f);
-		
+
 		ImGui::TreePop();
 	}
 	if (ImGui::TreeNode("お試し実装:自分の方に来る"))
@@ -137,8 +172,9 @@ void Player::Update()
 	if (ImGui::TreeNode("お試し実装:パブロアタック"))
 	{
 		ImGui::Text("スティックの入力:%f", abs(RInput::GetInstance()->GetPadLStick().LengthSq()));
-		ImGui::SliderFloat("ショットが出る基準", &shotDeadZone,-2.0f,2.0f);
+		ImGui::SliderFloat("ショットが出る基準", &shotDeadZone,0.0f,2.0f);
 		ImGui::SliderFloat("広がり", &pabloRange,0.0f,10.f);
+		ImGui::SliderFloat("横の広がり", &pabloSideRange,0.0f,10.f);
 		ImGui::SliderFloat("パブロ攻撃時の移動速度低下係数", &pabloSpeedMag,0.0f,1.0f);
 
 		ImGui::TreePop();
@@ -161,6 +197,7 @@ void Player::Update()
 		Parameter::Save("クールタイム", atkCoolTimer.maxTime_);
 		Parameter::Save("固まるまでの時間", solidTimer.maxTime_);
 		Parameter::Save("パブロ攻撃の広がり", pabloRange);
+		Parameter::Save("パブロ攻撃の横の広がり", pabloSideRange);
 		Parameter::Save("パブロ攻撃時の移動速度低下係数", pabloSpeedMag);
 		Parameter::Save("ショットが出る基準", shotDeadZone);
 		Parameter::End();
@@ -228,6 +265,14 @@ void Player::MovePad()
 		isGround = false;
 		jumpSpeed = jumpPower;	//速度に初速を代入
 		jumpTimer.Start();
+
+		//エミッターの座標はプレイヤーの座標からY座標だけにスケール分ずらしたもの
+		Vector3 emitterPos = obj.mTransform.position;
+		emitterPos.y -= obj.mTransform.scale.y;
+
+		jumpParticle.SetPos(emitterPos);
+		jumpParticle.AddRing(20, 0.5f, obj.mTuneMaterial.mColor, 1.f, 2.5f, 0.5f, 0.8f,
+			0.01f, 0.05f, -Vector3::ONE * 0.1f, Vector3::ONE * 0.1f, 0.05f);
 	}
 
 	//ジャンプ中は
@@ -280,19 +325,6 @@ void Player::MoveKey()
 
 		//入力中は加速度足し続ける
 		moveAccel += moveAccelAmount;
-
-		//エミッターの座標はプレイヤーの座標から移動方向の逆側にスケール分ずらしたもの
-		Vector3 emitterPos = obj.mTransform.position;
-		Vector2 mVelo = { -moveVec.x,-moveVec.z };	//moveVecを正規化すると実際の移動に支障が出るので一時変数に格納
-		mVelo.Normalize();
-		emitterPos.x += mVelo.x * obj.mTransform.scale.x;
-		emitterPos.z += mVelo.y * obj.mTransform.scale.z;
-
-		moveParticle.SetPos(emitterPos);
-		moveParticle.Add(
-			2, 0.5f, obj.mTuneMaterial.mColor, 0.3f, 0.7f,
-			{ -0.001f,0.01f,-0.001f }, { 0.001f,0.03f,0.001f },
-			0.01f, -Vector3::ONE * 0.1f, Vector3::ONE * 0.1f, 0.05f);
 	}
 	else
 	{
@@ -303,13 +335,21 @@ void Player::MoveKey()
 	moveVec *= moveSpeed * moveAccel;						//移動速度をかけ合わせたら完成
 	obj.mTransform.position += moveVec;						//完成したものを座標に足し合わせる
 
-	//接地時にAボタン押すと
+	//接地時にスペース押すと
 	if (isGround && RInput::GetInstance()->GetKeyDown(DIK_SPACE))
 	{
 		isJumping = true;
 		isGround = false;
 		jumpSpeed = jumpPower;	//速度に初速を代入
 		jumpTimer.Start();
+
+		//エミッターの座標はプレイヤーの座標からY座標だけにスケール分ずらしたもの
+		Vector3 emitterPos = obj.mTransform.position;
+		emitterPos.y -= obj.mTransform.scale.y;
+
+		jumpParticle.SetPos(emitterPos);
+		jumpParticle.AddRing(16, 0.5f, obj.mTuneMaterial.mColor, 1.f, 2.5f, 0.5f, 0.8f,
+			0.01f, 0.03f, -Vector3::ONE * 0.1f, Vector3::ONE * 0.1f, 0.05f);
 	}
 
 	//ジャンプ中は
@@ -337,6 +377,21 @@ void Player::MoveKey()
 		jumpHeight = 0.f;
 	}
 
+	if (keyVec.LengthSq() > 0.f || isJumping) {
+		//エミッターの座標はプレイヤーの座標から移動方向の逆側にスケール分ずらしたもの
+		Vector3 emitterPos = obj.mTransform.position;
+		Vector2 mVelo = { -moveVec.x,-moveVec.z };	//moveVecを正規化すると実際の移動に支障が出るので一時変数に格納
+		mVelo.Normalize();
+		emitterPos.x += mVelo.x * obj.mTransform.scale.x;
+		emitterPos.z += mVelo.y * obj.mTransform.scale.z;
+
+		moveParticle.SetPos(emitterPos);
+		moveParticle.Add(
+			2, 0.5f, obj.mTuneMaterial.mColor, 0.3f, 0.7f,
+			{ -0.001f,0.01f,-0.001f }, { 0.001f,0.03f,0.001f },
+			0.01f, -Vector3::ONE * 0.1f, Vector3::ONE * 0.1f, 0.05f);
+	}
+
 	//「ジャンプの高さ」+「プレイヤーの大きさ」を反映
 	obj.mTransform.position.y = jumpHeight + obj.mTransform.scale.y;
 }
@@ -346,7 +401,7 @@ void Player::Attack()
 	if (isAttack == false || isMugenAttack)
 	{
 		if ((RInput::GetInstance()->GetPadButton(XINPUT_GAMEPAD_RIGHT_SHOULDER) ||
-			RInput::GetInstance()->GetMouseClick(1)) && 
+			RInput::GetInstance()->GetMouseClick(1)) &&
 			!atkCoolTimer.GetRun())
 		{
 			isAttack = true;
@@ -360,7 +415,7 @@ void Player::Attack()
 			WaxManager::GetInstance()->Create(
 				obj.mTransform, atkPower, atkVec, atkSpeed,
 				atkRange, atkSize, atkTimer.maxTime_, solidTimer.maxTime_);
-		
+
 			//すぐ攻撃のクールタイム始まるように
 			if (isMugenAttack)
 			{
@@ -369,23 +424,76 @@ void Player::Attack()
 			}
 		}
 	}
+}
 
-	//攻撃中は
-	atkTimer.Update();
-	atkCoolTimer.Update();
+void Player::PabloAttack()
+{
+	//攻撃中なら次の攻撃が出せない
+	if (atkCoolTimer.GetRun())return;
+	atkCoolTimer.Start();
 
-	//攻撃終わったらクールタイム開始
-	if (atkTimer.GetEnd())
+	Vector3 pabloVec = { 0,0,0 };
+	//入力があるならそっちへ
+	if (abs(RInput::GetInstance()->GetPadLStick().LengthSq()) >= shotDeadZone)
 	{
-		atkCoolTimer.Start();
-		atkTimer.Reset();
+		pabloVec = Vector3(RInput::GetInstance()->GetPadLStick().x,
+			atkHeight,
+			RInput::GetInstance()->GetPadLStick().y);
+	}
+	//ないなら正面へ
+	else
+	{
+		pabloVec = GetFrontVec();
+		pabloVec.y = atkHeight;
 	}
 
-	//クールタイム終わったら攻撃再びできるように
-	if (atkCoolTimer.GetEnd())
+	atkVec = pabloVec;
+
+	Vector2 rotaVec = { pabloVec.x,pabloVec.z };
+	rotaVec = rotaVec.Rotation(-Util::PI / 2);
+
+	//pabloVecの横ベクトルを取る
+	Vector3 sidePabloVec = { rotaVec.x,0,rotaVec.y };
+	sidePabloVec.Normalize();
+	
+	//発射数の半分(切り捨て)はマイナス横ベクトル方向へずらす
+	int32_t waxNum = 3;
+	
+	//imguiでいじれるようにするのと、前方向へのランダムを作る
+
+	//発射数分ロウを生成、座標を生成するたびプラス横ベクトル方向へずらす
+	//座標を生成するたびプラス正面ベクトル方向へずらす
+	Vector3 sideRandMin = -sidePabloVec * pabloSideRange;
+	Vector3 sideRandMax = sidePabloVec * pabloSideRange;
+	
+	//もしminの方が大きくなってしまっていたら入れ替える
+	if (sideRandMin.x > sideRandMax.x) {
+		float save = sideRandMin.x;
+		sideRandMin.x = sideRandMax.x;
+		sideRandMax.x = save;
+	}
+
+	if (sideRandMin.z > sideRandMax.z) {
+		float save = sideRandMin.z;
+		sideRandMin.z = sideRandMax.z;
+		sideRandMax.z = save;
+	}
+
+	for (int32_t i = 0; i < waxNum; i++)
 	{
-		isAttack = false;
-		atkCoolTimer.Reset();
+		Transform spawnTrans = obj.mTransform;
+		//横のランダムを決定
+		spawnTrans.position.x += Util::GetRand(sideRandMin.x, sideRandMax.x);
+		spawnTrans.position.z += Util::GetRand(sideRandMin.z, sideRandMax.z);
+		
+		//前に(幅 / 数)分進める(多少ランダムにしたい)
+		spawnTrans.position += (pabloVec * pabloRange / (float)waxNum) * (float)i;
+
+		WaxManager::GetInstance()->Create(
+			spawnTrans, atkPower,
+			atkVec, atkSpeed,
+			atkRange, atkSize,
+			atkTimer.maxTime_, solidTimer.maxTime_);
 	}
 }
 

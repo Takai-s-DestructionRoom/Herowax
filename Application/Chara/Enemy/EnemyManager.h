@@ -10,6 +10,15 @@ public:
 	//敵リスト
 	std::list<Enemy> enemys;
 
+	//地面座標(平面想定のみ、ちゃんと地形を入れるならまた変えないといけない)
+	ModelObj* ground = nullptr;
+
+	float knockRandXS;
+	float knockRandXE;
+
+	float knockRandZS;
+	float knockRandZE;
+
 private:
 	uint32_t solidCombo;	//連続で固まった敵の数カウント(これが多いと抜け出すまでの時間減る)
 	uint32_t burningCombo;	//連続で燃えた敵の数カウント(これが多いと温度爆上げ↑)
@@ -20,6 +29,13 @@ private:
 	float slowMag;			//共通の減速率
 	float slowCoatingMag;	//共通の蝋かけられたときの減速率
 
+	//------------ ノックバック関連 ------------//
+	float knockRange;
+	float knockTime;
+
+	//------------ 無敵時間 -------------//
+	float mutekiTime;
+
 public:
 	static EnemyManager* GetInstance();
 
@@ -28,6 +44,8 @@ public:
 
 	//敵の追跡対象を変更(プレイヤーを入れるのを想定)
 	void SetTarget(ModelObj* target_);
+	//地面座標を入れる
+	void SetGround(ModelObj* ground_);
 	
 	static void LoadResource();
 
@@ -42,6 +60,8 @@ public:
 	uint32_t GetBurningCombo() { return burningCombo; }
 	//燃えた敵に応じて上昇するボーナスを取得
 	float GetBurningBonus() { return burningBonus; }
+	//攻撃に当たった時のノックバックする距離を取得
+	float GetKnockBack() { return knockRange; };
 
 	// セッター //
 	//連続で固まった敵の数カウント増やす

@@ -111,6 +111,14 @@ Vector2 Vector2::GetNormalize() const {
 	return Vector2(dx, dy);
 }
 
+Vector2 Vector2::Rotation(float radian)
+{
+	Vector2 temp;
+	temp.x = (x * cosf(radian)) - (y * sinf(radian));
+	temp.y = (x * sinf(radian)) + (y * cosf(radian));
+	return temp;
+}
+
 Vector2::operator Vector3() const
 {
 	return Vector3(x, y, 0);

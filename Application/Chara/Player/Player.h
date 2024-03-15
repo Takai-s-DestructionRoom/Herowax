@@ -1,6 +1,7 @@
 #pragma once
 #include "GameObject.h"
 #include "SimpleParticle.h"
+#include "RingParticle.h"
 #include "Easing.h"
 #include "PlayerState.h"
  
@@ -45,13 +46,17 @@ public:
 
 	//----------- 新攻撃(パブロ攻撃)関連 -------------//
 	float pabloRange;			//最大射程
+	float pabloSideRange;		//横の射程
 	float pabloSeparator;		//射程の分割数
 	float pabloSpeedMag;		//パブロ攻撃時の移動速度
 	float shotDeadZone = 1.0f;
 
+	//------------ パーティクル関連 ------------//
+	SimpleParticle moveParticle;
+	RingParticle jumpParticle;
+
 	//------------ その他 ------------//
 	std::unique_ptr<PlayerState> attackState;
-	SimpleParticle moveParticle;
 
 public:
 	Player();
@@ -65,6 +70,9 @@ public:
 
 	//攻撃(ステートに移動)
 	void Attack();
+
+	//パブロ攻撃処理のまとめ
+	void PabloAttack();
 
 	//ﾌｧｲｱ
 	void Fire();

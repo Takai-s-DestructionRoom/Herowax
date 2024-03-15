@@ -43,6 +43,8 @@ void ProtoScene::Init()
 	FireManager::GetInstance()->Init();
 	TemperatureManager::GetInstance()->Init();
 
+	EnemyManager::GetInstance()->SetGround(&level.ground);
+
 	//とりあえず最初のステージを設定しておく
 	level.Extract("test");
 }
@@ -85,8 +87,12 @@ void ProtoScene::Update()
 					if (wax->isGround == false) {
 						enemy.ChangeState<EnemyWaxCoating>();
 						enemy.trappedWaxGroup = group.get();
+						
 						//enemyにダメージ
-						enemy.DealDamage(WaxManager::GetInstance()->waxDamage);
+						Vector3 knockVec = player.atkVec;
+						knockVec.y = 0;
+						enemy.DealDamage(WaxManager::GetInstance()->waxDamage,
+							knockVec, &player.obj);
 						//お試し実装:自分が攻撃を当てた相手が自分を追いかけてくる
 						if (player.GetTauntMode()) {
 							enemy.SetTarget(&player.obj);
@@ -103,6 +109,12 @@ void ProtoScene::Update()
 							enemy.ChangeState<EnemyBurning>();
 						}
 					}
+
+					/*if (group) {
+						if(group->waxs.size() > group->)
+						size_t hoge = ;
+						hoge;
+					}*/
 				}
 			}
 		}

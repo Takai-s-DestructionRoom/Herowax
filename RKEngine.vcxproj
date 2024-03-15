@@ -212,6 +212,7 @@
     <ClCompile Include="Application\Object\TemperatueUI.cpp" />
     <ClCompile Include="Application\Chara\Player\PlayerState.cpp" />
     <ClCompile Include="Application\Paint\PaintableModelObj.cpp" />
+    <ClCompile Include="Engine\Particle\RingParticle.cpp" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Shader\BasicPS.hlsl">
@@ -265,10 +266,14 @@
     <FxCompile Include="Shader\DisolvePS.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
     </FxCompile>
     <FxCompile Include="Shader\DisolveVS.hlsl">
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
     </FxCompile>
     <FxCompile Include="Shader\FinalVS.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
@@ -589,6 +594,7 @@
     <ClInclude Include="Application\Object\TemperatueUI.h" />
     <ClInclude Include="Application\Chara\Player\PlayerState.h" />
     <ClInclude Include="Application\Paint\PaintableModelObj.h" />
+    <ClInclude Include="Engine\Particle\RingParticle.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Shader\Basic.hlsli">

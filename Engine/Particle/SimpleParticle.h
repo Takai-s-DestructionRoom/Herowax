@@ -1,6 +1,7 @@
 #pragma once
 #include "Particle3D.h"
 
+//範囲内に発生して消えゆく普通のパーティクル
 class SimpleParticle :
 	public IEmitter3D
 {
