@@ -28,9 +28,10 @@ gravity(0.2f), groundPos(0)
 
 Enemy::~Enemy()
 {
+	//死んだときパーティクル出す
 	ParticleManager::GetInstance()->AddSimple(
-		obj.mTransform.position, 10, 0.5f, obj.mTuneMaterial.mColor, 0.3f, 0.7f,
-		{ -0.1f,-0.1f,-0.1f }, { 0.1f,0.1f,0.1f },
+		obj.mTransform.position, 10, 0.3f, Color::kGreen, 0.5f, 0.8f,
+		{ -0.3f,-0.3f,-0.3f }, { 0.3f,0.3f,0.3f },
 		0.05f, -Vector3::ONE * 0.1f, Vector3::ONE * 0.1f, 0.05f);
 }
 
