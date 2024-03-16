@@ -174,32 +174,14 @@ void ProtoScene::Update()
 		for (auto& group2 : *wGroups)
 		{
 			if (group1 == group2)continue;
-			//nullチェック
-			bool check = false;
-			for (auto& wax : group1->waxs)
-			{
-				if (!wax) {
-					check = true;
-					group1->SetIsAlive(false);
-					break;
-				}
-			}
-			if (check) continue;
-			for (auto& wax : group2->waxs)
-			{
-				if (!wax) {
-					check = true;
-					group2->SetIsAlive(false);
-					break;
-				}
-			}
-			if (check)continue;
-
+		
 			//こうしたい
 			if (WaxManager::GetInstance()->CheckHitWaxGroups(group1, group2)) {
 				//どれか一つがぶつかったなら、グループすべてが移動する
-				group1->waxs.reserve(group1->waxs.size() + group2->waxs.size());
+				group1->waxs.splice(group1->waxs.end(), std::move(group2->waxs));
+				/*group1->waxs.reserve(group1->waxs.size() + group2->waxs.size());
 				std::move(group2->waxs.begin(), group2->waxs.end(), std::back_inserter(group1->waxs));
+				*/
 				group1->SetSameSolidTime();
 			}
 		}

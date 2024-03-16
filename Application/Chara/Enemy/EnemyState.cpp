@@ -28,7 +28,6 @@ void EnemySlow::Update(Enemy* enemy)
 		EnemyManager::GetInstance()->IncrementSolidCombo();
 		//抜け出す力を付与する
 		enemy->SetEscapePower((float)EnemyManager::GetInstance()->GetSolidCombo());
-
 		//遷移
 		enemy->ChangeState<EnemyFootStop>();
 	}
