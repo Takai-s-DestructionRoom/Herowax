@@ -17,31 +17,25 @@ void ParticleManager::Init()
 		emitter->ClearParticles();
 		emitter->Init();
 	}
-
-	for (auto& emitter : polygonEmitters_)
-	{
-		emitter->ClearParticles();
-		emitter->Init();
-	}
 }
 
 void ParticleManager::Update()
 {
-	for (auto& emitter : emitters_)
-	{
-		//パーティクルがあるときだけ更新処理回す
-		if (emitter->GetParticlesDead() == false)
-		{
-			emitter->Update();
-		}
-	}
+	//エミッター群のイテレーター
+	std::list<std::unique_ptr<IEmitter3D>>::iterator emit = emitters_.begin();
 
-	for (auto& emitter : polygonEmitters_)
-	{
-		//パーティクルがあるときだけ更新処理回す
-		if (emitter->GetParticlesDead() == false)
+	//イテレーターが最後になるまで回す
+	while (emit != emitters_.end()) {
+		//パーティクルがもうなくなってたら
+		if (emit->get()->GetParticlesDead()) {
+			emit = emitters_.erase(emit);	//殺す
+		}
+		//パーティクルが生きてるなら
+		else
 		{
-			emitter->Update();
+			//更新処理して次の要素へ
+			emit->get()->Update();
+			++emit;
 		}
 	}
 
@@ -72,12 +66,6 @@ void ParticleManager::Draw()
 		{
 			emitter->Draw();
 		}
-	}
-
-	//ポリゴン
-	for (auto& emitter : polygonEmitters_)
-	{
-		emitter->Draw();
 	}
 }
 
