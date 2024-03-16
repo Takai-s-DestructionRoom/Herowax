@@ -18,17 +18,6 @@ atkCoolTimer(0.3f), atkTimer(0.5f), atkHeight(1.f), solidTimer(5.f)
 {
 	obj = ModelObj(Model::Load("./Resources/Model/Cube.obj", "Cube", true));
 
-	//ParticleManager::GetInstance()->EraseEmitter("playerMove");
-	//moveParticle.SetShapeType((uint32_t)ShapeType::Cube);
-	//ParticleManager::GetInstance()->AddEmitter(&moveParticle, "playerMove");
-	//moveParticle.SetIsRotation(true);
-	//moveParticle.SetIsGrowing(true);
-
-	//jumpParticle.SetShapeType((uint32_t)ShapeType::Cube);
-	//ParticleManager::GetInstance()->AddEmitter(&jumpParticle, "playerJump");
-	//jumpParticle.SetIsRotation(true);
-	//jumpParticle.SetIsGrowing(true);
-
 	std::map<std::string, std::string> extract = Parameter::Extract("Player");
 	moveSpeed = Parameter::GetParam(extract, "移動速度", 1.f);
 	moveAccelAmount = Parameter::GetParam(extract, "移動加速度", 0.05f);

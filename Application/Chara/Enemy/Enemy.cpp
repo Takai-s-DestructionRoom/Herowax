@@ -1,16 +1,17 @@
 #include "Enemy.h"
 #include "Camera.h"
 #include "EnemyManager.h"
+#include "ParticleManager.h"
 #include "Parameter.h"
 #include "Quaternion.h"
 #include "RImGui.h"
 
 Enemy::Enemy(ModelObj* target_) : GameObject(),
-	moveSpeed(0.1f),slowMag(0.8f),
-	isGraund(true), hp(0), maxHP(10.f),
-	isEscape(false),escapePower(0.f),escapeCoolTimer(1.f),
-	isAttack(false), atkPower(0.f), atkCoolTimer(1.f),
-	gravity(0.2f), groundPos(0)
+moveSpeed(0.1f), slowMag(0.8f),
+isGraund(true), hp(0), maxHP(10.f),
+isEscape(false), escapePower(0.f), escapeCoolTimer(1.f),
+isAttack(false), atkPower(0.f), atkCoolTimer(1.f),
+gravity(0.2f), groundPos(0)
 {
 	state = std::make_unique<EnemyNormal>();
 	obj = ModelObj(Model::Load("./Resources/Model/firewisp/firewisp.obj", "firewisp", true));
@@ -22,12 +23,15 @@ Enemy::Enemy(ModelObj* target_) : GameObject(),
 
 	mutekiTimer.maxTime_ = Parameter::GetParam(extract, "無敵時間さん", 0.1f);
 
-	obj.mTransform.scale = {2,2,2};
+	obj.mTransform.scale = { 2,2,2 };
 }
 
 Enemy::~Enemy()
 {
-	
+	ParticleManager::GetInstance()->AddSimple(
+		obj.mTransform.position, 10, 0.5f, obj.mTuneMaterial.mColor, 0.3f, 0.7f,
+		{ -0.1f,-0.1f,-0.1f }, { 0.1f,0.1f,0.1f },
+		0.05f, -Vector3::ONE * 0.1f, Vector3::ONE * 0.1f, 0.05f);
 }
 
 void Enemy::Init()
@@ -39,7 +43,7 @@ void Enemy::Update()
 {
 	moveVec.x = 0;
 	moveVec.z = 0;
-	
+
 	//各ステート時の固有処理
 	state->Update(this);	//移動速度に関係するので移動の更新より前に置く
 
@@ -184,7 +188,7 @@ void Enemy::DealDamage(uint32_t damage, const Vector3& dir, ModelObj* target_)
 
 	//ダメージ受けたらノックバックしちゃおう
 	hp -= damage;
-	
+
 	attackTarget = target_;
 
 	knockbackVec = dir;
@@ -194,11 +198,11 @@ void Enemy::DealDamage(uint32_t damage, const Vector3& dir, ModelObj* target_)
 
 	//角度計算(-90度~90度)
 	knockRadianStart.x = Util::GetRand(
-		EnemyManager::GetInstance()->knockRandXS, 
+		EnemyManager::GetInstance()->knockRandXS,
 		EnemyManager::GetInstance()->knockRandXE);
 	//縦のけぞり計算(45~90度)
 	knockRadianStart.z = Util::GetRand(
-		EnemyManager::GetInstance()->knockRandZS, 
+		EnemyManager::GetInstance()->knockRandZS,
 		EnemyManager::GetInstance()->knockRandZE);
 
 	//ヒットモーションタイマーを開始
