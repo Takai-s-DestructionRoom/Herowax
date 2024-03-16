@@ -28,7 +28,10 @@ public:
 class EnemyWaxCoating : public EnemyState
 {
 public:
+	EnemyWaxCoating();
 	void Update(Enemy* enemy)override;
+private:
+	Easing::EaseTimer timer = 1.0f;
 };
 
 //全身硬化状態(全身に蝋がついているイメージ)

@@ -7,7 +7,7 @@
 class WaxGroup
 {
 public:
-	std::vector<std::unique_ptr<Wax>> waxs;	//所属してるロウ
+	std::list<std::unique_ptr<Wax>> waxs;	//所属してるロウ
 
 	//所属しているロウの中で最大の時間
 	float smallestTime = 1000.0f;

@@ -10,6 +10,7 @@
 #include "InstantDrawer.h"
 #include "Temperature.h"
 #include "FireManager.h"
+#include "Parameter.h"
 
 ProtoScene::ProtoScene()
 {
@@ -31,8 +32,13 @@ ProtoScene::ProtoScene()
 void ProtoScene::Init()
 {
 	Camera::sNowCamera = &camera;
-	cameraDist = -20.f;
-	cameraAngle = { Util::AngleToRadian(20.f),0.f };
+
+	std::map<std::string, std::string> extract = Parameter::Extract("Camera");
+	cameraDist = Parameter::GetParam(extract,"カメラ距離", -20.f);
+	cameraAngle.x = Parameter::GetParam(extract,"カメラアングルX", Util::AngleToRadian(20.f));
+	cameraAngle.y = Parameter::GetParam(extract,"カメラアングルY", 0.f);
+	cameraSpeed = Parameter::GetParam(extract,"カメラの移動速度", 0.01f);
+
 	LightGroup::sNowLight = &light;
 
 	player.Init();
@@ -52,6 +58,17 @@ void ProtoScene::Init()
 void ProtoScene::Update()
 {
 	InstantDrawer::DrawInit();
+
+	Vector2 stick = RInput::GetInstance()->GetRStick(false, true);
+
+	if (stick.LengthSq() > 0.0f) {
+		float moveSpeed = cameraSpeed;
+
+		if (!std::signbit(stick.x)) {
+			moveSpeed *= -1;
+		}
+		cameraAngle.y += moveSpeed;
+	}
 
 	Vector3 cameraVec = { 0, 0, 1 };
 	//カメラアングル適応
@@ -174,32 +191,14 @@ void ProtoScene::Update()
 		for (auto& group2 : *wGroups)
 		{
 			if (group1 == group2)continue;
-			//nullチェック
-			bool check = false;
-			for (auto& wax : group1->waxs)
-			{
-				if (!wax) {
-					check = true;
-					group1->SetIsAlive(false);
-					break;
-				}
-			}
-			if (check) continue;
-			for (auto& wax : group2->waxs)
-			{
-				if (!wax) {
-					check = true;
-					group2->SetIsAlive(false);
-					break;
-				}
-			}
-			if (check)continue;
-
+		
 			//こうしたい
 			if (WaxManager::GetInstance()->CheckHitWaxGroups(group1, group2)) {
 				//どれか一つがぶつかったなら、グループすべてが移動する
-				group1->waxs.reserve(group1->waxs.size() + group2->waxs.size());
+				group1->waxs.splice(group1->waxs.end(), std::move(group2->waxs));
+				/*group1->waxs.reserve(group1->waxs.size() + group2->waxs.size());
 				std::move(group2->waxs.begin(), group2->waxs.end(), std::back_inserter(group1->waxs));
+				*/
 				group1->SetSameSolidTime();
 			}
 		}
@@ -236,6 +235,16 @@ void ProtoScene::Update()
 	ImGui::SliderFloat("カメラ距離:%f", &cameraDist, -500.f, 0.f);
 	ImGui::SliderAngle("カメラアングルX:%f", &cameraAngle.x);
 	ImGui::SliderAngle("カメラアングルY:%f", &cameraAngle.y);
+	ImGui::SliderFloat("カメラの移動速度", &cameraSpeed,0.0f,0.5f);
+	
+	if (ImGui::Button("セーブ")) {
+		Parameter::Begin("Camera");
+		Parameter::Save("カメラ距離", cameraDist);
+		Parameter::Save("カメラアングルX", cameraAngle.x);
+		Parameter::Save("カメラアングルY", cameraAngle.y);
+		Parameter::Save("カメラの移動速度", cameraSpeed);
+		Parameter::End();
+	}
 
 	ImGui::End();
 #pragma endregion

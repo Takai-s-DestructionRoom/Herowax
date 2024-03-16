@@ -123,8 +123,8 @@ void WaxManager::Update()
 	isBurningNum = 0;
 
 	//死んでいるグループがあれば消す
-	waxGroups.remove_if([](std::unique_ptr<WaxGroup>& wax) {
-		return !wax->GetIsAlive();
+	waxGroups.remove_if([](std::unique_ptr<WaxGroup>& waxgroup) {
+		return !waxgroup->GetIsAlive() || waxgroup->waxs.size() <= 0;
 		});
 
 	for (auto& waxGroup : waxGroups)

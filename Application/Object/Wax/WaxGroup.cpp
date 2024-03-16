@@ -90,7 +90,7 @@ void WaxGroup::SetSameSolidTime()
 	for (auto& wax : waxs)
 	{
 		//固まり初めていないなら
-		if (wax->GetIsSolidLine()) {
+		if (!wax->isSolid) {
 			//固まるまでの時間を更新
 			wax->solidTimer.nowTime_ = smallestTime;
 		}
@@ -105,15 +105,16 @@ bool WaxGroup::IsSolid()
 		return false;
 	}
 
-	for (auto& wax : waxs)
-	{
-		if (wax->isSolid) {
-			solidCount += 1;
-		}
-	}
 	//少なくともワックスを一つでも保持していて
 	if (waxs.size() >= 1)
 	{
+		for (auto& wax : waxs)
+		{
+			if (wax->isSolid) {
+				solidCount += 1;
+			}
+		}
+
 		//すべてのロウが固まっているならtrue
 		if (solidCount >= waxs.size()) {
 			return true;

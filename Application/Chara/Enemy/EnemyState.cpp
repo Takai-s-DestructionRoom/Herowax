@@ -28,7 +28,6 @@ void EnemySlow::Update(Enemy* enemy)
 		EnemyManager::GetInstance()->IncrementSolidCombo();
 		//抜け出す力を付与する
 		enemy->SetEscapePower((float)EnemyManager::GetInstance()->GetSolidCombo());
-
 		//遷移
 		enemy->ChangeState<EnemyFootStop>();
 	}
@@ -69,12 +68,23 @@ void EnemyFootStop::Update(Enemy* enemy)
 	}
 }
 
+EnemyWaxCoating::EnemyWaxCoating()
+{
+	timer.Start();
+}
+
 void EnemyWaxCoating::Update(Enemy* enemy)
 {
 	enemy->SetStateStr("WaxCoating");
 
 	//蝋まみれの減速率はimguiでいじったものを基準とするのでここではいじらない
 	enemy->SetSlowMag(0.f);
+
+	timer.Update();
+	if (timer.GetEnd()) {
+		//遷移
+		enemy->ChangeState<EnemyAllStop>();
+	}
 }
 
 void EnemyAllStop::Update(Enemy* enemy)
