@@ -68,12 +68,23 @@ void EnemyFootStop::Update(Enemy* enemy)
 	}
 }
 
+EnemyWaxCoating::EnemyWaxCoating()
+{
+	timer.Start();
+}
+
 void EnemyWaxCoating::Update(Enemy* enemy)
 {
 	enemy->SetStateStr("WaxCoating");
 
 	//蝋まみれの減速率はimguiでいじったものを基準とするのでここではいじらない
 	enemy->SetSlowMag(0.f);
+
+	timer.Update();
+	if (timer.GetEnd()) {
+		//遷移
+		enemy->ChangeState<EnemyAllStop>();
+	}
 }
 
 void EnemyAllStop::Update(Enemy* enemy)

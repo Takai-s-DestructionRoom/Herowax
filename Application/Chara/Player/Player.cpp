@@ -67,12 +67,6 @@ void Player::Update()
 		MoveKey();
 	}
 
-	//カメラ操作
-	if (RInput::GetInstance()->GetPadConnect())
-	{
-
-	}
-
 	attackState->Update(this);
 
 	//-----------クールタイム管理-----------//

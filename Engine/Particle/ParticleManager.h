@@ -10,8 +10,8 @@ class IEmitter3D;
 class ParticleManager final
 {
 public:
-	std::unordered_map<std::string, IEmitter3D*> emitters_;			//パーティクルエミッター群
-	std::unordered_map<std::string, IEmitter3D*> polygonEmitters_;	//ポリゴンパーティクルエミッター群
+	std::list<std::unique_ptr<IEmitter3D>> emitters_;			//パーティクルエミッター群
+	std::list<std::unique_ptr<IEmitter3D>> polygonEmitters_;	//ポリゴンパーティクルエミッター群
 
 public:
 	//シングルトンインスタンス取得
@@ -23,30 +23,39 @@ public:
 	//描画
 	void Draw();
 
-	//エミッターをunordered_mapに追加
-	void AddEmitter(IEmitter3D* emitter, const std::string& key)
-	{
-		//同じ名前のやつが登録されてたら追加せずに処理終了
-		for (auto& emit : emitters_)
-		{
-			if (emit.first == key)
-			{
-				return;
-			}
-		}
-		emitter->Init();					//初期化してから登録
-		emitters_.emplace(std::make_pair(key, emitter));
-	}
-	//エミッターをunordered_mapから削除
-	void EraseEmitter(const std::string& key)
-	{
-		emitters_.erase(key);
-	}
-	//有効フラグを設定
-	void SetIsActive(const std::string& key, bool isActive)
-	{
-		emitters_[key]->SetIsActive(isActive);
-	}
+	//リング状パーティクル追加(固有処理にしたかったらoverrideで上書きする)
+	//life:秒数指定なので注意
+	void AddRing(uint32_t addNum, float life, Color color, float startRadius, float endRadius, float minScale, float maxScale,
+		float minVeloY, float maxVeloY, Vector3 minRot = {}, Vector3 maxRot = {}, float growingTimer = 0.f);
+
+	//パーティクルの追加
+	void AddSimple(uint32_t addNum, float life, Color color, float minScale, float maxScale,
+		Vector3 minVelo, Vector3 maxVelo, float accelPower = 0.f, Vector3 minRot = {}, Vector3 maxRot = {}, float growingTimer = 0.f);
+
+	////エミッターをunordered_mapに追加
+	//void AddEmitter(IEmitter3D emitter, const std::string& key)
+	//{
+	//	//同じ名前のやつが登録されてたら追加せずに処理終了
+	//	for (auto& emit : emitters_)
+	//	{
+	//		if (emit.first == key)
+	//		{
+	//			return;
+	//		}
+	//	}
+	//	emitter->Init();					//初期化してから登録
+	//	emitters_.emplace(std::make_pair(key, emitter));
+	//}
+	////エミッターをunordered_mapから削除
+	//void EraseEmitter(const std::string& key)
+	//{
+	//	emitters_.erase(key);
+	//}
+	////有効フラグを設定
+	//void SetIsActive(const std::string& key, bool isActive)
+	//{
+	//	emitters_[key]->SetIsActive(isActive);
+	//}
 
 private:
 	//コンストラクタ
