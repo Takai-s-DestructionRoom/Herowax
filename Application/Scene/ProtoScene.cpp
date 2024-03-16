@@ -12,6 +12,8 @@
 #include "FireManager.h"
 #include "Parameter.h"
 
+
+
 ProtoScene::ProtoScene()
 {
 	skydome = ModelObj(Model::Load("./Resources/Model/Skydome/Skydome.obj", "Skydome"));
