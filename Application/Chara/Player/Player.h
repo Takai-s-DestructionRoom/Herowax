@@ -52,8 +52,8 @@ public:
 	float shotDeadZone = 1.0f;
 
 	//------------ パーティクル関連 ------------//
-	SimpleParticle moveParticle;
-	RingParticle jumpParticle;
+	//SimpleParticle moveParticle;
+	//RingParticle jumpParticle;
 
 	//------------ その他 ------------//
 	std::unique_ptr<PlayerState> attackState;

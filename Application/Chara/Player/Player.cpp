@@ -18,16 +18,16 @@ atkCoolTimer(0.3f), atkTimer(0.5f), atkHeight(1.f), solidTimer(5.f)
 {
 	obj = ModelObj(Model::Load("./Resources/Model/Cube.obj", "Cube", true));
 
-	ParticleManager::GetInstance()->EraseEmitter("playerMove");
+	//ParticleManager::GetInstance()->EraseEmitter("playerMove");
 	//moveParticle.SetShapeType((uint32_t)ShapeType::Cube);
-	ParticleManager::GetInstance()->AddEmitter(&moveParticle, "playerMove");
-	moveParticle.SetIsRotation(true);
-	moveParticle.SetIsGrowing(true);
+	//ParticleManager::GetInstance()->AddEmitter(&moveParticle, "playerMove");
+	//moveParticle.SetIsRotation(true);
+	//moveParticle.SetIsGrowing(true);
 
 	//jumpParticle.SetShapeType((uint32_t)ShapeType::Cube);
-	ParticleManager::GetInstance()->AddEmitter(&jumpParticle, "playerJump");
-	jumpParticle.SetIsRotation(true);
-	jumpParticle.SetIsGrowing(true);
+	//ParticleManager::GetInstance()->AddEmitter(&jumpParticle, "playerJump");
+	//jumpParticle.SetIsRotation(true);
+	//jumpParticle.SetIsGrowing(true);
 
 	std::map<std::string, std::string> extract = Parameter::Extract("Player");
 	moveSpeed = Parameter::GetParam(extract, "移動速度", 1.f);
@@ -103,8 +103,7 @@ void Player::Update()
 			Vector3 emitterPos = obj.mTransform.position;
 			emitterPos.y -= obj.mTransform.scale.y;
 
-			jumpParticle.SetPos(emitterPos);
-			jumpParticle.AddRing(16, 0.3f, obj.mTuneMaterial.mColor, 0.7f, 1.2f, 0.3f, 0.6f,
+			ParticleManager::GetInstance()->AddRing(emitterPos,16, 0.3f, obj.mTuneMaterial.mColor, 0.7f, 1.2f, 0.3f, 0.6f,
 				0.01f, 0.05f, -Vector3::ONE * 0.1f, Vector3::ONE * 0.1f, 0.05f);
 		}
 		isJumping = false;
@@ -243,8 +242,7 @@ void Player::MovePad()
 		emitterPos.x += mVelo.x * obj.mTransform.scale.x;
 		emitterPos.z += mVelo.y * obj.mTransform.scale.z;
 
-		moveParticle.SetPos(emitterPos);
-		moveParticle.Add(
+		ParticleManager::GetInstance()->AddSimple(emitterPos,
 			2, 0.5f, obj.mTuneMaterial.mColor, 0.3f, 0.7f,
 			{ -0.001f,0.01f,-0.001f }, { 0.001f,0.03f,0.001f },
 			0.01f, -Vector3::ONE * 0.1f, Vector3::ONE * 0.1f, 0.05f);
@@ -270,8 +268,8 @@ void Player::MovePad()
 		Vector3 emitterPos = obj.mTransform.position;
 		emitterPos.y -= obj.mTransform.scale.y;
 
-		jumpParticle.SetPos(emitterPos);
-		jumpParticle.AddRing(20, 0.5f, obj.mTuneMaterial.mColor, 1.f, 2.5f, 0.5f, 0.8f,
+		ParticleManager::GetInstance()->AddRing(emitterPos,
+		20, 0.5f, obj.mTuneMaterial.mColor, 1.f, 2.5f, 0.5f, 0.8f,
 			0.01f, 0.05f, -Vector3::ONE * 0.1f, Vector3::ONE * 0.1f, 0.05f);
 	}
 
@@ -347,8 +345,7 @@ void Player::MoveKey()
 		Vector3 emitterPos = obj.mTransform.position;
 		emitterPos.y -= obj.mTransform.scale.y;
 
-		jumpParticle.SetPos(emitterPos);
-		jumpParticle.AddRing(16, 0.5f, obj.mTuneMaterial.mColor, 1.f, 2.5f, 0.5f, 0.8f,
+		ParticleManager::GetInstance()->AddRing(emitterPos, 16, 0.5f, obj.mTuneMaterial.mColor, 1.f, 2.5f, 0.5f, 0.8f,
 			0.01f, 0.03f, -Vector3::ONE * 0.1f, Vector3::ONE * 0.1f, 0.05f);
 	}
 
@@ -385,8 +382,7 @@ void Player::MoveKey()
 		emitterPos.x += mVelo.x * obj.mTransform.scale.x;
 		emitterPos.z += mVelo.y * obj.mTransform.scale.z;
 
-		moveParticle.SetPos(emitterPos);
-		moveParticle.Add(
+		ParticleManager::GetInstance()->AddSimple(emitterPos,
 			2, 0.5f, obj.mTuneMaterial.mColor, 0.3f, 0.7f,
 			{ -0.001f,0.01f,-0.001f }, { 0.001f,0.03f,0.001f },
 			0.01f, -Vector3::ONE * 0.1f, Vector3::ONE * 0.1f, 0.05f);
