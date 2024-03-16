@@ -128,12 +128,6 @@ void ProtoScene::Update()
 							enemy.ChangeState<EnemyBurning>();
 						}
 					}
-
-					/*if (group) {
-						if(group->waxs.size() > group->)
-						size_t hoge = ;
-						hoge;
-					}*/
 				}
 			}
 		}
@@ -197,10 +191,14 @@ void ProtoScene::Update()
 			//こうしたい
 			if (WaxManager::GetInstance()->CheckHitWaxGroups(group1, group2)) {
 				//どれか一つがぶつかったなら、グループすべてが移動する
+				for (auto& enemy : EnemyManager::GetInstance()->enemys)
+				{
+					//エネミーが保持しているポインタと同じ位置を指そうとしているなら変える
+					if (enemy.trappedWaxGroup == group2.get()) {
+						enemy.trappedWaxGroup = group1.get();
+					}
+				}
 				group1->waxs.splice(group1->waxs.end(), std::move(group2->waxs));
-				/*group1->waxs.reserve(group1->waxs.size() + group2->waxs.size());
-				std::move(group2->waxs.begin(), group2->waxs.end(), std::back_inserter(group1->waxs));
-				*/
 				group1->SetSameSolidTime();
 			}
 		}
