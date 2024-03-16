@@ -134,6 +134,6 @@ void EnemyBurning::Update(Enemy* enemy)
 	
 	//燃えて死ぬ
 	if (timer.GetEnd()) {
-		enemy->isAlive = false;
+		enemy->SetDeath();
 	}
 }
