@@ -31,7 +31,7 @@ void EnemyManager::CreateEnemy(const Vector3 position)
 	enemys.emplace_back(target);
 	enemys.back().SetPos(position);
 	enemys.back().Init();
-	enemys.back().SetGroundPos(ground->mTransform.position.y);
+	enemys.back().SetGroundPos(ground->obj.mTransform.position.y);
 }
 
 void EnemyManager::SetTarget(ModelObj* target_)
@@ -39,7 +39,7 @@ void EnemyManager::SetTarget(ModelObj* target_)
 	target = target_;
 }
 
-void EnemyManager::SetGround(ModelObj* ground_)
+void EnemyManager::SetGround(Ground* ground_)
 {
 	ground = ground_;
 }

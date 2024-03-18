@@ -153,6 +153,7 @@
     <ClCompile Include="Application\Object\Fire.cpp" />
     <ClCompile Include="Application\Object\FireManager.cpp" />
     <ClCompile Include="Application\Level.cpp" />
+    <ClCompile Include="Application\Object\Ground.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Engine\Base\Material.cpp" />
     <ClCompile Include="Engine\Math\Matrix4.cpp" />
@@ -213,6 +214,7 @@
     <ClCompile Include="Application\Chara\Player\PlayerState.cpp" />
     <ClCompile Include="Application\Paint\PaintableModelObj.cpp" />
     <ClCompile Include="Engine\Particle\RingParticle.cpp" />
+    <ClCompile Include="Application\Object\Terrain.cpp" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Shader\Basic\BasicPS.hlsl">
@@ -595,6 +597,8 @@
     <ClInclude Include="Application\Chara\Player\PlayerState.h" />
     <ClInclude Include="Application\Paint\PaintableModelObj.h" />
     <ClInclude Include="Engine\Particle\RingParticle.h" />
+    <ClInclude Include="Application\Object\Terrain.h" />
+    <ClInclude Include="Application\Object\Ground.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Shader\Basic\Basic.hlsli">

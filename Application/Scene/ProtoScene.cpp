@@ -12,8 +12,6 @@
 #include "FireManager.h"
 #include "Parameter.h"
 
-
-
 ProtoScene::ProtoScene()
 {
 	//ブラシの読み込み
@@ -61,10 +59,13 @@ void ProtoScene::Init()
 	FireManager::GetInstance()->Init();
 	TemperatureManager::GetInstance()->Init();
 
-	EnemyManager::GetInstance()->SetGround(&level.ground);
-
 	//とりあえず最初のステージを設定しておく
 	level.Extract("test");
+
+	//地面を設定
+	EnemyManager::GetInstance()->SetGround(level.GetGround());
+	//タワーを入れる
+	EnemyManager::GetInstance()->SetTarget(&level.GetTower()->obj);
 }
 
 void ProtoScene::Update()
@@ -100,10 +101,10 @@ void ProtoScene::Update()
 	for (auto& enemy : EnemyManager::GetInstance()->enemys)
 	{
 		//タワーとの当たり判定
-		if (ColPrimitive3D::CheckSphereToSphere(enemy.collider, level.tower.collider)) {
+		if (ColPrimitive3D::CheckSphereToSphere(enemy.collider, level.GetTower()->collider)) {
 			enemy.SetDeath();
-			Vector3 vec = level.tower.GetPos() - enemy.GetPos();
-			level.tower.Damage(1.f,vec);
+			Vector3 vec = level.GetTower()->GetPos() - enemy.GetPos();
+			level.GetTower()->Damage(1.f,vec);
 		}
 		//蝋との当たり判定
 		for (auto& group : WaxManager::GetInstance()->waxGroups)
@@ -157,6 +158,7 @@ void ProtoScene::Update()
 	
 	player.Update();
 	level.Update();
+	EnemyManager::GetInstance()->Update();
 
 	//敵がロウを壊してから連鎖で壊れるため、敵の処理をしてからこの処理を行う
 #pragma region ロウ同士の当たり判定
@@ -191,13 +193,19 @@ void ProtoScene::Update()
 	}
 	
 	//塗る処理(いったん全検索のカス)
-	for (auto& paintObj : level.objects)
+	for (auto& group : WaxManager::GetInstance()->waxGroups)
 	{
-		for (auto& paintTri : paintObj.GetTriangle())
+		for (auto& wax : group->waxs)
 		{
-			for (auto& group : WaxManager::GetInstance()->waxGroups)
+			//地面に着弾したロウとは判定を行いたくないのでスキップ
+			if (wax->isGround) continue;
+
+			for (auto& paintObj : level.objects)
 			{
-				for (auto& wax : group->waxs)
+				//ここで大雑把に当たり判定を取って、絶対に当たってないやつを除外する
+				if (!ColPrimitive3D::CheckSphereToSphere(wax->collider, paintObj->collider))continue;
+
+				for (auto& paintTri : paintObj->obj.GetTriangle())
 				{
 					Vector3 closestPoint = { 0,0,0 };
 					//当たったトライアングルがあるならそこを塗る
@@ -211,11 +219,11 @@ void ProtoScene::Update()
 
 						ColPrimitive3D::Ray ray = { posA,dir };
 
-						if (paintObj.GetInfo(ray, &info))
+						if (paintObj->obj.GetInfo(ray, &info))
 						{
 							//情報が完全一致するなら塗る
 							if (info.tri == paintTri) {
-								paintObj.Paint(info.closestPos, info.hitMeshIndex, info.hitIndex,
+								paintObj->obj.Paint(info.closestPos, info.hitMeshIndex, info.hitIndex,
 									"brush", paintColor, Vector2(paintSize, paintSize), camera.mViewProjection.mMatrix);
 
 								//塗ったロウはハカイ
@@ -325,6 +333,8 @@ void ProtoScene::Draw()
 	player.Draw();
 
 	level.Draw();
+
+	EnemyManager::GetInstance()->Draw();
 
 	//更新
 	InstantDrawer::AllUpdate();

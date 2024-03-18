@@ -9,8 +9,6 @@ public:
 	float hp;				//現在のヒットポイント
 	float maxHP;			//最大HP
 
-	bool isViewCol = false;
-
 	//------------ その他 ------------//
 	Vector3 oriPos;					//揺れる前の座標
 	Vector3 shakeVec;				//揺れベクトル

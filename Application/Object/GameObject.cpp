@@ -2,7 +2,8 @@
 #include "Camera.h"
 #include <Renderer.h>
 
-GameObject::GameObject() : isAlive(true)
+//クラス名に入れ忘れていたら"unset"を返すように
+GameObject::GameObject() : isAlive(true) ,classname("_unset_")
 {
 	drawerObj = ModelObj(Model::Load("./Resources/Model/Sphere.obj", "Sphere", true));
 }
@@ -20,6 +21,21 @@ Vector3 GameObject::GetScale() const
 bool GameObject::GetIsAlive() const
 {
 	return isAlive;
+}
+
+bool GameObject::GetIsViewCol() const
+{
+	return isViewCol;
+}
+
+std::string GameObject::GetObjectName()
+{
+	//未設定ならassert
+	if (classname == "_unset_") {
+		assert(0 + "classnameにクラス名を入れ忘れています");
+	}
+	//設定しているなら通す
+	return classname;
 }
 
 void GameObject::UpdateCollider()
@@ -42,6 +58,9 @@ void GameObject::UpdateCollider()
 
 void GameObject::DrawCollider()
 {
+	//非表示状態ならスキップ
+	if (!isViewCol)return;
+
 	//パイプラインをワイヤーフレームに
 	PipelineStateDesc pipedesc = RDirectX::GetDefPipeline().mDesc;
 	pipedesc.RasterizerState.FillMode = D3D12_FILL_MODE_WIREFRAME;

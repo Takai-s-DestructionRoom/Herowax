@@ -7,6 +7,7 @@
 Tower::Tower() : GameObject(), hp(0), maxHP(10.f),shakeTimer(0.3f),shakePower(1.5f)
 {
 	obj = PaintableModelObj(Model::Load("./Resources/Model/Birdnest/Birdnest.obj", "Birdnest", true));
+	classname  = __func__;
 }
 
 Tower::~Tower()
@@ -74,7 +75,7 @@ void Tower::Update()
 	}
 
 	if (ImGui::Button("当たり判定の描画")) {
-		isViewCol = !isViewCol;
+		SetIsViewCol(!GetIsViewCol());
 	}
 	if (ImGui::Button("Reset")) {
 		hp = maxHP;
@@ -90,9 +91,7 @@ void Tower::Draw()
 	if (isAlive)
 	{
 		obj.Draw();
-		if (isViewCol) {
-			DrawCollider();
-		}
+		DrawCollider();
 	}
 }
 

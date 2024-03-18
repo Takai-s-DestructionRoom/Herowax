@@ -3,6 +3,7 @@
 #include "Enemy.h"
 #include <list>
 #include "Easing.h"
+#include "Ground.h"
 
 class EnemyManager
 {
@@ -11,7 +12,7 @@ public:
 	std::list<Enemy> enemys;
 
 	//地面座標(平面想定のみ、ちゃんと地形を入れるならまた変えないといけない)
-	ModelObj* ground = nullptr;
+	Ground* ground = nullptr;
 
 	float knockRandXS;
 	float knockRandXE;
@@ -45,7 +46,7 @@ public:
 	//敵の追跡対象を変更(プレイヤーを入れるのを想定)
 	void SetTarget(ModelObj* target_);
 	//地面座標を入れる
-	void SetGround(ModelObj* ground_);
+	void SetGround(Ground* ground_);
 	
 	static void LoadResource();
 

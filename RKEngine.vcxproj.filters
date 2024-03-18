@@ -262,6 +262,18 @@
     <Filter Include="シェーダー ファイル\Test">
       <UniqueIdentifier>{490e77e7-f6fa-45bf-9d11-cc4484504355}</UniqueIdentifier>
     </Filter>
+    <Filter Include="ソース ファイル\Application\Object\Terrain">
+      <UniqueIdentifier>{45e5593f-d7f0-410e-aad8-46cf6a555f87}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\Application\Object\Terrain">
+      <UniqueIdentifier>{7302a03a-7d02-40ea-ae0e-d9226bd1044b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\Application\Object\Ground">
+      <UniqueIdentifier>{fcafc67f-2133-435c-8b94-54ee30d53eb0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\Application\Object\Ground">
+      <UniqueIdentifier>{47f2a312-84fc-428b-b043-ff74c55dcca4}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Engine\2d\Sprite.cpp">
@@ -579,14 +591,20 @@
     <ClCompile Include="Application\Object\EnemyUI.cpp">
       <Filter>ソース ファイル\Application\Object\Chara\Enemy</Filter>
     </ClCompile>
-    <ClCompile Include="Application\Chara\Player\PlayerState.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
     <ClCompile Include="Application\Paint\PaintableModelObj.cpp">
       <Filter>ソース ファイル\Application\Paint</Filter>
     </ClCompile>
     <ClCompile Include="Engine\Particle\RingParticle.cpp">
       <Filter>ソース ファイル\Engine\Particle</Filter>
+    </ClCompile>
+    <ClCompile Include="Application\Object\Terrain.cpp">
+      <Filter>ソース ファイル\Application\Object\Terrain</Filter>
+    </ClCompile>
+    <ClCompile Include="Application\Chara\Player\PlayerState.cpp">
+      <Filter>ソース ファイル\Application\Object\Chara\Player</Filter>
+    </ClCompile>
+    <ClCompile Include="Application\Object\Ground.cpp">
+      <Filter>ソース ファイル\Application\Object\Ground</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -1066,14 +1084,20 @@
     <ClInclude Include="Application\Object\EnemyUI.h">
       <Filter>ヘッダー ファイル\Application\Object\Chara\Enemy</Filter>
     </ClInclude>
-    <ClInclude Include="Application\Chara\Player\PlayerState.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
     <ClInclude Include="Application\Paint\PaintableModelObj.h">
       <Filter>ヘッダー ファイル\Application\Paint</Filter>
     </ClInclude>
     <ClInclude Include="Engine\Particle\RingParticle.h">
       <Filter>ヘッダー ファイル\Engine\Particle</Filter>
+    </ClInclude>
+    <ClInclude Include="Application\Chara\Player\PlayerState.h">
+      <Filter>ヘッダー ファイル\Application\Object\Chara\Player</Filter>
+    </ClInclude>
+    <ClInclude Include="Application\Object\Terrain.h">
+      <Filter>ヘッダー ファイル\Application\Object\Terrain</Filter>
+    </ClInclude>
+    <ClInclude Include="Application\Object\Ground.h">
+      <Filter>ヘッダー ファイル\Application\Object\Ground</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

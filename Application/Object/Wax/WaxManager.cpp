@@ -157,6 +157,13 @@ void WaxManager::Update()
 
 	if (ImGui::Button("当たり判定の描画")) {
 		isViewCol = !isViewCol;
+		for (auto& group : waxGroups)
+		{
+			for (auto& wax : group->waxs)
+			{
+				wax->SetIsViewCol(isViewCol);
+			}
+		}
 	}
 
 	if (ImGui::Button("Reset")) {
@@ -178,13 +185,6 @@ void WaxManager::Draw()
 	for (auto& group : waxGroups)
 	{
 		group->Draw();
-		for (auto& wax : group->waxs)
-		{
-			wax->Draw();
-			if (isViewCol) {
-				wax->DrawCollider();
-			}
-		}
 	}
 }
 

@@ -5,6 +5,7 @@
 #include "Camera.h"
 #include "Util.h"
 #include "PaintUtil.h"
+#include "RImGui.h"
 
 Level::Level()
 {
@@ -19,9 +20,8 @@ void Level::Load()
 void Level::Reset()
 {
 	spawnerManager->Init();
-	tower.Init();
 	EnemyManager::GetInstance()->Init();
-	EnemyManager::GetInstance()->SetTarget(&tower.obj);
+	EnemyManager::GetInstance()->SetTarget(&GetTower()->obj);
 	objects.clear();
 }
 
@@ -29,6 +29,51 @@ void Level::Reload()
 {
 	LevelLoader::Get()->Load(nowLevel->mPath, nowLevel->mHandle);
 	Extract(nowLevel->mHandle);
+}
+
+Tower* Level::GetTower()
+{
+	//タワーが見つかっていなかったら
+	if (tower == nullptr) {
+		//全検索して
+		for (auto& gameObj : objects)
+		{
+			//タワーがあれば
+			if (gameObj->GetObjectName() == "Tower") {
+				//ポインタに入れる
+				tower = static_cast<Tower*>(gameObj.get());
+				break;
+			}
+		}
+		//ここまでいって見つからないならぬるぽが返ってしまうのでassert
+		assert(0 + "Towerがnullptrです");
+	}
+
+	//返す
+	return tower;
+}
+
+Ground* Level::GetGround()
+{
+	//タワーが見つかっていなかったら
+	if (ground == nullptr) {
+		//全検索して
+		for (auto& gameObj : objects)
+		{
+			//タワーがあれば
+			if (gameObj->GetObjectName() == "Ground") {
+				//ポインタに入れる
+				ground = static_cast<Ground*>(gameObj.get());
+				break;
+			}
+		}
+
+		//ここまでいって見つからないならぬるぽが返ってしまうのでassert
+		assert(0 + "Groundがnullptrです");
+	}
+
+	//返す
+	return ground;
 }
 
 void Level::Update()
@@ -39,32 +84,46 @@ void Level::Update()
 		Reload();
 	}
 
-	for (auto& obj : objects)
+	for (auto& gameObj : objects)
 	{
-		obj.mTransform.UpdateMatrix();
-		obj.TransferBuffer(Camera::sNowCamera->mViewProjection);
+		gameObj->Update();
 	}
 
 	spawnerManager->Update();
 
-	EnemyManager::GetInstance()->Update();
+#pragma region ImGui
+	ImGui::SetNextWindowSize({ 350, 180 });
 
-	ground.mTransform.UpdateMatrix();
-	ground.TransferBuffer(Camera::sNowCamera->mViewProjection);
-	
-	tower.Update();
+	ImGuiWindowFlags window_flags = 0;
+	window_flags |= ImGuiWindowFlags_NoResize;
+
+	ImGui::Begin("レベルデータ");
+
+	bool oldView = isViewCol;
+	ImGui::Checkbox("地面、卵、地形の当たり判定描画", &isViewCol);
+	if (oldView != isViewCol) {
+		for (auto& gameObj : objects)
+		{
+			gameObj->SetIsViewCol(isViewCol);
+		}
+	}
+
+	if (ImGui::Button("再読み込み")) {
+		Reload();
+	}
+
+	ImGui::End();
+
+#pragma endregion
 }
 
 void Level::Draw()
 {
 	spawnerManager->Draw();
-	EnemyManager::GetInstance()->Draw();
-	ground.Draw();
-	tower.Draw();
-
+	
 	for (auto& obj : objects)
 	{
-		obj.Draw();
+		obj->Draw();
 	}
 }
 
@@ -79,12 +138,9 @@ void Level::Extract(const std::string& handle)
 	{
 		if (objectData->setObjectName == "Ground")
 		{
-			ground = PaintableModelObj(Model::Load("./Resources/Model/Ground/ground.obj", "Ground"));
-			
-			//座標を設定
-			ground.mTransform.position = objectData->translation;
-			ground.mTransform.scale = objectData->scaling;
-			ground.mTransform.rotation = objectData->rotation;
+			GameObject* loadObj = SetUpObject<Ground>(*objectData);
+			//後呼びしないとモデルがないのでここで毎回書く
+			loadObj->obj.SetupPaint();
 		}
 		if (objectData->setObjectName == "EnemySpawner")
 		{
@@ -94,24 +150,21 @@ void Level::Extract(const std::string& handle)
 		}
 		if (objectData->setObjectName == "Tower")
 		{
-			tower.Init(); 
-			//座標を設定
-			tower.SetPos(objectData->translation);
-			tower.SetScale(objectData->scaling);
-			tower.SetRota(objectData->rotation);
+			GameObject* loadObj = SetUpObject<Tower>(*objectData);
+			//HP初期化
+			loadObj->Init();
+			//後呼びしないとモデルがないのでここで毎回書く
+			loadObj->obj.SetupPaint();
 		}
 		//後ろに_Objがついているものであれば適用
 		//書式として[ハンドル名]+[_Obj]になっていないとエラーとなる
 		if (Util::ContainString(objectData->setObjectName, "_Obj"))
 		{
+			GameObject* loadObj = SetUpObject<Terrain>(*objectData);
 			std::vector<std::string> objHandle = Util::StringSplit(objectData->setObjectName,"_");
-			objects.emplace_back(PaintableModelObj(objHandle[0]));
-
-			objects.back().mTransform.position = objectData->translation;
-			objects.back().mTransform.scale = objectData->scaling;
-			objects.back().mTransform.rotation = objectData->rotation;
-			
-			objects.back().SetupPaint();
+			loadObj->obj.mModel = ModelManager::Get(objHandle[0]);
+			//後呼びしないとモデルがないのでここで毎回書く
+			loadObj->obj.SetupPaint();
 		}
 	}
 }

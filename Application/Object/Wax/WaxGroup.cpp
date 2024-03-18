@@ -63,6 +63,7 @@ void WaxGroup::Draw()
 	{
 		if (wax->isAlive) {
 			wax->Draw();
+			wax->DrawCollider();
 		}
 	}
 }
