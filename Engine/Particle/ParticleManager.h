@@ -25,12 +25,14 @@ public:
 
 	//リング状パーティクル追加(固有処理にしたかったらoverrideで上書きする)
 	//life:秒数指定なので注意
-	void AddRing(Vector3 position,uint32_t addNum, float life, Color color, float startRadius, float endRadius, float minScale, float maxScale,
+	void AddRing(Vector3 emitPos, uint32_t addNum, float life, Color color,
+		float startRadius, float endRadius, float minScale, float maxScale,
 		float minVeloY, float maxVeloY, Vector3 minRot = {}, Vector3 maxRot = {}, float growingTimer = 0.f);
 
 	//パーティクルの追加
-	void AddSimple(Vector3 position,uint32_t addNum, float life, Color color, float minScale, float maxScale,
-		Vector3 minVelo, Vector3 maxVelo, float accelPower = 0.f, Vector3 minRot = {}, Vector3 maxRot = {}, float growingTimer = 0.f);
+	void AddSimple(Vector3 emitPos, Vector3 emitScale, uint32_t addNum, float life,
+		Color color, float minScale, float maxScale, Vector3 minVelo, Vector3 maxVelo,
+		float accelPower = 0.f, Vector3 minRot = {}, Vector3 maxRot = {}, float growingTimer = 0.f);
 
 	////エミッターをunordered_mapに追加
 	//void AddEmitter(IEmitter3D emitter, const std::string& key)

@@ -69,21 +69,26 @@ void ParticleManager::Draw()
 	}
 }
 
-void ParticleManager::AddRing(Vector3 position,uint32_t addNum, float life, Color color, float startRadius, float endRadius, float minScale, float maxScale, float minVeloY, float maxVeloY, Vector3 minRot, Vector3 maxRot, float growingTimer)
+void ParticleManager::AddRing(Vector3 emitPos, uint32_t addNum, float life, Color color,
+	float startRadius, float endRadius, float minScale, float maxScale,
+	float minVeloY, float maxVeloY, Vector3 minRot, Vector3 maxRot, float growingTimer)
 {
 	emitters_.emplace_back();
 	emitters_.back() = std::make_unique<RingParticle>();
-	emitters_.back()->SetPos(position);
+	emitters_.back()->SetPos(emitPos);
 	emitters_.back()->AddRing(
 		addNum, life, color, startRadius, endRadius, minScale, maxScale,
 		minVeloY, maxVeloY, minRot, maxRot, growingTimer);
 }
 
-void ParticleManager::AddSimple(Vector3 position,uint32_t addNum, float life, Color color, float minScale, float maxScale, Vector3 minVelo, Vector3 maxVelo, float accelPower, Vector3 minRot, Vector3 maxRot, float growingTimer)
+void ParticleManager::AddSimple(Vector3 emitPos, Vector3 emitScale, uint32_t addNum, float life,
+	Color color, float minScale, float maxScale, Vector3 minVelo, Vector3 maxVelo,
+	float accelPower, Vector3 minRot, Vector3 maxRot, float growingTimer)
 {
 	emitters_.emplace_back();
 	emitters_.back() = std::make_unique<SimpleParticle>();
-	emitters_.back()->SetPos(position);
+	emitters_.back()->SetPos(emitPos);
+	emitters_.back()->SetScale(emitScale);
 	emitters_.back()->Add(
 		addNum, life, color, minScale, maxScale,
 		minVelo, maxVelo, accelPower, minRot, maxRot, growingTimer);

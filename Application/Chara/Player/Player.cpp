@@ -231,7 +231,8 @@ void Player::MovePad()
 		emitterPos.x += mVelo.x * obj.mTransform.scale.x;
 		emitterPos.z += mVelo.y * obj.mTransform.scale.z;
 
-		ParticleManager::GetInstance()->AddSimple(emitterPos,
+		ParticleManager::GetInstance()->AddSimple(
+			emitterPos, obj.mTransform.scale * 0.5f,
 			2, 0.5f, obj.mTuneMaterial.mColor, 0.3f, 0.7f,
 			{ -0.001f,0.01f,-0.001f }, { 0.001f,0.03f,0.001f },
 			0.01f, -Vector3::ONE * 0.1f, Vector3::ONE * 0.1f, 0.05f);
@@ -371,7 +372,8 @@ void Player::MoveKey()
 		emitterPos.x += mVelo.x * obj.mTransform.scale.x;
 		emitterPos.z += mVelo.y * obj.mTransform.scale.z;
 
-		ParticleManager::GetInstance()->AddSimple(emitterPos,
+		ParticleManager::GetInstance()->AddSimple(
+			emitterPos, obj.mTransform.scale * 0.5f,
 			2, 0.5f, obj.mTuneMaterial.mColor, 0.3f, 0.7f,
 			{ -0.001f,0.01f,-0.001f }, { 0.001f,0.03f,0.001f },
 			0.01f, -Vector3::ONE * 0.1f, Vector3::ONE * 0.1f, 0.05f);
