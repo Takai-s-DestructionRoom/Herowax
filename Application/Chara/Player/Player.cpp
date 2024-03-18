@@ -56,6 +56,18 @@ void Player::Update()
 		MoveKey();
 	}
 
+	//カメラの向いている方向を取得
+	Vector3 camVec = Camera::sNowCamera->mViewProjection.mTarget -
+		Camera::sNowCamera->mViewProjection.mEye;
+	camVec.Normalize();
+	camVec.y = 0;
+
+	//ターゲットの方向を向いてくれる
+	Quaternion aLookat = Quaternion::LookAt(camVec);
+
+	//euler軸へ変換
+	obj.mTransform.rotation = aLookat.ToEuler();
+
 	attackState->Update(this);
 
 	//-----------クールタイム管理-----------//
@@ -120,6 +132,9 @@ void Player::Update()
 
 	ImGui::Text("Lスティック移動、Aボタンジャンプ、Rで攻撃");
 	ImGui::Text("WASD移動、スペースジャンプ、右クリで攻撃");
+	ImGui::Text("obj.mTransform.rotation.x %f", obj.mTransform.rotation.x);
+	ImGui::Text("obj.mTransform.rotation.y %f", obj.mTransform.rotation.y);
+	ImGui::Text("obj.mTransform.rotation.z %f", obj.mTransform.rotation.z);
 
 	if (ImGui::TreeNode("移動系"))
 	{
@@ -423,6 +438,7 @@ void Player::PabloAttack()
 	//入力があるならそっちへ
 	if (abs(RInput::GetInstance()->GetPadLStick().LengthSq()) >= shotDeadZone)
 	{
+		//ここまだやってない
 		pabloVec = Vector3(RInput::GetInstance()->GetPadLStick().x,
 			atkHeight,
 			RInput::GetInstance()->GetPadLStick().y);
@@ -433,6 +449,8 @@ void Player::PabloAttack()
 		pabloVec = GetFrontVec();
 		pabloVec.y = atkHeight;
 	}
+
+	pabloVec.Normalize();
 
 	atkVec = pabloVec;
 
@@ -502,6 +520,7 @@ void Player::Fire()
 Vector3 Player::GetFrontVec()
 {
 	//正面ベクトルを取得
+	frontVec = { 0,0,1 };
 	frontVec *= Quaternion::Euler(obj.mTransform.rotation);
 	return frontVec;
 }
