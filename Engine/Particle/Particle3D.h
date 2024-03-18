@@ -10,13 +10,6 @@
 
 // 3Dのパーティクル //
 // エミッターも含む //
-
-enum class ShapeType
-{
-	Cube,
-	Polygon,
-};
-
 class IEmitter3D
 {
 	//粒子1粒
@@ -61,6 +54,7 @@ protected:
 	Matrix4 billboardMat;			//ビルボード行列
 	SRConstBuffer<TransformBuffer> billboardBuff;
 
+	//頂点群
 	std::vector<VertexParticle> vertices;
 	SRVertexBuffer vertBuff;
 
@@ -89,9 +83,7 @@ protected:
 	bool isGravity_ = false;				//重力の影響受けるかフラグ
 	bool isBillboard_ = false;				//ビルボード描画するかフラグ
 
-	//形状のタイプ
-	uint32_t shapeType_;
-
+	Texture texture;						//割り当てるテクスチャ
 
 public:
 	//コンストラクタ
@@ -113,13 +105,13 @@ public:
 
 	//パーティクル追加(固有処理にしたかったらoverrideで上書きする)
 	//life:秒数指定なので注意
-	virtual void Add(uint32_t addNum, float life, Color color, float minScale, float maxScale,
+	virtual void Add(uint32_t addNum, float life, Color color, TextureHandle tex, float minScale, float maxScale,
 		Vector3 minVelo, Vector3 maxVelo, float accelPower = 0.f, Vector3 minRot = {}, Vector3 maxRot = {},
 		float growingTimer = 0.f, bool isGravity = false, bool isBillboard = false);
 
 	//リング状パーティクル追加(固有処理にしたかったらoverrideで上書きする)
 	//life:秒数指定なので注意
-	virtual void AddRing(uint32_t addNum, float life, Color color,
+	virtual void AddRing(uint32_t addNum, float life, Color color, TextureHandle tex,
 		float startRadius, float endRadius, float minScale, float maxScale,
 		float minVeloY, float maxVeloY, Vector3 minRot = {}, Vector3 maxRot = {},
 		float growingTimer = 0.f, bool isGravity = false, bool isBillboard = false);
@@ -138,8 +130,6 @@ public:
 	size_t GetParticlesSize()const { return particles_.size(); }
 	//有効フラグ取得
 	bool GetIsActive()const { return isActive_; }
-	//形状取得
-	uint32_t GetShapeType()const { return shapeType_; }
 
 	//セッター//
 	//座標設定
@@ -156,8 +146,6 @@ public:
 	void SetIsGravity(bool isGravity) { isGravity_ = isGravity; }
 	//ビルボードフラグ設定
 	void SetIsisBillboard(bool isBillboard) { isBillboard_ = isBillboard; }
-	//形状設定
-	void SetShapeType(uint32_t shapeType) { shapeType_ = shapeType; }
 
 	//拡縮用タイマーが切り替わる時間設定(秒)
 	void SetScalingTimer(float timer);

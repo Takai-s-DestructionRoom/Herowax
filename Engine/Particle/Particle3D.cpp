@@ -28,6 +28,8 @@ void IEmitter3D::Init()
 	vertices.resize(maxParticle_);
 	//それによってバッファの初期化をする
 	vertBuff.Init(vertices);
+
+	texture = TextureManager::Get("");
 }
 
 void IEmitter3D::Update()
@@ -260,7 +262,7 @@ void IEmitter3D::Draw()
 			{RootDataType::SRBUFFER_CBV, billboardBuff.mBuff },
 			{RootDataType::SRBUFFER_CBV, viewProjectionBuff.mBuff },
 			{RootDataType::LIGHT},
-			{TextureManager::Get("").mGpuHandle}
+			{texture.mGpuHandle}
 		};
 
 		Renderer::DrawCall("Opaque", order);
@@ -360,7 +362,7 @@ void IEmitter3D::Draw()
 			{RootDataType::SRBUFFER_CBV, transformBuff.mBuff },
 			{RootDataType::SRBUFFER_CBV, viewProjectionBuff.mBuff },
 			{RootDataType::LIGHT},
-			{TextureManager::Get("").mGpuHandle}
+			{texture.mGpuHandle}
 		};
 
 		Renderer::DrawCall("Opaque", order);
@@ -375,12 +377,13 @@ void IEmitter3D::TransferBuffer(ViewProjection viewprojection)
 	viewProjectionBuff->cameraPos = viewprojection.mEye;
 }
 
-void IEmitter3D::Add(uint32_t addNum, float life, Color color, float minScale, float maxScale,
-	Vector3 minVelo, Vector3 maxVelo, float accelPower, Vector3 minRot, Vector3 maxRot,
-	float growingTimer, bool isGravity, bool isBillboard)
+void IEmitter3D::Add(uint32_t addNum, float life, Color color, TextureHandle tex,
+	float minScale, float maxScale, Vector3 minVelo, Vector3 maxVelo, float accelPower,
+	Vector3 minRot, Vector3 maxRot, float growingTimer, bool isGravity, bool isBillboard)
 {
 	isGravity_ = isGravity;
 	isBillboard_ = isBillboard;
+	texture = TextureManager::Get(tex);
 
 	for (uint32_t i = 0; i < addNum; i++)
 	{
@@ -437,16 +440,17 @@ void IEmitter3D::Add(uint32_t addNum, float life, Color color, float minScale, f
 	}
 }
 
-void IEmitter3D::AddRing(uint32_t addNum, float life, Color color,
+void IEmitter3D::AddRing(uint32_t addNum, float life, Color color, TextureHandle tex,
 	float startRadius, float endRadius, float minScale, float maxScale,
 	float minVeloY, float maxVeloY, Vector3 minRot, Vector3 maxRot,
 	float growingTimer, bool isGravity, bool isBillboard)
 {
-	//キレイに一周させたいので指定した数が最大数超えてたら修正
-	uint32_t addNumClamp = Util::Clamp(addNum, 0, maxParticle_);
-
 	isGravity_ = isGravity;
 	isBillboard_ = isBillboard;
+	texture = TextureManager::Get(tex);
+
+	//キレイに一周させたいので指定した数が最大数超えてたら修正
+	uint32_t addNumClamp = Util::Clamp(addNum, 0, maxParticle_);
 
 	for (uint32_t i = 0; i < addNumClamp; i++)
 	{

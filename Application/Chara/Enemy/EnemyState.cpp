@@ -125,9 +125,9 @@ EnemyBurning::EnemyBurning()
 	float hoge = TemperatureManager::GetInstance()->GetTemperature();
 	//燃え始めたときに、すでに燃えている数に応じて追加で温度上昇
 	TemperatureManager::GetInstance()->TemperaturePlus(
-		EnemyManager::GetInstance()->GetBurningCombo() * 
+		EnemyManager::GetInstance()->GetBurningCombo() *
 		EnemyManager::GetInstance()->GetBurningBonus());
-	hoge = TemperatureManager::GetInstance()->GetTemperature();  
+	hoge = TemperatureManager::GetInstance()->GetTemperature();
 }
 
 void EnemyBurning::Update(Enemy* enemy)
@@ -143,12 +143,13 @@ void EnemyBurning::Update(Enemy* enemy)
 
 	//燃えてるときパーティクル出す
 	ParticleManager::GetInstance()->AddSimple(
-		enemy->obj.mTransform.position, enemy->obj.mTransform.scale * 0.5f, 1, 0.3f, enemy->obj.mTuneMaterial.mColor, 0.5f, 0.8f,
-		{ -0.2f,0.1f,-0.2f }, { 0.2f,0.5f,0.2f },
-		0.05f, -Vector3::ONE * 0.1f, Vector3::ONE * 0.1f, 0.05f,false,true);
+		enemy->obj.mTransform.position, enemy->obj.mTransform.scale * 0.5f, 2, 0.3f,
+		enemy->obj.mTuneMaterial.mColor, TextureManager::Load("./Resources/particle_simple.png"),
+		1.f, 2.f, { -0.2f,0.1f,-0.2f }, { 0.2f,0.5f,0.2f },
+		0.05f, -Vector3::ONE * 0.1f, Vector3::ONE * 0.1f, 0.05f, false, true);
 
 	//減速率いじるかわかんないので保留
-	
+
 	//燃えて死ぬ
 	if (timer.GetEnd()) {
 		enemy->SetDeath();

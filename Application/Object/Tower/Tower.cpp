@@ -45,7 +45,7 @@ void Tower::Update()
 			//死んだ瞬間パーティクル出す
 			ParticleManager::GetInstance()->AddSimple(
 				obj.mTransform.position, obj.mTransform.scale,
-				25, 0.5f, obj.mTuneMaterial.mColor, 1.5f, 2.5f,
+				25, 0.5f, obj.mTuneMaterial.mColor, "", 1.5f, 2.5f,
 				{ -0.5f,-0.5f,-0.5f }, { 0.5f,0.5f,0.5f },
 				0.05f, -Vector3::ONE * 0.1f, Vector3::ONE * 0.1f, 0.1f);
 		}

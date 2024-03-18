@@ -92,8 +92,10 @@ void Player::Update()
 			Vector3 emitterPos = obj.mTransform.position;
 			emitterPos.y -= obj.mTransform.scale.y;
 
-			ParticleManager::GetInstance()->AddRing(emitterPos,16, 0.3f, obj.mTuneMaterial.mColor, 0.7f, 1.2f, 0.3f, 0.6f,
-				0.01f, 0.05f, -Vector3::ONE * 0.1f, Vector3::ONE * 0.1f, 0.05f);
+			ParticleManager::GetInstance()->AddRing(
+				emitterPos, 16, 0.3f, obj.mTuneMaterial.mColor, "",
+				0.7f, 1.2f, 0.3f, 0.6f, 0.01f, 0.05f,
+				-Vector3::ONE * 0.1f, Vector3::ONE * 0.1f, 0.05f);
 		}
 		isJumping = false;
 	}
@@ -160,10 +162,10 @@ void Player::Update()
 	if (ImGui::TreeNode("お試し実装:パブロアタック"))
 	{
 		ImGui::Text("スティックの入力:%f", abs(RInput::GetInstance()->GetPadLStick().LengthSq()));
-		ImGui::SliderFloat("ショットが出る基準", &shotDeadZone,0.0f,2.0f);
-		ImGui::SliderFloat("広がり", &pabloRange,0.0f,10.f);
-		ImGui::SliderFloat("横の広がり", &pabloSideRange,0.0f,10.f);
-		ImGui::SliderFloat("パブロ攻撃時の移動速度低下係数", &pabloSpeedMag,0.0f,1.0f);
+		ImGui::SliderFloat("ショットが出る基準", &shotDeadZone, 0.0f, 2.0f);
+		ImGui::SliderFloat("広がり", &pabloRange, 0.0f, 10.f);
+		ImGui::SliderFloat("横の広がり", &pabloSideRange, 0.0f, 10.f);
+		ImGui::SliderFloat("パブロ攻撃時の移動速度低下係数", &pabloSpeedMag, 0.0f, 1.0f);
 
 		ImGui::TreePop();
 	}
@@ -233,9 +235,9 @@ void Player::MovePad()
 
 		ParticleManager::GetInstance()->AddSimple(
 			emitterPos, obj.mTransform.scale * 0.5f,
-			2, 0.5f, obj.mTuneMaterial.mColor, 0.3f, 0.7f,
+			2, 0.5f, obj.mTuneMaterial.mColor, "", 0.3f, 0.7f,
 			{ -0.001f,0.01f,-0.001f }, { 0.001f,0.03f,0.001f },
-			0.01f, -Vector3::ONE * 0.1f, Vector3::ONE * 0.1f, 0.05f,false,false);
+			0.01f, -Vector3::ONE * 0.1f, Vector3::ONE * 0.1f, 0.05f, false, false);
 	}
 	else
 	{
@@ -258,9 +260,10 @@ void Player::MovePad()
 		Vector3 emitterPos = obj.mTransform.position;
 		emitterPos.y -= obj.mTransform.scale.y;
 
-		ParticleManager::GetInstance()->AddRing(emitterPos,
-		20, 0.5f, obj.mTuneMaterial.mColor, 1.f, 2.5f, 0.5f, 0.8f,
-			0.01f, 0.05f, -Vector3::ONE * 0.1f, Vector3::ONE * 0.1f, 0.05f);
+		ParticleManager::GetInstance()->AddRing(
+			emitterPos, 20, 0.5f, obj.mTuneMaterial.mColor, "",
+			1.f, 2.5f, 0.5f, 0.8f, 0.01f, 0.05f,
+			-Vector3::ONE * 0.1f, Vector3::ONE * 0.1f, 0.05f);
 	}
 
 	//ジャンプ中は
@@ -335,8 +338,10 @@ void Player::MoveKey()
 		Vector3 emitterPos = obj.mTransform.position;
 		emitterPos.y -= obj.mTransform.scale.y;
 
-		ParticleManager::GetInstance()->AddRing(emitterPos, 16, 0.5f, obj.mTuneMaterial.mColor, 1.f, 2.5f, 0.5f, 0.8f,
-			0.01f, 0.03f, -Vector3::ONE * 0.1f, Vector3::ONE * 0.1f, 0.05f);
+		ParticleManager::GetInstance()->AddRing(
+			emitterPos, 16, 0.5f, obj.mTuneMaterial.mColor, "",
+			1.f, 2.5f, 0.5f, 0.8f, 0.01f, 0.03f,
+			-Vector3::ONE * 0.1f, Vector3::ONE * 0.1f, 0.05f);
 	}
 
 	//ジャンプ中は
@@ -374,9 +379,9 @@ void Player::MoveKey()
 
 		ParticleManager::GetInstance()->AddSimple(
 			emitterPos, obj.mTransform.scale * 0.5f,
-			2, 0.5f, obj.mTuneMaterial.mColor, 0.3f, 0.7f,
+			2, 0.5f, obj.mTuneMaterial.mColor, TextureManager::Load("./Resources/white2x2.png"), 0.3f, 0.7f,
 			{ -0.001f,0.01f,-0.001f }, { 0.001f,0.03f,0.001f },
-			0.01f, -Vector3::ONE * 0.1f, Vector3::ONE * 0.1f, 0.05f);
+			0.01f, -Vector3::ONE * 0.1f, Vector3::ONE * 0.1f, 0.05f,false,false);
 	}
 
 	//「ジャンプの高さ」+「プレイヤーの大きさ」を反映
@@ -442,17 +447,17 @@ void Player::PabloAttack()
 	//pabloVecの横ベクトルを取る
 	Vector3 sidePabloVec = { rotaVec.x,0,rotaVec.y };
 	sidePabloVec.Normalize();
-	
+
 	//発射数の半分(切り捨て)はマイナス横ベクトル方向へずらす
 	int32_t waxNum = 3;
-	
+
 	//imguiでいじれるようにするのと、前方向へのランダムを作る
 
 	//発射数分ロウを生成、座標を生成するたびプラス横ベクトル方向へずらす
 	//座標を生成するたびプラス正面ベクトル方向へずらす
 	Vector3 sideRandMin = -sidePabloVec * pabloSideRange;
 	Vector3 sideRandMax = sidePabloVec * pabloSideRange;
-	
+
 	//もしminの方が大きくなってしまっていたら入れ替える
 	if (sideRandMin.x > sideRandMax.x) {
 		float save = sideRandMin.x;
@@ -472,7 +477,7 @@ void Player::PabloAttack()
 		//横のランダムを決定
 		spawnTrans.position.x += Util::GetRand(sideRandMin.x, sideRandMax.x);
 		spawnTrans.position.z += Util::GetRand(sideRandMin.z, sideRandMax.z);
-		
+
 		//前に(幅 / 数)分進める(多少ランダムにしたい)
 		spawnTrans.position += (pabloVec * pabloRange / (float)waxNum) * (float)i;
 

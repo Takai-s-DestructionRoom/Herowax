@@ -19,12 +19,12 @@ void SimpleParticle::Update()
 	}
 }
 
-void SimpleParticle::Add(uint32_t addNum, float life, Color color, float minScale, float maxScale,
-	Vector3 minVelo, Vector3 maxVelo, float accelPower, Vector3 minRot, Vector3 maxRot,
-	float growingTimer, bool isGravity, bool isBillboard)
+void SimpleParticle::Add(uint32_t addNum, float life, Color color, TextureHandle tex,
+	float minScale, float maxScale,Vector3 minVelo, Vector3 maxVelo, float accelPower,
+	Vector3 minRot, Vector3 maxRot,float growingTimer, bool isGravity, bool isBillboard)
 {
 	IEmitter3D::Add(
-		addNum, life, color, minScale, maxScale,
+		addNum, life, color, tex, minScale, maxScale,
 		minVelo, maxVelo, accelPower, minRot, maxRot,
 		growingTimer, isGravity, isBillboard);
 }

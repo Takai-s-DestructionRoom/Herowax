@@ -30,7 +30,8 @@ Enemy::~Enemy()
 {
 	//死んだときパーティクル出す
 	ParticleManager::GetInstance()->AddSimple(
-		obj.mTransform.position, obj.mTransform.scale * 0.5f, 10, 0.3f, Color::kGreen, 0.5f, 0.8f,
+		obj.mTransform.position, obj.mTransform.scale * 0.5f, 10, 0.3f,
+		Color::kGreen, "", 0.5f, 0.8f,
 		{ -0.3f,-0.3f,-0.3f }, { 0.3f,0.3f,0.3f },
 		0.05f, -Vector3::ONE * 0.1f, Vector3::ONE * 0.1f, 0.05f);
 }
