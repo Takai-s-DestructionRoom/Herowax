@@ -86,6 +86,7 @@ protected:
 	bool isGravity_ = false;				//重力の影響受けるかフラグ
 	bool isRotation_ = false;				//回すかフラグ
 	bool isGrowing_ = true;					//発生時に徐々に大きくなるかフラグ
+	bool isBillboard_ = false;				//ビルボード描画するかフラグ
 
 	//形状のタイプ
 	uint32_t shapeType_;
