@@ -7,7 +7,7 @@ EnemySpawner::EnemySpawner() : GameObject(),
 	hp(0), maxHP(5.f), spawnInterval(3.f), spawnNum(1),
 	spawnRandomPos(5.f)
 {
-	obj = ModelObj(Model::Load("./Resources/Model/stick.obj", "Stick", true));
+	obj = PaintableModelObj(Model::Load("./Resources/Model/stick.obj", "Stick", true));
 	
 	//色変更
 	obj.mTuneMaterial.mColor = Color(0.3f, 0.3f, 0.3f, 1);

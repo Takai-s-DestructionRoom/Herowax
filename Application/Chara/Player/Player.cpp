@@ -16,7 +16,7 @@ isJumping(false), jumpTimer(0.2f), jumpHeight(0.f), maxJumpHeight(5.f), jumpPowe
 isAttack(false), atkSpeed(1.f), atkRange({ 3.f,5.f }), atkSize(0.f), atkPower(1),
 atkCoolTimer(0.3f), atkTimer(0.5f), atkHeight(1.f), solidTimer(5.f)
 {
-	obj = ModelObj(Model::Load("./Resources/Model/Cube.obj", "Cube", true));
+	obj = PaintableModelObj(Model::Load("./Resources/Model/Cube.obj", "Cube", true));
 
 	std::map<std::string, std::string> extract = Parameter::Extract("Player");
 	moveSpeed = Parameter::GetParam(extract, "移動速度", 1.f);

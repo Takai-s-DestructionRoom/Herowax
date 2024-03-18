@@ -79,7 +79,7 @@ void Level::Extract(const std::string& handle)
 	{
 		if (objectData->setObjectName == "Ground")
 		{
-			ground = ModelObj(Model::Load("./Resources/Model/Ground/ground.obj", "Ground"));
+			ground = PaintableModelObj(Model::Load("./Resources/Model/Ground/ground.obj", "Ground"));
 			
 			//座標を設定
 			ground.mTransform.position = objectData->translation;
@@ -105,11 +105,13 @@ void Level::Extract(const std::string& handle)
 		if (Util::ContainString(objectData->setObjectName, "_Obj"))
 		{
 			std::vector<std::string> objHandle = Util::StringSplit(objectData->setObjectName,"_");
-			objects.emplace_back(ModelObj(objHandle[0]));
+			objects.emplace_back(PaintableModelObj(objHandle[0]));
 
 			objects.back().mTransform.position = objectData->translation;
 			objects.back().mTransform.scale = objectData->scaling;
 			objects.back().mTransform.rotation = objectData->rotation;
+			
+			objects.back().SetupPaint();
 		}
 	}
 }

@@ -26,6 +26,9 @@ namespace ColPrimitive3D
 		Vector3 p1;
 		Vector3 p2;
 		Vector3 normal;
+
+		//比較
+		bool operator==(const Triangle& a) const;
 	};
 
 	//軸平行ボックス

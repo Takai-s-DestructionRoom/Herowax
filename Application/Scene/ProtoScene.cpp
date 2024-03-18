@@ -16,6 +16,9 @@
 
 ProtoScene::ProtoScene()
 {
+	//ブラシの読み込み
+	TextureManager::Load("./Resources/Brush.png", "brush");
+
 	skydome = ModelObj(Model::Load("./Resources/Model/Skydome/Skydome.obj", "Skydome"));
 	skydome.mTransform.scale = { 5, 5, 5 };
 	skydome.mTransform.UpdateMatrix();
@@ -38,8 +41,15 @@ void ProtoScene::Init()
 	std::map<std::string, std::string> extract = Parameter::Extract("Camera");
 	cameraDist = Parameter::GetParam(extract,"カメラ距離", -20.f);
 	cameraAngle.x = Parameter::GetParam(extract,"カメラアングルX", Util::AngleToRadian(20.f));
-	cameraAngle.y = Parameter::GetParam(extract,"カメラアングルY", 0.f);
+	cameraAngle.y = 0.f;
 	cameraSpeed = Parameter::GetParam(extract,"カメラの移動速度", 0.01f);
+
+	extract = Parameter::Extract("Paint");
+	paintSize = Parameter::GetParam(extract, "ペイントサイズ", 300.f);
+	paintColor.r = Parameter::GetParam(extract, "ペイントカラー_R", 1.f);
+	paintColor.g = Parameter::GetParam(extract, "ペイントカラー_G", 1.f);
+	paintColor.b = Parameter::GetParam(extract, "ペイントカラー_B", 1.f);
+	paintColor.a = Parameter::GetParam(extract, "ペイントカラー_A", 1.f);
 
 	LightGroup::sNowLight = &light;
 
@@ -180,6 +190,43 @@ void ProtoScene::Update()
 		}
 	}
 	
+	//塗る処理(いったん全検索のカス)
+	for (auto& paintObj : level.objects)
+	{
+		for (auto& paintTri : paintObj.GetTriangle())
+		{
+			for (auto& group : WaxManager::GetInstance()->waxGroups)
+			{
+				for (auto& wax : group->waxs)
+				{
+					Vector3 closestPoint = { 0,0,0 };
+					//当たったトライアングルがあるならそこを塗る
+					if (ColPrimitive3D::CheckSphereToTriangle(wax->collider, paintTri, &closestPoint)) {
+						PaintableInfo info;
+
+						//交点と球の中心で必ず当たるレイを作り、交点に塗る
+						Vector3 posA = wax->collider.pos;
+						Vector3 posB = closestPoint;
+						Vector3 dir = (posB - posA).Normalize();
+
+						ColPrimitive3D::Ray ray = { posA,dir };
+
+						if (paintObj.GetInfo(ray, &info))
+						{
+							//情報が完全一致するなら塗る
+							if (info.tri == paintTri) {
+								paintObj.Paint(info.closestPos, info.hitMeshIndex, info.hitIndex,
+									"brush", paintColor, Vector2(paintSize, paintSize), camera.mViewProjection.mMatrix);
+
+								//塗ったロウはハカイ
+								wax->SetIsAlive(false);
+							}
+						}
+					}
+				}
+			}
+		}
+	}
 
 	//別グループ内のロウが当たった時の処理
 	for (auto& group1 : *wGroups)
@@ -247,6 +294,24 @@ void ProtoScene::Update()
 	}
 
 	ImGui::End();
+
+	ImGui::SetNextWindowSize({ 300, 150 });
+	// ペイント //
+	ImGui::Begin("ペイント", NULL, window_flags);
+	ImGui::SliderFloat("ペイントサイズ", &paintSize,0.0f,300.f);
+	ImGui::ColorEdit4("PaintColor", &paintColor.r);
+
+	if (ImGui::Button("セーブ")) {
+		Parameter::Begin("Paint");
+		Parameter::Save("ペイントサイズ", paintSize);
+		Parameter::Save("ペイントカラー_R", paintColor.r);
+		Parameter::Save("ペイントカラー_G", paintColor.g);
+		Parameter::Save("ペイントカラー_B", paintColor.b);
+		Parameter::Save("ペイントカラー_A", paintColor.a);
+		Parameter::End();
+	}
+	ImGui::End();
+
 #pragma endregion
 }
 

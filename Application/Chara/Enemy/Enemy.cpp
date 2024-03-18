@@ -14,7 +14,7 @@ isAttack(false), atkPower(0.f), atkCoolTimer(1.f),
 gravity(0.2f), groundPos(0)
 {
 	state = std::make_unique<EnemyNormal>();
-	obj = ModelObj(Model::Load("./Resources/Model/firewisp/firewisp.obj", "firewisp", true));
+	obj = PaintableModelObj(Model::Load("./Resources/Model/firewisp/firewisp.obj", "firewisp", true));
 	target = target_;
 
 	std::map<std::string, std::string> extract = Parameter::Extract("Enemy");

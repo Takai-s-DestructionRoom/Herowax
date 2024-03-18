@@ -2,6 +2,7 @@
 #include "Camera.h"
 #include "Renderer.h"
 #include "WaxManager.h"
+#include "PaintUtil.h"
 
 Wax::Wax():GameObject(),
 	waxOriginColor(0.8f, 0.6f, 0.35f, 1.f),
@@ -15,7 +16,7 @@ Wax::Wax():GameObject(),
 	disolveValue(0.f)
 {
 	state = std::make_unique<WaxNormal>();
-	obj = ModelObj(Model::Load("./Resources/Model/wax/wax.obj", "wax", true));
+	obj = PaintableModelObj(Model::Load("./Resources/Model/wax/wax.obj", "wax", true));
 	obj.mTuneMaterial.mColor = waxOriginColor;
 
 	TextureManager::Load("./Resources/DissolveMap.png","DissolveMap");

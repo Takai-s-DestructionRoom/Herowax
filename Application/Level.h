@@ -1,6 +1,6 @@
 #pragma once
 #include "LevelLoader.h"
-#include "ModelObj.h"
+#include "PaintableModelObj.h"
 #include "Tower.h"
 #include "SpawnerManager.h"
 
@@ -27,8 +27,8 @@ public:
 public:
 	LevelData* nowLevel = nullptr;
 
-	std::list<ModelObj> objects;	//オブジェクトたち
-	ModelObj ground;	//地面
+	std::list<PaintableModelObj> objects;	//オブジェクトたち
+	PaintableModelObj ground;	//地面
 	Tower tower;		//タワー
 	SpawnerManager* spawnerManager = SpawnerManager::GetInstance();	//スポナー
 private:

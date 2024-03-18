@@ -38,6 +38,10 @@ private:
 	Vector2 mAngle = { 0, 0 };
 	LightGroup light;
 
+	//ペイント
+	float paintSize = 300.f;
+	Color paintColor = {1,1,1,1};
+
 	float rot[3] = { 0, 0, 0 };
 	float scale[3] = { 1, 1, 1 };
 };

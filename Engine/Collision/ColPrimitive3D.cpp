@@ -222,3 +222,8 @@ bool ColPrimitive3D::CheckRayToSphere(Ray ray, Sphere sphere, float* outDistance
 
     return true;
 }
+
+bool ColPrimitive3D::Triangle::operator==(const Triangle& a) const
+{
+    return p0 == a.p0 && p1 == a.p1 && p2 == a.p2 && normal == a.normal;
+}

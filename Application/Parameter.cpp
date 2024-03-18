@@ -52,7 +52,7 @@ std::map<std::string, std::string> Parameter::Extract(const std::string& filenam
 	std::ifstream file;
 	file.open(path.c_str());
 	if (file.fail()) {
-		assert(0);
+		assert(0 + "ファイルが生成されていません");
 	}
 
 	std::map<std::string, std::string> result;

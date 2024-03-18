@@ -8,6 +8,16 @@
 #include <Sprite.h>
 #include <ColPrimitive3D.h>
 #include <RenderTarget.h>
+#include "ColPrimitive3D.h"
+
+struct PaintableInfo
+{
+	ColPrimitive3D::Triangle tri;
+	int32_t hitMeshIndex = 0;
+	int32_t hitIndex = 0;
+	float closestDis = FLT_MAX;
+	Vector3 closestPos = { 0, 0, 0 };
+};
 
 class PaintableModelObj : public ModelObj
 {
@@ -45,6 +55,10 @@ public:
 	/// <param name="matrix">カメラの持つ行列</param>
 	/// <returns>塗れたかどうか</returns>
 	bool Paint(ColPrimitive3D::Ray ray, TextureHandle brush, Color color, Vector2 size, Matrix4 matrix);
+
+	bool GetInfo(ColPrimitive3D::Ray ray, PaintableInfo *info = nullptr);
+
+	std::vector<ColPrimitive3D::Triangle> GetTriangle();
 
 	//各データのバッファへの転送
 	void TransferBuffer(ViewProjection viewprojection) override;

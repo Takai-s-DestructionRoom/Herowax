@@ -237,6 +237,110 @@ bool PaintableModelObj::Paint(ColPrimitive3D::Ray ray, TextureHandle brush, Colo
     return false;
 }
 
+bool PaintableModelObj::GetInfo(ColPrimitive3D::Ray ray,
+	PaintableInfo* info_)
+{
+	PaintableInfo info;
+
+	for (int32_t mi = 0; mi < mModel->mData.size(); mi++) {
+		ModelMesh& mesh = *mModel->mData[mi].get();
+
+		std::vector<VertexPNU> verts = mesh.mVertices;
+		for (auto& vert : verts) {
+			Float4 tp = vert.pos;
+			tp *= mTransform.matrix;
+			vert.pos = tp;
+			vert.normal *= Matrix4::RotationZXY(
+				mTransform.rotation.x,
+				mTransform.rotation.y,
+				mTransform.rotation.z);
+		}
+
+		for (int32_t i = 0; i < mesh.mIndices.size() / 3; i++) {
+			VertexPNU vert1 = verts[3 * i];
+			VertexPNU vert2 = verts[3 * i + 1];
+			VertexPNU vert3 = verts[3 * i + 2];
+
+			Vector3 p0 = vert1.pos;
+			Vector3 p1 = vert2.pos;
+			Vector3 p2 = vert3.pos;
+
+			Vector3 v1 = p1 - p0;
+			Vector3 v2 = p2 - p0;
+
+			Vector3 normal = v1.Cross(v2);
+			normal.Normalize();
+
+			info.tri.p0 = vert1.pos;
+			info.tri.p1 = vert2.pos;
+			info.tri.p2 = vert3.pos;
+			info.tri.normal = normal;
+			
+			float outDis;
+			Vector3 outInter;
+			if (ColPrimitive3D::CheckRayToTriangle(ray, info.tri,
+				&outDis, &outInter)) {
+				if (outDis < info.closestDis) {
+					info.closestDis = outDis;
+					info.closestPos = outInter;
+					info.hitMeshIndex = mi;
+					info.hitIndex = i;
+				}
+				if (info_ != nullptr) {
+					*info_ = info;
+				}
+
+				return true;
+			}
+		}
+	}
+	return false;
+}
+
+std::vector<ColPrimitive3D::Triangle> PaintableModelObj::GetTriangle()
+{
+	std::vector<ColPrimitive3D::Triangle> triangles;
+
+	for (int32_t mi = 0; mi < mModel->mData.size(); mi++) {
+		ModelMesh& mesh = *mModel->mData[mi].get();
+
+		std::vector<VertexPNU> verts = mesh.mVertices;
+		for (auto& vert : verts) {
+			Float4 tp = vert.pos;
+			tp *= mTransform.matrix;
+			vert.pos = tp;
+			vert.normal *= Matrix4::RotationZXY(
+				mTransform.rotation.x,
+				mTransform.rotation.y,
+				mTransform.rotation.z);
+		}
+
+		for (int32_t i = 0; i < mesh.mIndices.size() / 3; i++) {
+			VertexPNU vert1 = verts[3 * i];
+			VertexPNU vert2 = verts[3 * i + 1];
+			VertexPNU vert3 = verts[3 * i + 2];
+
+			Vector3 p0 = vert1.pos;
+			Vector3 p1 = vert2.pos;
+			Vector3 p2 = vert3.pos;
+
+			Vector3 v1 = p1 - p0;
+			Vector3 v2 = p2 - p0;
+
+			Vector3 normal = v1.Cross(v2);
+			normal.Normalize();
+
+			triangles.emplace_back();
+			triangles.back().p0 = vert1.pos;
+			triangles.back().p1 = vert2.pos;
+			triangles.back().p2 = vert3.pos;
+			triangles.back().normal = normal;
+		}
+	}
+
+	return triangles;
+}
+
 void PaintableModelObj::TransferBuffer(ViewProjection viewprojection)
 {
 	int32_t count = 0;
