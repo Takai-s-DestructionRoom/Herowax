@@ -58,6 +58,9 @@ protected:
 	SRConstBuffer<TransformBuffer> transformBuff;
 	SRConstBuffer<ViewProjectionBuffer> viewProjectionBuff;
 
+	Matrix4 billboardMat;			//ビルボード行列
+	SRConstBuffer<TransformBuffer> billboardBuff;
+
 	std::vector<VertexParticle> vertices;
 	SRVertexBuffer vertBuff;
 
@@ -84,8 +87,6 @@ protected:
 	bool isActive_ = true;					//有効にするかフラグ
 
 	bool isGravity_ = false;				//重力の影響受けるかフラグ
-	bool isRotation_ = false;				//回すかフラグ
-	bool isGrowing_ = true;					//発生時に徐々に大きくなるかフラグ
 	bool isBillboard_ = false;				//ビルボード描画するかフラグ
 
 	//形状のタイプ
@@ -113,12 +114,15 @@ public:
 	//パーティクル追加(固有処理にしたかったらoverrideで上書きする)
 	//life:秒数指定なので注意
 	virtual void Add(uint32_t addNum, float life, Color color, float minScale, float maxScale,
-		Vector3 minVelo, Vector3 maxVelo, float accelPower = 0.f, Vector3 minRot = {}, Vector3 maxRot = {}, float growingTimer = 0.f);
+		Vector3 minVelo, Vector3 maxVelo, float accelPower = 0.f, Vector3 minRot = {}, Vector3 maxRot = {},
+		float growingTimer = 0.f, bool isGravity = false, bool isBillboard = false);
 
 	//リング状パーティクル追加(固有処理にしたかったらoverrideで上書きする)
 	//life:秒数指定なので注意
-	virtual void AddRing(uint32_t addNum, float life, Color color, float startRadius, float endRadius, float minScale, float maxScale,
-		float minVeloY, float maxVeloY, Vector3 minRot = {}, Vector3 maxRot = {}, float growingTimer = 0.f);
+	virtual void AddRing(uint32_t addNum, float life, Color color,
+		float startRadius, float endRadius, float minScale, float maxScale,
+		float minVeloY, float maxVeloY, Vector3 minRot = {}, Vector3 maxRot = {},
+		float growingTimer = 0.f, bool isGravity = false, bool isBillboard = false);
 
 	//パーティクル全消し
 	void ClearParticles() { particles_.clear(); }
@@ -150,10 +154,8 @@ public:
 	void SetIsActive(bool isActive) { isActive_ = isActive; }
 	//重力フラグ設定
 	void SetIsGravity(bool isGravity) { isGravity_ = isGravity; }
-	//回転フラグ設定
-	void SetIsRotation(bool isRotation) { isRotation_ = isRotation; }
-	//発生時拡大フラグ設定
-	void SetIsGrowing(bool isGrowing) { isGrowing_ = isGrowing; }
+	//ビルボードフラグ設定
+	void SetIsisBillboard(bool isBillboard) { isBillboard_ = isBillboard; }
 	//形状設定
 	void SetShapeType(uint32_t shapeType) { shapeType_ = shapeType; }
 

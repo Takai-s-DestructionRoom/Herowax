@@ -145,7 +145,7 @@ void EnemyBurning::Update(Enemy* enemy)
 	ParticleManager::GetInstance()->AddSimple(
 		enemy->obj.mTransform.position, enemy->obj.mTransform.scale * 0.5f, 1, 0.3f, enemy->obj.mTuneMaterial.mColor, 0.5f, 0.8f,
 		{ -0.2f,0.1f,-0.2f }, { 0.2f,0.5f,0.2f },
-		0.05f, -Vector3::ONE * 0.1f, Vector3::ONE * 0.1f, 0.05f);
+		0.05f, -Vector3::ONE * 0.1f, Vector3::ONE * 0.1f, 0.05f,false,true);
 
 	//減速率いじるかわかんないので保留
 	

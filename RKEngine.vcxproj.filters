@@ -262,6 +262,9 @@
     <Filter Include="シェーダー ファイル\Test">
       <UniqueIdentifier>{490e77e7-f6fa-45bf-9d11-cc4484504355}</UniqueIdentifier>
     </Filter>
+    <Filter Include="シェーダー ファイル\ParticleBillboard">
+      <UniqueIdentifier>{1cf9738f-6392-41f9-811e-0dac77145214}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Engine\2d\Sprite.cpp">
@@ -507,7 +510,7 @@
     <ClCompile Include="Application\Chara\Enemy\EnemyManager.cpp">
       <Filter>ソース ファイル\Application\Object\Chara\Enemy</Filter>
     </ClCompile>
-    <ClCompile Include="Application\Object\EnemySpawner.cpp">
+    <ClCompile Include="Application\Chara\Enemy\EnemySpawner.cpp">
       <Filter>ソース ファイル\Application\Object\EnemySpawner</Filter>
     </ClCompile>
     <ClCompile Include="Application\Object\Wax\Wax.cpp">
@@ -576,7 +579,7 @@
     <ClCompile Include="Application\Paint\PaintUtil.cpp">
       <Filter>ソース ファイル\Application\Paint</Filter>
     </ClCompile>
-    <ClCompile Include="Application\Object\EnemyUI.cpp">
+    <ClCompile Include="Application\Chara\Enemy\EnemyUI.cpp">
       <Filter>ソース ファイル\Application\Object\Chara\Enemy</Filter>
     </ClCompile>
     <ClCompile Include="Application\Chara\Player\PlayerState.cpp">
@@ -724,6 +727,15 @@
     </FxCompile>
     <FxCompile Include="Shader\Test\TestVS.hlsl">
       <Filter>シェーダー ファイル\Test</Filter>
+    </FxCompile>
+    <FxCompile Include="Shader\ParticleBillboard\ParticleBillboardGS.hlsl">
+      <Filter>シェーダー ファイル\ParticleBillboard</Filter>
+    </FxCompile>
+    <FxCompile Include="Shader\ParticleBillboard\ParticleBillboardPS.hlsl">
+      <Filter>シェーダー ファイル\ParticleBillboard</Filter>
+    </FxCompile>
+    <FxCompile Include="Shader\ParticleBillboard\ParticleBillboardVS.hlsl">
+      <Filter>シェーダー ファイル\ParticleBillboard</Filter>
     </FxCompile>
   </ItemGroup>
   <ItemGroup>
@@ -994,7 +1006,7 @@
     <ClInclude Include="Application\Chara\Enemy\EnemyManager.h">
       <Filter>ヘッダー ファイル\Application\Object\Chara\Enemy</Filter>
     </ClInclude>
-    <ClInclude Include="Application\Object\EnemySpawner.h">
+    <ClInclude Include="Application\Chara\Enemy\EnemySpawner.h">
       <Filter>ヘッダー ファイル\Application\Object\EnemySpawner</Filter>
     </ClInclude>
     <ClInclude Include="Application\Object\Wax\Wax.h">
@@ -1063,7 +1075,7 @@
     <ClInclude Include="Application\Paint\PaintUtil.h">
       <Filter>ヘッダー ファイル\Application\Paint</Filter>
     </ClInclude>
-    <ClInclude Include="Application\Object\EnemyUI.h">
+    <ClInclude Include="Application\Chara\Enemy\EnemyUI.h">
       <Filter>ヘッダー ファイル\Application\Object\Chara\Enemy</Filter>
     </ClInclude>
     <ClInclude Include="Application\Chara\Player\PlayerState.h">
@@ -1136,6 +1148,9 @@
     </None>
     <None Include="Shader\Test\Test.hlsli">
       <Filter>シェーダー ファイル\Test</Filter>
+    </None>
+    <None Include="Shader\ParticleBillboard\ParticleBillboard.hlsli">
+      <Filter>シェーダー ファイル\ParticleBillboard</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>
