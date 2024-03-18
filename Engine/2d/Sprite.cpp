@@ -197,8 +197,8 @@ void SpriteManager::Init()
 
 	mPipelineState = RDirectX::GetDefPipeline();
 
-	mPipelineState.mDesc.VS = Shader("./Shader/SpriteVS.hlsl", "main", "vs_5_0");
-	mPipelineState.mDesc.PS = Shader("./Shader/SpritePS.hlsl", "main", "ps_5_0");
+	mPipelineState.mDesc.VS = Shader("./Shader/Sprite/SpriteVS.hlsl", "main", "vs_5_0");
+	mPipelineState.mDesc.PS = Shader("./Shader/Sprite/SpritePS.hlsl", "main", "ps_5_0");
 
 	// ラスタライザの設定
 	mPipelineState.mDesc.RasterizerState.CullMode = D3D12_CULL_MODE_NONE;

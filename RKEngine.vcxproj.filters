@@ -202,6 +202,66 @@
     <Filter Include="ソース ファイル\Application\Object\EnemySpawner">
       <UniqueIdentifier>{82fc10b4-caf4-4682-bcca-a7a23bf0b7fc}</UniqueIdentifier>
     </Filter>
+    <Filter Include="シェーダー ファイル\Basic">
+      <UniqueIdentifier>{0cb9f8e9-d808-44d8-862d-1f6dc9c7da28}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="シェーダー ファイル\Bloom">
+      <UniqueIdentifier>{d12b599a-1f97-4998-bbc3-017dc76b8ab8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="シェーダー ファイル\BrightCut">
+      <UniqueIdentifier>{397ce580-e329-496c-9b66-1aaf2972af06}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="シェーダー ファイル\DepthTest">
+      <UniqueIdentifier>{fc8f17db-499c-468c-ba3d-150af2bc56a2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="シェーダー ファイル\Disolve">
+      <UniqueIdentifier>{35423561-f1a8-4ede-85a2-3b4d222d1f96}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="シェーダー ファイル\Final">
+      <UniqueIdentifier>{1521abb2-485d-4dfd-ae33-9f2ffac05eb5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="シェーダー ファイル\GaussianBlur">
+      <UniqueIdentifier>{58bd0e0f-f57d-4040-aa48-bcb221d5a642}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="シェーダー ファイル\Grid">
+      <UniqueIdentifier>{10e30a08-55d0-4912-b0ec-5963affe05f4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="シェーダー ファイル\LinearBlur">
+      <UniqueIdentifier>{686bab57-d312-4a4c-9eaf-e2382609f78c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="シェーダー ファイル\MultiRenderTest">
+      <UniqueIdentifier>{40f996ba-01d7-4bcb-a6b9-7e9154d71986}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="シェーダー ファイル\NoneShading">
+      <UniqueIdentifier>{981a24b7-81e7-4bc8-949a-4012884b9ffe}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="シェーダー ファイル\PaintedBasic">
+      <UniqueIdentifier>{a52a762a-758d-465a-b489-fcb1f68767a1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="シェーダー ファイル\Particle3D">
+      <UniqueIdentifier>{df702d1b-dc1f-4686-bafc-099cc3763f7d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="シェーダー ファイル\PostEffect">
+      <UniqueIdentifier>{48186639-7045-4eb2-b2c4-4a3cd4cb49bf}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="シェーダー ファイル\Simple">
+      <UniqueIdentifier>{4ff0d6a1-ad51-488b-9ce9-f9a5e030548b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="シェーダー ファイル\SimpleLine">
+      <UniqueIdentifier>{e5f3523b-7715-4c81-853e-65368e25eb69}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="シェーダー ファイル\SimpleMesh">
+      <UniqueIdentifier>{2723f69e-65cb-4f82-9573-a4d3e4a39d3d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="シェーダー ファイル\SimpleInstance">
+      <UniqueIdentifier>{c4a0852e-4790-4e5f-bdf2-f8b703d7c222}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="シェーダー ファイル\Sprite">
+      <UniqueIdentifier>{5084128c-c618-47f8-bb75-efacf66ec1b1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="シェーダー ファイル\Test">
+      <UniqueIdentifier>{490e77e7-f6fa-45bf-9d11-cc4484504355}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Engine\2d\Sprite.cpp">
@@ -530,140 +590,140 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <FxCompile Include="Shader\TestVS.hlsl">
-      <Filter>シェーダー ファイル</Filter>
+    <FxCompile Include="Shader\Basic\BasicPS.hlsl">
+      <Filter>シェーダー ファイル\Basic</Filter>
     </FxCompile>
-    <FxCompile Include="Shader\BasicPS.hlsl">
-      <Filter>シェーダー ファイル</Filter>
+    <FxCompile Include="Shader\Basic\BasicVS.hlsl">
+      <Filter>シェーダー ファイル\Basic</Filter>
     </FxCompile>
-    <FxCompile Include="Shader\BasicVS.hlsl">
-      <Filter>シェーダー ファイル</Filter>
+    <FxCompile Include="Shader\Bloom\BloomPS.hlsl">
+      <Filter>シェーダー ファイル\Bloom</Filter>
     </FxCompile>
-    <FxCompile Include="Shader\GridPS.hlsl">
-      <Filter>シェーダー ファイル</Filter>
+    <FxCompile Include="Shader\Bloom\BloomVS.hlsl">
+      <Filter>シェーダー ファイル\Bloom</Filter>
     </FxCompile>
-    <FxCompile Include="Shader\GridVS.hlsl">
-      <Filter>シェーダー ファイル</Filter>
+    <FxCompile Include="Shader\BrightCut\BrightCutPS.hlsl">
+      <Filter>シェーダー ファイル\BrightCut</Filter>
     </FxCompile>
-    <FxCompile Include="Shader\SimplePS.hlsl">
-      <Filter>シェーダー ファイル</Filter>
+    <FxCompile Include="Shader\BrightCut\BrightCutVS.hlsl">
+      <Filter>シェーダー ファイル\BrightCut</Filter>
     </FxCompile>
-    <FxCompile Include="Shader\SimpleVS.hlsl">
-      <Filter>シェーダー ファイル</Filter>
+    <FxCompile Include="Shader\DepthTest\DepthTestPS.hlsl">
+      <Filter>シェーダー ファイル\DepthTest</Filter>
     </FxCompile>
-    <FxCompile Include="Shader\SpritePS.hlsl">
-      <Filter>シェーダー ファイル</Filter>
+    <FxCompile Include="Shader\DepthTest\DepthTestVS.hlsl">
+      <Filter>シェーダー ファイル\DepthTest</Filter>
     </FxCompile>
-    <FxCompile Include="Shader\SpriteVS.hlsl">
-      <Filter>シェーダー ファイル</Filter>
+    <FxCompile Include="Shader\Disolve\DisolvePS.hlsl">
+      <Filter>シェーダー ファイル\Disolve</Filter>
     </FxCompile>
-    <FxCompile Include="Shader\TestGS.hlsl">
-      <Filter>シェーダー ファイル</Filter>
+    <FxCompile Include="Shader\Disolve\DisolveVS.hlsl">
+      <Filter>シェーダー ファイル\Disolve</Filter>
     </FxCompile>
-    <FxCompile Include="Shader\TestPS.hlsl">
-      <Filter>シェーダー ファイル</Filter>
+    <FxCompile Include="Shader\Final\FinalVS.hlsl">
+      <Filter>シェーダー ファイル\Final</Filter>
     </FxCompile>
-    <FxCompile Include="Shader\PostEffectPS.hlsl">
-      <Filter>シェーダー ファイル</Filter>
+    <FxCompile Include="Shader\Final\FinalPS.hlsl">
+      <Filter>シェーダー ファイル\Final</Filter>
     </FxCompile>
-    <FxCompile Include="Shader\PostEffectVS.hlsl">
-      <Filter>シェーダー ファイル</Filter>
+    <FxCompile Include="Shader\GaussianBlur\GaussianBlurPS.hlsl">
+      <Filter>シェーダー ファイル\GaussianBlur</Filter>
     </FxCompile>
-    <FxCompile Include="Shader\FinalVS.hlsl">
-      <Filter>シェーダー ファイル</Filter>
+    <FxCompile Include="Shader\GaussianBlur\GaussianBlurVS.hlsl">
+      <Filter>シェーダー ファイル\GaussianBlur</Filter>
     </FxCompile>
-    <FxCompile Include="Shader\FinalPS.hlsl">
-      <Filter>シェーダー ファイル</Filter>
+    <FxCompile Include="Shader\Grid\GridPS.hlsl">
+      <Filter>シェーダー ファイル\Grid</Filter>
     </FxCompile>
-    <FxCompile Include="Shader\BloomPS.hlsl">
-      <Filter>シェーダー ファイル</Filter>
+    <FxCompile Include="Shader\Grid\GridVS.hlsl">
+      <Filter>シェーダー ファイル\Grid</Filter>
     </FxCompile>
-    <FxCompile Include="Shader\BloomVS.hlsl">
-      <Filter>シェーダー ファイル</Filter>
+    <FxCompile Include="Shader\LinearBlur\LinearBlurPS.hlsl">
+      <Filter>シェーダー ファイル\LinearBlur</Filter>
     </FxCompile>
-    <FxCompile Include="Shader\BrightCutPS.hlsl">
-      <Filter>シェーダー ファイル</Filter>
+    <FxCompile Include="Shader\LinearBlur\LinearBlurVS.hlsl">
+      <Filter>シェーダー ファイル\LinearBlur</Filter>
     </FxCompile>
-    <FxCompile Include="Shader\BrightCutVS.hlsl">
-      <Filter>シェーダー ファイル</Filter>
+    <FxCompile Include="Shader\MultiRenderTest\MultiRenderTestAPS.hlsl">
+      <Filter>シェーダー ファイル\MultiRenderTest</Filter>
     </FxCompile>
-    <FxCompile Include="Shader\GaussianBlurPS.hlsl">
-      <Filter>シェーダー ファイル</Filter>
+    <FxCompile Include="Shader\MultiRenderTest\MultiRenderTestAVS.hlsl">
+      <Filter>シェーダー ファイル\MultiRenderTest</Filter>
     </FxCompile>
-    <FxCompile Include="Shader\GaussianBlurVS.hlsl">
-      <Filter>シェーダー ファイル</Filter>
+    <FxCompile Include="Shader\MultiRenderTest\MultiRenderTestBPS.hlsl">
+      <Filter>シェーダー ファイル\MultiRenderTest</Filter>
     </FxCompile>
-    <FxCompile Include="Shader\NoneShadingPS.hlsl">
-      <Filter>シェーダー ファイル</Filter>
+    <FxCompile Include="Shader\MultiRenderTest\MultiRenderTestBVS.hlsl">
+      <Filter>シェーダー ファイル\MultiRenderTest</Filter>
     </FxCompile>
-    <FxCompile Include="Shader\NoneShadingVS.hlsl">
-      <Filter>シェーダー ファイル</Filter>
+    <FxCompile Include="Shader\NoneShading\NoneShadingPS.hlsl">
+      <Filter>シェーダー ファイル\NoneShading</Filter>
     </FxCompile>
-    <FxCompile Include="Shader\SimpleInstancePS.hlsl">
-      <Filter>シェーダー ファイル</Filter>
+    <FxCompile Include="Shader\NoneShading\NoneShadingVS.hlsl">
+      <Filter>シェーダー ファイル\NoneShading</Filter>
     </FxCompile>
-    <FxCompile Include="Shader\SimpleInstanceVS.hlsl">
-      <Filter>シェーダー ファイル</Filter>
+    <FxCompile Include="Shader\PaintedBasic\PaintedBasicPS.hlsl">
+      <Filter>シェーダー ファイル\PaintedBasic</Filter>
     </FxCompile>
-    <FxCompile Include="Shader\SimpleLineGS.hlsl">
-      <Filter>シェーダー ファイル</Filter>
+    <FxCompile Include="Shader\PaintedBasic\PaintedBasicVS.hlsl">
+      <Filter>シェーダー ファイル\PaintedBasic</Filter>
     </FxCompile>
-    <FxCompile Include="Shader\SimpleLinePS.hlsl">
-      <Filter>シェーダー ファイル</Filter>
+    <FxCompile Include="Shader\Particle3D\Particle3DGS.hlsl">
+      <Filter>シェーダー ファイル\Particle3D</Filter>
     </FxCompile>
-    <FxCompile Include="Shader\SimpleLineVS.hlsl">
-      <Filter>シェーダー ファイル</Filter>
+    <FxCompile Include="Shader\Particle3D\Particle3DPS.hlsl">
+      <Filter>シェーダー ファイル\Particle3D</Filter>
     </FxCompile>
-    <FxCompile Include="Shader\SimpleMeshPS.hlsl">
-      <Filter>シェーダー ファイル</Filter>
+    <FxCompile Include="Shader\Particle3D\Particle3DVS.hlsl">
+      <Filter>シェーダー ファイル\Particle3D</Filter>
     </FxCompile>
-    <FxCompile Include="Shader\SimpleMeshVS.hlsl">
-      <Filter>シェーダー ファイル</Filter>
+    <FxCompile Include="Shader\PostEffect\PostEffectPS.hlsl">
+      <Filter>シェーダー ファイル\PostEffect</Filter>
     </FxCompile>
-    <FxCompile Include="Shader\DepthTestPS.hlsl">
-      <Filter>シェーダー ファイル</Filter>
+    <FxCompile Include="Shader\PostEffect\PostEffectVS.hlsl">
+      <Filter>シェーダー ファイル\PostEffect</Filter>
     </FxCompile>
-    <FxCompile Include="Shader\DepthTestVS.hlsl">
-      <Filter>シェーダー ファイル</Filter>
+    <FxCompile Include="Shader\SimpleLine\SimpleLineGS.hlsl">
+      <Filter>シェーダー ファイル\SimpleLine</Filter>
     </FxCompile>
-    <FxCompile Include="Shader\LinearBlurPS.hlsl">
-      <Filter>シェーダー ファイル</Filter>
+    <FxCompile Include="Shader\SimpleLine\SimpleLinePS.hlsl">
+      <Filter>シェーダー ファイル\SimpleLine</Filter>
     </FxCompile>
-    <FxCompile Include="Shader\LinearBlurVS.hlsl">
-      <Filter>シェーダー ファイル</Filter>
+    <FxCompile Include="Shader\SimpleLine\SimpleLineVS.hlsl">
+      <Filter>シェーダー ファイル\SimpleLine</Filter>
     </FxCompile>
-    <FxCompile Include="Shader\MultiRenderTestAPS.hlsl">
-      <Filter>シェーダー ファイル</Filter>
+    <FxCompile Include="Shader\SimpleMesh\SimpleMeshPS.hlsl">
+      <Filter>シェーダー ファイル\SimpleMesh</Filter>
     </FxCompile>
-    <FxCompile Include="Shader\MultiRenderTestAVS.hlsl">
-      <Filter>シェーダー ファイル</Filter>
+    <FxCompile Include="Shader\SimpleMesh\SimpleMeshVS.hlsl">
+      <Filter>シェーダー ファイル\SimpleMesh</Filter>
     </FxCompile>
-    <FxCompile Include="Shader\MultiRenderTestBPS.hlsl">
-      <Filter>シェーダー ファイル</Filter>
+    <FxCompile Include="Shader\Simple\SimplePS.hlsl">
+      <Filter>シェーダー ファイル\Simple</Filter>
     </FxCompile>
-    <FxCompile Include="Shader\MultiRenderTestBVS.hlsl">
-      <Filter>シェーダー ファイル</Filter>
+    <FxCompile Include="Shader\Simple\SimpleVS.hlsl">
+      <Filter>シェーダー ファイル\Simple</Filter>
     </FxCompile>
-    <FxCompile Include="Shader\Particle3DGS.hlsl">
-      <Filter>シェーダー ファイル</Filter>
+    <FxCompile Include="Shader\SimpleInstance\SimpleInstancePS.hlsl">
+      <Filter>シェーダー ファイル\SimpleInstance</Filter>
     </FxCompile>
-    <FxCompile Include="Shader\Particle3DPS.hlsl">
-      <Filter>シェーダー ファイル</Filter>
+    <FxCompile Include="Shader\SimpleInstance\SimpleInstanceVS.hlsl">
+      <Filter>シェーダー ファイル\SimpleInstance</Filter>
     </FxCompile>
-    <FxCompile Include="Shader\Particle3DVS.hlsl">
-      <Filter>シェーダー ファイル</Filter>
+    <FxCompile Include="Shader\Sprite\SpritePS.hlsl">
+      <Filter>シェーダー ファイル\Sprite</Filter>
     </FxCompile>
-    <FxCompile Include="Shader\DisolvePS.hlsl">
-      <Filter>シェーダー ファイル</Filter>
+    <FxCompile Include="Shader\Sprite\SpriteVS.hlsl">
+      <Filter>シェーダー ファイル\Sprite</Filter>
     </FxCompile>
-    <FxCompile Include="Shader\DisolveVS.hlsl">
-      <Filter>シェーダー ファイル</Filter>
+    <FxCompile Include="Shader\Test\TestGS.hlsl">
+      <Filter>シェーダー ファイル\Test</Filter>
     </FxCompile>
-    <FxCompile Include="Shader\PaintedBasicPS.hlsl">
-      <Filter>シェーダー ファイル</Filter>
+    <FxCompile Include="Shader\Test\TestPS.hlsl">
+      <Filter>シェーダー ファイル\Test</Filter>
     </FxCompile>
-    <FxCompile Include="Shader\PaintedBasicVS.hlsl">
-      <Filter>シェーダー ファイル</Filter>
+    <FxCompile Include="Shader\Test\TestVS.hlsl">
+      <Filter>シェーダー ファイル\Test</Filter>
     </FxCompile>
   </ItemGroup>
   <ItemGroup>
@@ -1017,65 +1077,65 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Shader\Basic.hlsli">
-      <Filter>シェーダー ファイル</Filter>
+    <None Include="Shader\Basic\Basic.hlsli">
+      <Filter>シェーダー ファイル\Basic</Filter>
     </None>
-    <None Include="Shader\Grid.hlsli">
-      <Filter>シェーダー ファイル</Filter>
+    <None Include="Shader\Bloom\Bloom.hlsli">
+      <Filter>シェーダー ファイル\Bloom</Filter>
     </None>
-    <None Include="Shader\Simple.hlsli">
-      <Filter>シェーダー ファイル</Filter>
+    <None Include="Shader\BrightCut\BrightCut.hlsli">
+      <Filter>シェーダー ファイル\BrightCut</Filter>
     </None>
-    <None Include="Shader\Sprite.hlsli">
-      <Filter>シェーダー ファイル</Filter>
+    <None Include="Shader\DepthTest\DepthTest.hlsli">
+      <Filter>シェーダー ファイル\DepthTest</Filter>
     </None>
-    <None Include="Shader\Test.hlsli">
-      <Filter>シェーダー ファイル</Filter>
+    <None Include="Shader\Disolve\Disolve.hlsli">
+      <Filter>シェーダー ファイル\Disolve</Filter>
     </None>
-    <None Include="Shader\PostEffect.hlsli">
-      <Filter>シェーダー ファイル</Filter>
+    <None Include="Shader\Final\Final.hlsli">
+      <Filter>シェーダー ファイル\Final</Filter>
     </None>
-    <None Include="Shader\Final.hlsli">
-      <Filter>シェーダー ファイル</Filter>
+    <None Include="Shader\GaussianBlur\GaussianBlur.hlsli">
+      <Filter>シェーダー ファイル\GaussianBlur</Filter>
     </None>
-    <None Include="Shader\Bloom.hlsli">
-      <Filter>シェーダー ファイル</Filter>
+    <None Include="Shader\Grid\Grid.hlsli">
+      <Filter>シェーダー ファイル\Grid</Filter>
     </None>
-    <None Include="Shader\BrightCut.hlsli">
-      <Filter>シェーダー ファイル</Filter>
+    <None Include="Shader\LinearBlur\LinearBlur.hlsli">
+      <Filter>シェーダー ファイル\LinearBlur</Filter>
     </None>
-    <None Include="Shader\GaussianBlur.hlsli">
-      <Filter>シェーダー ファイル</Filter>
+    <None Include="Shader\MultiRenderTest\MultiRenderTest.hlsli">
+      <Filter>シェーダー ファイル\MultiRenderTest</Filter>
     </None>
-    <None Include="Shader\NoneShading.hlsli">
-      <Filter>シェーダー ファイル</Filter>
+    <None Include="Shader\NoneShading\NoneShading.hlsli">
+      <Filter>シェーダー ファイル\NoneShading</Filter>
     </None>
-    <None Include="Shader\SimpleInstance.hlsli">
-      <Filter>シェーダー ファイル</Filter>
+    <None Include="Shader\PaintedBasic\PaintedBasic.hlsli">
+      <Filter>シェーダー ファイル\PaintedBasic</Filter>
     </None>
-    <None Include="Shader\SimpleLine.hlsli">
-      <Filter>シェーダー ファイル</Filter>
+    <None Include="Shader\Particle3D\Particle3D.hlsli">
+      <Filter>シェーダー ファイル\Particle3D</Filter>
     </None>
-    <None Include="Shader\SimpleMesh.hlsli">
-      <Filter>シェーダー ファイル</Filter>
+    <None Include="Shader\PostEffect\PostEffect.hlsli">
+      <Filter>シェーダー ファイル\PostEffect</Filter>
     </None>
-    <None Include="Shader\DepthTest.hlsli">
-      <Filter>シェーダー ファイル</Filter>
+    <None Include="Shader\Simple\Simple.hlsli">
+      <Filter>シェーダー ファイル\Simple</Filter>
     </None>
-    <None Include="Shader\LinearBlur.hlsli">
-      <Filter>シェーダー ファイル</Filter>
+    <None Include="Shader\SimpleLine\SimpleLine.hlsli">
+      <Filter>シェーダー ファイル\SimpleLine</Filter>
     </None>
-    <None Include="Shader\MultiRenderTest.hlsli">
-      <Filter>シェーダー ファイル</Filter>
+    <None Include="Shader\SimpleMesh\SimpleMesh.hlsli">
+      <Filter>シェーダー ファイル\SimpleMesh</Filter>
     </None>
-    <None Include="Shader\Particle3D.hlsli">
-      <Filter>シェーダー ファイル</Filter>
+    <None Include="Shader\SimpleInstance\SimpleInstance.hlsli">
+      <Filter>シェーダー ファイル\SimpleInstance</Filter>
     </None>
-    <None Include="Shader\Disolve.hlsli">
-      <Filter>シェーダー ファイル</Filter>
+    <None Include="Shader\Sprite\Sprite.hlsli">
+      <Filter>シェーダー ファイル\Sprite</Filter>
     </None>
-    <None Include="Shader\PaintedBasic.hlsli">
-      <Filter>シェーダー ファイル</Filter>
+    <None Include="Shader\Test\Test.hlsli">
+      <Filter>シェーダー ファイル\Test</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>

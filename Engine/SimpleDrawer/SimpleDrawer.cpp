@@ -347,8 +347,8 @@ void SimpleDrawer::Init()
 
 	mPipelineState = RDirectX::GetDefPipeline();
 
-	mPipelineState.mDesc.VS = Shader("./Shader/SimpleVS.hlsl", "main", "vs_5_0");
-	mPipelineState.mDesc.PS = Shader("./Shader/SimplePS.hlsl", "main", "ps_5_0");
+	mPipelineState.mDesc.VS = Shader("./Shader/Simple/SimpleVS.hlsl", "main", "vs_5_0");
+	mPipelineState.mDesc.PS = Shader("./Shader/Simple/SimplePS.hlsl", "main", "ps_5_0");
 
 	// ラスタライザの設定
 	mPipelineState.mDesc.RasterizerState.CullMode = D3D12_CULL_MODE_NONE;
@@ -365,8 +365,8 @@ void SimpleDrawer::Init()
 	mBoxRS.mDesc.Flags = D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT;
 	mBoxRS.Create();
 
-	mBoxPSO.mDesc.VS = Shader("./Shader/SimpleMeshVS.hlsl", "main", "vs_5_0");
-	mBoxPSO.mDesc.PS = Shader("./Shader/SimpleMeshPS.hlsl", "main", "ps_5_0");
+	mBoxPSO.mDesc.VS = Shader("./Shader/SimpleMesh/SimpleMeshVS.hlsl", "main", "vs_5_0");
+	mBoxPSO.mDesc.PS = Shader("./Shader/SimpleMesh/SimpleMeshPS.hlsl", "main", "ps_5_0");
 	mBoxPSO.mDesc.SampleMask = D3D12_DEFAULT_SAMPLE_MASK;
 
 	mBoxPSO.mDesc.RasterizerState.CullMode = D3D12_CULL_MODE_NONE;
@@ -417,9 +417,9 @@ void SimpleDrawer::Init()
 	mLineRS.mDesc.RootParamaters = lineRootParams;
 	mLineRS.Create();
 
-	mLinePSO.mDesc.VS = Shader("./Shader/SimpleLineVS.hlsl", "main", "vs_5_0");
-	mLinePSO.mDesc.GS = Shader("./Shader/SimpleLineGS.hlsl", "main", "gs_5_0");
-	mLinePSO.mDesc.PS = Shader("./Shader/SimpleLinePS.hlsl", "main", "ps_5_0");
+	mLinePSO.mDesc.VS = Shader("./Shader/SimpleLine/SimpleLineVS.hlsl", "main", "vs_5_0");
+	mLinePSO.mDesc.GS = Shader("./Shader/SimpleLine/SimpleLineGS.hlsl", "main", "gs_5_0");
+	mLinePSO.mDesc.PS = Shader("./Shader/SimpleLine/SimpleLinePS.hlsl", "main", "ps_5_0");
 	mLinePSO.mDesc.SampleMask = D3D12_DEFAULT_SAMPLE_MASK;
 
 	mLinePSO.mDesc.RasterizerState.CullMode = D3D12_CULL_MODE_NONE;
@@ -476,8 +476,8 @@ void SimpleDrawer::Init()
 	mCircleRS.mDesc.Flags = D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT;
 	mCircleRS.Create();
 
-	mCirclePSO.mDesc.VS = Shader("Shader/SimpleInstanceVS.hlsl", "main", "vs_5_0");
-	mCirclePSO.mDesc.PS = Shader("Shader/SimpleInstancePS.hlsl", "main", "ps_5_0");
+	mCirclePSO.mDesc.VS = Shader("Shader/SimpleInstance/SimpleInstanceVS.hlsl", "main", "vs_5_0");
+	mCirclePSO.mDesc.PS = Shader("Shader/SimpleInstance/SimpleInstancePS.hlsl", "main", "ps_5_0");
 	mCirclePSO.mDesc.SampleMask = D3D12_DEFAULT_SAMPLE_MASK;
 
 	mCirclePSO.mDesc.RasterizerState.CullMode = D3D12_CULL_MODE_NONE;

@@ -146,8 +146,8 @@ GraphicsPipeline& DepthTest::GetGraphicsPipelineA()
 	blenddesc.SrcBlend = D3D12_BLEND_SRC_ALPHA;
 	blenddesc.DestBlend = D3D12_BLEND_INV_SRC_ALPHA;
 
-	desc.VS = Shader::GetOrCreate("DepthTestA_VS", "Shader/DepthTestVS.hlsl", "main", "vs_5_0");
-	desc.PS = Shader::GetOrCreate("DepthTestA_PS", "Shader/DepthTestPS.hlsl", "main", "ps_5_0");
+	desc.VS = Shader::GetOrCreate("DepthTestA_VS", "Shader/DepthTest/DepthTestVS.hlsl", "main", "vs_5_0");
+	desc.PS = Shader::GetOrCreate("DepthTestA_PS", "Shader/DepthTest/DepthTestPS.hlsl", "main", "ps_5_0");
 	desc.pRootSignature = GetRootSignatureA().mPtr.Get();
 	return GraphicsPipeline::GetOrCreate("DepthTestA", desc);
 }
@@ -173,8 +173,8 @@ GraphicsPipeline& DepthTest::GetGraphicsPipelineB()
 	desc.DepthStencilState.DepthEnable = false;
 	desc.DepthStencilState.DepthWriteMask = D3D12_DEPTH_WRITE_MASK_ZERO;
 
-	desc.VS = Shader::GetOrCreate("DepthTestB_VS", "Shader/FinalVS.hlsl", "main", "vs_5_0");
-	desc.PS = Shader::GetOrCreate("DepthTestB_PS", "Shader/FinalPS.hlsl", "main", "ps_5_0");
+	desc.VS = Shader::GetOrCreate("DepthTestB_VS", "Shader/Final/FinalVS.hlsl", "main", "vs_5_0");
+	desc.PS = Shader::GetOrCreate("DepthTestB_PS", "Shader/Final/FinalPS.hlsl", "main", "ps_5_0");
 	desc.pRootSignature = GetRootSignatureA().mPtr.Get();
 	return GraphicsPipeline::GetOrCreate("DepthTestB", desc);
 }

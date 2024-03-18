@@ -47,8 +47,8 @@ GraphicsPipeline WaxManager::CreateDisolvePipeLine()
 	descriptorRange.OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND;
 
 	PipelineStateDesc pipedesc = RDirectX::GetDefPipeline().mDesc;
-	pipedesc.VS = Shader::GetOrCreate("DisolveVS", "Shader/DisolveVS.hlsl", "main", "vs_5_0");
-	pipedesc.PS = Shader::GetOrCreate("DisolvePS", "Shader/DisolvePS.hlsl", "main", "ps_5_0");
+	pipedesc.VS = Shader::GetOrCreate("DisolveVS", "Shader/Disolve/DisolveVS.hlsl", "main", "vs_5_0");
+	pipedesc.PS = Shader::GetOrCreate("DisolvePS", "Shader/Disolve/DisolvePS.hlsl", "main", "ps_5_0");
 
 	RootParamaters rootParams(7);
 	//マテリアル

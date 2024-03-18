@@ -322,7 +322,7 @@ void RDirectX::InitInternal() {
 	mRootSignature.Create();
 
 	//Basicシェーダ達の読み込みとコンパイル
-	mBasicVS = Shader("Shader/BasicVS.hlsl", "main", "vs_5_0");
+	mBasicVS = Shader("Shader/Basic/BasicVS.hlsl", "main", "vs_5_0");
 	if (!mBasicVS.mSucceeded) {
 		string error;
 		error.resize(mBasicVS.mErrorBlob->GetBufferSize());
@@ -335,7 +335,7 @@ void RDirectX::InitInternal() {
 		assert(0);
 	}
 
-	mBasicPS = Shader("Shader/BasicPS.hlsl", "main", "ps_5_0");
+	mBasicPS = Shader("Shader/Basic/BasicPS.hlsl", "main", "ps_5_0");
 	if (!mBasicPS.mSucceeded) {
 		string error;
 		error.resize(mBasicPS.mErrorBlob->GetBufferSize());

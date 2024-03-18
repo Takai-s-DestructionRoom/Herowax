@@ -175,8 +175,8 @@ GraphicsPipeline& CrossFilter::GetGraphicsPipelineA()
 	blenddesc.SrcBlend = D3D12_BLEND_SRC_ALPHA;
 	blenddesc.DestBlend = D3D12_BLEND_INV_SRC_ALPHA;
 
-	desc.VS = Shader::GetOrCreate("CrossFilterA_VS", "Shader/BrightCutVS.hlsl", "main", "vs_5_0");
-	desc.PS = Shader::GetOrCreate("CrossFilterA_PS", "Shader/BrightCutPS.hlsl", "main", "ps_5_0");
+	desc.VS = Shader::GetOrCreate("CrossFilterA_VS", "Shader/BrightCut/BrightCutVS.hlsl", "main", "vs_5_0");
+	desc.PS = Shader::GetOrCreate("CrossFilterA_PS", "Shader/BrightCut/BrightCutPS.hlsl", "main", "ps_5_0");
 	desc.pRootSignature = GetRootSignatureA().mPtr.Get();
 	return GraphicsPipeline::GetOrCreate("CrossFilterA", desc);
 }
@@ -211,8 +211,8 @@ GraphicsPipeline& CrossFilter::GetGraphicsPipelineB()
 	blenddesc.SrcBlend = D3D12_BLEND_SRC_ALPHA;
 	blenddesc.DestBlend = D3D12_BLEND_INV_SRC_ALPHA;
 
-	desc.VS = Shader::GetOrCreate("CrossFilterB_VS", "Shader/LinearBlurVS.hlsl", "main", "vs_5_0");
-	desc.PS = Shader::GetOrCreate("CrossFilterB_PS", "Shader/LinearBlurPS.hlsl", "main", "ps_5_0");
+	desc.VS = Shader::GetOrCreate("CrossFilterB_VS", "Shader/LinearBlur/LinearBlurVS.hlsl", "main", "vs_5_0");
+	desc.PS = Shader::GetOrCreate("CrossFilterB_PS", "Shader/LinearBlur/LinearBlurPS.hlsl", "main", "ps_5_0");
 	desc.pRootSignature = GetRootSignatureB().mPtr.Get();
 	return GraphicsPipeline::GetOrCreate("CrossFilterB", desc);
 }
@@ -246,8 +246,8 @@ GraphicsPipeline& CrossFilter::GetGraphicsPipelineC()
 	blenddesc.BlendOp = D3D12_BLEND_OP_ADD;
 	blenddesc.SrcBlend = D3D12_BLEND_ONE;
 	blenddesc.DestBlend = D3D12_BLEND_ONE;
-	desc.VS = Shader::GetOrCreate("CrossFilterC_VS", "Shader/BloomVS.hlsl", "main", "vs_5_0");
-	desc.PS = Shader::GetOrCreate("CrossFilterC_PS", "Shader/BloomPS.hlsl", "main", "ps_5_0");
+	desc.VS = Shader::GetOrCreate("CrossFilterC_VS", "Shader/Bloom/BloomVS.hlsl", "main", "vs_5_0");
+	desc.PS = Shader::GetOrCreate("CrossFilterC_PS", "Shader/Bloom/BloomPS.hlsl", "main", "ps_5_0");
 	desc.pRootSignature = GetRootSignatureA().mPtr.Get();
 	return GraphicsPipeline::GetOrCreate("CrossFilterC", desc);
 }

@@ -180,8 +180,8 @@ GraphicsPipeline& MultiRenderTest::GetGraphicsPipelineA()
 	blenddesc.DestBlend = D3D12_BLEND_INV_SRC_ALPHA;
 	desc.BlendState.RenderTarget[1] = blenddesc;
 
-	desc.VS = Shader::GetOrCreate("MultiRenderTestA_VS", "Shader/MultiRenderTestAVS.hlsl", "main", "vs_5_0");
-	desc.PS = Shader::GetOrCreate("MultiRenderTestA_PS", "Shader/MultiRenderTestAPS.hlsl", "main", "ps_5_0");
+	desc.VS = Shader::GetOrCreate("MultiRenderTestA_VS", "Shader/MultiRenderTest/MultiRenderTestAVS.hlsl", "main", "vs_5_0");
+	desc.PS = Shader::GetOrCreate("MultiRenderTestA_PS", "Shader/MultiRenderTest/MultiRenderTestAPS.hlsl", "main", "ps_5_0");
 	desc.pRootSignature = GetRootSignatureA().mPtr.Get();
 	return GraphicsPipeline::GetOrCreate("MultiRenderTestA", desc);
 }
@@ -216,8 +216,8 @@ GraphicsPipeline& MultiRenderTest::GetGraphicsPipelineB()
 	blenddesc.SrcBlend = D3D12_BLEND_SRC_ALPHA;
 	blenddesc.DestBlend = D3D12_BLEND_INV_SRC_ALPHA;
 
-	desc.VS = Shader::GetOrCreate("MultiRenderTestB_VS", "Shader/MultiRenderTestBVS.hlsl", "main", "vs_5_0");
-	desc.PS = Shader::GetOrCreate("MultiRenderTestB_PS", "Shader/MultiRenderTestBPS.hlsl", "main", "ps_5_0");
+	desc.VS = Shader::GetOrCreate("MultiRenderTestB_VS", "Shader/MultiRenderTest/MultiRenderTestBVS.hlsl", "main", "vs_5_0");
+	desc.PS = Shader::GetOrCreate("MultiRenderTestB_PS", "Shader/MultiRenderTest/MultiRenderTestBPS.hlsl", "main", "ps_5_0");
 	desc.pRootSignature = GetRootSignatureB().mPtr.Get();
 	return GraphicsPipeline::GetOrCreate("MultiRenderTestB", desc);
 }
