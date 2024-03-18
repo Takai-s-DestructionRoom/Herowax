@@ -15,6 +15,7 @@ void Level::Load()
 {
 	LevelLoader::Get()->Load("./Level/test.json", "test");
 	Model::Load("./Resources/Model/Cube.obj", "Cube", true);
+	Model::Load("./Resources/Model/Slope.obj", "Slope", true);
 }
 
 void Level::Reset()

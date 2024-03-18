@@ -204,6 +204,8 @@ void ProtoScene::Update()
 			{
 				//ここで大雑把に当たり判定を取って、絶対に当たってないやつを除外する
 				if (!ColPrimitive3D::CheckSphereToSphere(wax->collider, paintObj->collider))continue;
+				//アクティブチェック
+				if (!paintObj->GetIsAlive())continue;
 
 				for (auto& paintTri : paintObj->obj.GetTriangle())
 				{

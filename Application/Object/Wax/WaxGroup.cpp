@@ -39,7 +39,13 @@ void WaxGroup::Update()
 		}
 		if (!(*itr)->GetIsAlive())
 		{
-			itr = waxs.erase(itr);
+			//サイズ1ならバグることがあるので除外
+			if (waxs.size() >= 1) {
+				itr = waxs.erase(itr);
+			}
+			else {
+				break;
+			}
 		}
 		else
 		{
