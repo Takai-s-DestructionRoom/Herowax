@@ -13,7 +13,8 @@ bool Material::operator==(const Material& o) const
         && mColor == o.mColor
         && mAmbient == o.mAmbient
         && mDiffuse == o.mDiffuse
-        && mSpecular == o.mSpecular;
+        && mSpecular == o.mSpecular
+        && mTiling == o.mTiling;
 }
 
 bool Material::operator!=(const Material& o) const
@@ -27,4 +28,5 @@ void Material::Transfer(MaterialBuffer* target)
 	target->ambient = mAmbient;
 	target->diffuse = mDiffuse;
 	target->specular = mSpecular;
+	target->tiling = mTiling;
 }

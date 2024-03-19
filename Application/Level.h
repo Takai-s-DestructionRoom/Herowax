@@ -54,4 +54,5 @@ private:
 	Ground* ground = nullptr;	//地面
 
 	bool isViewCol = false;
+	float tiling = 1.f;
 };

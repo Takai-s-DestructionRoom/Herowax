@@ -16,6 +16,8 @@ struct MaterialBuffer {
 	Vector3 diffuse;
 	float pad2 = 0;
 	Vector3 specular;
+	float pad3 = 0;
+	Vector2 tiling;
 };
 
 class Material
@@ -27,6 +29,7 @@ public:
 	Vector3 mAmbient = {1, 1, 1}; //環境光
 	Vector3 mDiffuse = {0, 0, 0}; //拡散反射光
 	Vector3 mSpecular = {0, 0, 0}; //鏡面反射光
+	Vector2 mTiling = { 1,1 };	//タイリング数
 
 	Material() {}
 	Material(bool allOne) {

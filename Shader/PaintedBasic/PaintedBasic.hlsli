@@ -5,6 +5,7 @@ cbuffer ConstBufferDataMaterial : register(b0)
 	float3 m_ambient : packoffset(c1);
 	float3 m_diffuse : packoffset(c2);
 	float3 m_specular : packoffset(c3);
+    float2 tiling : packoffset(c4);
 };
 
 // ƒ[ƒ‹ƒh•ÏŠ·s—ñ

@@ -100,6 +100,15 @@ void Level::Update()
 
 	ImGui::Begin("レベルデータ");
 
+	float oldtil = tiling;
+	ImGui::SliderFloat("タイリング", &tiling,0.0f,100.f);
+	if (oldtil != tiling) {
+		for (auto& gameObj : objects)
+		{
+			gameObj->obj.mTuneMaterial.mTiling = { tiling,tiling };
+		}
+	}
+
 	bool oldView = isViewCol;
 	ImGui::Checkbox("地面、卵、地形の当たり判定描画", &isViewCol);
 	if (oldView != isViewCol) {

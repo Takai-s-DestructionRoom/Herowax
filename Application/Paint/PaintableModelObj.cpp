@@ -360,6 +360,8 @@ void PaintableModelObj::TransferBuffer(ViewProjection viewprojection)
 		mat.mAmbient *= mTuneMaterial.mAmbient;
 		mat.mDiffuse *= mTuneMaterial.mDiffuse;
 		mat.mSpecular *= mTuneMaterial.mSpecular;
+		mat.mTiling.x *= mTuneMaterial.mTiling.x;
+		mat.mTiling.y *= mTuneMaterial.mTiling.y;
 		mat.Transfer(mMaterialBuffMap[name].Get());
 	}
 

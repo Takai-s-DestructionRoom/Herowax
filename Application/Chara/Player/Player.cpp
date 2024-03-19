@@ -438,10 +438,13 @@ void Player::PabloAttack()
 	//入力があるならそっちへ
 	if (abs(RInput::GetInstance()->GetPadLStick().LengthSq()) >= shotDeadZone)
 	{
+		pabloVec = GetFrontVec();
+		pabloVec.y = atkHeight;
+
 		//ここまだやってない
-		pabloVec = Vector3(RInput::GetInstance()->GetPadLStick().x,
+		pabloVec.Cross(Vector3(RInput::GetInstance()->GetPadLStick().x,
 			atkHeight,
-			RInput::GetInstance()->GetPadLStick().y);
+			RInput::GetInstance()->GetPadLStick().y));
 	}
 	//ないなら正面へ
 	else

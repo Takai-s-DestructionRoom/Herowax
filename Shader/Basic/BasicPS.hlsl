@@ -33,7 +33,7 @@ float4 main(VSOutput input) : SV_TARGET
     
     //----------ディザ抜きの諸々の処理終わり----------//
     
-	float4 texcolor = float4(tex.Sample(smp, input.uv));
+    float4 texcolor = float4(tex.Sample(smp, input.uv * tiling));
 	texcolor = texcolor * m_color;
 	
 	//光沢度

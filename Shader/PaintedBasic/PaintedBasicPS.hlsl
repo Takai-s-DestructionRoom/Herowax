@@ -34,14 +34,14 @@ float4 main(VSOutput input) : SV_TARGET
     
     //----------ディザ抜きの諸々の処理終わり----------//
     
-	float4 texcolor = float4(tex.Sample(smp, input.uv));
+	float4 texcolor = float4(tex.Sample(smp, input.uv * tiling));
 	texcolor = texcolor * m_color;
     
     //ペイント部分のマテリアル扱い
     float3 m_pAmbient = { 1, 1, 1 };
     float3 m_pDiffuse = { 1, 1, 1 };
     float3 m_pSpecular = { 1, 1, 1 };
-    float4 paintcolor = float4(paintTex.Sample(smp, input.uv));
+    float4 paintcolor = float4(paintTex.Sample(smp, input.uv * tiling));
     float paintRatio = paintcolor.a;
     paintcolor.a = 1;
     texcolor = texcolor * (1 - paintRatio) + paintcolor * paintRatio;
