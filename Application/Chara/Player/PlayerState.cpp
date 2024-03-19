@@ -2,9 +2,23 @@
 #include "Player.h"
 #include "RInput.h"
 #include "WaxManager.h"
+#include "Camera.h"
+#include "Quaternion.h"
 
 void PlayerNormal::Update(Player* player)
 {
+	//カメラの向いている方向を取得
+	Vector3 camVec = Camera::sNowCamera->mViewProjection.mTarget -
+		Camera::sNowCamera->mViewProjection.mEye;
+	camVec.Normalize();
+	camVec.y = 0;
+
+	//ターゲットの方向を向いてくれる
+	Quaternion aLookat = Quaternion::LookAt(camVec);
+
+	//euler軸へ変換
+	player->obj.mTransform.rotation = aLookat.ToEuler();
+
 	//入力があればステート遷移
 	if (RInput::GetInstance()->GetRTrigger()) {
 		player->attackState = std::make_unique<PlayerPablo>();
@@ -26,6 +40,17 @@ void PlayerPablo::Update(Player* player)
 		//通常の移動速度に戻す
 		player->moveSpeed /= player->pabloSpeedMag;
 	}
+
+	//カメラの向いている方向を取得
+	Vector3 camVec = -Vector3(RInput::GetInstance()->GetPadLStick().x, 0,RInput::GetInstance()->GetPadLStick().y);
+	camVec.Normalize();
+	camVec.y = 0;
+
+	//ターゲットの方向を向いてくれる
+	Quaternion aLookat = Quaternion::LookAt(camVec);
+
+	//euler軸へ変換
+	player->obj.mTransform.rotation = aLookat.ToEuler();
 
 	//パッドの入力があったらそっちの方向を正面として飛ばす
 	//弾きの入力があったら生成

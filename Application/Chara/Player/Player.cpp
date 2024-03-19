@@ -56,18 +56,6 @@ void Player::Update()
 		MoveKey();
 	}
 
-	//カメラの向いている方向を取得
-	Vector3 camVec = Camera::sNowCamera->mViewProjection.mTarget -
-		Camera::sNowCamera->mViewProjection.mEye;
-	camVec.Normalize();
-	camVec.y = 0;
-
-	//ターゲットの方向を向いてくれる
-	Quaternion aLookat = Quaternion::LookAt(camVec);
-
-	//euler軸へ変換
-	obj.mTransform.rotation = aLookat.ToEuler();
-
 	attackState->Update(this);
 
 	//-----------クールタイム管理-----------//
@@ -435,23 +423,9 @@ void Player::PabloAttack()
 	atkCoolTimer.Start();
 
 	Vector3 pabloVec = { 0,0,0 };
-	//入力があるならそっちへ
-	if (abs(RInput::GetInstance()->GetPadLStick().LengthSq()) >= shotDeadZone)
-	{
-		pabloVec = GetFrontVec();
-		pabloVec.y = atkHeight;
 
-		//ここまだやってない
-		pabloVec.Cross(Vector3(RInput::GetInstance()->GetPadLStick().x,
-			atkHeight,
-			RInput::GetInstance()->GetPadLStick().y));
-	}
-	//ないなら正面へ
-	else
-	{
-		pabloVec = GetFrontVec();
-		pabloVec.y = atkHeight;
-	}
+	pabloVec = GetFrontVec();
+	pabloVec.y = atkHeight;
 
 	pabloVec.Normalize();
 
