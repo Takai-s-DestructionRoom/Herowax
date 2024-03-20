@@ -97,9 +97,9 @@ void ProtoScene::Update()
 		//蝋との当たり判定
 		for (auto& group : WaxManager::GetInstance()->waxGroups)
 		{
-			bool isCollision = false;
+			bool isHitEnemy = false;
 			for (auto& wax : group->waxs) {
-				isCollision = ColPrimitive3D::CheckSphereToSphere(enemy->collider, wax->collider);
+				bool isCollision = ColPrimitive3D::CheckSphereToSphere(enemy->collider, wax->collider);
 
 				if (isCollision && wax->isSolid == false) {
 					//投げられてる蝋に当たった時は蝋固まり状態へ遷移
@@ -117,9 +117,13 @@ void ProtoScene::Update()
 							enemy->SetTarget(&player.obj);
 						}
 					}
+					else
+					{
+						isHitEnemy = true;
+					}
 				}
 			}
-			if (isCollision) {
+			if (isHitEnemy) {
 				group->trapEnemys.push_back(enemy.get());
 			}
 		}

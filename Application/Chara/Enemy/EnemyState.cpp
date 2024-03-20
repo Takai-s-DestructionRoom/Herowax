@@ -85,7 +85,9 @@ void EnemyWaxCoating::Update(Enemy* enemy)
 	timer.Update();
 	if (timer.GetEnd()) {
 		//遷移
-		enemy->ChangeState<EnemyAllStop>();
+		//enemy->ChangeState<EnemyAllStop>();
+		enemy->ChangeState<EnemyNormal>();	//仕様変更でAllstopに遷移する理由がないのでいったんnormalへ
+		//あとでまた考える
 	}
 }
 
@@ -95,25 +97,25 @@ void EnemyAllStop::Update(Enemy* enemy)
 
 	enemy->SetIsEscape(false);
 	//タイマーを回し続ける
-	enemy->GetEscapeCoolTimer()->Update();
-	if (enemy->GetEscapeCoolTimer()->GetStarted() == false)
-	{
-		enemy->GetEscapeCoolTimer()->Start();
-	}
-	else if (enemy->GetEscapeCoolTimer()->GetEnd())
-	{
-		enemy->SetIsEscape(true);	//脱出行動をする
-		enemy->trappedWaxGroup->Damage(enemy->GetEscapePower());
+	//enemy->GetEscapeCoolTimer()->Update();
+	//if (enemy->GetEscapeCoolTimer()->GetStarted() == false)
+	//{
+	//	enemy->GetEscapeCoolTimer()->Start();
+	//}
+	//else if (enemy->GetEscapeCoolTimer()->GetEnd())
+	//{
+	//	enemy->SetIsEscape(true);	//脱出行動をする
+	//	enemy->trappedWaxGroup->Damage(enemy->GetEscapePower());
 
-		enemy->GetEscapeCoolTimer()->Reset();
-	}
+	//	enemy->GetEscapeCoolTimer()->Reset();
+	//}
 
-	//抵抗して蝋のHPが0になったら次へ(当たり判定不要)
-	if (enemy->trappedWaxGroup->GetIsAlive() == false)
-	{
-		//遷移
-		enemy->ChangeState<EnemyNormal>();
-	}
+	////抵抗して蝋のHPが0になったら次へ(当たり判定不要)
+	//if (enemy->trappedWaxGroup->GetIsAlive() == false)
+	//{
+	//	//遷移
+	//	enemy->ChangeState<EnemyNormal>();
+	//}
 }
 
 EnemyBurning::EnemyBurning()

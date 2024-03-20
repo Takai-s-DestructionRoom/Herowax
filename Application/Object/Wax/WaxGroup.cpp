@@ -67,7 +67,6 @@ void WaxGroup::Update()
 		if (enemy->GetState() == "Normal") {
 			enemy->ChangeState<EnemySlow>();
 		}
-		
 	}
 
 	//1~9までの場合を入れる
@@ -101,7 +100,9 @@ void WaxGroup::Update()
 		SetIsAlive(false);
 	}
 
-	trapEnemys.clear();
+	if (!solidTimer.GetStarted()) {
+		trapEnemys.clear();
+	}
 }
 
 void WaxGroup::Draw()
