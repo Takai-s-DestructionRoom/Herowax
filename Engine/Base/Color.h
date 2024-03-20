@@ -42,6 +42,9 @@ public:
 	const static Color kWhite;
 	const static Color kBlack;
 
+	const static Color kFireOutside;
+	const static Color kFireInside;
+
 	bool operator==(const Color& o) const;
 
 	static Color convertFromHSVA(HSVA hsva) {
