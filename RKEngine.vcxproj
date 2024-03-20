@@ -117,6 +117,7 @@
     <ClCompile Include="Application\Chara\Enemy\EnemyManager.cpp" />
     <ClCompile Include="Application\Chara\Enemy\EnemyState.cpp" />
     <ClCompile Include="Application\Chara\Enemy\EnemyUI.cpp" />
+    <ClCompile Include="Application\BombSolider.cpp" />
     <ClCompile Include="Engine\Easing.cpp" />
     <ClCompile Include="Engine\Base\RenderTarget.cpp" />
     <ClCompile Include="Engine\Base\SRIndexBuffer.cpp" />
@@ -213,6 +214,7 @@
     <ClCompile Include="Application\Chara\Player\PlayerState.cpp" />
     <ClCompile Include="Application\Paint\PaintableModelObj.cpp" />
     <ClCompile Include="Engine\Particle\RingParticle.cpp" />
+    <ClCompile Include="Application\SpawnOrderData.cpp" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Shader\Basic\BasicPS.hlsl">
@@ -511,6 +513,7 @@
     <ClInclude Include="Application\Chara\Enemy\EnemyManager.h" />
     <ClInclude Include="Application\Chara\Enemy\EnemyState.h" />
     <ClInclude Include="Application\Chara\Enemy\EnemyUI.h" />
+    <ClInclude Include="Application\BombSolider.h" />
     <ClInclude Include="Engine\Easing.h" />
     <ClInclude Include="Engine\Base\Rect.h" />
     <ClInclude Include="Engine\Base\RenderTarget.h" />
@@ -613,6 +616,7 @@
     <ClInclude Include="Application\Chara\Player\PlayerState.h" />
     <ClInclude Include="Application\Paint\PaintableModelObj.h" />
     <ClInclude Include="Engine\Particle\RingParticle.h" />
+    <ClInclude Include="Application\SpawnOrderData.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Shader\Basic\Basic.hlsli">

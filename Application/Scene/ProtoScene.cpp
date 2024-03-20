@@ -90,42 +90,42 @@ void ProtoScene::Update()
 	for (auto& enemy : EnemyManager::GetInstance()->enemys)
 	{
 		//タワーとの当たり判定
-		if (ColPrimitive3D::CheckSphereToSphere(enemy.collider, level.tower.collider)) {
-			enemy.SetDeath();
-			Vector3 vec = level.tower.GetPos() - enemy.GetPos();
+		if (ColPrimitive3D::CheckSphereToSphere(enemy->collider, level.tower.collider)) {
+			enemy->SetDeath();
+			Vector3 vec = level.tower.GetPos() - enemy->GetPos();
 			level.tower.Damage(1.f,vec);
 		}
 		//蝋との当たり判定
 		for (auto& group : WaxManager::GetInstance()->waxGroups)
 		{
 			for (auto& wax : group->waxs) {
-				bool isCollision = ColPrimitive3D::CheckSphereToSphere(enemy.collider, wax->collider);
+				bool isCollision = ColPrimitive3D::CheckSphereToSphere(enemy->collider, wax->collider);
 
 				if (isCollision && wax->isSolid == false) {
 					//投げられてる蝋に当たった時は蝋固まり状態へ遷移
 					if (wax->isGround == false) {
-						enemy.ChangeState<EnemyWaxCoating>();
-						enemy.trappedWaxGroup = group.get();
+						enemy->ChangeState<EnemyWaxCoating>();
+						enemy->trappedWaxGroup = group.get();
 						
 						//enemyにダメージ
 						Vector3 knockVec = player.atkVec;
 						knockVec.y = 0;
-						enemy.DealDamage(WaxManager::GetInstance()->waxDamage,
+						enemy->DealDamage(WaxManager::GetInstance()->waxDamage,
 							knockVec, &player.obj);
 						//お試し実装:自分が攻撃を当てた相手が自分を追いかけてくる
 						if (player.GetTauntMode()) {
-							enemy.SetTarget(&player.obj);
+							enemy->SetTarget(&player.obj);
 						}
 					}
 					//地面に付いた蝋に当たった時は蝋足止め状態へ遷移
 					else {
-						enemy.ChangeState<EnemySlow>();
-						enemy.trappedWaxGroup = group.get();
+						enemy->ChangeState<EnemySlow>();
+						enemy->trappedWaxGroup = group.get();
 
 						//そのロウが燃えているなら一緒に燃える
 						if (wax->GetState() != "Normal")
 						{
-							enemy.ChangeState<EnemyBurning>();
+							enemy->ChangeState<EnemyBurning>();
 						}
 					}
 				}
@@ -194,8 +194,8 @@ void ProtoScene::Update()
 				for (auto& enemy : EnemyManager::GetInstance()->enemys)
 				{
 					//エネミーが保持しているポインタと同じ位置を指そうとしているなら変える
-					if (enemy.trappedWaxGroup == group2.get()) {
-						enemy.trappedWaxGroup = group1.get();
+					if (enemy->trappedWaxGroup == group2.get()) {
+						enemy->trappedWaxGroup = group1.get();
 					}
 				}
 				group1->waxs.splice(group1->waxs.end(), std::move(group2->waxs));
