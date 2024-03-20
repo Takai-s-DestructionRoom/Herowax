@@ -22,6 +22,10 @@ public:
 	//どっかで呼んでください
 	void SetupPaint();
 
+	//ペイントされたテクスチャの色を取得してくる
+	//指定したUVに対応する位置をゲット
+	Color ReadPaint(Vector2 uv, int32_t texNum);
+
 	/// <summary>
 	/// 指定したワールド座標とポリゴンからテクスチャペイントを行う
 	/// </summary>

@@ -57,6 +57,59 @@ void PaintableModelObj::SetupPaint()
 	}
 }
 
+Color PaintableModelObj::ReadPaint(Vector2 uv, int32_t texNum)
+{
+	Texture& tex = mRenderTargets[texNum]->GetTexture();
+
+	UINT width = static_cast<UINT>(tex.mResource.Get()->GetDesc().Width);
+	UINT height = tex.mResource.Get()->GetDesc().Height;
+
+	UINT u = static_cast<UINT>(roundf(uv.x * width));
+	UINT v = static_cast<UINT>(roundf(uv.y * height));
+
+	struct ColorU8 {
+		uint8_t r;
+		uint8_t g;
+		uint8_t b;
+		uint8_t a;
+	};
+
+	ColorU8 color;
+
+	D3D12_BOX rect{};
+	rect.left = u;
+	rect.right = u + 1;
+	rect.top = v;
+	rect.bottom = v + 1;
+	rect.front = 0;
+	rect.back = 1;
+
+	tex.mResource.Get()->ReadFromSubresource(&color, width, height, 0, &rect);
+
+	Color result;
+
+	if (color.r / 255.0f <= 0.04045f) {
+		result.r = color.r / 255.0f / 12.92f;
+	}
+	else {
+		result.r = powf((color.r / 255.0f + 0.055f) / 1.055f, 2.4f);
+	}
+	if (color.g / 255.0f <= 0.04045f) {
+		result.g = color.g / 255.0f / 12.92f;
+	}
+	else {
+		result.g = powf((color.g / 255.0f + 0.055f) / 1.055f, 2.4f);
+	}
+	if (color.b / 255.0f <= 0.04045f) {
+		result.b = color.b / 255.0f / 12.92f;
+	}
+	else {
+		result.b = powf((color.b / 255.0f + 0.055f) / 1.055f, 2.4f);
+	}
+
+	return result;
+}
+
 bool PaintableModelObj::Paint(Vector3 pos, int32_t hitMeshIndex, int32_t hitIndicesIndex, TextureHandle brush, Color color, Vector2 size, Matrix4 matrix)
 {
 	if (!mSetuped) {
