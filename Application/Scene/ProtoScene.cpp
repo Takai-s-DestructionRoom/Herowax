@@ -308,7 +308,7 @@ void ProtoScene::Update()
 	ImGui::SetNextWindowSize({ 300, 150 });
 	// ペイント //
 	ImGui::Begin("ペイント", NULL, window_flags);
-	ImGui::SliderFloat("ペイントサイズ", &paintSize,0.0f,300.f);
+	ImGui::SliderFloat("ペイントサイズ", &paintSize,0.0f,3000.f);
 	ImGui::ColorEdit4("PaintColor", &paintColor.r);
 
 	if (ImGui::Button("セーブ")) {
