@@ -42,7 +42,18 @@ void main(
         //中心からのオフセットをスケーリング
         float4 offset = kOffset_array[i] * input[0].scale;
         
-        offset = mul(matBillboard, offset);
+        //Z軸回転行列
+        float sinZ = sin(input[0].rot.z);
+        float cosZ = cos(input[0].rot.z);
+
+        float4x4 matZ = float4x4(
+        cosZ, sinZ, 0, 0,
+        -sinZ, cosZ, 0, 0,
+        0, 0, 1, 0,
+        0, 0, 0, 1);
+        
+        //Z軸の回転は適用
+        offset = mul(matBillboard, mul(matZ, offset));
         
         //システム用頂点座標
         //オフセット分ずらす(ワールド座標)

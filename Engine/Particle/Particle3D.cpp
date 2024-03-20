@@ -182,7 +182,7 @@ void IEmitter3D::Draw()
 		descriptorRange.BaseShaderRegister = 0; //テクスチャレジスタ0番
 		descriptorRange.OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND;
 
-		RootParamaters rootParams(5);
+		RootParamaters rootParams(4);
 		//定数バッファ0番(Transform)
 		rootParams[0].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV; //定数バッファビュー
 		rootParams[0].Descriptor.ShaderRegister = 0; //定数バッファ番号
@@ -198,15 +198,10 @@ void IEmitter3D::Draw()
 		rootParams[2].Descriptor.ShaderRegister = 2; //定数バッファ番号
 		rootParams[2].Descriptor.RegisterSpace = 0; //デフォルト値
 		rootParams[2].ShaderVisibility = D3D12_SHADER_VISIBILITY_ALL; //全シェーダから見える
-		//定数バッファ3番(Light)
-		rootParams[3].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV; //定数バッファビュー
-		rootParams[3].Descriptor.ShaderRegister = 3; //定数バッファ番号
-		rootParams[3].Descriptor.RegisterSpace = 0; //デフォルト値
-		rootParams[3].ShaderVisibility = D3D12_SHADER_VISIBILITY_ALL; //全シェーダから見える
 		//テクスチャ
-		rootParams[4].ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;
-		rootParams[4].DescriptorTable = DescriptorRanges{ descriptorRange };
-		rootParams[4].ShaderVisibility = D3D12_SHADER_VISIBILITY_ALL;
+		rootParams[3].ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;
+		rootParams[3].DescriptorTable = DescriptorRanges{ descriptorRange };
+		rootParams[3].ShaderVisibility = D3D12_SHADER_VISIBILITY_ALL;
 
 		mRootSignature.mDesc.RootParamaters = rootParams;
 		mRootSignature.Create();
@@ -261,7 +256,6 @@ void IEmitter3D::Draw()
 			{RootDataType::SRBUFFER_CBV, transformBuff.mBuff },
 			{RootDataType::SRBUFFER_CBV, billboardBuff.mBuff },
 			{RootDataType::SRBUFFER_CBV, viewProjectionBuff.mBuff },
-			{RootDataType::LIGHT},
 			{texture.mGpuHandle}
 		};
 
@@ -379,7 +373,7 @@ void IEmitter3D::TransferBuffer(ViewProjection viewprojection)
 
 void IEmitter3D::Add(uint32_t addNum, float life, Color color, TextureHandle tex,
 	float minScale, float maxScale, Vector3 minVelo, Vector3 maxVelo, float accelPower,
-	Vector3 minRot, Vector3 maxRot, float growingTimer, bool isGravity, bool isBillboard)
+	Vector3 minRot, Vector3 maxRot, float growingTimer, float endScale, bool isGravity, bool isBillboard)
 {
 	isGravity_ = isGravity;
 	isBillboard_ = isBillboard;
@@ -430,7 +424,7 @@ void IEmitter3D::Add(uint32_t addNum, float life, Color color, TextureHandle tex
 		p.aliveTimer.Start();
 		p.scale = sX;
 		p.startScale = p.scale;
-		p.endScale = 0.0f;
+		p.endScale = endScale;
 		p.color = color;
 		//イージング用のタイマーを設定、開始
 		p.easeTimer.maxTime_ = life - growingTimer;	//全体の時間がずれないように最初の拡大部分を引く
@@ -443,7 +437,7 @@ void IEmitter3D::Add(uint32_t addNum, float life, Color color, TextureHandle tex
 void IEmitter3D::AddRing(uint32_t addNum, float life, Color color, TextureHandle tex,
 	float startRadius, float endRadius, float minScale, float maxScale,
 	float minVeloY, float maxVeloY, Vector3 minRot, Vector3 maxRot,
-	float growingTimer, bool isGravity, bool isBillboard)
+	float growingTimer,float endScale, bool isGravity, bool isBillboard)
 {
 	isGravity_ = isGravity;
 	isBillboard_ = isBillboard;
@@ -495,7 +489,7 @@ void IEmitter3D::AddRing(uint32_t addNum, float life, Color color, TextureHandle
 		p.startScale = p.scale;
 		p.radius = startRadius;
 		p.endRadius = endRadius;
-		p.endScale = 0.0f;
+		p.endScale = endScale;
 		p.color = color;
 		//イージング用のタイマーを設定、開始
 		p.easeTimer.maxTime_ = life - growingTimer;	//全体の時間がずれないように最初の拡大部分を引く

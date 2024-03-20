@@ -237,7 +237,7 @@ void Player::MovePad()
 			emitterPos, obj.mTransform.scale * 0.5f,
 			2, 0.5f, obj.mTuneMaterial.mColor, "", 0.3f, 0.7f,
 			{ -0.001f,0.01f,-0.001f }, { 0.001f,0.03f,0.001f },
-			0.01f, -Vector3::ONE * 0.1f, Vector3::ONE * 0.1f, 0.05f, false, false);
+			0.01f, -Vector3::ONE * 0.1f, Vector3::ONE * 0.1f, 0.05f, 0.f, false, false);
 	}
 	else
 	{
@@ -381,7 +381,7 @@ void Player::MoveKey()
 			emitterPos, obj.mTransform.scale * 0.5f,
 			2, 0.5f, obj.mTuneMaterial.mColor, TextureManager::Load("./Resources/white2x2.png"), 0.3f, 0.7f,
 			{ -0.001f,0.01f,-0.001f }, { 0.001f,0.03f,0.001f },
-			0.01f, -Vector3::ONE * 0.1f, Vector3::ONE * 0.1f, 0.05f,false,false);
+			0.01f, -Vector3::ONE * 0.1f, Vector3::ONE * 0.1f, 0.05f, 0.f, false,false);
 	}
 
 	//「ジャンプの高さ」+「プレイヤーの大きさ」を反映

@@ -35,7 +35,7 @@ void WaxIgnite::Update(Wax* wax)
 			15, 0.3f, wax->waxEndColor,
 			TextureManager::Load("./Resources/particle_simple.png"),
 			2.f, 4.f,1.5f,3.0f, 0.1f, 0.5f,
-			-Vector3::ONE * 0.1f, Vector3::ONE * 0.1f, 0.1f, false, true);
+			-Vector3::ONE * 0.1f, Vector3::ONE * 0.1f, 0.1f,0.f, false, true);
 	}
 
 	//色が変わる
