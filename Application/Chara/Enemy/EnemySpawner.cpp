@@ -2,6 +2,7 @@
 #include "Camera.h"
 #include "EnemyManager.h"
 #include "Util.h"
+#include "BombSolider.h"
 
 EnemySpawner::EnemySpawner() : GameObject(),
 	hp(0), maxHP(5.f), spawnInterval(3.f), spawnNum(1),
@@ -17,16 +18,43 @@ void EnemySpawner::Init()
 {
 	hp = maxHP;
 
-	spawnTimer.Start();
+	lifeTimer.Start();
+
+	loadOrderFilename = "test";
+	Load(loadOrderFilename);
+}
+
+void EnemySpawner::Init(const std::string& loadfile)
+{
+	hp = maxHP;
+
+	lifeTimer.Start();
+
+	loadOrderFilename = loadfile;
+	Load(loadOrderFilename);
 }
 
 void EnemySpawner::Update()
 {
-	//敵の出現
-	PopEnemy(obj.mTransform.position, spawnInterval);
+	lifeTimer.Update();
 
-	//HP0になったら死ぬ
-	if (hp <= 0)
+	for (auto& order : orderData.orders)
+	{
+		//スポーン済みならスキップ
+		if (order.spawnCompletion)continue;
+
+		//スポーン時間を超えたら
+		if (order.spawnTiming <= lifeTimer.nowTime_)
+		{
+			//敵の出現
+			PopEnemy(obj.mTransform.position, order);
+
+			order.spawnCompletion = true;
+		}
+	}
+
+	//HP0になったら死ぬ 時間が終わっても死ぬ
+	if (hp <= 0 || lifeTimer.GetEnd())
 	{
 		isAlive = false;
 	}
@@ -42,22 +70,26 @@ void EnemySpawner::Draw()
 	obj.Draw();
 }
 
-void EnemySpawner::PopEnemy(const Vector3 position, float time)
+void EnemySpawner::PopEnemy(const Vector3 position, const SpawnOrderOnce& order)
 {
-	spawnTimer.Update();
-	
-	//時間設定
-	spawnTimer.maxTime_ = time;
-	
-	//時間になったら出現
-	if (spawnTimer.GetEnd()) {
-		for (int i = 0; i < spawnNum; i++)
-		{
-			Vector3 spawnPos = position;
-			spawnPos.x += Util::GetRand(-spawnRandomPos, spawnRandomPos);
-			spawnPos.z += Util::GetRand(-spawnRandomPos, spawnRandomPos);
-			EnemyManager::GetInstance()->CreateEnemy(spawnPos);
+	for (int i = 0; i < order.spawnNum; i++)
+	{
+		Vector3 spawnPos = position;
+		spawnPos.x += Util::GetRand(-spawnRandomPos, spawnRandomPos);
+		spawnPos.z += Util::GetRand(-spawnRandomPos, spawnRandomPos);
+		//ここで文字列に応じてクラスごとに敵を出現させる
+		if (order.enemyClassName == "enemy") {
+			EnemyManager::GetInstance()->CreateEnemy<Enemy>(spawnPos);
 		}
-		spawnTimer.Start();
+		if (order.enemyClassName == "bombsolider") {
+			EnemyManager::GetInstance()->CreateEnemy<BombSolider>(spawnPos);
+		}
 	}
+}
+
+void EnemySpawner::Load(const std::string fileName)
+{
+	SpawnOrderData temp = SpawnDataLoader::Load(fileName);
+	lifeTimer.maxTime_ = temp.maxTime;
+	orderData.orders = temp.orders;
 }

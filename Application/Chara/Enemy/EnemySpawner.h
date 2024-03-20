@@ -1,6 +1,7 @@
 #pragma once
 #include "GameObject.h"
 #include "Easing.h"
+#include "SpawnOrderData.h"
 
 class EnemySpawner : public GameObject
 {
@@ -12,19 +13,26 @@ public:
 	int spawnNum;				//敵の同時出現数
 	float spawnRandomPos;		//敵が出現する際の中心位置からのズレ
 
+	std::string loadOrderFilename;	//参照するorderDataのハンドル
+
 private:
-	Easing::EaseTimer spawnTimer;
+	SpawnOrderData orderData;
+	Easing::EaseTimer lifeTimer;
 
 public:
 	EnemySpawner();
 	void Init()override;
+	void Init(const std::string& loadfile);
 	void Update()override;
 	void Draw()override;
 
-	//敵を指定秒数感覚で出現
-	void PopEnemy(const Vector3 position,float time);
+	//敵を出現
+	void PopEnemy(const Vector3 position,const SpawnOrderOnce& order);
 
 	//ダメージくらう
 	void Damage(float damage) { hp -= damage; }
+
+	//敵の出現順を読み込む
+	void Load(const std::string fileName);
 };
 

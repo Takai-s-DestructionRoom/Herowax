@@ -209,6 +209,21 @@ void Enemy::DealDamage(uint32_t damage, const Vector3& dir, ModelObj* target_)
 
 	//ヒットモーションタイマーを開始
 	knockbackTimer.Start();
+
+	//ヒットパーティクル出す
+	ParticleManager::GetInstance()->AddSimple(
+		obj.mTransform.position, obj.mTransform.scale,
+		10, 0.3f, obj.mTuneMaterial.mColor, "", 0.5f, 1.2f,
+		dir.GetNormalize() - Vector3::ONE * 0.3f, dir.GetNormalize() - Vector3::ONE * 0.3f,
+		0.03f, -Vector3::ONE * 0.1f, Vector3::ONE * 0.1f, 0.1f);
+
+	//ヒットエフェクト出す
+	ParticleManager::GetInstance()->AddSimple(
+		obj.mTransform.position + Vector3::UP * obj.mTransform.scale.y,
+		obj.mTransform.scale * 0.f, 1, 0.3f,
+		obj.mTuneMaterial.mColor, TextureManager::Load("./Resources/hit_circle.png"),
+		0.f, 0.f, Vector3::ZERO, Vector3::ZERO,
+		0.f, Vector3::ONE * 0.1f, Vector3::ONE * 0.1f, 0.1f, 3.f, false, true);
 }
 
 void Enemy::SetDeath()

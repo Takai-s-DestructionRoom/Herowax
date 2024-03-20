@@ -15,7 +15,7 @@ public:
 	//描画
 	void Draw();
 	//指定座標に配置
-	void Create(const Vector3& position, const Vector3& scale,const Vector3& rotation);
+	void Create(const Vector3& position, const Vector3& scale,const Vector3& rotation,const std::string& loadfile = "test");
 
 public:
 	std::list<EnemySpawner> spawners;	//スポナーども

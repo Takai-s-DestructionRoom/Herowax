@@ -107,14 +107,14 @@ public:
 	//life:秒数指定なので注意
 	virtual void Add(uint32_t addNum, float life, Color color, TextureHandle tex, float minScale, float maxScale,
 		Vector3 minVelo, Vector3 maxVelo, float accelPower = 0.f, Vector3 minRot = {}, Vector3 maxRot = {},
-		float growingTimer = 0.f, bool isGravity = false, bool isBillboard = false);
+		float growingTimer = 0.f, float endScale = 0.f, bool isGravity = false, bool isBillboard = false);
 
 	//リング状パーティクル追加(固有処理にしたかったらoverrideで上書きする)
 	//life:秒数指定なので注意
 	virtual void AddRing(uint32_t addNum, float life, Color color, TextureHandle tex,
 		float startRadius, float endRadius, float minScale, float maxScale,
 		float minVeloY, float maxVeloY, Vector3 minRot = {}, Vector3 maxRot = {},
-		float growingTimer = 0.f, bool isGravity = false, bool isBillboard = false);
+		float growingTimer = 0.f, float endScale = 0.f, bool isGravity = false, bool isBillboard = false);
 
 	//パーティクル全消し
 	void ClearParticles() { particles_.clear(); }

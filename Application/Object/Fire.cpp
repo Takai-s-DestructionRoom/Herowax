@@ -1,6 +1,7 @@
 #include "Fire.h"
 #include "Camera.h"
 #include "Util.h"
+#include "ParticleManager.h"
 
 Fire::Fire(std::vector<Vector3> splinePoints_):
 	GameObject(),timer(2.0f)
@@ -37,6 +38,14 @@ void Fire::Update()
 
 	targetCircle.mTransform.UpdateMatrix();
 	targetCircle.TransferBuffer(Camera::sNowCamera->mViewProjection);
+
+
+	//燃えてるときパーティクル出す
+	ParticleManager::GetInstance()->AddSimple(
+		obj.mTransform.position, obj.mTransform.scale * 0.8f, 2, 0.4f,
+		obj.mTuneMaterial.mColor, TextureManager::Load("./Resources/particle_simple.png"),
+		2.f, 4.f, { -0.1f,0.1f,-0.1f }, { 0.1f,0.5f,0.1f },
+		0.05f, -Vector3::ONE * 0.1f, Vector3::ONE * 0.1f, 0.05f, 0.f, false, true);
 }
 
 void Fire::Draw()
