@@ -44,4 +44,6 @@ private:
 
 	float rot[3] = { 0, 0, 0 };
 	float scale[3] = { 1, 1, 1 };
+
+	void PaintObj(GameObject* bePaint,const GameObject& toPaint);
 };

@@ -297,7 +297,7 @@ bool PaintableModelObj::GetInfo(ColPrimitive3D::Ray ray,
 	return false;
 }
 
-std::vector<ColPrimitive3D::Triangle> PaintableModelObj::GetTriangle()
+std::vector<ColPrimitive3D::Triangle> PaintableModelObj::GetTriangle() const
 {
 	std::vector<ColPrimitive3D::Triangle> triangles;
 

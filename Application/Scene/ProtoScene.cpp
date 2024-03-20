@@ -192,6 +192,16 @@ void ProtoScene::Update()
 		}
 	}
 	
+	for (auto& paintObj : level.objects)
+	{
+		//地面を塗る
+		for (auto& enemy : EnemyManager::GetInstance()->enemys)
+		{
+			
+			PaintObj(paintObj.get(), enemy);
+		}
+	}
+
 	//塗る処理(いったん全検索のカス)
 	for (auto& group : WaxManager::GetInstance()->waxGroups)
 	{
@@ -341,4 +351,37 @@ void ProtoScene::Draw()
 	//更新
 	InstantDrawer::AllUpdate();
 	InstantDrawer::AllDraw2D();
+}
+
+void ProtoScene::PaintObj(GameObject* bePaint, const GameObject& toPaint)
+{
+	//ここで大雑把に当たり判定を取って、絶対に当たってないやつを除外する
+	if (!ColPrimitive3D::CheckSphereToSphere(bePaint->collider, toPaint.collider))return;
+	//アクティブチェック
+	if (!bePaint->GetIsAlive())return;
+
+	for (auto& paintTri : bePaint->obj.GetTriangle())
+	{
+		Vector3 closestPoint = { 0,0,0 };
+		//当たったトライアングルがあるならそこを塗る
+		if (ColPrimitive3D::CheckSphereToTriangle(toPaint.collider, paintTri, &closestPoint)) {
+			PaintableInfo info;
+
+			//交点と球の中心で必ず当たるレイを作り、交点に塗る
+			Vector3 posA = toPaint.collider.pos;
+			Vector3 posB = closestPoint;
+			Vector3 dir = (posB - posA).Normalize();
+
+			ColPrimitive3D::Ray ray = { posA,dir };
+
+			if (bePaint->obj.GetInfo(ray, &info))
+			{
+				//情報が完全一致するなら塗る
+				if (info.tri == paintTri) {
+					bePaint->obj.Paint(info.closestPos, info.hitMeshIndex, info.hitIndex,
+						"brush", paintColor, Vector2(paintSize, paintSize), camera.mViewProjection.mMatrix);
+				}
+			}
+		}
+	}
 }

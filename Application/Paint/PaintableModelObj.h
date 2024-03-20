@@ -58,7 +58,7 @@ public:
 
 	bool GetInfo(ColPrimitive3D::Ray ray, PaintableInfo *info = nullptr);
 
-	std::vector<ColPrimitive3D::Triangle> GetTriangle();
+	std::vector<ColPrimitive3D::Triangle> GetTriangle()const;
 
 	//各データのバッファへの転送
 	void TransferBuffer(ViewProjection viewprojection) override;
