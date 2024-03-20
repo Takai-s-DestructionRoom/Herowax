@@ -182,7 +182,7 @@ void IEmitter3D::Draw()
 		descriptorRange.BaseShaderRegister = 0; //テクスチャレジスタ0番
 		descriptorRange.OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND;
 
-		RootParamaters rootParams(5);
+		RootParamaters rootParams(4);
 		//定数バッファ0番(Transform)
 		rootParams[0].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV; //定数バッファビュー
 		rootParams[0].Descriptor.ShaderRegister = 0; //定数バッファ番号
@@ -198,15 +198,10 @@ void IEmitter3D::Draw()
 		rootParams[2].Descriptor.ShaderRegister = 2; //定数バッファ番号
 		rootParams[2].Descriptor.RegisterSpace = 0; //デフォルト値
 		rootParams[2].ShaderVisibility = D3D12_SHADER_VISIBILITY_ALL; //全シェーダから見える
-		//定数バッファ3番(Light)
-		rootParams[3].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV; //定数バッファビュー
-		rootParams[3].Descriptor.ShaderRegister = 3; //定数バッファ番号
-		rootParams[3].Descriptor.RegisterSpace = 0; //デフォルト値
-		rootParams[3].ShaderVisibility = D3D12_SHADER_VISIBILITY_ALL; //全シェーダから見える
 		//テクスチャ
-		rootParams[4].ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;
-		rootParams[4].DescriptorTable = DescriptorRanges{ descriptorRange };
-		rootParams[4].ShaderVisibility = D3D12_SHADER_VISIBILITY_ALL;
+		rootParams[3].ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;
+		rootParams[3].DescriptorTable = DescriptorRanges{ descriptorRange };
+		rootParams[3].ShaderVisibility = D3D12_SHADER_VISIBILITY_ALL;
 
 		mRootSignature.mDesc.RootParamaters = rootParams;
 		mRootSignature.Create();
@@ -261,7 +256,6 @@ void IEmitter3D::Draw()
 			{RootDataType::SRBUFFER_CBV, transformBuff.mBuff },
 			{RootDataType::SRBUFFER_CBV, billboardBuff.mBuff },
 			{RootDataType::SRBUFFER_CBV, viewProjectionBuff.mBuff },
-			{RootDataType::LIGHT},
 			{texture.mGpuHandle}
 		};
 
