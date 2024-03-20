@@ -89,7 +89,6 @@ void Enemy::Update()
 	obj.TransferBuffer(Camera::sNowCamera->mViewProjection);
 
 	ui.Update(this);
-
 }
 
 void Enemy::Draw()
