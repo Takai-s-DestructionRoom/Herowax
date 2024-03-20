@@ -86,6 +86,10 @@ void LevelLoader::ObjectLoad(LevelData& levelData,nlohmann::json& object)
 			objectData.setObjectName = object["setObject"];
 		}
 
+		if (object.contains("spawnerOrder")) {
+			objectData.spawnerOrder = object["spawnerOrder"];
+		}
+
 		// JSONデータを文字列に変換
 		std::string jsonStr = object.dump();
 

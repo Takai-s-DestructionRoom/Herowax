@@ -12,9 +12,6 @@ EnemySpawner::EnemySpawner() : GameObject(),
 	
 	//色変更
 	obj.mTuneMaterial.mColor = Color(0.3f, 0.3f, 0.3f, 1);
-
-	loadOrderFilename = "test";
-	Load(loadOrderFilename);
 }
 
 void EnemySpawner::Init()
@@ -22,6 +19,19 @@ void EnemySpawner::Init()
 	hp = maxHP;
 
 	lifeTimer.Start();
+
+	loadOrderFilename = "test";
+	Load(loadOrderFilename);
+}
+
+void EnemySpawner::Init(const std::string& loadfile)
+{
+	hp = maxHP;
+
+	lifeTimer.Start();
+
+	loadOrderFilename = loadfile;
+	Load(loadOrderFilename);
 }
 
 void EnemySpawner::Update()
@@ -79,7 +89,7 @@ void EnemySpawner::PopEnemy(const Vector3 position, const SpawnOrderOnce& order)
 
 void EnemySpawner::Load(const std::string fileName)
 {
-	SpawnOrderData temp = SpawnOrderData::Load(fileName);
+	SpawnOrderData temp = SpawnDataLoader::Load(fileName);
 	lifeTimer.maxTime_ = temp.maxTime;
 	orderData.orders = temp.orders;
 }

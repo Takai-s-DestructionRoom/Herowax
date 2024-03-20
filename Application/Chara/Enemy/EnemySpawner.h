@@ -22,6 +22,7 @@ private:
 public:
 	EnemySpawner();
 	void Init()override;
+	void Init(const std::string& loadfile);
 	void Update()override;
 	void Draw()override;
 

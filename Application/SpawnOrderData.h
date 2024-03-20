@@ -10,26 +10,43 @@ struct SpawnOrderOnce
 	bool spawnCompletion = false;
 
 	//出現させたい敵のクラス名
-	std::string enemyClassName;
+	std::string enemyClassName = "";
 
 	//出現させるタイミング
-	float spawnTiming;
+	float spawnTiming = 0.0f;
 
 	//出現させる数
-	int32_t spawnNum;
+	int32_t spawnNum = 0;
 };
 
 class SpawnOrderData
 {
 public:
-	//読み込み
-	static SpawnOrderData Load(const std::string& filename);
-	
-	//未定
-	//void Save();
-public:
 	//スポナーの生存時間
-	float maxTime;
+	float maxTime = 0.0f;
 	std::vector<SpawnOrderOnce> orders;
 };
 
+namespace enemyHandles {
+	extern std::string enemy;
+	extern std::string bombsolider;
+}
+
+class SpawnDataLoader
+{
+public:
+	//オーダーを作るImgui
+	static void OrderCreateGUI();
+
+	//読み込み
+	static SpawnOrderData Load(const std::string& filename);
+
+	//書き出し
+	static void Save(const SpawnOrderData& saveOrder, const std::string& saveFileName_);
+
+private:
+	static std::ofstream writing_file;
+	static std::string saveFileName;
+	static SpawnOrderData saveOrderData;
+	static SpawnOrderOnce once;
+};

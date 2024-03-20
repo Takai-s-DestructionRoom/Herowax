@@ -11,8 +11,7 @@
 #include "Temperature.h"
 #include "FireManager.h"
 #include "Parameter.h"
-
-
+#include "SpawnOrderData.h"
 
 ProtoScene::ProtoScene()
 {
@@ -247,6 +246,9 @@ void ProtoScene::Update()
 	}
 
 	ImGui::End();
+
+	SpawnDataLoader::OrderCreateGUI();
+
 #pragma endregion
 }
 

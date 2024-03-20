@@ -90,7 +90,8 @@ void Level::Extract(const std::string& handle)
 		{
 			spawnerManager->Create(objectData->translation,
 				objectData->scaling,
-				objectData->rotation);
+				objectData->rotation,
+				objectData->spawnerOrder);
 		}
 		if (objectData->setObjectName == "Tower")
 		{
