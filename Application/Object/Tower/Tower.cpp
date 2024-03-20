@@ -128,4 +128,11 @@ void Tower::Damage(float damage, Vector3 vec)
 	hp -= damage;
 	shakeVec = vec.Normalize();
 	shakeTimer.Start();
+
+	//ヒットパーティクル出す
+	ParticleManager::GetInstance()->AddSimple(
+		obj.mTransform.position, obj.mTransform.scale,
+		15, 0.3f, obj.mTuneMaterial.mColor, "", 0.5f, 1.5f,
+		shakeVec - Vector3::ONE * 0.3f, shakeVec - Vector3::ONE * 0.3f,
+		0.03f, -Vector3::ONE * 0.1f, Vector3::ONE * 0.1f, 0.1f);
 }
