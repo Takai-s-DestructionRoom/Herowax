@@ -379,7 +379,7 @@ void IEmitter3D::TransferBuffer(ViewProjection viewprojection)
 
 void IEmitter3D::Add(uint32_t addNum, float life, Color color, TextureHandle tex,
 	float minScale, float maxScale, Vector3 minVelo, Vector3 maxVelo, float accelPower,
-	Vector3 minRot, Vector3 maxRot, float growingTimer, bool isGravity, bool isBillboard)
+	Vector3 minRot, Vector3 maxRot, float growingTimer, float endScale, bool isGravity, bool isBillboard)
 {
 	isGravity_ = isGravity;
 	isBillboard_ = isBillboard;
@@ -430,7 +430,7 @@ void IEmitter3D::Add(uint32_t addNum, float life, Color color, TextureHandle tex
 		p.aliveTimer.Start();
 		p.scale = sX;
 		p.startScale = p.scale;
-		p.endScale = 0.0f;
+		p.endScale = endScale;
 		p.color = color;
 		//イージング用のタイマーを設定、開始
 		p.easeTimer.maxTime_ = life - growingTimer;	//全体の時間がずれないように最初の拡大部分を引く
@@ -443,7 +443,7 @@ void IEmitter3D::Add(uint32_t addNum, float life, Color color, TextureHandle tex
 void IEmitter3D::AddRing(uint32_t addNum, float life, Color color, TextureHandle tex,
 	float startRadius, float endRadius, float minScale, float maxScale,
 	float minVeloY, float maxVeloY, Vector3 minRot, Vector3 maxRot,
-	float growingTimer, bool isGravity, bool isBillboard)
+	float growingTimer,float endScale, bool isGravity, bool isBillboard)
 {
 	isGravity_ = isGravity;
 	isBillboard_ = isBillboard;
@@ -495,7 +495,7 @@ void IEmitter3D::AddRing(uint32_t addNum, float life, Color color, TextureHandle
 		p.startScale = p.scale;
 		p.radius = startRadius;
 		p.endRadius = endRadius;
-		p.endScale = 0.0f;
+		p.endScale = endScale;
 		p.color = color;
 		//イージング用のタイマーを設定、開始
 		p.easeTimer.maxTime_ = life - growingTimer;	//全体の時間がずれないように最初の拡大部分を引く

@@ -45,7 +45,7 @@ void Fire::Update()
 		obj.mTransform.position, obj.mTransform.scale * 0.8f, 2, 0.4f,
 		obj.mTuneMaterial.mColor, TextureManager::Load("./Resources/particle_simple.png"),
 		2.f, 4.f, { -0.1f,0.1f,-0.1f }, { 0.1f,0.5f,0.1f },
-		0.05f, -Vector3::ONE * 0.1f, Vector3::ONE * 0.1f, 0.05f, false, true);
+		0.05f, -Vector3::ONE * 0.1f, Vector3::ONE * 0.1f, 0.05f, 0.f, false, true);
 }
 
 void Fire::Draw()
