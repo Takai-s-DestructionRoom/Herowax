@@ -1,9 +1,11 @@
 #include "WaxGroup.h"
 #include "WaxManager.h"
+#include "Enemy.h"
 
 WaxGroup::WaxGroup():
 	hp(10.f),maxHP(10.f),damageSustained(0),isAlive(true)
 {
+	solidTimer.Start();
 }
 
 void WaxGroup::Init()
@@ -18,6 +20,9 @@ void WaxGroup::Update()
 	if (waxs.size() <= 0) {
 		SetIsAlive(false);
 	}
+
+	solidTimer.Update();
+	solidBreakTimer.Update();
 
 	hp = maxHP - damageSustained;
 
@@ -53,8 +58,50 @@ void WaxGroup::Update()
 
 	for (auto& wax : waxs)
 	{
+		wax->obj.mTuneMaterial.mColor = wax->SolidBling(solidTimer);
 		wax->Update();
 	}
+
+	for (auto& enemy : trapEnemys)
+	{
+		if (enemy->GetState() == "Normal") {
+			enemy->ChangeState<EnemySlow>();
+		}
+		
+	}
+
+	//1~9までの場合を入れる
+	for (int i = 0; i < 10; i++)
+	{
+		if (trapEnemys.size() - 1 == i) {
+			solidBreakTimer.maxTime_ = WaxManager::GetInstance()->waxTime[i];
+			break;
+		}	
+	}
+	//10以上の場合を入れる
+	if (trapEnemys.size() - 1 >= 10) {
+		solidBreakTimer.maxTime_ = WaxManager::GetInstance()->waxTime[9];
+	}
+
+	if (solidTimer.GetNowEnd()) {
+		//ここで当たってるエネミーを登録したい
+		for (auto& enemy : trapEnemys)
+		{
+			enemy->ChangeState<EnemyFootStop>();
+		}
+
+		solidBreakTimer.Start();
+	}
+
+	if (solidBreakTimer.GetEnd()) {
+		for (auto& enemy : trapEnemys)
+		{
+			enemy->ChangeState<EnemyNormal>();
+		}
+		SetIsAlive(false);
+	}
+
+	trapEnemys.clear();
 }
 
 void WaxGroup::Draw()
@@ -79,22 +126,8 @@ void WaxGroup::DrawCollider()
 
 void WaxGroup::SetSameSolidTime()
 {
-	for (auto& wax : waxs)
-	{
-		//より小さい時間を見つけたら記録
-		if (smallestTime > wax->solidTimer.nowTime_)
-		{
-			smallestTime = wax->solidTimer.nowTime_;
-		}
-	}
-	for (auto& wax : waxs)
-	{
-		//固まり初めていないなら
-		if (!wax->isSolid) {
-			//固まるまでの時間を更新
-			wax->solidTimer.nowTime_ = smallestTime;
-		}
-	}
+	//ロウをかけたらもう一度初めから開始
+	solidTimer.Start();
 }
 
 bool WaxGroup::IsSolid()

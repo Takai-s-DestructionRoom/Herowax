@@ -214,6 +214,9 @@ void Easing::EaseTimer::ReStart()
 
 void Easing::EaseTimer::Update(const float elapseTimer)
 {
+	//前フレームの経過時間を記録
+	oldTime_ = nowTime_;
+
 	if (run_) {
 		nowTime_ += TimeManager::deltaTime * elapseTimer;
 	}
@@ -263,7 +266,7 @@ void Easing::EaseTimer::RoopReverse(const float elapseTimer)
 	}
 }
 
-float Easing::EaseTimer::GetTimeRate()
+float Easing::EaseTimer::GetTimeRate()const
 {
 	float timeRate = 0.0f;
 	timeRate = Util::Clamp(timeRate, nowTime_ / maxTime_, 1.0f);
