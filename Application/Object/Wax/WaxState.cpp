@@ -3,6 +3,7 @@
 #include "Easing.h"
 #include "Temperature.h"
 #include "WaxManager.h"
+#include "ParticleManager.h"
 
 void WaxNormal::Update(Wax* wax)
 {
@@ -24,14 +25,25 @@ void WaxIgnite::Update(Wax* wax)
 {
 	wax->SetStateStr("Ignite");
 
-	if (!wax->igniteTimer.GetStarted())wax->igniteTimer.Start();
-	wax->igniteTimer.Update();
+	if (!wax->igniteTimer.GetStarted())
+	{
+		wax->igniteTimer.Start();
+
+		//燃えた瞬間パーティクル出す
+		ParticleManager::GetInstance()->AddRing(
+			wax->obj.mTransform.position, 
+			15, 0.3f, wax->waxEndColor,
+			TextureManager::Load("./Resources/particle_simple.png"),
+			2.f, 4.f,1.5f,3.0f, 0.1f, 0.5f,
+			-Vector3::ONE * 0.1f, Vector3::ONE * 0.1f, 0.1f, false, true);
+	}
 
 	//色が変わる
 	wax->obj.mTuneMaterial.mColor.r = Easing::InQuad(wax->waxOriginColor.r, wax->waxEndColor.r, wax->igniteTimer.GetTimeRate());
 	wax->obj.mTuneMaterial.mColor.g = Easing::InQuad(wax->waxOriginColor.g, wax->waxEndColor.g, wax->igniteTimer.GetTimeRate());
 	wax->obj.mTuneMaterial.mColor.b = Easing::InQuad(wax->waxOriginColor.b, wax->waxEndColor.b, wax->igniteTimer.GetTimeRate());
 
+	wax->igniteTimer.Update();
 	//次へ
 	if (wax->igniteTimer.GetEnd()) {
 		wax->ChangeState<WaxBurning>();
