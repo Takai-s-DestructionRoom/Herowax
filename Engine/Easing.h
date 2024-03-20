@@ -66,6 +66,7 @@ namespace Easing
 			maxTime_ = maxTime;
 		}
 
+		float oldTime_ = 0.0f;		// 現在の経過時間
 		float nowTime_ = 0.0f;		// 現在の経過時間
 		float maxTime_ = 1.0f;		// 何秒かけて移動するか
 
@@ -77,6 +78,11 @@ namespace Easing
 		bool GetEnd()const { return end_; };
 		//進み切ったかフラグを設定
 		void SetEnd(bool end) { end_ = end; };
+		//今タイマーが終わったか
+		bool GetNowEnd() {
+			return oldTime_ < maxTime_ &&
+				nowTime_ >= maxTime_;
+		};
 
 		//タイマーが戻ってるかフラグ取得
 		bool GetReverse()const { return reverse_; };
@@ -105,6 +111,6 @@ namespace Easing
 		void RoopReverse(const float elapseTimer = 1.0f);
 
 		//現在が最大秒数のうちどの割合かを(0.0f～1.0f)の値で返す
-		float GetTimeRate();
+		float GetTimeRate()const;
 	};
 };

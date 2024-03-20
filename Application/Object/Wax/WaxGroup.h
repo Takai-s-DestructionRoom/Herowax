@@ -4,6 +4,8 @@
 #include <memory>
 #include "Wax.h"
 
+class Enemy;
+
 class WaxGroup
 {
 public:
@@ -11,6 +13,11 @@ public:
 
 	//所属しているロウの中で最大の時間
 	float smallestTime = 1000.0f;
+
+	Easing::EaseTimer solidTimer;	//固形になるまでの時間
+	Easing::EaseTimer solidBreakTimer;	//固形になってから壊れるまでの時間
+
+	std::list<Enemy*> trapEnemys;
 
 private:
 	const uint32_t kMaxWax = 128;	//最大ロウ数

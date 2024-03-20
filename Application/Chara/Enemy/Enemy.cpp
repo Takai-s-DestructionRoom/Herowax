@@ -58,10 +58,6 @@ void Enemy::Update()
 	pVec.Normalize();
 	pVec.y = 0;
 
-	//減速率は大きいほどスピード下がるから1.0から引くようにしてる
-	moveVec += pVec * moveSpeed *
-		(1.f - slowMag) * (1.f - slowCoatingMag);
-
 	//無敵時間さん!?の更新
 	mutekiTimer.Update();
 
@@ -73,6 +69,10 @@ void Enemy::Update()
 		//重力をかける
 		moveVec.y -= gravity;
 	}
+
+	//減速率は大きいほどスピード下がるから1.0から引くようにしてる
+	moveVec += pVec * moveSpeed *
+		(1.f - slowMag) * (1.f - slowCoatingMag);
 
 	//座標加算
 	obj.mTransform.position += moveVec;
