@@ -62,11 +62,12 @@ struct VertexParticle
 	Vector3 rot = { 0, 0, 0 };
 	Color color = Color::kWhite;
 	float scale = 0.0f;
+	float timer = 0.0f;
 
 	//コンストラクタ
 	VertexParticle(Vector3 pos = { 0, 0, 0 }, Vector3 rot = { 0, 0, 0 },
 		Color color = Color::kWhite, float scale = 0.0f)
-		: pos(pos), rot(rot), color(color), scale(scale) {}
+		: pos(pos), rot(rot), color(color), scale(scale),timer(timer) {}
 
 	bool operator==(const VertexParticle& a) const;
 };

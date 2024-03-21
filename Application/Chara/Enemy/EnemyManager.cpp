@@ -48,11 +48,6 @@ void EnemyManager::Init()
 
 void EnemyManager::Update()
 {
-	//死んでるならリストから削除
-	enemys.remove_if([](std::unique_ptr<Enemy>& enemy) {
-		return !enemy->GetIsAlive();
-		});
-
 	for (auto& enemy : enemys)
 	{
 		enemy->SetSlowMag(slowMag);	//減速率まとめて変更
@@ -127,4 +122,12 @@ void EnemyManager::Draw()
 	{
 		enemy->Draw();
 	}
+}
+
+void EnemyManager::Delete()
+{
+	//死んでるならリストから削除
+	enemys.remove_if([](std::unique_ptr<Enemy>& enemy) {
+		return !enemy->GetIsAlive();
+		});
 }

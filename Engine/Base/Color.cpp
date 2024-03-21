@@ -9,6 +9,9 @@ const Color Color::kLightblue(0, 1.0f, 1.0f, 1.f);
 const Color Color::kWhite(1.0f, 1.0f, 1.0f, 1.f);
 const Color Color::kBlack(0, 0, 0, 1.f);
 
+const Color Color::kFireOutside(1.f, 0.25f, 0.05f, 1.f);
+const Color Color::kFireInside(0.9f, 0.8f, 0.05f, 1.f);
+
 Color::Color(int32_t hexcolor)
 {
 	int32_t r_, g_, b_;

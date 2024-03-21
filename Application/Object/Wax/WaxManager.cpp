@@ -98,15 +98,37 @@ GraphicsPipeline WaxManager::CreateDisolvePipeLine()
 	return pipe;
 }
 
+void WaxManager::Delete()
+{
+	//死んでいるグループがあれば消す
+	waxGroups.remove_if([](std::unique_ptr<WaxGroup>& waxgroup) {
+		return !waxgroup->GetIsAlive() || waxgroup->waxs.size() <= 0;
+		});
+}
+
 WaxManager::WaxManager() :
 	heatUpTemperature(10.f),
 	heatBonus(5.f),
-	waxDamage(1)
+	waxDamage(10)
 {
 	//生成時に変数をセーブデータから引っ張ってくる
 	std::map<std::string, std::string> extract = Parameter::Extract(fileName);
 	heatUpTemperature = Parameter::GetParam(extract, "ロウが燃えたときの上昇温度",5.f);
 	heatBonus = Parameter::GetParam(extract, "ボーナス上昇温度",2.f);
+
+	for (int i = 0; i < 10; i++)
+	{
+		waxTime.emplace_back();
+		waxTime.back() = 0.0f;
+	}
+	for (int i = 0; i < 10; i++)
+	{
+		std::string waxnum = std::to_string(i + 1) + "体の時";
+		if (i + 1 >= 10) {
+			waxnum = std::to_string(i + 1) + "体以上の時";
+		}
+		waxTime[i] = Parameter::GetParam(extract,waxnum.c_str(), 0.0f);
+	}
 
 	//ディゾルブで使うパイプラインを生成する
 	CreateDisolvePipeLine();
@@ -121,11 +143,6 @@ void WaxManager::Update()
 {
 	//燃えている数を初期化
 	isBurningNum = 0;
-
-	//死んでいるグループがあれば消す
-	waxGroups.remove_if([](std::unique_ptr<WaxGroup>& waxgroup) {
-		return !waxgroup->GetIsAlive() || waxgroup->waxs.size() <= 0;
-		});
 
 	for (auto& waxGroup : waxGroups)
 	{
@@ -146,12 +163,20 @@ void WaxManager::Update()
 	ImGui::InputFloat("ロウが燃えたときの上昇温度", &heatUpTemperature, 1.0f);
 	ImGui::InputFloat("ボーナス上昇温度", &heatBonus, 1.0f);
 
+	ImGui::Text("敵を捕まえたときの固まっている秒数");
+	for (int i = 0; i < 10; i++)
+	{
+		std::string waxnum = std::to_string(i + 1) + "体の時";
+		if (i + 1 >= 10) {
+			waxnum = std::to_string(i + 1) + "体以上の時";
+		}
+		ImGui::InputFloat(waxnum.c_str(), &waxTime[i], 1.0f);
+	}
+
 	ImGui::Text("ロウグループ数:%d", (int)waxGroups.size());
 	for (auto& group : waxGroups)
 	{
 		ImGui::Text("グループ内のロウの数:%d", (int)group->waxs.size());
-		ImGui::Text("グループの中で最長の固まる時間:%f", group->smallestTime);
-		
 	}
 	ImGui::PopItemWidth();
 
@@ -166,6 +191,14 @@ void WaxManager::Update()
 		Parameter::Begin(fileName);
 		Parameter::Save("ロウが燃えたときの上昇温度", heatUpTemperature);
 		Parameter::Save("ボーナス上昇温度", heatBonus);
+		for (int i = 0; i < 10; i++)
+		{
+			std::string waxnum = std::to_string(i + 1) + "体の時";
+			if (i + 1 >= 10) {
+				waxnum = std::to_string(i + 1) + "体以上の時";
+			}
+			Parameter::Save(waxnum.c_str(), waxTime[i]);
+		}
 		Parameter::End();
 	}
 
@@ -201,7 +234,8 @@ void WaxManager::Create(Transform transform, uint32_t power, Vector3 vec,
 	//指定された状態に
 	waxGroups.back()->waxs.back()->obj.mTransform = transform;
 	//情報を受け取って格納
-	waxGroups.back()->waxs.back()->Init(power, vec, speed, range, size, atkTime, solidTime);
+	waxGroups.back()->waxs.back()->Init(power, vec, speed, range, size, atkTime);
+	waxGroups.back()->solidTimer.maxTime_ = solidTime;
 }
 
 float WaxManager::GetCalcHeatBonus()

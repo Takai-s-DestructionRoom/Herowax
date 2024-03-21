@@ -1,9 +1,11 @@
 #include "WaxGroup.h"
 #include "WaxManager.h"
+#include "Enemy.h"
 
 WaxGroup::WaxGroup():
 	hp(10.f),maxHP(10.f),damageSustained(0),isAlive(true)
 {
+	solidTimer.Start();
 }
 
 void WaxGroup::Init()
@@ -19,10 +21,13 @@ void WaxGroup::Update()
 		SetIsAlive(false);
 	}
 
+	solidTimer.Update();
+	breakTimer.Update();
+
 	hp = maxHP - damageSustained;
 
 	//HPなくなったら死ぬ
-	if (hp <= 0)
+	if (hp <= 0 || breakTimer.GetEnd())
 	{
 		isAlive = false;
 	}
@@ -53,6 +58,7 @@ void WaxGroup::Update()
 
 	for (auto& wax : waxs)
 	{
+		wax->obj.mTuneMaterial.mColor = wax->SolidBling(solidTimer);
 		wax->Update();
 	}
 }
@@ -79,47 +85,11 @@ void WaxGroup::DrawCollider()
 
 void WaxGroup::SetSameSolidTime()
 {
-	for (auto& wax : waxs)
-	{
-		//より小さい時間を見つけたら記録
-		if (smallestTime > wax->solidTimer.nowTime_)
-		{
-			smallestTime = wax->solidTimer.nowTime_;
-		}
-	}
-	for (auto& wax : waxs)
-	{
-		//固まり初めていないなら
-		if (!wax->isSolid) {
-			//固まるまでの時間を更新
-			wax->solidTimer.nowTime_ = smallestTime;
-		}
-	}
+	//ロウをかけたらもう一度初めから開始
+	solidTimer.Start();
 }
 
-bool WaxGroup::IsSolid()
+bool WaxGroup::GetNowIsSolid()
 {
-	int32_t solidCount = 0;
-	//最大ロウ数より多い数が入ってたらだいたいアウトなのでfalse
-	if (waxs.size() > kMaxWax) {
-		return false;
-	}
-
-	//少なくともワックスを一つでも保持していて
-	if (waxs.size() >= 1)
-	{
-		for (auto& wax : waxs)
-		{
-			if (wax->isSolid) {
-				solidCount += 1;
-			}
-		}
-
-		//すべてのロウが固まっているならtrue
-		if (solidCount >= waxs.size()) {
-			return true;
-		}
-	}
-	//そうでないならfalse
-	return false;
+	return solidTimer.GetNowEnd();
 }

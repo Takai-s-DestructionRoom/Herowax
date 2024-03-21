@@ -9,7 +9,7 @@ Fire::Fire(std::vector<Vector3> splinePoints_):
 	splinePoints = splinePoints_;
 
 	obj = ModelObj(Model::Load("./Resources/Model/Sphere.obj", "Sphere", true));
-	obj.mTuneMaterial.mColor = { 0.9f,0.1f,0.1f,1.f };
+	obj.mTuneMaterial.mColor = Color::kFireOutside;
 
 	targetCircle = ModelObj(Model::Load("./Resources/Model/targetMark/targetMark.obj", "targetMark", true));
 }
@@ -43,9 +43,15 @@ void Fire::Update()
 	//燃えてるときパーティクル出す
 	ParticleManager::GetInstance()->AddSimple(
 		obj.mTransform.position, obj.mTransform.scale * 0.8f, 2, 0.4f,
-		obj.mTuneMaterial.mColor, TextureManager::Load("./Resources/particle_simple.png"),
-		2.f, 4.f, { -0.1f,0.1f,-0.1f }, { 0.1f,0.5f,0.1f },
+		Color::kFireOutside, TextureManager::Load("./Resources/fireEffect.png"),
+		1.5f, 3.f, { -0.1f,0.1f,-0.1f }, { 0.1f,0.5f,0.1f },
 		0.05f, -Vector3::ONE * 0.1f, Vector3::ONE * 0.1f, 0.05f, 0.f, false, true);
+	//中心の炎
+	ParticleManager::GetInstance()->AddSimple(
+		obj.mTransform.position, obj.mTransform.scale * 0.3f, 2, 0.2f,
+		Color::kFireInside, TextureManager::Load("./Resources/fireEffect.png"),
+		1.5f, 3.f, { -0.1f,0.1f,-0.1f }, { 0.1f,0.4f,0.1f },
+		0.01f, -Vector3::ONE * 0.1f, Vector3::ONE * 0.1f, 0.05f, 0.f, false, true);
 }
 
 void Fire::Draw()

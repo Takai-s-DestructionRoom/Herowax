@@ -21,8 +21,8 @@ public:
 	Easing::EaseTimer atkTimer;	//攻撃時間計測用
 
 	//------------ 燃焼関連 ------------//
-	Color waxOriginColor;		//蝋の元の色
-	Color waxEndColor;			//蝋の燃えた後の色
+	static Color waxOriginColor;		//蝋の元の色
+	static Color waxEndColor;			//蝋の燃えた後の色
 	
 	Easing::EaseTimer igniteTimer;	//燃え始めて色が変わるの時間
 	Easing::EaseTimer burningTimer;	//蝋が燃え尽きるまでの時間
@@ -34,7 +34,6 @@ public:
 	//------------ 固形関連 ------------//
 	bool isSolid;					//固形かフラグ
 	bool isSolided;					//1F前に固形だったかフラグ
-	Easing::EaseTimer solidTimer;	//固形になるまでの時間
 	bool isFlashing;				//点滅フラグ
 
 	//------------ その他 ------------//
@@ -51,18 +50,17 @@ public:
 	//生成時に必要な情報だけもらって独立
 	void Init(
 		uint32_t power, Vector3 vec,float speed,
-		Vector2 range, float size, float atkTime, float solidTime);
+		Vector2 range, float size, float atkTime);
 	//継承元との齟齬がないように空のやつを宣言だけしておく
 	void Init()override {};
 	
 	void Update()override;
 	void Draw()override;
 
+	Color SolidBling(const Easing::EaseTimer& timer);
+
 	bool IsBurning();
 	bool IsNormal();
-
-	//固まり始めて点滅し始めているかどうか
-	bool GetIsSolidLine();
 
 	////ダメージ受ける
 	//void Damage(float damage) { hp -= damage; }

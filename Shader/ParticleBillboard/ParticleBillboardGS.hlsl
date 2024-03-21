@@ -68,6 +68,7 @@ void main(
         float4 wnormal = normalize(float4(kNormal_array[i], 0));
         element.normal = wnormal.xyz;
         element.uv = kUV_array[i];
+        element.timer = input[0].timer;
         
         output.Append(element);
     }

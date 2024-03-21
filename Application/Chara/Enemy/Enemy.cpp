@@ -49,18 +49,17 @@ void Enemy::Update()
 	//各ステート時の固有処理
 	state->Update(this);	//移動速度に関係するので移動の更新より前に置く
 
+	hp = Util::Clamp(hp, 0.f, maxHP);
+
 	if (hp <= 0) {
-		SetDeath();
+		//hpが0になったら、自身の状態を固まり状態へ遷移
+		ChangeState<EnemyAllStop>();
 	}
 
 	//プレイヤーに向かって移動するAI
 	Vector3 pVec = target->mTransform.position - obj.mTransform.position;
 	pVec.Normalize();
 	pVec.y = 0;
-
-	//減速率は大きいほどスピード下がるから1.0から引くようにしてる
-	moveVec += pVec * moveSpeed *
-		(1.f - slowMag) * (1.f - slowCoatingMag);
 
 	//無敵時間さん!?の更新
 	mutekiTimer.Update();
@@ -73,6 +72,10 @@ void Enemy::Update()
 		//重力をかける
 		moveVec.y -= gravity;
 	}
+
+	//減速率は大きいほどスピード下がるから1.0から引くようにしてる
+	moveVec += pVec * moveSpeed *
+		(1.f - slowMag) * (1.f - slowCoatingMag);
 
 	//座標加算
 	obj.mTransform.position += moveVec;

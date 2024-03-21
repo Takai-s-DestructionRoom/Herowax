@@ -111,6 +111,8 @@ void IEmitter3D::Update()
 		vertex.color = particles_[i].color;
 		//スケール
 		vertex.scale = particles_[i].scale;
+		//タイマー
+		vertex.timer = particles_[i].easeTimer.GetTimeRate();
 
 		vertices.at(i) = vertex;
 	}
@@ -238,6 +240,13 @@ void IEmitter3D::Draw()
 			//大きさ
 			{
 				"TEXCOORD", 0,
+				DXGI_FORMAT_R32_FLOAT, 0,
+				D3D12_APPEND_ALIGNED_ELEMENT,
+				D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0
+			},
+			//タイマー
+			{
+				"TIMER", 0,
 				DXGI_FORMAT_R32_FLOAT, 0,
 				D3D12_APPEND_ALIGNED_ELEMENT,
 				D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0
