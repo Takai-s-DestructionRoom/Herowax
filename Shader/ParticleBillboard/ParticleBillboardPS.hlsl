@@ -8,7 +8,7 @@ float4 main(GSOutput input) : SV_TARGET
     // テクスチャマッピング
     float4 texcolor = tex.Sample(smp, input.uv);
     
-    float threshold = 0.3;
+    float threshold = input.timer;
 
     if (texcolor.r < threshold || texcolor.g < threshold || texcolor.b < threshold)
     {

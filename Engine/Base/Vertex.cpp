@@ -71,6 +71,10 @@ bool VertexParticle::operator==(const VertexParticle& a) const
 	{
 		return false;
 	}
+	else if (timer != a.timer)
+	{
+		return false;
+	}
 
 	return true;
 }
