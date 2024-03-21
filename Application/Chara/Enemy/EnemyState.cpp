@@ -5,6 +5,11 @@
 #include "WaxManager.h"
 #include "ParticleManager.h"
 
+EnemyNormal::EnemyNormal()
+{
+	priority = 0;
+}
+
 void EnemyNormal::Update(Enemy* enemy)
 {
 	//減速率どちらも0%
@@ -15,90 +20,32 @@ void EnemyNormal::Update(Enemy* enemy)
 	//ここからの遷移は当たり判定に任せる
 }
 
+EnemySlow::EnemySlow()
+{
+	priority = 0;
+}
+
 void EnemySlow::Update(Enemy* enemy)
 {
 	enemy->SetStateStr("Slow");
 
 	//足とられた時の減速率はimguiでいじったものを基準とするのでここではいじらない
 	enemy->SetSlowCoatingMag(0.f);
-
-	////足がとられている蝋のポインタを持っておいて、固まっているかを調べる
-	//if (enemy->trappedWaxGroup->IsSolid())
-	//{
-	//	//付与する力が一度に固まる敵の数だけ強まる
-	//	EnemyManager::GetInstance()->IncrementSolidCombo();
-	//	//抜け出す力を付与する
-	//	enemy->SetEscapePower((float)EnemyManager::GetInstance()->GetSolidCombo());
-	//	//遷移
-	//	enemy->ChangeState<EnemyFootStop>();
-	//}
-}
-
-void EnemyFootStop::Update(Enemy* enemy)
-{
-	enemy->SetStateStr("FootStop");
-	//減速率100%
-	enemy->SetSlowMag(1.f);
-
-	enemy->SetIsEscape(false);
-
-	////タイマーを回し続ける
-	//enemy->GetEscapeCoolTimer()->Update();
-	//if (enemy->GetEscapeCoolTimer()->GetStarted() == false)
-	//{
-	//	enemy->GetEscapeCoolTimer()->Start();
-	//}
-	//else if (enemy->GetEscapeCoolTimer()->GetEnd())
-	//{
-	//	enemy->SetIsEscape(true);	//脱出行動をする
-	//	enemy->trappedWaxGroup->Damage(enemy->GetEscapePower());
-
-	//	enemy->GetEscapeCoolTimer()->Reset();
-	//}
-
-	////抵抗して蝋のHPが0になったら次へ(当たり判定不要)
-	//if (enemy->trappedWaxGroup->GetIsAlive() == false)
-	//{
-	//	//遷移
-	//	enemy->ChangeState<EnemyNormal>();
-	//}
-
-	/*std::string state = enemy->trappedWaxGroup->waxs.back()->GetState();
-	if (state != "Normal")
-	{
-		enemy->ChangeState<EnemyBurning>();
-	}*/
-}
-
-EnemyWaxCoating::EnemyWaxCoating()
-{
-	timer.Start();
-}
-
-void EnemyWaxCoating::Update(Enemy* enemy)
-{
-	enemy->SetStateStr("WaxCoating");
-
-	//蝋まみれの減速率はimguiでいじったものを基準とするのでここではいじらない
-	enemy->SetSlowMag(0.f);
-
-	timer.Update();
-	if (timer.GetEnd()) {
-		//遷移
-		enemy->ChangeState<EnemyAllStop>();
-		//enemy->ChangeState<EnemyNormal>();	//仕様変更でAllstopに遷移する理由がないのでいったんnormalへ
-		//あとでまた考える
-	}
 }
 
 EnemyAllStop::EnemyAllStop()
 {
-	escapeTimer.Start();
+	priority = 0;
 }
 
 void EnemyAllStop::Update(Enemy* enemy)
 {
-	escapeTimer.Update();
+	//タイマー開始
+	if (!enemy->solidTimer.GetStarted()) {
+		enemy->solidTimer.Start();
+	}
+
+	enemy->solidTimer.Update();
 
 	enemy->SetStateStr("AllStop");
 
@@ -109,34 +56,17 @@ void EnemyAllStop::Update(Enemy* enemy)
 	//ロウの色にして固まってるっぽく
 	//enemy->obj.mTuneMaterial.mColor = Wax::waxOriginColor;
 
-	if (escapeTimer.GetEnd()) {
+	//脱出タイマーが終わったら通常の状態へ戻す
+	if (enemy->solidTimer.GetEnd()) {
+		enemy->solidTimer.Reset();
 		enemy->ChangeState<EnemyNormal>();
-		//enemy->obj.mTuneMaterial.mColor = saveColor;
 	}
-	//タイマーを回し続ける
-	//enemy->GetEscapeCoolTimer()->Update();
-	//if (enemy->GetEscapeCoolTimer()->GetStarted() == false)
-	//{
-	//	enemy->GetEscapeCoolTimer()->Start();
-	//}
-	//else if (enemy->GetEscapeCoolTimer()->GetEnd())
-	//{
-	//	enemy->SetIsEscape(true);	//脱出行動をする
-	//	enemy->trappedWaxGroup->Damage(enemy->GetEscapePower());
-
-	//	enemy->GetEscapeCoolTimer()->Reset();
-	//}
-
-	////抵抗して蝋のHPが0になったら次へ(当たり判定不要)
-	//if (enemy->trappedWaxGroup->GetIsAlive() == false)
-	//{
-	//	//遷移
-	//	enemy->ChangeState<EnemyNormal>();
-	//}
 }
 
 EnemyBurning::EnemyBurning()
 {
+	priority = 1;
+
 	timer.Start();
 
 	//燃えている数カウントに+1
@@ -180,4 +110,9 @@ void EnemyBurning::Update(Enemy* enemy)
 	if (timer.GetEnd()) {
 		enemy->SetDeath();
 	}
+}
+
+int32_t EnemyState::GetPriority()
+{
+	return priority;
 }

@@ -364,12 +364,6 @@
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
     </FxCompile>
-    <FxCompile Include="Shader\PaintedBasic\PaintedBasicVS.hlsl">
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
-      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
-      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
-    </FxCompile>
     <FxCompile Include="Shader\Particle3D\Particle3DGS.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Geometry</ShaderType>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
@@ -621,9 +615,6 @@
     <ClInclude Include="Application\Chara\Player\PlayerUI.h" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Shader\Basic\Basic.hlsli">
-      <FileType>Document</FileType>
-    </None>
     <None Include="Shader\Bloom\Bloom.hlsli" />
     <None Include="Shader\BrightCut\BrightCut.hlsli" />
     <None Include="Shader\DepthTest\DepthTest.hlsli" />
@@ -631,10 +622,13 @@
     <None Include="Shader\Final\Final.hlsli" />
     <None Include="Shader\GaussianBlur\GaussianBlur.hlsli" />
     <None Include="Shader\Grid\Grid.hlsli" />
+    <None Include="Shader\Include\Camera.hlsli" />
+    <None Include="Shader\Include\Lighting.hlsli" />
+    <None Include="Shader\Include\Material.hlsli" />
+    <None Include="Shader\Include\Transform.hlsli" />
+    <None Include="Shader\Include\VSStruct.hlsli" />
     <None Include="Shader\LinearBlur\LinearBlur.hlsli" />
     <None Include="Shader\MultiRenderTest\MultiRenderTest.hlsli" />
-    <None Include="Shader\NoneShading\NoneShading.hlsli" />
-    <None Include="Shader\PaintedBasic\PaintedBasic.hlsli" />
     <None Include="Shader\Particle3D\Particle3D.hlsli" />
     <None Include="Shader\ParticleBillboard\ParticleBillboard.hlsli" />
     <None Include="Shader\PostEffect\PostEffect.hlsli" />

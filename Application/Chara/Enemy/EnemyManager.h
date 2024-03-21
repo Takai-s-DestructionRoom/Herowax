@@ -58,6 +58,9 @@ public:
 	
 	static void LoadResource();
 
+	//死んでるやつらを殺す
+	void Delete();
+
 	void Init();
 	void Update();
 	void Draw();

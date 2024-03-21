@@ -17,7 +17,6 @@ private:
 
 	std::string fileName = "Wax";
 
-
 public:
 	std::vector<float> waxTime;
 	//std::vector<std::unique_ptr<Wax>> waxs;	//蝋ども
@@ -56,6 +55,10 @@ public:
 		std::unique_ptr<WaxGroup>& group2);
 
 	GraphicsPipeline CreateDisolvePipeLine();
+
+	//死んでるやつらを殺したりする
+	void Delete();
+
 private:
 
 	//コンストラクタ

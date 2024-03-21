@@ -11,14 +11,9 @@ class WaxGroup
 public:
 	std::list<std::unique_ptr<Wax>> waxs;	//所属してるロウ
 
-	//所属しているロウの中で最大の時間
-	float smallestTime = 1000.0f;
-
 	Easing::EaseTimer solidTimer;	//固形になるまでの時間
-	Easing::EaseTimer solidBreakTimer;	//固形になってから壊れるまでの時間
-
-	std::list<Enemy*> trapEnemys;
-
+	Easing::EaseTimer breakTimer;	//壊れるまでの時間
+	
 private:
 	const uint32_t kMaxWax = 128;	//最大ロウ数
 
@@ -46,8 +41,8 @@ public:
 	bool GetIsAlive() { return isAlive; }
 	//生存フラグ変更
 	void SetIsAlive(bool isAlive_) { isAlive = isAlive_; }
-	//グループ内のロウが固まっているか返す
-	bool IsSolid();
+	//今この瞬間にロウが固まったかを返す
+	bool GetNowIsSolid();
 
 	////満杯かどうか返す
 	//bool GetIsFull() { return waxNums.size() >= kMaxWax; }

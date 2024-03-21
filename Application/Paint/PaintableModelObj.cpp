@@ -32,7 +32,6 @@ void PaintableModelObj::SetupPaint()
 	mRootSignature = &RootSignature::GetOrCreate("PaintableModelObj", rDesc);
 
 	PipelineStateDesc pDesc = RDirectX::GetDefPipeline().mDesc;
-	//pDesc.VS = Shader::GetOrCreate("PaintedBasicVS", "Shader/PaintedBasic/PaintedBasicVS.hlsl", "main", "vs_5_0");
 	pDesc.PS = Shader::GetOrCreate("PaintedBasicPS", "Shader/PaintedBasic/PaintedBasicPS.hlsl", "main", "ps_5_0");
 	pDesc.pRootSignature = mRootSignature->mPtr.Get();
 

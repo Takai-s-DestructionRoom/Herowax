@@ -1,8 +1,10 @@
-#include "Basic.hlsli"
+#include "../Include/Transform.hlsli"
+#include "../Include/Camera.hlsli"
+#include "../Include/VSStruct.hlsli"
 
-VSOutput main(float4 pos : POSITION, float3 normal : NORMAL, float2 uv : TEXCOORD)
+VSOutputBasic main(float4 pos : POSITION, float3 normal : NORMAL, float2 uv : TEXCOORD)
 {
-	VSOutput output; // ピクセルシェーダーに渡す値
+	VSOutputBasic output; // ピクセルシェーダーに渡す値
 	
 	// 法線を回すために平行移動成分を消した行列を用意する
     matrix worldRot = matWorld;

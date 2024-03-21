@@ -265,6 +265,9 @@
     <Filter Include="シェーダー ファイル\ParticleBillboard">
       <UniqueIdentifier>{1cf9738f-6392-41f9-811e-0dac77145214}</UniqueIdentifier>
     </Filter>
+    <Filter Include="シェーダー ファイル\Include">
+      <UniqueIdentifier>{0c542465-0fd9-4e42-be1a-4160ad03dabb}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Engine\2d\Sprite.cpp">
@@ -675,9 +678,6 @@
       <Filter>シェーダー ファイル\NoneShading</Filter>
     </FxCompile>
     <FxCompile Include="Shader\PaintedBasic\PaintedBasicPS.hlsl">
-      <Filter>シェーダー ファイル\PaintedBasic</Filter>
-    </FxCompile>
-    <FxCompile Include="Shader\PaintedBasic\PaintedBasicVS.hlsl">
       <Filter>シェーダー ファイル\PaintedBasic</Filter>
     </FxCompile>
     <FxCompile Include="Shader\Particle3D\Particle3DGS.hlsl">
@@ -1107,9 +1107,6 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Shader\Basic\Basic.hlsli">
-      <Filter>シェーダー ファイル\Basic</Filter>
-    </None>
     <None Include="Shader\Bloom\Bloom.hlsli">
       <Filter>シェーダー ファイル\Bloom</Filter>
     </None>
@@ -1137,12 +1134,6 @@
     <None Include="Shader\MultiRenderTest\MultiRenderTest.hlsli">
       <Filter>シェーダー ファイル\MultiRenderTest</Filter>
     </None>
-    <None Include="Shader\NoneShading\NoneShading.hlsli">
-      <Filter>シェーダー ファイル\NoneShading</Filter>
-    </None>
-    <None Include="Shader\PaintedBasic\PaintedBasic.hlsli">
-      <Filter>シェーダー ファイル\PaintedBasic</Filter>
-    </None>
     <None Include="Shader\Particle3D\Particle3D.hlsli">
       <Filter>シェーダー ファイル\Particle3D</Filter>
     </None>
@@ -1169,6 +1160,21 @@
     </None>
     <None Include="Shader\ParticleBillboard\ParticleBillboard.hlsli">
       <Filter>シェーダー ファイル\ParticleBillboard</Filter>
+    </None>
+    <None Include="Shader\Include\Lighting.hlsli">
+      <Filter>シェーダー ファイル\Include</Filter>
+    </None>
+    <None Include="Shader\Include\Material.hlsli">
+      <Filter>シェーダー ファイル\Include</Filter>
+    </None>
+    <None Include="Shader\Include\Transform.hlsli">
+      <Filter>シェーダー ファイル\Include</Filter>
+    </None>
+    <None Include="Shader\Include\Camera.hlsli">
+      <Filter>シェーダー ファイル\Include</Filter>
+    </None>
+    <None Include="Shader\Include\VSStruct.hlsli">
+      <Filter>シェーダー ファイル\Include</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>

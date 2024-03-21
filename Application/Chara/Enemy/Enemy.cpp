@@ -49,8 +49,11 @@ void Enemy::Update()
 	//各ステート時の固有処理
 	state->Update(this);	//移動速度に関係するので移動の更新より前に置く
 
+	hp = Util::Clamp(hp, 0.f, maxHP);
+
 	if (hp <= 0) {
-		SetDeath();
+		//hpが0になったら、自身の状態を固まり状態へ遷移
+		ChangeState<EnemyAllStop>();
 	}
 
 	//プレイヤーに向かって移動するAI

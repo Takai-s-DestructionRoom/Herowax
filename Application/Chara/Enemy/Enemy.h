@@ -53,8 +53,8 @@ private:
 	EnemyUI ui;
 
 public:
-	WaxGroup* trappedWaxGroup;			//足を取られている対象の蝋を保持
-
+	Easing::EaseTimer solidTimer;	//動けなくなっている時間
+	
 public:
 
 	Enemy(ModelObj* target_);
@@ -71,10 +71,18 @@ public:
 
 	void SetGroundPos(float groundPos_) { groundPos = groundPos_; }
 
-	//状態変更
+	/// <summary>
+	/// 状態変更
+	/// 内部で設定している優先度を見て、同値以上であれば遷移、未満であれば何もしない
+	/// </summary>
+	/// <typeparam name="ChangeEnemyState">変化先のEnemyState</typeparam>
 	template <typename ChangeEnemyState>
 	void ChangeState() {
-		state = std::make_unique<ChangeEnemyState>();
+		std::unique_ptr<EnemyState> change = std::make_unique<ChangeEnemyState>();
+		//より優先度が高いステートであれば遷移する
+		if (state->GetPriority() <= change->GetPriority()) {
+			state = std::make_unique<ChangeEnemyState>();
+		}
 	};
 
 	// ゲッター //
