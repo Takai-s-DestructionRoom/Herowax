@@ -31,6 +31,13 @@ public:
 	Vector3 GetScale()const;
 	//生きてるかフラグ取得
 	bool GetIsAlive()const;
+	//中心点取得(座標 + 高さ / 2)
+	Vector3 GetCenterPos(){
+		return Vector3(
+			obj.mTransform.position.x,
+			obj.mTransform.position.y + obj.mTransform.scale.y,
+			obj.mTransform.position.z);
+	}
 
 	// セッター //
 	//座標設定

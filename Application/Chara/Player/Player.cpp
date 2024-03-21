@@ -89,8 +89,7 @@ void Player::Update()
 			isGround = true;
 
 			//エミッターの座標はプレイヤーの座標からY座標だけにスケール分ずらしたもの
-			Vector3 emitterPos = obj.mTransform.position;
-			emitterPos.y -= obj.mTransform.scale.y;
+			Vector3 emitterPos = GetCenterPos();
 
 			ParticleManager::GetInstance()->AddRing(
 				emitterPos, 16, 0.3f, obj.mTuneMaterial.mColor, "",
@@ -257,8 +256,7 @@ void Player::MovePad()
 		jumpTimer.Start();
 
 		//エミッターの座標はプレイヤーの座標からY座標だけにスケール分ずらしたもの
-		Vector3 emitterPos = obj.mTransform.position;
-		emitterPos.y -= obj.mTransform.scale.y;
+		Vector3 emitterPos = GetCenterPos();
 
 		ParticleManager::GetInstance()->AddRing(
 			emitterPos, 20, 0.5f, obj.mTuneMaterial.mColor, "",
@@ -335,8 +333,7 @@ void Player::MoveKey()
 		jumpTimer.Start();
 
 		//エミッターの座標はプレイヤーの座標からY座標だけにスケール分ずらしたもの
-		Vector3 emitterPos = obj.mTransform.position;
-		emitterPos.y -= obj.mTransform.scale.y;
+		Vector3 emitterPos = GetCenterPos();
 
 		ParticleManager::GetInstance()->AddRing(
 			emitterPos, 16, 0.5f, obj.mTuneMaterial.mColor, "",

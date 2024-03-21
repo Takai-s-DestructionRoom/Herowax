@@ -24,6 +24,7 @@ struct VSOutput
     float3 rot : ROT;           //回転情報
     float4 color : COLOR;       //色
     float scale : SCALE;        //スケール
+    float timer : TIMER;        //タイマー
 };
 
 struct GSOutput
@@ -33,4 +34,5 @@ struct GSOutput
     float4 color : COLOR;       //色
     float3 normal : NORMAL;     //法線ベクトル
     float2 uv : TEXCOORD;       //uv値
+    float timer : TIMER;        //タイマー
 };
