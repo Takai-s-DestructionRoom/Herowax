@@ -4,6 +4,7 @@
 #include "RingParticle.h"
 #include "Easing.h"
 #include "PlayerState.h"
+#include "PlayerUI.h"
  
 class Player : public GameObject
 {
@@ -51,8 +52,16 @@ public:
 	float pabloSpeedMag;		//パブロ攻撃時の移動速度
 	float shotDeadZone = 1.0f;
 
+	//------------ 炎関係 ------------//
+	float fireGauge;			//炎ゲージ
+	float maxFireGauge;			//炎ゲージ最大値
+	uint32_t fireStock;			//炎ストック
+	uint32_t maxFireStock;		//炎ストック最大値
+
 	//------------ その他 ------------//
 	std::unique_ptr<PlayerState> attackState;
+
+	PlayerUI ui;
 
 public:
 	Player();
@@ -75,12 +84,18 @@ public:
 
 	Vector3 GetFrontVec();
 
-	//お試し実装:殴った相手が自分を追っかけてくるモード
-	bool GetTauntMode() { return isTauntMode; };
-
 	//状態変更
 	template <typename ChangePlayerState>
 	void ChangeState() {
 		state = std::make_unique<ChangePlayerState>();
 	};
+
+	//炎ゲージ溜まる
+	void FireGaugeCharge(float gauge);
+
+	// ゲッター //
+	//お試し実装:殴った相手が自分を追っかけてくるモード
+	bool GetTauntMode() { return isTauntMode; };
+
+	// セッター //
 };
