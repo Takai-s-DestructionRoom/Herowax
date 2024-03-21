@@ -1,4 +1,8 @@
-#include "PaintedBasic.hlsli"
+#include "../Include/Material.hlsli"
+#include "../Include/Transform.hlsli"
+#include "../Include/Camera.hlsli"
+#include "../Include/Lighting.hlsli"
+#include "../Include/VSStruct.hlsli"
 
 Texture2D<float4> tex : register(t0); //0番スロットに設定されたテクスチャ
 Texture2D<float4> paintTex : register(t1); //1番スロットに設定されたテクスチャ
@@ -18,7 +22,7 @@ float3 magnitude(float3 v)
     return (v.x * v.x + v.y * v.y + v.z * v.z);
 }
 
-float4 main(VSOutput input) : SV_TARGET
+float4 main(VSOutputBasic input) : SV_TARGET
 {
     //----------ディザ抜きの諸々の処理-------------//
     int ditherUV_x = (int) fmod(input.svpos.x, 4.0f); //パターンの大きさで割ったときの余りを求める
