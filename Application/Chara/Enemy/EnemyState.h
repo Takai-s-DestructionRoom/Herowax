@@ -9,12 +9,18 @@ class EnemyState
 public:
 	virtual void Update(Enemy* enemy) = 0;
 	virtual ~EnemyState() {};
+	int32_t GetPriority();
+public:
+	int32_t priority = -1;	//優先度 
+	//ステートが変化する際、変化先の優先度を参照し、
+	//同じかより高い優先度でなければ変化できない
 };
 
 //通常時
 class EnemyNormal : public EnemyState
 {
 public:
+	EnemyNormal();
 	void Update(Enemy* enemy)override;
 };
 
@@ -22,17 +28,8 @@ public:
 class EnemySlow : public EnemyState
 {
 public:
+	EnemySlow();
 	void Update(Enemy* enemy)override;
-};
-
-//蝋をかけられてる状態
-class EnemyWaxCoating : public EnemyState
-{
-public:
-	EnemyWaxCoating();
-	void Update(Enemy* enemy)override;
-private:
-	Easing::EaseTimer timer = 1.0f;
 };
 
 //全身硬化状態(全身に蝋がついているイメージ)
@@ -42,16 +39,8 @@ public:
 	EnemyAllStop();
 	void Update(Enemy* enemy)override;
 private:
-	Easing::EaseTimer escapeTimer = 2.0f;
 	Color saveColor;
 	Enemy* saveEnemy = nullptr;
-};
-
-//足元硬化状態
-class EnemyFootStop : public EnemyState
-{
-public:
-	void Update(Enemy* enemy)override;
 };
 
 //燃えてる状態

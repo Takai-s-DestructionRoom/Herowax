@@ -22,12 +22,12 @@ void WaxGroup::Update()
 	}
 
 	solidTimer.Update();
-	solidBreakTimer.Update();
+	breakTimer.Update();
 
 	hp = maxHP - damageSustained;
 
 	//HPなくなったら死ぬ
-	if (hp <= 0)
+	if (hp <= 0 || breakTimer.GetEnd())
 	{
 		isAlive = false;
 	}
@@ -61,63 +61,6 @@ void WaxGroup::Update()
 		wax->obj.mTuneMaterial.mColor = wax->SolidBling(solidTimer);
 		wax->Update();
 	}
-
-	for (auto& enemy : trapEnemys)
-	{
-		if (enemy->GetState() == "Normal") {
-			enemy->ChangeState<EnemySlow>();
-		}
-	}
-
-	//1~9までの場合を入れる
-	for (int i = 0; i < 10; i++)
-	{
-		if (trapEnemys.size() - 1 == i) {
-			solidBreakTimer.maxTime_ = WaxManager::GetInstance()->waxTime[i];
-			break;
-		}	
-	}
-	//10以上の場合を入れる
-	if (trapEnemys.size() - 1 >= 10) {
-		solidBreakTimer.maxTime_ = WaxManager::GetInstance()->waxTime[9];
-	}
-
-	if (solidTimer.GetNowEnd()) {
-		//捕まえてるエネミーを足止めする
-		for (auto& enemy : trapEnemys)
-		{
-			enemy->ChangeState<EnemyFootStop>();
-		}
-
-		solidBreakTimer.Start();
-	}
-
-	//捕まえてるエネミーを通常の状態に戻す処理
-	if (solidBreakTimer.GetEnd()) {
-		for (auto& enemy : trapEnemys)
-		{
-			enemy->ChangeState<EnemyNormal>();
-		}
-		SetIsAlive(false);
-	}
-
-	//捕まえてるエネミーを燃やす処理
-	for (auto& enemy : trapEnemys)
-	{
-		for (auto& wax : waxs)
-		{
-			bool isCollision = ColPrimitive3D::CheckSphereToSphere(enemy->collider,
-				wax->collider);
-
-			if (isCollision && wax->GetState() != "Normal") {
-				enemy->ChangeState<EnemyBurning>();
-			}
-		}
-	}
-
-	if (!solidTimer.GetStarted()) {
-		trapEnemys.clear();
-	}
 }
 
 void WaxGroup::Draw()
@@ -146,29 +89,7 @@ void WaxGroup::SetSameSolidTime()
 	solidTimer.Start();
 }
 
-bool WaxGroup::IsSolid()
+bool WaxGroup::GetNowIsSolid()
 {
-	int32_t solidCount = 0;
-	//最大ロウ数より多い数が入ってたらだいたいアウトなのでfalse
-	if (waxs.size() > kMaxWax) {
-		return false;
-	}
-
-	//少なくともワックスを一つでも保持していて
-	if (waxs.size() >= 1)
-	{
-		for (auto& wax : waxs)
-		{
-			if (wax->isSolid) {
-				solidCount += 1;
-			}
-		}
-
-		//すべてのロウが固まっているならtrue
-		if (solidCount >= waxs.size()) {
-			return true;
-		}
-	}
-	//そうでないならfalse
-	return false;
+	return solidTimer.GetNowEnd();
 }

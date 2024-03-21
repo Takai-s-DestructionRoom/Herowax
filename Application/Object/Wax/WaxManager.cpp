@@ -98,10 +98,18 @@ GraphicsPipeline WaxManager::CreateDisolvePipeLine()
 	return pipe;
 }
 
+void WaxManager::Delete()
+{
+	//死んでいるグループがあれば消す
+	waxGroups.remove_if([](std::unique_ptr<WaxGroup>& waxgroup) {
+		return !waxgroup->GetIsAlive() || waxgroup->waxs.size() <= 0;
+		});
+}
+
 WaxManager::WaxManager() :
 	heatUpTemperature(10.f),
 	heatBonus(5.f),
-	waxDamage(0)
+	waxDamage(10)
 {
 	//生成時に変数をセーブデータから引っ張ってくる
 	std::map<std::string, std::string> extract = Parameter::Extract(fileName);
@@ -136,11 +144,6 @@ void WaxManager::Update()
 	//燃えている数を初期化
 	isBurningNum = 0;
 
-	//死んでいるグループがあれば消す
-	waxGroups.remove_if([](std::unique_ptr<WaxGroup>& waxgroup) {
-		return !waxgroup->GetIsAlive() || waxgroup->waxs.size() <= 0;
-		});
-
 	for (auto& waxGroup : waxGroups)
 	{
 		waxGroup->Update();
@@ -174,7 +177,6 @@ void WaxManager::Update()
 	for (auto& group : waxGroups)
 	{
 		ImGui::Text("グループ内のロウの数:%d", (int)group->waxs.size());
-		ImGui::Text("グループの中で最長の固まる時間:%f", group->smallestTime);
 	}
 	ImGui::PopItemWidth();
 
