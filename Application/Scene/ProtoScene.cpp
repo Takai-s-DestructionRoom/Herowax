@@ -105,13 +105,13 @@ void ProtoScene::Update()
 					//投げられてる蝋に当たった時は蝋固まり状態へ遷移
 					if (wax->isGround == false) {
 						enemy->ChangeState<EnemyWaxCoating>();
-						enemy->trappedWaxGroup = group.get();
 						
 						//enemyにダメージ
 						Vector3 knockVec = player.atkVec;
 						knockVec.y = 0;
 						enemy->DealDamage(WaxManager::GetInstance()->waxDamage,
 							knockVec, &player.obj);
+
 						//お試し実装:自分が攻撃を当てた相手が自分を追いかけてくる
 						if (player.GetTauntMode()) {
 							enemy->SetTarget(&player.obj);
@@ -142,8 +142,7 @@ void ProtoScene::Update()
 	}
 	
 	player.Update();
-	level.Update();
-
+	
 	//敵がロウを壊してから連鎖で壊れるため、敵の処理をしてからこの処理を行う
 #pragma region ロウ同士の当たり判定
 	std::list<std::unique_ptr<WaxGroup>>* wGroups = &WaxManager::GetInstance()->waxGroups;
@@ -205,6 +204,8 @@ void ProtoScene::Update()
 	FireManager::GetInstance()->Update();
 	TemperatureManager::GetInstance()->Update();
 	ParticleManager::GetInstance()->Update();
+
+	level.Update();
 
 	light.Update();
 
