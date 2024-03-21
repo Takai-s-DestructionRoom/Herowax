@@ -8,8 +8,10 @@ float4 main(GSOutput input) : SV_TARGET
     // テクスチャマッピング
     float4 texcolor = tex.Sample(smp, input.uv);
     
-    float threshold = input.timer;
+    //ある程度下限を引き上げないと黒めのとこ結構入る
+    float threshold = clamp(input.timer,0.2,1.0);
 
+    //閾値よりも暗かったら描画しない
     if (texcolor.r < threshold || texcolor.g < threshold || texcolor.b < threshold)
     {
         texcolor.a = 0.0;

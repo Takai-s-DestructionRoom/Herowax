@@ -17,12 +17,12 @@ private:
 	bool isGraund;				//接地しているかフラグ
 	float gravity;				//重力
 	float groundPos;			//地面座標
-	
+
 	//---- ノックバック関連 ----//
 	Vector3 knockbackVec;		//ノックバックする方向
 	float knockbackSpeed;		//ノックバックさせる変数(速度に加算、タイマーに合わせて減少)
 	float knockbackRange;		//ノックバックする距離
-	Vector3 knockRadianStart;		
+	Vector3 knockRadianStart;
 	float knockRadianX;
 	float knockRadianZ;
 
@@ -47,7 +47,7 @@ private:
 	//攻撃してきた対象
 	ModelObj* attackTarget = nullptr;
 
- 	std::unique_ptr<EnemyState> state;			//状態管理
+	std::unique_ptr<EnemyState> state;			//状態管理
 	std::string stateStr;		//状態を文字列で保存
 
 	EnemyUI ui;
@@ -69,7 +69,7 @@ public:
 	//追いかける対象を変更
 	void SetTarget(ModelObj* target_);
 
-	void SetGroundPos(float groundPos_) {groundPos = groundPos_;}
+	void SetGroundPos(float groundPos_) { groundPos = groundPos_; }
 
 	//状態変更
 	template <typename ChangeEnemyState>
@@ -114,7 +114,7 @@ public:
 	//ダメージを与える
 	void DealDamage(uint32_t damage);
 	//引数があればノックバックもする(その方向を向かせるために攻撃対象も入れる)
-	void DealDamage(uint32_t damage,const Vector3& dir,ModelObj* target_);
+	void DealDamage(uint32_t damage, const Vector3& dir, ModelObj* target_);
 	//強制的に死亡させる
 	void SetDeath();
 };
