@@ -83,7 +83,7 @@ void WaxGroup::Update()
 	}
 
 	if (solidTimer.GetNowEnd()) {
-		//ここで当たってるエネミーを登録したい
+		//捕まえてるエネミーを足止めする
 		for (auto& enemy : trapEnemys)
 		{
 			enemy->ChangeState<EnemyFootStop>();
@@ -92,12 +92,27 @@ void WaxGroup::Update()
 		solidBreakTimer.Start();
 	}
 
+	//捕まえてるエネミーを通常の状態に戻す処理
 	if (solidBreakTimer.GetEnd()) {
 		for (auto& enemy : trapEnemys)
 		{
 			enemy->ChangeState<EnemyNormal>();
 		}
 		SetIsAlive(false);
+	}
+
+	//捕まえてるエネミーを燃やす処理
+	for (auto& enemy : trapEnemys)
+	{
+		for (auto& wax : waxs)
+		{
+			bool isCollision = ColPrimitive3D::CheckSphereToSphere(enemy->collider,
+				wax->collider);
+
+			if (isCollision && wax->GetState() != "Normal") {
+				enemy->ChangeState<EnemyBurning>();
+			}
+		}
 	}
 
 	if (!solidTimer.GetStarted()) {

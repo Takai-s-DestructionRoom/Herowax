@@ -21,8 +21,8 @@ public:
 	Easing::EaseTimer atkTimer;	//攻撃時間計測用
 
 	//------------ 燃焼関連 ------------//
-	Color waxOriginColor;		//蝋の元の色
-	Color waxEndColor;			//蝋の燃えた後の色
+	static Color waxOriginColor;		//蝋の元の色
+	static Color waxEndColor;			//蝋の燃えた後の色
 	
 	Easing::EaseTimer igniteTimer;	//燃え始めて色が変わるの時間
 	Easing::EaseTimer burningTimer;	//蝋が燃え尽きるまでの時間

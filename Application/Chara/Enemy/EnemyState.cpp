@@ -85,17 +85,34 @@ void EnemyWaxCoating::Update(Enemy* enemy)
 	timer.Update();
 	if (timer.GetEnd()) {
 		//遷移
-		//enemy->ChangeState<EnemyAllStop>();
-		enemy->ChangeState<EnemyNormal>();	//仕様変更でAllstopに遷移する理由がないのでいったんnormalへ
+		enemy->ChangeState<EnemyAllStop>();
+		//enemy->ChangeState<EnemyNormal>();	//仕様変更でAllstopに遷移する理由がないのでいったんnormalへ
 		//あとでまた考える
 	}
 }
 
+EnemyAllStop::EnemyAllStop()
+{
+	escapeTimer.Start();
+}
+
 void EnemyAllStop::Update(Enemy* enemy)
 {
+	escapeTimer.Update();
+
 	enemy->SetStateStr("AllStop");
 
 	enemy->SetIsEscape(false);
+
+	//色を保存
+	saveColor = enemy->obj.mTuneMaterial.mColor;
+	//ロウの色にして固まってるっぽく
+	//enemy->obj.mTuneMaterial.mColor = Wax::waxOriginColor;
+
+	if (escapeTimer.GetEnd()) {
+		enemy->ChangeState<EnemyNormal>();
+		//enemy->obj.mTuneMaterial.mColor = saveColor;
+	}
 	//タイマーを回し続ける
 	//enemy->GetEscapeCoolTimer()->Update();
 	//if (enemy->GetEscapeCoolTimer()->GetStarted() == false)

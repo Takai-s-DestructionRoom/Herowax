@@ -1,5 +1,6 @@
 #pragma once
 #include "Easing.h"
+#include "Color.h"
 
 class Enemy;
 
@@ -38,7 +39,12 @@ private:
 class EnemyAllStop : public EnemyState
 {
 public:
+	EnemyAllStop();
 	void Update(Enemy* enemy)override;
+private:
+	Easing::EaseTimer escapeTimer = 2.0f;
+	Color saveColor;
+	Enemy* saveEnemy = nullptr;
 };
 
 //足元硬化状態
