@@ -108,6 +108,7 @@ void FireUnit::SetTransform(Transform transform)
 
 	frontVec *= Quaternion::Euler(transform.rotation);
 	FireManager::GetInstance()->SetThorwVec(frontVec);
+	FireManager::GetInstance()->SetEndReferencePoint(transform.position);
 
 	obj.mTransform = target;
 	obj.mTransform.scale *= size;

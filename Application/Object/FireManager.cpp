@@ -33,10 +33,10 @@ void FireManager::Update()
 	//始点:自身の座標(炎を出す味方を作るならソイツの座標に変更)
 	//中点:終点座標のXZの半分を始点に足した値と、終点で指定した値の半分を足したY
 	//終点:自身の正面方向に指定した値だけ進んだ場所
-	Vector3 end = spawnObject->mTransform.position + throwVec * fireRange;
+	Vector3 end = endReferencePoint + throwVec * fireRange;
 	end.y = 0;
 	Vector3 middle = spawnObject->mTransform.position + throwVec * (fireRange / 2);
-	middle.y += fireRange / 2;
+	middle.y += fireRange / 4.f;
 
 	splinePoints.push_back(spawnObject->mTransform.position);
 	splinePoints.push_back(middle);

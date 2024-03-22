@@ -27,6 +27,7 @@ public:
 	float fireImpactTime;			//炎が着弾するまでの時間
 
 	Vector3 throwVec;				//投げる方向
+	Vector3 endReferencePoint;		//着弾の基準点
 
 	std::vector<Vector3> splinePoints;	//炎が通るスプライン挙動
 
@@ -51,6 +52,8 @@ public:
 	//外部から情報を設定しておくやつら
 	void SetThorwVec(const Vector3& throwVec_);
 	void SetTarget(ModelObj* target_);
+	//着弾の基準点設定
+	void SetEndReferencePoint(Vector3 point) { endReferencePoint = point; }
 
 	//情報を元に生成
 	void Create();
