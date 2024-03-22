@@ -30,7 +30,8 @@ Enemy::~Enemy()
 {
 	//死んだときパーティクル出す
 	ParticleManager::GetInstance()->AddSimple(
-		obj.mTransform.position, 10, 0.3f, Color::kGreen, 0.5f, 0.8f,
+		obj.mTransform.position, obj.mTransform.scale * 0.5f, 10, 0.3f,
+		Color::kGreen, "", 0.5f, 0.8f,
 		{ -0.3f,-0.3f,-0.3f }, { 0.3f,0.3f,0.3f },
 		0.05f, -Vector3::ONE * 0.1f, Vector3::ONE * 0.1f, 0.05f);
 }
@@ -48,18 +49,17 @@ void Enemy::Update()
 	//各ステート時の固有処理
 	state->Update(this);	//移動速度に関係するので移動の更新より前に置く
 
+	hp = Util::Clamp(hp, 0.f, maxHP);
+
 	if (hp <= 0) {
-		SetDeath();
+		//hpが0になったら、自身の状態を固まり状態へ遷移
+		ChangeState<EnemyAllStop>();
 	}
 
 	//プレイヤーに向かって移動するAI
 	Vector3 pVec = target->mTransform.position - obj.mTransform.position;
 	pVec.Normalize();
 	pVec.y = 0;
-
-	//減速率は大きいほどスピード下がるから1.0から引くようにしてる
-	moveVec += pVec * moveSpeed *
-		(1.f - slowMag) * (1.f - slowCoatingMag);
 
 	//無敵時間さん!?の更新
 	mutekiTimer.Update();
@@ -72,6 +72,10 @@ void Enemy::Update()
 		//重力をかける
 		moveVec.y -= gravity;
 	}
+
+	//減速率は大きいほどスピード下がるから1.0から引くようにしてる
+	moveVec += pVec * moveSpeed *
+		(1.f - slowMag) * (1.f - slowCoatingMag);
 
 	//座標加算
 	obj.mTransform.position += moveVec;
@@ -208,6 +212,21 @@ void Enemy::DealDamage(uint32_t damage, const Vector3& dir, ModelObj* target_)
 
 	//ヒットモーションタイマーを開始
 	knockbackTimer.Start();
+
+	//ヒットパーティクル出す
+	ParticleManager::GetInstance()->AddSimple(
+		obj.mTransform.position, obj.mTransform.scale,
+		10, 0.3f, obj.mTuneMaterial.mColor, "", 0.5f, 1.2f,
+		dir.GetNormalize() - Vector3::ONE * 0.3f, dir.GetNormalize() - Vector3::ONE * 0.3f,
+		0.03f, -Vector3::ONE * 0.1f, Vector3::ONE * 0.1f, 0.1f);
+
+	//ヒットエフェクト出す
+	ParticleManager::GetInstance()->AddSimple(
+		obj.mTransform.position + Vector3::UP * obj.mTransform.scale.y,
+		obj.mTransform.scale * 0.f, 1, 0.3f,
+		obj.mTuneMaterial.mColor, TextureManager::Load("./Resources/hit_circle.png"),
+		0.f, 0.f, Vector3::ZERO, Vector3::ZERO,
+		0.f, Vector3::ONE * 0.1f, Vector3::ONE * 0.1f, 0.1f, 3.f, false, true);
 }
 
 void Enemy::SetDeath()

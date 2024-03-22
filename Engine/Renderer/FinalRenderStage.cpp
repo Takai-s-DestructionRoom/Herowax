@@ -55,8 +55,8 @@ void FinalRenderStage::Init()
 
 	mPipelineState = RDirectX::GetDefPipeline();
 
-	mPipelineState.mDesc.VS = Shader("./Shader/FinalVS.hlsl", "main", "vs_5_0");
-	mPipelineState.mDesc.PS = Shader("./Shader/FinalPS.hlsl", "main", "ps_5_0");
+	mPipelineState.mDesc.VS = Shader("./Shader/Final/FinalVS.hlsl", "main", "vs_5_0");
+	mPipelineState.mDesc.PS = Shader("./Shader/Final/FinalPS.hlsl", "main", "ps_5_0");
 
 	// ラスタライザの設定
 	mPipelineState.mDesc.RasterizerState.CullMode = D3D12_CULL_MODE_NONE;

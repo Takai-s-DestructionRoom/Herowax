@@ -32,10 +32,10 @@ void SpawnerManager::Draw()
 	}
 }
 
-void SpawnerManager::Create(const Vector3& position, const Vector3& scale, const Vector3& rotation)
+void SpawnerManager::Create(const Vector3& position, const Vector3& scale, const Vector3& rotation, const std::string& loadfile)
 {
 	spawners.emplace_back();
-	spawners.back().Init();
+	spawners.back().Init(loadfile);
 	spawners.back().SetPos(position);
 	spawners.back().SetScale(scale);
 	spawners.back().SetRota(rotation);

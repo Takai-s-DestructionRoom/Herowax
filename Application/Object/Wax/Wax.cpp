@@ -3,15 +3,17 @@
 #include "Renderer.h"
 #include "WaxManager.h"
 
+Color Wax::waxOriginColor = { 0.8f, 0.6f, 0.35f, 1.f };
+Color Wax::waxEndColor = { 0.8f, 0.0f, 0.f, 1.f };
+
 Wax::Wax():GameObject(),
-	waxOriginColor(0.8f, 0.6f, 0.35f, 1.f),
-	waxEndColor(0.8f,0.0f,0.f,1.f),
+	
+	
 	atkSpeed(1.f),
 	atkPower(1),
 	igniteTimer(0.25f),
 	burningTimer(1.0f),
 	extinguishTimer(0.5f),
-	solidTimer(1.f),
 	disolveValue(0.f)
 {
 	state = std::make_unique<WaxNormal>();
@@ -31,7 +33,7 @@ bool Wax::GetIsSolidNow()
 }
 
 void Wax::Init(uint32_t power, Vector3 vec,float speed,
-	Vector2 range, float size, float atkTime, float solidTime)
+	Vector2 range, float size, float atkTime)
 {
 	//hp = maxHP;
 	atkPower = power;
@@ -40,15 +42,12 @@ void Wax::Init(uint32_t power, Vector3 vec,float speed,
 	atkSize = size;
 	atkTimer = atkTime;
 	atkTimer.Start();
-	solidTimer = solidTime;
-	solidTimer.Start();
 }
 
 void Wax::Update()
 {
 	atkTimer.Update();
-	solidTimer.Update();
-
+	
 	isSolided = isSolid;	//1F前の状態を保存
 
 	//段々大きくなる
@@ -73,31 +72,6 @@ void Wax::Update()
 		obj.mTransform.position.y = 0.f;
 		
 		isGround = true;
-	}
-
-	//もう少しで固まりそうなら
-	if (GetIsSolidLine())
-	{
-		//もう1色は更新し続け
-		obj.mTuneMaterial.mColor = Color::kWhite;
-
-		//トグルでtrueになったら色変えることで点滅
-		isFlashing = ((int)(solidTimer.GetTimeRate() * 1000.0f) % 100 > 50);
-		if (isFlashing ^ obj.mTuneMaterial.mColor == Color::kWhite)
-		{
-			obj.mTuneMaterial.mColor = Color::kYellow;
-		}
-	}
-	else
-	{
-		obj.mTuneMaterial.mColor = waxOriginColor;
-	}
-
-	//固まるまでの時間過ぎたら固まる
-	if (solidTimer.GetEnd())
-	{
-		isSolid = true;
-		obj.mTuneMaterial.mColor = Color::kLightblue;
 	}
 
 	//燃焼周りのステートの更新
@@ -153,7 +127,24 @@ bool Wax::IsNormal()
 		!extinguishTimer.GetStarted();
 }
 
-bool Wax::GetIsSolidLine()
+Color Wax::SolidBling(const Easing::EaseTimer& timer)
 {
-	return solidTimer.GetTimeRate() > 0.7f;
+	//もう1色は更新し続け
+	Color color = Color::kWhite;
+
+	if (timer.GetEnd()) {
+		//ここだいぶカス
+		isSolid = true;
+		return Color::kLightblue;
+	}
+	else if (timer.GetTimeRate() > 0.7f) {
+		//トグルでtrueになったら色変えることで点滅
+		isFlashing = ((int)(timer.GetTimeRate() * 1000.0f) % 100 > 50);
+		if (isFlashing ^ color == Color::kWhite)
+		{
+			return Color::kYellow;
+		}
+	}
+	
+	return waxOriginColor;
 }

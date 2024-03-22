@@ -18,6 +18,7 @@ private:
 	std::string fileName = "Wax";
 
 public:
+	std::vector<float> waxTime;
 	//std::vector<std::unique_ptr<Wax>> waxs;	//蝋ども
 	std::list<std::unique_ptr<WaxGroup>> waxGroups;	//蝋ども
 	const uint32_t kMaxWax = 128;	//最大グループ数
@@ -54,6 +55,10 @@ public:
 		std::unique_ptr<WaxGroup>& group2);
 
 	GraphicsPipeline CreateDisolvePipeLine();
+
+	//死んでるやつらを殺したりする
+	void Delete();
+
 private:
 
 	//コンストラクタ

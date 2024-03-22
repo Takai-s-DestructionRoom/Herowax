@@ -3,7 +3,6 @@
 void RingParticle::Init()
 {
 	IEmitter3D::Init();
-	IEmitter3D::SetIsRotation(true);
 }
 
 void RingParticle::Update()
@@ -36,10 +35,13 @@ void RingParticle::Update()
 	}
 }
 
-void RingParticle::AddRing(uint32_t addNum, float life, Color color, float startRadius, float endRadius, float minScale, float maxScale,
-	float minVeloY, float maxVeloY, Vector3 minRot, Vector3 maxRot, float growingTimer)
+void RingParticle::AddRing(
+	uint32_t addNum, float life, Color color, TextureHandle tex,
+	float startRadius, float endRadius, float minScale, float maxScale,
+	float minVeloY, float maxVeloY, Vector3 minRot, Vector3 maxRot,
+	float growingTimer, float endScale, bool isGravity, bool isBillboard)
 {
 	IEmitter3D::AddRing(
-		addNum, life, color, startRadius, endRadius, minScale, maxScale,
-		minVeloY, maxVeloY, minRot, maxRot, growingTimer);
+		addNum, life, color, tex, startRadius, endRadius, minScale, maxScale,
+		minVeloY, maxVeloY, minRot, maxRot, growingTimer, endScale, isGravity, isBillboard);
 }

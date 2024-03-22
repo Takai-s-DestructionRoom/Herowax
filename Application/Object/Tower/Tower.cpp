@@ -1,11 +1,16 @@
 #include "Tower.h"
 #include "Temperature.h"
 #include "Camera.h"
+#include "ParticleManager.h"
 #include "ImGui.h"
 
 Tower::Tower() : GameObject(), hp(0), maxHP(10.f),shakeTimer(0.3f),shakePower(1.5f)
 {
 	obj = ModelObj(Model::Load("./Resources/Model/Birdnest/Birdnest.obj", "Birdnest", true));
+}
+
+Tower::~Tower()
+{
 }
 
 void Tower::Init()
@@ -35,6 +40,15 @@ void Tower::Update()
 	//HP0になったら死ぬ
 	if (hp <= 0)
 	{
+		if (isAlive)
+		{
+			//死んだ瞬間パーティクル出す
+			ParticleManager::GetInstance()->AddSimple(
+				obj.mTransform.position, obj.mTransform.scale,
+				25, 0.5f, obj.mTuneMaterial.mColor, "", 1.5f, 2.5f,
+				{ -0.5f,-0.5f,-0.5f }, { 0.5f,0.5f,0.5f },
+				0.05f, -Vector3::ONE * 0.1f, Vector3::ONE * 0.1f, 0.1f);
+		}
 		isAlive = false;
 	}
 	else
@@ -114,4 +128,11 @@ void Tower::Damage(float damage, Vector3 vec)
 	hp -= damage;
 	shakeVec = vec.Normalize();
 	shakeTimer.Start();
+
+	//ヒットパーティクル出す
+	ParticleManager::GetInstance()->AddSimple(
+		obj.mTransform.position, obj.mTransform.scale,
+		15, 0.3f, obj.mTuneMaterial.mColor, "", 0.5f, 1.5f,
+		shakeVec - Vector3::ONE * 0.3f, shakeVec - Vector3::ONE * 0.3f,
+		0.03f, -Vector3::ONE * 0.1f, Vector3::ONE * 0.1f, 0.1f);
 }

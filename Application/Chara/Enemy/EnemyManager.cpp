@@ -26,14 +26,6 @@ EnemyManager::EnemyManager()
 	mutekiTime = Parameter::GetParam(extract, "無敵時間さん", 0.1f);
 }
 
-void EnemyManager::CreateEnemy(const Vector3 position)
-{
-	enemys.emplace_back(target);
-	enemys.back().SetPos(position);
-	enemys.back().Init();
-	enemys.back().SetGroundPos(ground->mTransform.position.y);
-}
-
 void EnemyManager::SetTarget(ModelObj* target_)
 {
 	target = target_;
@@ -56,20 +48,17 @@ void EnemyManager::Init()
 
 void EnemyManager::Update()
 {
-	//死んでるならリストから削除
-	enemys.remove_if([](Enemy& enemy) {
-		return !enemy.GetIsAlive();
-		});
+	Delete();
 
 	for (auto& enemy : enemys)
 	{
-		enemy.SetSlowMag(slowMag);	//減速率まとめて変更
-		enemy.SetSlowCoatingMag(slowCoatingMag);	//蝋かかかった時の減速率まとめて変更
-		enemy.SetKnockRange(knockRange);
-		enemy.SetKnockTime(knockTime);
-		enemy.SetMutekiTime(mutekiTime);
-		
-		enemy.Update();
+		enemy->SetSlowMag(slowMag);	//減速率まとめて変更
+		enemy->SetSlowCoatingMag(slowCoatingMag);	//蝋かかかった時の減速率まとめて変更
+		enemy->SetKnockRange(knockRange);
+		enemy->SetKnockTime(knockTime);
+		enemy->SetMutekiTime(mutekiTime);
+			 
+		enemy->Update();
 	}
 
 	burningComboTimer.Update();
@@ -133,6 +122,14 @@ void EnemyManager::Draw()
 {
 	for (auto& enemy : enemys)
 	{
-		enemy.Draw();
+		enemy->Draw();
 	}
+}
+
+void EnemyManager::Delete()
+{
+	//死んでるならリストから削除
+	enemys.remove_if([](std::unique_ptr<Enemy>& enemy) {
+		return !enemy->GetIsAlive();
+		});
 }

@@ -10,13 +10,6 @@
 
 // 3Dのパーティクル //
 // エミッターも含む //
-
-enum class ShapeType
-{
-	Cube,
-	Polygon,
-};
-
 class IEmitter3D
 {
 	//粒子1粒
@@ -58,6 +51,10 @@ protected:
 	SRConstBuffer<TransformBuffer> transformBuff;
 	SRConstBuffer<ViewProjectionBuffer> viewProjectionBuff;
 
+	Matrix4 billboardMat;			//ビルボード行列
+	SRConstBuffer<TransformBuffer> billboardBuff;
+
+	//頂点群
 	std::vector<VertexParticle> vertices;
 	SRVertexBuffer vertBuff;
 
@@ -84,12 +81,9 @@ protected:
 	bool isActive_ = true;					//有効にするかフラグ
 
 	bool isGravity_ = false;				//重力の影響受けるかフラグ
-	bool isRotation_ = false;				//回すかフラグ
-	bool isGrowing_ = true;					//発生時に徐々に大きくなるかフラグ
+	bool isBillboard_ = false;				//ビルボード描画するかフラグ
 
-	//形状のタイプ
-	uint32_t shapeType_;
-
+	Texture texture;						//割り当てるテクスチャ
 
 public:
 	//コンストラクタ
@@ -111,13 +105,16 @@ public:
 
 	//パーティクル追加(固有処理にしたかったらoverrideで上書きする)
 	//life:秒数指定なので注意
-	virtual void Add(uint32_t addNum, float life, Color color, float minScale, float maxScale,
-		Vector3 minVelo, Vector3 maxVelo, float accelPower = 0.f, Vector3 minRot = {}, Vector3 maxRot = {}, float growingTimer = 0.f);
+	virtual void Add(uint32_t addNum, float life, Color color, TextureHandle tex, float minScale, float maxScale,
+		Vector3 minVelo, Vector3 maxVelo, float accelPower = 0.f, Vector3 minRot = {}, Vector3 maxRot = {},
+		float growingTimer = 0.f, float endScale = 0.f, bool isGravity = false, bool isBillboard = false);
 
 	//リング状パーティクル追加(固有処理にしたかったらoverrideで上書きする)
 	//life:秒数指定なので注意
-	virtual void AddRing(uint32_t addNum, float life, Color color, float startRadius, float endRadius, float minScale, float maxScale,
-		float minVeloY, float maxVeloY, Vector3 minRot = {}, Vector3 maxRot = {}, float growingTimer = 0.f);
+	virtual void AddRing(uint32_t addNum, float life, Color color, TextureHandle tex,
+		float startRadius, float endRadius, float minScale, float maxScale,
+		float minVeloY, float maxVeloY, Vector3 minRot = {}, Vector3 maxRot = {},
+		float growingTimer = 0.f, float endScale = 0.f, bool isGravity = false, bool isBillboard = false);
 
 	//パーティクル全消し
 	void ClearParticles() { particles_.clear(); }
@@ -133,8 +130,6 @@ public:
 	size_t GetParticlesSize()const { return particles_.size(); }
 	//有効フラグ取得
 	bool GetIsActive()const { return isActive_; }
-	//形状取得
-	uint32_t GetShapeType()const { return shapeType_; }
 
 	//セッター//
 	//座標設定
@@ -149,12 +144,8 @@ public:
 	void SetIsActive(bool isActive) { isActive_ = isActive; }
 	//重力フラグ設定
 	void SetIsGravity(bool isGravity) { isGravity_ = isGravity; }
-	//回転フラグ設定
-	void SetIsRotation(bool isRotation) { isRotation_ = isRotation; }
-	//発生時拡大フラグ設定
-	void SetIsGrowing(bool isGrowing) { isGrowing_ = isGrowing; }
-	//形状設定
-	void SetShapeType(uint32_t shapeType) { shapeType_ = shapeType; }
+	//ビルボードフラグ設定
+	void SetIsisBillboard(bool isBillboard) { isBillboard_ = isBillboard; }
 
 	//拡縮用タイマーが切り替わる時間設定(秒)
 	void SetScalingTimer(float timer);

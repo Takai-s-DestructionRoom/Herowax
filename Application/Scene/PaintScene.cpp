@@ -55,6 +55,7 @@ void PaintScene::Update()
 	ImGui::Begin("Paint Control", NULL, window_flags);
 	ImGui::DragFloat("PaintSize", &paintSize);
 	ImGui::ColorEdit4("PaintColor", &paintColor.r);
+	ImGui::ColorEdit4("ResultColor", &hogeColor.r);
 	ImGui::End();
 
 	light.Update();
@@ -62,7 +63,8 @@ void PaintScene::Update()
 
 	skydome.TransferBuffer(camera.mViewProjection);
 
-	if (!ImGui::GetIO().WantCaptureMouse && RInput::GetMouseClick(0)) {
+	if (GetActiveWindow() == RWindow::GetWindowHandle()
+		&& !ImGui::GetIO().WantCaptureMouse && RInput::GetMouseClick(0)) {
 		Float4 mousePosA = RInput::GetMousePos();
 		Float4 mousePosB = RInput::GetMousePos();
 		mousePosB.z = 1;
@@ -132,6 +134,12 @@ void PaintScene::Update()
 		if (closestDis != FLT_MAX) {
 			skydome.Paint(closestPos, hitMeshIndex, hitIndex, "brush", paintColor, Vector2(paintSize, paintSize), camera.mViewProjection.mMatrix);
 		}
+	}
+
+	if (RInput::GetKey(DIK_P)) {
+		Util::CalcElapsedTimeStart();
+		hogeColor = skydome.ReadPaint({0, 0}, 0);
+		Util::CalcElapsedTimeEnd("Read");
 	}
 }
 

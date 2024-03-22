@@ -16,6 +16,7 @@ struct LevelData
 	};
 	struct ObjectData {
 		std::string setObjectName;
+		std::string spawnerOrder;
 		
 		Vector3 translation{};
 		Vector3 rotation{};

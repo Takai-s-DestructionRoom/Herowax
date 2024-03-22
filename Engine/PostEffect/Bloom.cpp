@@ -195,8 +195,8 @@ GraphicsPipeline& Bloom::GetGraphicsPipelineA()
 	blenddesc.SrcBlend = D3D12_BLEND_SRC_ALPHA;
 	blenddesc.DestBlend = D3D12_BLEND_INV_SRC_ALPHA;
 
-	desc.VS = Shader::GetOrCreate("BloomA_VS", "Shader/BrightCutVS.hlsl", "main", "vs_5_0");
-	desc.PS = Shader::GetOrCreate("BloomA_PS", "Shader/BrightCutPS.hlsl", "main", "ps_5_0");
+	desc.VS = Shader::GetOrCreate("BloomA_VS", "Shader/BrightCut/BrightCutVS.hlsl", "main", "vs_5_0");
+	desc.PS = Shader::GetOrCreate("BloomA_PS", "Shader/BrightCut/BrightCutPS.hlsl", "main", "ps_5_0");
 	desc.pRootSignature = GetRootSignatureA().mPtr.Get();
 	return GraphicsPipeline::GetOrCreate("BloomA", desc);
 }
@@ -231,8 +231,8 @@ GraphicsPipeline& Bloom::GetGraphicsPipelineB()
 	blenddesc.SrcBlend = D3D12_BLEND_SRC_ALPHA;
 	blenddesc.DestBlend = D3D12_BLEND_INV_SRC_ALPHA;
 
-	desc.VS = Shader::GetOrCreate("BloomB_VS", "Shader/GaussianBlurVS.hlsl", "main", "vs_5_0");
-	desc.PS = Shader::GetOrCreate("BloomB_PS", "Shader/GaussianBlurPS.hlsl", "main", "ps_5_0");
+	desc.VS = Shader::GetOrCreate("BloomB_VS", "Shader/GaussianBlur/GaussianBlurVS.hlsl", "main", "vs_5_0");
+	desc.PS = Shader::GetOrCreate("BloomB_PS", "Shader/GaussianBlur/GaussianBlurPS.hlsl", "main", "ps_5_0");
 	desc.pRootSignature = GetRootSignatureB().mPtr.Get();
 	return GraphicsPipeline::GetOrCreate("BloomB", desc);
 }
@@ -266,8 +266,8 @@ GraphicsPipeline& Bloom::GetGraphicsPipelineC()
 	blenddesc.BlendOp = D3D12_BLEND_OP_ADD;
 	blenddesc.SrcBlend = D3D12_BLEND_ONE;
 	blenddesc.DestBlend = D3D12_BLEND_ONE;
-	desc.VS = Shader::GetOrCreate("BloomC_VS", "Shader/BloomVS.hlsl", "main", "vs_5_0");
-	desc.PS = Shader::GetOrCreate("BloomC_PS", "Shader/BloomPS.hlsl", "main", "ps_5_0");
+	desc.VS = Shader::GetOrCreate("BloomC_VS", "Shader/Bloom/BloomVS.hlsl", "main", "vs_5_0");
+	desc.PS = Shader::GetOrCreate("BloomC_PS", "Shader/Bloom/BloomPS.hlsl", "main", "ps_5_0");
 	desc.pRootSignature = GetRootSignatureA().mPtr.Get();
 	return GraphicsPipeline::GetOrCreate("BloomC", desc);
 }

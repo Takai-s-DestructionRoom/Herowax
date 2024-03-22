@@ -6,6 +6,7 @@
 const float EPSILON = 0.000001f;
 const Vector3 Vector3::ZERO = Vector3();
 const Vector3 Vector3::ONE = Vector3(1,1,1);
+const Vector3 Vector3::UP = Vector3(0,1,0);
 
 Vector3::Vector3() : x(0), y(0), z(0) {}
 

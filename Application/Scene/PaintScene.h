@@ -37,4 +37,6 @@ private:
 	//customize
 	Color paintColor = { 1, 1, 1, 1 };
 	float paintSize = 300;
+
+	Color hogeColor = { 0, 0, 0, 0 };
 };

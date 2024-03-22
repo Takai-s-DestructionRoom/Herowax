@@ -3,12 +3,13 @@
 #include "Enemy.h"
 #include <list>
 #include "Easing.h"
+#include <memory>
 
 class EnemyManager
 {
 public:
 	//敵リスト
-	std::list<Enemy> enemys;
+	std::list<std::unique_ptr<Enemy>> enemys;
 
 	//地面座標(平面想定のみ、ちゃんと地形を入れるならまた変えないといけない)
 	ModelObj* ground = nullptr;
@@ -40,7 +41,15 @@ public:
 	static EnemyManager* GetInstance();
 
 	//指定した座標に敵を生成
-	void CreateEnemy(const Vector3 position);
+	template <typename TEnemy>
+	void CreateEnemy(const Vector3 position)
+	{
+		enemys.emplace_back();
+		enemys.back() = std::make_unique<TEnemy>(target);
+		enemys.back()->SetPos(position);
+		enemys.back()->Init();
+		enemys.back()->SetGroundPos(ground->mTransform.position.y);
+	}
 
 	//敵の追跡対象を変更(プレイヤーを入れるのを想定)
 	void SetTarget(ModelObj* target_);
@@ -48,6 +57,9 @@ public:
 	void SetGround(ModelObj* ground_);
 	
 	static void LoadResource();
+
+	//死んでるやつらを殺す
+	void Delete();
 
 	void Init();
 	void Update();

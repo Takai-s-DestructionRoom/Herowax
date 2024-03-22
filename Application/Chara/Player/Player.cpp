@@ -9,12 +9,14 @@
 #include "RImGui.h"
 #include "FireManager.h"
 #include "Parameter.h"
+#include "InstantDrawer.h"
 
 Player::Player() :GameObject(),
 moveSpeed(1.f), moveAccelAmount(0.05f), isGround(true), hp(0), maxHP(10.f),
 isJumping(false), jumpTimer(0.2f), jumpHeight(0.f), maxJumpHeight(5.f), jumpPower(2.f), jumpSpeed(0.f),
 isAttack(false), atkSpeed(1.f), atkRange({ 3.f,5.f }), atkSize(0.f), atkPower(1),
-atkCoolTimer(0.3f), atkTimer(0.5f), atkHeight(1.f), solidTimer(5.f)
+atkCoolTimer(0.3f), atkTimer(0.5f), atkHeight(1.f), solidTimer(5.f),
+maxFireGauge(5.f), maxFireStock(5), isFireStock(false)
 {
 	obj = ModelObj(Model::Load("./Resources/Model/Cube.obj", "Cube", true));
 
@@ -42,6 +44,8 @@ atkCoolTimer(0.3f), atkTimer(0.5f), atkHeight(1.f), solidTimer(5.f)
 void Player::Init()
 {
 	hp = maxHP;
+	//最初から出せないの不便なので初期状態で半分はあげる
+	fireStock = maxFireStock / 2;
 }
 
 void Player::Update()
@@ -89,11 +93,12 @@ void Player::Update()
 			isGround = true;
 
 			//エミッターの座標はプレイヤーの座標からY座標だけにスケール分ずらしたもの
-			Vector3 emitterPos = obj.mTransform.position;
-			emitterPos.y -= obj.mTransform.scale.y;
+			Vector3 emitterPos = GetCenterPos();
 
-			ParticleManager::GetInstance()->AddRing(emitterPos,16, 0.3f, obj.mTuneMaterial.mColor, 0.7f, 1.2f, 0.3f, 0.6f,
-				0.01f, 0.05f, -Vector3::ONE * 0.1f, Vector3::ONE * 0.1f, 0.05f);
+			ParticleManager::GetInstance()->AddRing(
+				emitterPos, 16, 0.3f, obj.mTuneMaterial.mColor, "",
+				0.7f, 1.2f, 0.3f, 0.6f, 0.01f, 0.05f,
+				-Vector3::ONE * 0.1f, Vector3::ONE * 0.1f, 0.05f);
 		}
 		isJumping = false;
 	}
@@ -106,9 +111,12 @@ void Player::Update()
 
 	UpdateCollider();
 
+
 	//更新してからバッファに送る
 	obj.mTransform.UpdateMatrix();
 	obj.TransferBuffer(Camera::sNowCamera->mViewProjection);
+
+	ui.Update(this);
 
 #pragma region ImGui
 	ImGui::SetNextWindowSize({ 600, 250 });
@@ -140,6 +148,7 @@ void Player::Update()
 	{
 		ImGui::Text("攻撃中か:%d", isAttack);
 		ImGui::Checkbox("攻撃中でも次の攻撃を出せるか", &isMugenAttack);
+		ImGui::Checkbox("炎をストック性にするか", &isFireStock);
 
 		ImGui::SliderFloat("攻撃時間", &atkTimer.maxTime_, 0.f, 2.f);
 		ImGui::SliderFloat("射出速度", &atkSpeed, 0.f, 2.f);
@@ -148,6 +157,7 @@ void Player::Update()
 		ImGui::SliderFloat("攻撃範囲Y", &atkRange.y, 0.f, 10.f);
 		ImGui::SliderFloat("クールタイム", &atkCoolTimer.maxTime_, 0.f, 2.f);
 		ImGui::SliderFloat("固まるまでの時間", &solidTimer.maxTime_, 0.f, 10.f);
+		ImGui::Text("炎のストック数:%d", fireStock);
 
 		ImGui::TreePop();
 	}
@@ -160,10 +170,10 @@ void Player::Update()
 	if (ImGui::TreeNode("お試し実装:パブロアタック"))
 	{
 		ImGui::Text("スティックの入力:%f", abs(RInput::GetInstance()->GetPadLStick().LengthSq()));
-		ImGui::SliderFloat("ショットが出る基準", &shotDeadZone,0.0f,2.0f);
-		ImGui::SliderFloat("広がり", &pabloRange,0.0f,10.f);
-		ImGui::SliderFloat("横の広がり", &pabloSideRange,0.0f,10.f);
-		ImGui::SliderFloat("パブロ攻撃時の移動速度低下係数", &pabloSpeedMag,0.0f,1.0f);
+		ImGui::SliderFloat("ショットが出る基準", &shotDeadZone, 0.0f, 2.0f);
+		ImGui::SliderFloat("広がり", &pabloRange, 0.0f, 10.f);
+		ImGui::SliderFloat("横の広がり", &pabloSideRange, 0.0f, 10.f);
+		ImGui::SliderFloat("パブロ攻撃時の移動速度低下係数", &pabloSpeedMag, 0.0f, 1.0f);
 
 		ImGui::TreePop();
 	}
@@ -200,6 +210,8 @@ void Player::Draw()
 	if (isAlive)
 	{
 		obj.Draw();
+
+		ui.Draw();
 	}
 }
 
@@ -231,10 +243,11 @@ void Player::MovePad()
 		emitterPos.x += mVelo.x * obj.mTransform.scale.x;
 		emitterPos.z += mVelo.y * obj.mTransform.scale.z;
 
-		ParticleManager::GetInstance()->AddSimple(emitterPos,
-			2, 0.5f, obj.mTuneMaterial.mColor, 0.3f, 0.7f,
+		ParticleManager::GetInstance()->AddSimple(
+			emitterPos, obj.mTransform.scale * 0.5f,
+			2, 0.5f, obj.mTuneMaterial.mColor, "", 0.3f, 0.7f,
 			{ -0.001f,0.01f,-0.001f }, { 0.001f,0.03f,0.001f },
-			0.01f, -Vector3::ONE * 0.1f, Vector3::ONE * 0.1f, 0.05f);
+			0.01f, -Vector3::ONE * 0.1f, Vector3::ONE * 0.1f, 0.05f, 0.f, false, false);
 	}
 	else
 	{
@@ -254,12 +267,12 @@ void Player::MovePad()
 		jumpTimer.Start();
 
 		//エミッターの座標はプレイヤーの座標からY座標だけにスケール分ずらしたもの
-		Vector3 emitterPos = obj.mTransform.position;
-		emitterPos.y -= obj.mTransform.scale.y;
+		Vector3 emitterPos = GetCenterPos();
 
-		ParticleManager::GetInstance()->AddRing(emitterPos,
-		20, 0.5f, obj.mTuneMaterial.mColor, 1.f, 2.5f, 0.5f, 0.8f,
-			0.01f, 0.05f, -Vector3::ONE * 0.1f, Vector3::ONE * 0.1f, 0.05f);
+		ParticleManager::GetInstance()->AddRing(
+			emitterPos, 20, 0.5f, obj.mTuneMaterial.mColor, "",
+			1.f, 2.5f, 0.5f, 0.8f, 0.01f, 0.05f,
+			-Vector3::ONE * 0.1f, Vector3::ONE * 0.1f, 0.05f);
 	}
 
 	//ジャンプ中は
@@ -331,11 +344,12 @@ void Player::MoveKey()
 		jumpTimer.Start();
 
 		//エミッターの座標はプレイヤーの座標からY座標だけにスケール分ずらしたもの
-		Vector3 emitterPos = obj.mTransform.position;
-		emitterPos.y -= obj.mTransform.scale.y;
+		Vector3 emitterPos = GetCenterPos();
 
-		ParticleManager::GetInstance()->AddRing(emitterPos, 16, 0.5f, obj.mTuneMaterial.mColor, 1.f, 2.5f, 0.5f, 0.8f,
-			0.01f, 0.03f, -Vector3::ONE * 0.1f, Vector3::ONE * 0.1f, 0.05f);
+		ParticleManager::GetInstance()->AddRing(
+			emitterPos, 16, 0.5f, obj.mTuneMaterial.mColor, "",
+			1.f, 2.5f, 0.5f, 0.8f, 0.01f, 0.03f,
+			-Vector3::ONE * 0.1f, Vector3::ONE * 0.1f, 0.05f);
 	}
 
 	//ジャンプ中は
@@ -371,10 +385,11 @@ void Player::MoveKey()
 		emitterPos.x += mVelo.x * obj.mTransform.scale.x;
 		emitterPos.z += mVelo.y * obj.mTransform.scale.z;
 
-		ParticleManager::GetInstance()->AddSimple(emitterPos,
-			2, 0.5f, obj.mTuneMaterial.mColor, 0.3f, 0.7f,
+		ParticleManager::GetInstance()->AddSimple(
+			emitterPos, obj.mTransform.scale * 0.5f,
+			2, 0.5f, obj.mTuneMaterial.mColor, TextureManager::Load("./Resources/white2x2.png"), 0.3f, 0.7f,
 			{ -0.001f,0.01f,-0.001f }, { 0.001f,0.03f,0.001f },
-			0.01f, -Vector3::ONE * 0.1f, Vector3::ONE * 0.1f, 0.05f);
+			0.01f, -Vector3::ONE * 0.1f, Vector3::ONE * 0.1f, 0.05f, 0.f, false, false);
 	}
 
 	//「ジャンプの高さ」+「プレイヤーの大きさ」を反映
@@ -391,6 +406,9 @@ void Player::Attack()
 		{
 			isAttack = true;
 			atkTimer.Start();
+
+			//ホントは塗った面積に応じて溜めたい
+			FireGaugeCharge(1.f);
 
 			//入力時の出現位置と方向を記録
 			atkVec = GetFrontVec();
@@ -432,6 +450,9 @@ void Player::PabloAttack()
 		pabloVec.y = atkHeight;
 	}
 
+	//ホントは塗った面積に応じて溜めたい
+	FireGaugeCharge(1.f);
+
 	atkVec = pabloVec;
 
 	Vector2 rotaVec = { pabloVec.x,pabloVec.z };
@@ -440,17 +461,17 @@ void Player::PabloAttack()
 	//pabloVecの横ベクトルを取る
 	Vector3 sidePabloVec = { rotaVec.x,0,rotaVec.y };
 	sidePabloVec.Normalize();
-	
+
 	//発射数の半分(切り捨て)はマイナス横ベクトル方向へずらす
 	int32_t waxNum = 3;
-	
+
 	//imguiでいじれるようにするのと、前方向へのランダムを作る
 
 	//発射数分ロウを生成、座標を生成するたびプラス横ベクトル方向へずらす
 	//座標を生成するたびプラス正面ベクトル方向へずらす
 	Vector3 sideRandMin = -sidePabloVec * pabloSideRange;
 	Vector3 sideRandMax = sidePabloVec * pabloSideRange;
-	
+
 	//もしminの方が大きくなってしまっていたら入れ替える
 	if (sideRandMin.x > sideRandMax.x) {
 		float save = sideRandMin.x;
@@ -470,7 +491,7 @@ void Player::PabloAttack()
 		//横のランダムを決定
 		spawnTrans.position.x += Util::GetRand(sideRandMin.x, sideRandMax.x);
 		spawnTrans.position.z += Util::GetRand(sideRandMin.z, sideRandMax.z);
-		
+
 		//前に(幅 / 数)分進める(多少ランダムにしたい)
 		spawnTrans.position += (pabloVec * pabloRange / (float)waxNum) * (float)i;
 
@@ -488,13 +509,35 @@ void Player::Fire()
 	FireManager::GetInstance()->SetTarget(&obj);
 	FireManager::GetInstance()->SetThorwVec(GetFrontVec());
 
-	//押し込んだら
-	if (RInput::GetPadButtonDown(XINPUT_GAMEPAD_RIGHT_THUMB) ||
-		RInput::GetInstance()->GetKeyDown(DIK_F))
+	//ストック性にしないなら無制限に出せる
+	if (isFireStock == false)
 	{
-		//放物線上に炎を投げる
-		FireManager::GetInstance()->Create();
+		fireStock = maxFireStock;
 	}
+
+	//炎のストックあるときに
+	if (fireStock > 0)
+	{
+		//押し込んだら
+		if (RInput::GetPadButtonDown(XINPUT_GAMEPAD_RIGHT_THUMB) ||
+			RInput::GetInstance()->GetKeyDown(DIK_F))
+		{
+			//放物線上に炎を投げる
+			FireManager::GetInstance()->Create();
+			//ストック数減らす
+			fireStock--;
+		}
+	}
+
+	//ゲージが溜まって、ストックも最大じゃないなら
+	if (fireGauge >= maxFireGauge && fireStock < maxFireStock)
+	{
+		//ストック数を1増やしてゲージリセット
+		fireStock++;
+		fireGauge = 0;
+	}
+	//行きすぎないように
+	fireGauge = Util::Clamp(fireGauge, 0.f, maxFireGauge);
 }
 
 Vector3 Player::GetFrontVec()
@@ -502,4 +545,13 @@ Vector3 Player::GetFrontVec()
 	//正面ベクトルを取得
 	frontVec *= Quaternion::Euler(obj.mTransform.rotation);
 	return frontVec;
+}
+
+void Player::FireGaugeCharge(float gauge)
+{
+	//最大数に達してないときだけ溜まる
+	if (fireStock < maxFireStock)
+	{
+		fireGauge += gauge;
+	}
 }

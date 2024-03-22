@@ -20,6 +20,7 @@ public:
 	Vector3();
 	const static Vector3 ZERO;
 	const static Vector3 ONE;
+	const static Vector3 UP;
 
 	//任意の成分ベクトル
 	Vector3(float x, float y, float z);

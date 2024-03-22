@@ -19,6 +19,7 @@ public:
 
 public:
 	Tower();
+	~Tower();
 	void Init()override;
 	void Update()override;
 	void Draw()override;

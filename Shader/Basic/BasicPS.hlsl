@@ -1,7 +1,10 @@
-#include "Basic.hlsli"
+#include "../Include/Material.hlsli"
+#include "../Include/Transform.hlsli"
+#include "../Include/Camera.hlsli"
+#include "../Include/Lighting.hlsli"
+#include "../Include/VSStruct.hlsli"
 
 Texture2D<float4> tex : register(t0); //0番スロットに設定されたテクスチャ
-Texture2D<float4> paintTex : register(t1); //1番スロットに設定されたテクスチャ
 SamplerState smp : register(s0); //0番スロットに設定されたサンプラー
 
 //ディザ抜きの目の細かさ(本来は外部テクスチャから読み込んだ方がいい)
@@ -18,7 +21,7 @@ float3 magnitude(float3 v)
     return (v.x * v.x + v.y * v.y + v.z * v.z);
 }
 
-float4 main(VSOutput input) : SV_TARGET
+float4 main(VSOutputBasic input) : SV_TARGET
 {
     //----------ディザ抜きの諸々の処理-------------//
     int ditherUV_x = (int) fmod(input.svpos.x, 4.0f); //パターンの大きさで割ったときの余りを求める
@@ -36,15 +39,6 @@ float4 main(VSOutput input) : SV_TARGET
     
 	float4 texcolor = float4(tex.Sample(smp, input.uv));
 	texcolor = texcolor * m_color;
-    
-    //ペイント部分のマテリアル扱い
-    float3 m_pAmbient = { 1, 1, 1 };
-    float3 m_pDiffuse = { 1, 1, 1 };
-    float3 m_pSpecular = { 1, 1, 1 };
-    float4 paintcolor = float4(paintTex.Sample(smp, input.uv));
-    float paintRatio = paintcolor.a;
-    paintcolor.a = 1;
-    texcolor = texcolor * (1 - paintRatio) + paintcolor * paintRatio;
 	
 	//光沢度
     const float shininess = 4.0f;
@@ -53,7 +47,7 @@ float4 main(VSOutput input) : SV_TARGET
     float3 eyedir = normalize(cameraPos - input.wpos.xyz);
 	
 	//環境反射光
-    float3 ambient = m_ambient * (1 - paintRatio) + m_pAmbient * paintRatio;
+    float3 ambient = m_ambient;
 	
 	//シェーディング結果の色
     float4 shadecolor = float4(ambientColor * ambient, 1);
@@ -68,9 +62,9 @@ float4 main(VSOutput input) : SV_TARGET
 		    //反射光ベクトル
             float3 reflect = normalize(directionalLights[i].lightVec + 2.0f * dotNormal * input.normal);
 		    //拡散反射光
-            float3 diffuse = saturate(dotNormal) * (m_diffuse * (1 - paintRatio) + m_pDiffuse * paintRatio);
+            float3 diffuse = saturate(dotNormal) * m_diffuse;
 		    //鏡面反射光
-            float3 specular = pow(saturate(dot(reflect, eyedir)), shininess) * (m_specular * (1 - paintRatio) + m_pSpecular * paintRatio);
+            float3 specular = pow(saturate(dot(reflect, eyedir)), shininess) * m_specular;
 		
             shadecolor.rgb += (diffuse + specular) * directionalLights[i].lightColor;
         }
