@@ -106,6 +106,9 @@ void FireUnit::SetTransform(Transform transform)
 	target = transform;
 	target.position += offset;
 
+	//正面ベクトルを取得
+	frontVec = { 0,0,1 };
+	frontVec.Normalize();
 	frontVec *= Quaternion::Euler(transform.rotation);
 	FireManager::GetInstance()->SetThorwVec(frontVec);
 	FireManager::GetInstance()->SetEndReferencePoint(transform.position);

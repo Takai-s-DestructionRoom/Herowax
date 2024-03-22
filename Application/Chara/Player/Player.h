@@ -52,6 +52,8 @@ public:
 	float pabloSeparator;		//射程の分割数
 	float pabloSpeedMag;		//パブロ攻撃時の移動速度
 	float shotDeadZone = 1.0f;
+	float pabloShotSpeedMag = 2.f;	//プレイヤーの正面に出すための係数
+	int32_t waxNum = 5;
 
 	//------------ 炎関係 ------------//
 	FireUnit fireUnit;
@@ -71,6 +73,9 @@ public:
 	//移動関数
 	void MovePad();
 	void MoveKey();
+
+	//回転関数
+	void Rotation();
 
 	//攻撃(ステートに移動)
 	void Attack();
