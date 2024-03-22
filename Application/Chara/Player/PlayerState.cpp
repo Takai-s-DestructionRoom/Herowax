@@ -43,7 +43,10 @@ void PlayerPablo::Update(Player* player)
 
 	Vector2 stick = RInput::GetInstance()->GetPadLStick();
 	//カメラから注視点へのベクトル
-	Vector3 cameraVec = Camera::sNowCamera->mViewProjection.mTarget - Camera::sNowCamera->mViewProjection.mEye;
+	Vector3 cameraVec = Camera::sNowCamera->mViewProjection.mTarget - 
+		Camera::sNowCamera->mViewProjection.mEye;
+	cameraVec.y = 0;
+	cameraVec.Normalize();
 	//カメラの角度
 	float cameraRad = atan2f(cameraVec.x, cameraVec.z);
 	//スティックの角度
@@ -53,7 +56,6 @@ void PlayerPablo::Update(Player* player)
 	shotVec *= Matrix4::RotationY(cameraRad + stickRad);	//カメラの角度から更にスティックの入力角度を足して
 	shotVec.Normalize();									//方向だけの情報なので正規化して
 	shotVec *= stick.LengthSq();							//傾き具合を大きさに反映
-
 
 	//ターゲットの方向を向いてくれる
 	Quaternion aLookat = Quaternion::LookAt(shotVec);
