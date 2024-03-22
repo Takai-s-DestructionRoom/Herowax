@@ -1006,7 +1006,8 @@
                     1.0
                 ]
             },
-            "setObject": "EnemySpawner"
+            "setObject": "EnemySpawner",
+            "spawnerOrder": "test"
         },
         {
             "type": "MESH",
@@ -1028,7 +1029,8 @@
                     1.0
                 ]
             },
-            "setObject": "EnemySpawner"
+            "setObject": "EnemySpawner",
+            "spawnerOrder": "test2"
         },
         {
             "type": "MESH",
@@ -1050,7 +1052,8 @@
                     1.0
                 ]
             },
-            "setObject": "EnemySpawner"
+            "setObject": "EnemySpawner",
+            "spawnerOrder": "order"
         }
     ]
 }
