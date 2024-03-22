@@ -46,12 +46,13 @@ void FireUnit::Update()
 		fireStock = maxFireStock;
 	}
 
+	//ふよふよさせる
 	floatingTimer.RoopReverse();
 	offset.y = 1.f + Easing::InQuad(floatingTimer.GetTimeRate()) * 0.5f;
 
 	FireShot();
 
-	//燃えてるときパーティクル出す
+	//炎パーティクル出す
 	ParticleManager::GetInstance()->AddSimple(
 		obj.mTransform.position, obj.mTransform.scale * 0.5f, 1, 0.4f,
 		Color::kFireOutside, TextureManager::Load("./Resources/fireEffect.png"),
