@@ -156,7 +156,9 @@ void ProtoScene::Update()
 				}
 			}
 		}
-		if (group->GetNowIsSolid())
+
+		//敵を一体でも巻き込んでいたらロウが壊れるように
+		if (group->GetNowIsSolid() && trapEnemys.size() > 0)
 		{
 			//1~9までの場合を入れる
 			float time = 0.0f;

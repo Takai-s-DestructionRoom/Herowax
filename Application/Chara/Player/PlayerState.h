@@ -1,4 +1,5 @@
 #pragma once
+#include "Easing.h"
 
 class Player;
 
@@ -20,5 +21,6 @@ class PlayerPablo : public PlayerState
 {
 public:
 	void Update(Player* player);
+private:
 	float oldLength = 0;
 };
