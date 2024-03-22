@@ -12,6 +12,9 @@ public:
 
 	ModelObj targetCircle;
 
+	uint32_t fireAddFrame;		//炎を何フレームに一回追加するか
+	uint32_t frameCount;		//フレームカウント
+
 public:
 	//生成時にFireManagerが定義していた挙動を自身に入れる
 	Fire(std::vector<Vector3> splinePoints_);

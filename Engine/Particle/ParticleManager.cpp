@@ -48,10 +48,12 @@ void ParticleManager::Update()
 	// パーティクル //
 	ImGui::Begin("Particle", NULL, window_flags);
 
+	size_t particleSize = 0;
 	for (auto& emitter : emitters_)
 	{
-		ImGui::Text("生存個体数:%d", emitter->GetParticlesSize());
+		particleSize += emitter->GetParticlesSize();
 	}
+	ImGui::Text("生存個体数:%d", particleSize);
 
 	ImGui::End();
 #pragma endregion

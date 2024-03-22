@@ -7,8 +7,6 @@ Color Wax::waxOriginColor = { 0.8f, 0.6f, 0.35f, 1.f };
 Color Wax::waxEndColor = { 0.8f, 0.0f, 0.f, 1.f };
 
 Wax::Wax():GameObject(),
-	
-	
 	atkSpeed(1.f),
 	atkPower(1),
 	igniteTimer(0.25f),

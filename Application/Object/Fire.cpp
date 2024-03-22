@@ -4,7 +4,7 @@
 #include "ParticleManager.h"
 
 Fire::Fire(std::vector<Vector3> splinePoints_):
-	GameObject(),timer(2.0f)
+	GameObject(),timer(2.0f), fireAddFrame(3)
 {
 	splinePoints = splinePoints_;
 
@@ -39,19 +39,24 @@ void Fire::Update()
 	targetCircle.mTransform.UpdateMatrix();
 	targetCircle.TransferBuffer(Camera::sNowCamera->mViewProjection);
 
+	frameCount++;
+	if (frameCount >= fireAddFrame)
+	{
+		//燃えてるときパーティクル出す
+		ParticleManager::GetInstance()->AddSimple(
+			obj.mTransform.position, obj.mTransform.scale * 0.8f, 2, 0.4f,
+			Color::kFireOutside, TextureManager::Load("./Resources/fireEffect.png"),
+			1.5f, 3.f, { -0.1f,0.1f,-0.1f }, { 0.1f,0.5f,0.1f },
+			0.05f, -Vector3::ONE * 0.1f, Vector3::ONE * 0.1f, 0.05f, 0.f, false, true);
+		//中心の炎
+		ParticleManager::GetInstance()->AddSimple(
+			obj.mTransform.position, obj.mTransform.scale * 0.3f, 2, 0.2f,
+			Color::kFireInside, TextureManager::Load("./Resources/fireEffect.png"),
+			1.5f, 3.f, { -0.1f,0.1f,-0.1f }, { 0.1f,0.4f,0.1f },
+			0.01f, -Vector3::ONE * 0.1f, Vector3::ONE * 0.1f, 0.05f, 0.f, false, true);
 
-	//燃えてるときパーティクル出す
-	ParticleManager::GetInstance()->AddSimple(
-		obj.mTransform.position, obj.mTransform.scale * 0.8f, 2, 0.4f,
-		Color::kFireOutside, TextureManager::Load("./Resources/fireEffect.png"),
-		1.5f, 3.f, { -0.1f,0.1f,-0.1f }, { 0.1f,0.5f,0.1f },
-		0.05f, -Vector3::ONE * 0.1f, Vector3::ONE * 0.1f, 0.05f, 0.f, false, true);
-	//中心の炎
-	ParticleManager::GetInstance()->AddSimple(
-		obj.mTransform.position, obj.mTransform.scale * 0.3f, 2, 0.2f,
-		Color::kFireInside, TextureManager::Load("./Resources/fireEffect.png"),
-		1.5f, 3.f, { -0.1f,0.1f,-0.1f }, { 0.1f,0.4f,0.1f },
-		0.01f, -Vector3::ONE * 0.1f, Vector3::ONE * 0.1f, 0.05f, 0.f, false, true);
+		frameCount = 0;
+	}
 }
 
 void Fire::Draw()

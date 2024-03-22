@@ -51,4 +51,7 @@ public:
 	void Update(Enemy* enemy)override;
 private:
 	Easing::EaseTimer timer = 1.0f;
+
+	uint32_t fireAddFrame = 3;	//炎を何フレームに一回追加するか
+	uint32_t frameCount;		//フレームカウント
 };

@@ -1,4 +1,5 @@
 #pragma once
+#include <stdint.h>
 #include "Vector3.h"
 #include "Easing.h"
 
@@ -29,6 +30,10 @@ class WaxBurning : public WaxState
 {
 public:
 	void Update(Wax* wax)override;
+
+private:
+	uint32_t fireAddFrame = 3;	//炎を何フレームに一回追加するか
+	uint32_t frameCount;		//フレームカウント
 };
 
 class WaxExtinguish : public WaxState

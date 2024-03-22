@@ -91,18 +91,24 @@ void EnemyBurning::Update(Enemy* enemy)
 	//色を赤に変更
 	enemy->obj.mTuneMaterial.mColor = Color::kRed;
 
-	//燃えてるときパーティクル出す
-	ParticleManager::GetInstance()->AddSimple(
-		enemy->GetCenterPos(), enemy->obj.mTransform.scale * 0.5f, 1, 0.3f,
-		Color::kFireOutside, TextureManager::Load("./Resources/fireEffect.png"),
-		1.5f, 3.f, { -0.1f,0.1f,-0.1f }, { 0.1f,0.5f,0.1f },
-		0.05f, -Vector3::ONE * 0.1f, Vector3::ONE * 0.1f, 0.05f,0.f, false, true);
-	//中心の炎
-	ParticleManager::GetInstance()->AddSimple(
-		enemy->GetCenterPos(), enemy->obj.mTransform.scale * 0.3f, 1, 0.2f,
-		Color::kFireInside, TextureManager::Load("./Resources/fireEffect.png"),
-		2.f, 4.f, { -0.1f,0.1f,-0.1f }, { 0.1f,0.4f,0.1f },
-		0.01f, -Vector3::ONE * 0.1f, Vector3::ONE * 0.1f, 0.05f, 0.f, false, true);
+	frameCount++;
+	if (frameCount >= fireAddFrame)
+	{
+		//燃えてるときパーティクル出す
+		ParticleManager::GetInstance()->AddSimple(
+			enemy->GetCenterPos(), enemy->obj.mTransform.scale * 0.5f, 1, 0.3f,
+			Color::kFireOutside, TextureManager::Load("./Resources/fireEffect.png"),
+			1.5f, 3.f, { -0.1f,0.1f,-0.1f }, { 0.1f,0.5f,0.1f },
+			0.05f, -Vector3::ONE * 0.1f, Vector3::ONE * 0.1f, 0.05f, 0.f, false, true);
+		//中心の炎
+		ParticleManager::GetInstance()->AddSimple(
+			enemy->GetCenterPos(), enemy->obj.mTransform.scale * 0.3f, 1, 0.2f,
+			Color::kFireInside, TextureManager::Load("./Resources/fireEffect.png"),
+			2.f, 4.f, { -0.1f,0.1f,-0.1f }, { 0.1f,0.4f,0.1f },
+			0.01f, -Vector3::ONE * 0.1f, Vector3::ONE * 0.1f, 0.05f, 0.f, false, true);
+
+		frameCount = 0;
+	}
 
 	//減速率いじるかわかんないので保留
 
