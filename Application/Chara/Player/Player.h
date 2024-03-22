@@ -57,6 +57,7 @@ public:
 	float maxFireGauge;			//炎ゲージ最大値
 	uint32_t fireStock;			//炎ストック
 	uint32_t maxFireStock;		//炎ストック最大値
+	bool isFireStock;			//炎をストック性にするかフラグ
 
 	//------------ その他 ------------//
 	std::unique_ptr<PlayerState> attackState;

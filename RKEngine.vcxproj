@@ -154,6 +154,7 @@
     <ClCompile Include="Application\Object\Fire.cpp" />
     <ClCompile Include="Application\Object\FireManager.cpp" />
     <ClCompile Include="Application\Level.cpp" />
+    <ClCompile Include="Application\Object\FireUnit.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Engine\Base\Material.cpp" />
     <ClCompile Include="Engine\Math\Matrix4.cpp" />
@@ -614,6 +615,7 @@
     <ClInclude Include="Engine\Particle\RingParticle.h" />
     <ClInclude Include="Application\SpawnOrderData.h" />
     <ClInclude Include="Application\Chara\Player\PlayerUI.h" />
+    <ClInclude Include="Application\Object\FireUnit.h" />
     <ClInclude Include="Application\Wave.h" />
   </ItemGroup>
   <ItemGroup>
