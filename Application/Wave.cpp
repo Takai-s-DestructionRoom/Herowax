@@ -76,7 +76,7 @@ void Wave::Update()
 	if (transitionTimer.GetTimeRate() > 0.5f) {
 		//次のウェーブ読み込み
 		nowLevel++;
-		nowLevel = Util::Clamp(nowLevel, 0, levelFiles.size());
+		nowLevel = Util::Clamp(nowLevel, 0, (int32_t)levelFiles.size());
 		//ここのハンドルをレベルに読み込ませる
 		Level::Get()->Extract(levelFiles[nowLevel]);
 	}
