@@ -144,6 +144,8 @@ void WaxManager::Update()
 	//燃えている数を初期化
 	isBurningNum = 0;
 
+	Delete();
+
 	for (auto& waxGroup : waxGroups)
 	{
 		waxGroup->Update();
