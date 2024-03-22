@@ -43,7 +43,7 @@ void EnemyManager::LoadResource()
 
 void EnemyManager::Init()
 {
-
+	enemys.clear();
 }
 
 void EnemyManager::Update()

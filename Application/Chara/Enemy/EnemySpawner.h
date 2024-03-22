@@ -9,15 +9,15 @@ public:
 	//------------ HP関連 ------------//
 	float hp;					//現在のヒットポイント
 	float maxHP;				//最大HP
-	float spawnInterval;		//敵の出現間隔
+	
 	int spawnNum;				//敵の同時出現数
 	float spawnRandomPos;		//敵が出現する際の中心位置からのズレ
 
 	std::string loadOrderFilename;	//参照するorderDataのハンドル
+	Easing::EaseTimer lifeTimer;
 
 private:
 	SpawnOrderData orderData;
-	Easing::EaseTimer lifeTimer;
 
 public:
 	EnemySpawner();

@@ -31,6 +31,12 @@ void Level::Reload()
 	Extract(nowLevel->mHandle);
 }
 
+Level* Level::Get()
+{
+	static Level instance;
+	return &instance;
+}
+
 void Level::Update()
 {
 	//Rキーで再読み込み

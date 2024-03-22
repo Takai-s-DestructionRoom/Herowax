@@ -3,9 +3,10 @@
 #include "ModelObj.h"
 #include "Tower.h"
 #include "SpawnerManager.h"
+#include "Singleton.h"
 
 //ステージの単位(ウェーブとかそういうやつ)
-class Level
+class Level : public Singleton
 {
 public:
 	Level();
@@ -23,6 +24,8 @@ public:
 
 	//読み込みした後、ステージ変更
 	void Reload();
+
+	static Level* Get();
 
 public:
 	LevelData* nowLevel = nullptr;
