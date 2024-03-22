@@ -16,7 +16,7 @@ moveSpeed(1.f), moveAccelAmount(0.05f), isGround(true), hp(0), maxHP(10.f),
 isJumping(false), jumpTimer(0.2f), jumpHeight(0.f), maxJumpHeight(5.f), jumpPower(2.f), jumpSpeed(0.f),
 isAttack(false), atkSpeed(1.f), atkRange({ 3.f,5.f }), atkSize(0.f), atkPower(1),
 atkCoolTimer(0.3f), atkTimer(0.5f), atkHeight(1.f), solidTimer(5.f),
-maxFireGauge(5.f), maxFireStock(5), isFireStock(false)
+ isFireStock(false)
 {
 	obj = ModelObj(Model::Load("./Resources/Model/Cube.obj", "Cube", true));
 
@@ -44,8 +44,7 @@ maxFireGauge(5.f), maxFireStock(5), isFireStock(false)
 void Player::Init()
 {
 	hp = maxHP;
-	//最初から出せないの不便なので初期状態で半分はあげる
-	fireStock = maxFireStock / 2;
+	fireUnit.Init();
 }
 
 void Player::Update()
@@ -80,8 +79,6 @@ void Player::Update()
 		atkCoolTimer.Reset();
 	}
 
-	Fire();
-
 	//地面に埋ってたら
 	if (obj.mTransform.position.y - obj.mTransform.scale.y < 0.f)
 	{
@@ -111,12 +108,15 @@ void Player::Update()
 
 	UpdateCollider();
 
-
 	//更新してからバッファに送る
 	obj.mTransform.UpdateMatrix();
 	obj.TransferBuffer(Camera::sNowCamera->mViewProjection);
 
 	ui.Update(this);
+
+	fireUnit.SetTransform(obj.mTransform);
+	fireUnit.SetIsFireStock(isFireStock);
+	fireUnit.Update();
 
 #pragma region ImGui
 	ImGui::SetNextWindowSize({ 600, 250 });
@@ -157,7 +157,7 @@ void Player::Update()
 		ImGui::SliderFloat("攻撃範囲Y", &atkRange.y, 0.f, 10.f);
 		ImGui::SliderFloat("クールタイム", &atkCoolTimer.maxTime_, 0.f, 2.f);
 		ImGui::SliderFloat("固まるまでの時間", &solidTimer.maxTime_, 0.f, 10.f);
-		ImGui::Text("炎のストック数:%d", fireStock);
+		ImGui::Text("炎のストック数:%d", fireUnit.fireStock);
 
 		ImGui::TreePop();
 	}
@@ -210,6 +210,7 @@ void Player::Draw()
 	if (isAlive)
 	{
 		obj.Draw();
+		fireUnit.Draw();
 
 		ui.Draw();
 	}
@@ -408,7 +409,7 @@ void Player::Attack()
 			atkTimer.Start();
 
 			//ホントは塗った面積に応じて溜めたい
-			FireGaugeCharge(1.f);
+			fireUnit.FireGaugeCharge(1.f);
 
 			//入力時の出現位置と方向を記録
 			atkVec = GetFrontVec();
@@ -451,7 +452,7 @@ void Player::PabloAttack()
 	}
 
 	//ホントは塗った面積に応じて溜めたい
-	FireGaugeCharge(1.f);
+	fireUnit.FireGaugeCharge(1.f);
 
 	atkVec = pabloVec;
 
@@ -503,55 +504,9 @@ void Player::PabloAttack()
 	}
 }
 
-void Player::Fire()
-{
-	//情報をfiremanagerへ送信
-	FireManager::GetInstance()->SetTarget(&obj);
-	FireManager::GetInstance()->SetThorwVec(GetFrontVec());
-
-	//ストック性にしないなら無制限に出せる
-	if (isFireStock == false)
-	{
-		fireStock = maxFireStock;
-	}
-
-	//炎のストックあるときに
-	if (fireStock > 0)
-	{
-		//押し込んだら
-		if (RInput::GetPadButtonDown(XINPUT_GAMEPAD_RIGHT_THUMB) ||
-			RInput::GetInstance()->GetKeyDown(DIK_F))
-		{
-			//放物線上に炎を投げる
-			FireManager::GetInstance()->Create();
-			//ストック数減らす
-			fireStock--;
-		}
-	}
-
-	//ゲージが溜まって、ストックも最大じゃないなら
-	if (fireGauge >= maxFireGauge && fireStock < maxFireStock)
-	{
-		//ストック数を1増やしてゲージリセット
-		fireStock++;
-		fireGauge = 0;
-	}
-	//行きすぎないように
-	fireGauge = Util::Clamp(fireGauge, 0.f, maxFireGauge);
-}
-
 Vector3 Player::GetFrontVec()
 {
 	//正面ベクトルを取得
 	frontVec *= Quaternion::Euler(obj.mTransform.rotation);
 	return frontVec;
-}
-
-void Player::FireGaugeCharge(float gauge)
-{
-	//最大数に達してないときだけ溜まる
-	if (fireStock < maxFireStock)
-	{
-		fireGauge += gauge;
-	}
 }

@@ -5,6 +5,7 @@
 #include "Easing.h"
 #include "PlayerState.h"
 #include "PlayerUI.h"
+#include "FireUnit.h"
  
 class Player : public GameObject
 {
@@ -53,10 +54,7 @@ public:
 	float shotDeadZone = 1.0f;
 
 	//------------ 炎関係 ------------//
-	float fireGauge;			//炎ゲージ
-	float maxFireGauge;			//炎ゲージ最大値
-	uint32_t fireStock;			//炎ストック
-	uint32_t maxFireStock;		//炎ストック最大値
+	FireUnit fireUnit;
 	bool isFireStock;			//炎をストック性にするかフラグ
 
 	//------------ その他 ------------//
@@ -80,23 +78,17 @@ public:
 	//パブロ攻撃処理のまとめ
 	void PabloAttack();
 
-	//ﾌｧｲｱ
-	void Fire();
-
-	Vector3 GetFrontVec();
-
 	//状態変更
 	template <typename ChangePlayerState>
 	void ChangeState() {
 		state = std::make_unique<ChangePlayerState>();
 	};
 
-	//炎ゲージ溜まる
-	void FireGaugeCharge(float gauge);
-
 	// ゲッター //
 	//お試し実装:殴った相手が自分を追っかけてくるモード
 	bool GetTauntMode() { return isTauntMode; };
+	//正面ベクトルを取得
+	Vector3 GetFrontVec();
 
 	// セッター //
 };

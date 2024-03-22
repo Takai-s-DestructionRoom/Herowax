@@ -16,8 +16,8 @@ void PlayerUI::Update(Player* player)
 {
 	position = player->obj.mTransform.position;
 	position.y += player->GetScale().y * 1.8f;
-	size.x = player->fireGauge;
-	maxSize.x = player->maxFireGauge * 1.1f;
+	size.x = player->fireUnit.fireGauge;
+	maxSize.x = player->fireUnit.maxFireGauge * 1.1f;
 	maxSize.y = size.y * 1.1f;
 }
 
