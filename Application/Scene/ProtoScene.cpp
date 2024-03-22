@@ -27,7 +27,9 @@ ProtoScene::ProtoScene()
 	EnemyManager::LoadResource();
 	InstantDrawer::PreCreate();
 
-	level.Load();
+	Level::Get()->Load();
+	
+	wave.Load();
 }
 
 void ProtoScene::Init()
@@ -50,10 +52,10 @@ void ProtoScene::Init()
 	FireManager::GetInstance()->Init();
 	TemperatureManager::GetInstance()->Init();
 
-	EnemyManager::GetInstance()->SetGround(&level.ground);
+	EnemyManager::GetInstance()->SetGround(&Level::Get()->ground);
 
 	//とりあえず最初のステージを設定しておく
-	level.Extract("test");
+	Level::Get()->Extract("test");
 }
 
 void ProtoScene::Update()
@@ -94,10 +96,11 @@ void ProtoScene::Update()
 	for (auto& enemy : EnemyManager::GetInstance()->enemys)
 	{
 		//タワーとの当たり判定
-		if (ColPrimitive3D::CheckSphereToSphere(enemy->collider, level.tower.collider)) {
+		if (ColPrimitive3D::CheckSphereToSphere(enemy->collider, 
+			Level::Get()->tower.collider)) {
 			enemy->SetDeath();
-			Vector3 vec = level.tower.GetPos() - enemy->GetPos();
-			level.tower.Damage(1.f,vec);
+			Vector3 vec = Level::Get()->tower.GetPos() - enemy->GetPos();
+			Level::Get()->tower.Damage(1.f,vec);
 		}
 	}
 
@@ -196,7 +199,7 @@ void ProtoScene::Update()
 	}
 	
 	player.Update();
-	level.Update();
+	Level::Get()->Update();
 
 	//敵がロウを壊してから連鎖で壊れるため、敵の処理をしてからこの処理を行う
 #pragma region ロウ同士の当たり判定
@@ -305,7 +308,7 @@ void ProtoScene::Draw()
 	TemperatureManager::GetInstance()->Draw();
 	player.Draw();
 
-	level.Draw();
+	Level::Get()->Draw();
 
 	//更新
 	InstantDrawer::AllUpdate();

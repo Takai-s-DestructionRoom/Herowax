@@ -15,6 +15,7 @@
 #include "EnemySpawner.h"
 
 #include "Level.h"
+#include "Wave.h"
 
 class ProtoScene : public IScene
 {
@@ -28,8 +29,7 @@ public:
 private:
 	ModelObj skydome;	//天球
 	Player player;
-
-	Level level;
+	Wave wave;
 
 	Camera camera = Camera();
 	float cameraDist = -20.f;	//注視点からカメラの距離

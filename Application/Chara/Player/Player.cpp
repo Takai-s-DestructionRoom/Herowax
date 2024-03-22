@@ -438,18 +438,8 @@ void Player::PabloAttack()
 
 	Vector3 pabloVec = { 0,0,0 };
 	//入力があるならそっちへ
-	if (abs(RInput::GetInstance()->GetPadLStick().LengthSq()) >= shotDeadZone)
-	{
-		pabloVec = Vector3(RInput::GetInstance()->GetPadLStick().x,
-			atkHeight,
-			RInput::GetInstance()->GetPadLStick().y);
-	}
-	//ないなら正面へ
-	else
-	{
-		pabloVec = GetFrontVec();
-		pabloVec.y = atkHeight;
-	}
+	pabloVec = GetFrontVec();
+	pabloVec.y = atkHeight;
 
 	//ホントは塗った面積に応じて溜めたい
 	fireUnit.FireGaugeCharge(1.f);
@@ -507,6 +497,9 @@ void Player::PabloAttack()
 Vector3 Player::GetFrontVec()
 {
 	//正面ベクトルを取得
+	Vector3 frontVec = { 0,0,1 };
+	frontVec.Normalize();
+
 	frontVec *= Quaternion::Euler(obj.mTransform.rotation);
 	return frontVec;
 }

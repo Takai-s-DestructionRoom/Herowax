@@ -217,6 +217,7 @@
     <ClCompile Include="Engine\Particle\RingParticle.cpp" />
     <ClCompile Include="Application\SpawnOrderData.cpp" />
     <ClCompile Include="Application\Chara\Player\PlayerUI.cpp" />
+    <ClCompile Include="Application\Wave.cpp" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Shader\Basic\BasicPS.hlsl">
@@ -615,6 +616,7 @@
     <ClInclude Include="Application\SpawnOrderData.h" />
     <ClInclude Include="Application\Chara\Player\PlayerUI.h" />
     <ClInclude Include="Application\Object\FireUnit.h" />
+    <ClInclude Include="Application\Wave.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Shader\Bloom\Bloom.hlsli" />
