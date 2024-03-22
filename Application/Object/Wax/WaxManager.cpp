@@ -102,7 +102,7 @@ void WaxManager::Delete()
 {
 	//死んでいるグループがあれば消す
 	waxGroups.remove_if([](std::unique_ptr<WaxGroup>& waxgroup) {
-		return !waxgroup->GetIsAlive() || waxgroup->waxs.size() <= 0;
+		return !waxgroup->GetIsAlive();
 		});
 }
 
@@ -174,12 +174,7 @@ void WaxManager::Update()
 		}
 		ImGui::InputFloat(waxnum.c_str(), &waxTime[i], 1.0f);
 	}
-
 	ImGui::Text("ロウグループ数:%d", (int)waxGroups.size());
-	for (auto& group : waxGroups)
-	{
-		ImGui::Text("グループ内のロウの数:%d", (int)group->waxs.size());
-	}
 	ImGui::PopItemWidth();
 
 	if (ImGui::Button("当たり判定の描画")) {

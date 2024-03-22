@@ -36,6 +36,7 @@ atkCoolTimer(0.3f), atkTimer(0.5f), atkHeight(1.f), solidTimer(5.f),
 	pabloRange = Parameter::GetParam(extract, "パブロ攻撃の広がり", 5.f);
 	pabloSideRange = Parameter::GetParam(extract, "パブロ攻撃の横の広がり", 5.f);
 	pabloSpeedMag = Parameter::GetParam(extract, "パブロ攻撃時の移動速度低下係数", 0.2f);
+	pabloShotSpeedMag = Parameter::GetParam(extract, "パブロ攻撃を移動しながら撃った時の係数", 2.0f);
 	shotDeadZone = Parameter::GetParam(extract, "ショットが出る基準", 0.5f);
 
 	attackState = std::make_unique<PlayerNormal>();
@@ -59,29 +60,7 @@ void Player::Update()
 		MoveKey();
 	}
 
-	Vector2 stick = RInput::GetInstance()->GetPadLStick();
-	if (stick.LengthSq() > 0) {
-		//カメラから注視点へのベクトル
-		Vector3 cameraVec = Camera::sNowCamera->mViewProjection.mTarget -
-			Camera::sNowCamera->mViewProjection.mEye;
-		cameraVec.y = 0;
-		cameraVec.Normalize();
-		//カメラの角度
-		float cameraRad = atan2f(cameraVec.x, cameraVec.z);
-		//スティックの角度
-		float stickRad = atan2f(stick.x, stick.y);
-
-		Vector3 shotVec = { 0,0,1 };								//正面を基準に
-		shotVec *= Matrix4::RotationY(cameraRad + stickRad);	//カメラの角度から更にスティックの入力角度を足して
-		shotVec.Normalize();									//方向だけの情報なので正規化して
-		shotVec *= stick.LengthSq();							//傾き具合を大きさに反映
-
-		//ターゲットの方向を向いてくれる
-		Quaternion aLookat = Quaternion::LookAt(shotVec);
-
-		//euler軸へ変換
-		obj.mTransform.rotation = aLookat.ToEuler();
-	}
+	Rotation();
 
 	attackState->Update(this);
 
@@ -195,9 +174,11 @@ void Player::Update()
 	{
 		ImGui::Text("スティックの入力:%f", abs(RInput::GetInstance()->GetPadLStick().LengthSq()));
 		ImGui::SliderFloat("ショットが出る基準", &shotDeadZone, 0.0f, 2.0f);
-		ImGui::SliderFloat("広がり", &pabloRange, 0.0f, 10.f);
+		ImGui::InputInt("一度に出るロウの数", &waxNum, 1);
+		ImGui::SliderFloat("奥方向への広がり", &pabloRange, 0.0f, 10.f);
 		ImGui::SliderFloat("横の広がり", &pabloSideRange, 0.0f, 10.f);
 		ImGui::SliderFloat("パブロ攻撃時の移動速度低下係数", &pabloSpeedMag, 0.0f, 1.0f);
+		ImGui::SliderFloat("パブロ攻撃を移動しながら撃った時の係数", &pabloShotSpeedMag, 1.0f, 5.f);
 
 		ImGui::TreePop();
 	}
@@ -221,6 +202,7 @@ void Player::Update()
 		Parameter::Save("パブロ攻撃の広がり", pabloRange);
 		Parameter::Save("パブロ攻撃の横の広がり", pabloSideRange);
 		Parameter::Save("パブロ攻撃時の移動速度低下係数", pabloSpeedMag);
+		Parameter::Save("パブロ攻撃を移動しながら撃った時の係数", pabloShotSpeedMag);
 		Parameter::Save("ショットが出る基準", shotDeadZone);
 		Parameter::End();
 	}
@@ -421,6 +403,50 @@ void Player::MoveKey()
 	obj.mTransform.position.y = jumpHeight + obj.mTransform.scale.y;
 }
 
+void Player::Rotation()
+{
+	Vector2 RStick = RInput::GetInstance()->GetRStick(false, true);
+
+	//Rスティック入力があったら
+	if (RStick.LengthSq() > 0.0f) {
+		//カメラから注視点へのベクトル
+		Vector3 cameraVec = Camera::sNowCamera->mViewProjection.mTarget -
+			Camera::sNowCamera->mViewProjection.mEye;
+		cameraVec.y = 0;
+		cameraVec.Normalize();
+
+		//ターゲットの方向を向いてくれる
+		Quaternion aLookat = Quaternion::LookAt(cameraVec);
+
+		//euler軸へ変換
+		obj.mTransform.rotation = aLookat.ToEuler();
+	}
+
+	Vector2 LStick = RInput::GetInstance()->GetLStick(true,false);
+	if (LStick.LengthSq() > 0) {
+		//カメラから注視点へのベクトル
+		Vector3 cameraVec = Camera::sNowCamera->mViewProjection.mTarget -
+			Camera::sNowCamera->mViewProjection.mEye;
+		cameraVec.y = 0;
+		cameraVec.Normalize();
+		//カメラの角度
+		float cameraRad = atan2f(cameraVec.x, cameraVec.z);
+		//スティックの角度
+		float stickRad = atan2f(LStick.x, LStick.y);
+
+		Vector3 shotVec = { 0,0,1 };								//正面を基準に
+		shotVec *= Matrix4::RotationY(cameraRad + stickRad);	//カメラの角度から更にスティックの入力角度を足して
+		shotVec.Normalize();									//方向だけの情報なので正規化して
+		shotVec *= LStick.LengthSq();							//傾き具合を大きさに反映
+
+		//ターゲットの方向を向いてくれる
+		Quaternion aLookat = Quaternion::LookAt(shotVec);
+
+		//euler軸へ変換
+		obj.mTransform.rotation = aLookat.ToEuler();
+	}
+}
+
 void Player::Attack()
 {
 	if (isAttack == false || isMugenAttack)
@@ -478,8 +504,7 @@ void Player::PabloAttack()
 	sidePabloVec.Normalize();
 
 	//発射数の半分(切り捨て)はマイナス横ベクトル方向へずらす
-	int32_t waxNum = 3;
-
+	
 	//imguiでいじれるようにするのと、前方向へのランダムを作る
 
 	//発射数分ロウを生成、座標を生成するたびプラス横ベクトル方向へずらす
@@ -510,7 +535,13 @@ void Player::PabloAttack()
 		//前に(幅 / 数)分進める(多少ランダムにしたい)
 		spawnTrans.position += (pabloVec * pabloRange / (float)waxNum) * (float)i;
 
-		float atkVal = atkSpeed * moveSpeed;
+		Vector2 stick = RInput::GetInstance()->GetPadLStick();
+		//stick.LengthSq()は大体0~1.0(斜めで1.2)くらいが返ってくるので、
+		//そのまま係数を掛ける
+		float hoge = stick.LengthSq() * pabloShotSpeedMag;
+		//最低でも1になってほしいのでclamp
+		hoge = Util::Clamp(hoge, 1.f,100.f);
+		float atkVal = atkSpeed * hoge;
 
 		WaxManager::GetInstance()->Create(
 			spawnTrans, atkPower,
