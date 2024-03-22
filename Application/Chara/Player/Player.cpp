@@ -16,7 +16,7 @@ moveSpeed(1.f), moveAccelAmount(0.05f), isGround(true), hp(0), maxHP(10.f),
 isJumping(false), jumpTimer(0.2f), jumpHeight(0.f), maxJumpHeight(5.f), jumpPower(2.f), jumpSpeed(0.f),
 isAttack(false), atkSpeed(1.f), atkRange({ 3.f,5.f }), atkSize(0.f), atkPower(1),
 atkCoolTimer(0.3f), atkTimer(0.5f), atkHeight(1.f), solidTimer(5.f),
-maxFireGauge(5.f), maxFireStock(3)
+maxFireGauge(5.f), maxFireStock(5), isFireStock(false)
 {
 	obj = ModelObj(Model::Load("./Resources/Model/Cube.obj", "Cube", true));
 
@@ -44,6 +44,8 @@ maxFireGauge(5.f), maxFireStock(3)
 void Player::Init()
 {
 	hp = maxHP;
+	//最初から出せないの不便なので初期状態で半分はあげる
+	fireStock = maxFireStock / 2;
 }
 
 void Player::Update()
@@ -146,6 +148,7 @@ void Player::Update()
 	{
 		ImGui::Text("攻撃中か:%d", isAttack);
 		ImGui::Checkbox("攻撃中でも次の攻撃を出せるか", &isMugenAttack);
+		ImGui::Checkbox("炎をストック性にするか", &isFireStock);
 
 		ImGui::SliderFloat("攻撃時間", &atkTimer.maxTime_, 0.f, 2.f);
 		ImGui::SliderFloat("射出速度", &atkSpeed, 0.f, 2.f);
@@ -404,6 +407,7 @@ void Player::Attack()
 			isAttack = true;
 			atkTimer.Start();
 
+			//ホントは塗った面積に応じて溜めたい
 			FireGaugeCharge(1.f);
 
 			//入力時の出現位置と方向を記録
@@ -446,6 +450,7 @@ void Player::PabloAttack()
 		pabloVec.y = atkHeight;
 	}
 
+	//ホントは塗った面積に応じて溜めたい
 	FireGaugeCharge(1.f);
 
 	atkVec = pabloVec;
@@ -504,12 +509,24 @@ void Player::Fire()
 	FireManager::GetInstance()->SetTarget(&obj);
 	FireManager::GetInstance()->SetThorwVec(GetFrontVec());
 
-	//押し込んだら
-	if (RInput::GetPadButtonDown(XINPUT_GAMEPAD_RIGHT_THUMB) ||
-		RInput::GetInstance()->GetKeyDown(DIK_F))
+	//ストック性にしないなら無制限に出せる
+	if (isFireStock == false)
 	{
-		//放物線上に炎を投げる
-		FireManager::GetInstance()->Create();
+		fireStock = maxFireStock;
+	}
+
+	//炎のストックあるときに
+	if (fireStock > 0)
+	{
+		//押し込んだら
+		if (RInput::GetPadButtonDown(XINPUT_GAMEPAD_RIGHT_THUMB) ||
+			RInput::GetInstance()->GetKeyDown(DIK_F))
+		{
+			//放物線上に炎を投げる
+			FireManager::GetInstance()->Create();
+			//ストック数減らす
+			fireStock--;
+		}
 	}
 
 	//ゲージが溜まって、ストックも最大じゃないなら
