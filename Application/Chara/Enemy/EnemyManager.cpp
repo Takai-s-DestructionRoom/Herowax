@@ -48,6 +48,8 @@ void EnemyManager::Init()
 
 void EnemyManager::Update()
 {
+	Delete();
+
 	for (auto& enemy : enemys)
 	{
 		enemy->SetSlowMag(slowMag);	//減速率まとめて変更

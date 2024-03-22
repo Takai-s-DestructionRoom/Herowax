@@ -61,8 +61,8 @@ void ProtoScene::Update()
 	//初期化周り
 	InstantDrawer::DrawInit();
 
-	EnemyManager::GetInstance()->Delete();
-	WaxManager::GetInstance()->Delete();
+	//EnemyManager::GetInstance()->Delete();
+	//WaxManager::GetInstance()->Delete();
 
 	Vector2 stick = RInput::GetInstance()->GetRStick(false, true);
 
@@ -101,27 +101,30 @@ void ProtoScene::Update()
 		}
 	}
 
+	for (auto& enemy : EnemyManager::GetInstance()->enemys)
+	{
+		//蝋と当たり判定をする前に、足盗られは毎フレーム解除判定を行う
+		if (enemy->GetState() == "Slow") {
+			enemy->ChangeState<EnemyNormal>();
+		}
+	}
+
 	//蝋との当たり判定
 	for (auto& group : WaxManager::GetInstance()->waxGroups)
 	{
 		std::vector<Enemy*> trapEnemys;
-		for (auto& enemy : EnemyManager::GetInstance()->enemys)
-		{
-			//蝋と当たり判定をする前に、足盗られは毎フレーム解除判定を行う
-			if (enemy->GetState() == "Slow") {
-				enemy->ChangeState<EnemyNormal>();
-			}
-
-			//グループとの判定
-			//今のフレームにロウが固まったならロウを足止めする
-			if (group->GetNowIsSolid())
+		//蝋一つ一つとの判定
+		for (auto& wax : group->waxs) {
+			for (auto& enemy : EnemyManager::GetInstance()->enemys)
 			{
-				trapEnemys.push_back(enemy.get());
-			}
-
-			//蝋一つ一つとの判定
-			for (auto& wax : group->waxs) {
 				bool isCollision = ColPrimitive3D::CheckSphereToSphere(enemy->collider, wax->collider);
+
+				//グループとの判定
+				//今のフレームにロウが固まったならロウを足止めする
+				if (isCollision && group->GetNowIsSolid())
+				{
+					trapEnemys.push_back(enemy.get());
+				}
 
 				if (isCollision && wax->isSolid == false) {
 					//投げられてる蝋に当たった時はダメージと蝋蓄積
@@ -149,30 +152,31 @@ void ProtoScene::Update()
 					enemy->ChangeState<EnemyBurning>();
 				}
 			}
-		
-			if (group->GetNowIsSolid())
+		}
+		if (group->GetNowIsSolid())
+		{
+			//1~9までの場合を入れる
+			float time = 0.0f;
+			
+			for (int i = 0; i < 10; i++)
 			{
-				//1~9までの場合を入れる
-				float time = 0.0f;
-				for (int i = 0; i < 10; i++)
-				{
-					if (trapEnemys.size() - 1 == i) {
-						time = WaxManager::GetInstance()->waxTime[i];
-						break;
-					}
+				if (trapEnemys.size() - 1 == i) {
+					time = WaxManager::GetInstance()->waxTime[i];
+					break;
 				}
-				//10以上の場合を入れる
-				if (trapEnemys.size() - 1 >= 10) {
-					time = WaxManager::GetInstance()->waxTime[9];
-				}
-				//ロウが壊れる時間とエネミーが死ぬ時間を合わせる
-				group->breakTimer = time;
-				group->breakTimer.Start();
-				for (auto& tEnemy : trapEnemys)
-				{
-					tEnemy->solidTimer = time;
-					tEnemy->ChangeState<EnemyAllStop>();
-				}
+			}
+			//10以上の場合を入れる
+			if (trapEnemys.size() - 1 >= 10) {
+				time = WaxManager::GetInstance()->waxTime[9];
+			}
+
+			//ロウが壊れる時間とエネミーが死ぬ時間を合わせる
+			group->breakTimer = time;
+			group->breakTimer.Start();
+			for (auto& tEnemy : trapEnemys)
+			{
+				tEnemy->solidTimer = time;
+				tEnemy->ChangeState<EnemyAllStop>();
 			}
 			trapEnemys.clear();
 		}
@@ -192,7 +196,8 @@ void ProtoScene::Update()
 	}
 	
 	player.Update();
-	
+	level.Update();
+
 	//敵がロウを壊してから連鎖で壊れるため、敵の処理をしてからこの処理を行う
 #pragma region ロウ同士の当たり判定
 	std::list<std::unique_ptr<WaxGroup>>* wGroups = &WaxManager::GetInstance()->waxGroups;
@@ -247,8 +252,6 @@ void ProtoScene::Update()
 	FireManager::GetInstance()->Update();
 	TemperatureManager::GetInstance()->Update();
 	ParticleManager::GetInstance()->Update();
-
-	level.Update();
 
 	light.Update();
 
