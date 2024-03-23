@@ -54,7 +54,9 @@ private:
 
 public:
 	Easing::EaseTimer solidTimer;	//動けなくなっている時間
-	
+
+	Vector3 shack;
+
 public:
 
 	Enemy(ModelObj* target_);

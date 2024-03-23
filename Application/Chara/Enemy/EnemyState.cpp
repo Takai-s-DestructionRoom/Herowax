@@ -41,7 +41,7 @@ EnemyAllStop::EnemyAllStop()
 void EnemyAllStop::Update(Enemy* enemy)
 {
 	//タイマー開始
-	if (!enemy->solidTimer.GetStarted()) {
+	if (!enemy->solidTimer.GetStarted() && enemy->GetHP() > 0) {
 		enemy->solidTimer.Start();
 	}
 
@@ -60,6 +60,16 @@ void EnemyAllStop::Update(Enemy* enemy)
 	if (enemy->solidTimer.GetEnd()) {
 		enemy->solidTimer.Reset();
 		enemy->ChangeState<EnemyNormal>();
+	}
+
+	if (enemy->solidTimer.GetTimeRate() > 0.5f && 
+		enemy->solidTimer.GetRun()) {
+		
+		//シェイクを算出
+		enemy->shack = Util::GetRandVector3(enemy->obj.mTransform.position, -1.f, 1.f, { 1,0,1 });
+		
+		//この値を移動値に足したいので、移動した分の値だけを算出
+		enemy->shack -= enemy->obj.mTransform.position;
 	}
 }
 
