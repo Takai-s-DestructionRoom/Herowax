@@ -75,6 +75,7 @@ void InstantDrawer::DrawGraph3D(const Vector3& pos, float width, float height,
 		if (!instant.isUse)
 		{
 			instant.isUse = true;
+			instant.mUseBillboardY = true;
 			//instant.Init(handle,Vector2(width,height));
 			instant.mImage.SetTexture(handle);
 			instant.mImage.SetSize({ width, height });

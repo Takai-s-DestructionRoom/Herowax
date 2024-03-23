@@ -2,6 +2,7 @@
 #include "Enemy.h"
 #include "InstantDrawer.h"
 #include "Texture.h"
+#include "Camera.h"
 
 void EnemyUI::LoadResource()
 {
@@ -24,7 +25,9 @@ void EnemyUI::Update(Enemy* enemy)
 void EnemyUI::Draw()
 {
 	Vector3 backPos = position;
-	backPos.z += 0.01f;
-	InstantDrawer::DrawGraph3D(backPos, maxSize.x, maxSize.y, "white2x2",Color::kBlack);
-	InstantDrawer::DrawGraph3D(position, size.x, size.y, "white2x2",Color::kRed);
+	Vector3 targetEyeVec = Camera::sNowCamera->mViewProjection.mTarget - Camera::sNowCamera->mViewProjection.mEye;
+	targetEyeVec.Normalize();
+	backPos += targetEyeVec * 0.01f;	//ここをカメラ方向へのプラスに変えればok
+	InstantDrawer::DrawGraph3D(backPos, maxSize.x, maxSize.y, "white2x2", Color::kBlack);
+	InstantDrawer::DrawGraph3D(position, size.x, size.y, "white2x2", Color::kRed);
 }
