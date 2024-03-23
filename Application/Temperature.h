@@ -14,7 +14,7 @@ public:
 	void Update();
 	void Draw();
 
-	void TemperaturePlus(float value) { temperature += value; };
+	void TemperaturePlus(float value);
 	
 	// ゲッター //
 	//現在の温度取得
@@ -35,6 +35,8 @@ public:
 	float MAX_TEMPERATURE = 100.f;
 private:
 	TemperatureUI ui;		//描画UI
+	float plusTemperature;
+	float maxPlusTemp;
 	float temperature;		//温度
 	float downSpeed;		//1秒あたりに下がる温度
 	float boaderTemperature;		//この温度以上を保つとクリア時間が減るボーダーライン
