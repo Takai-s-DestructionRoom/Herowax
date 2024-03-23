@@ -9,11 +9,12 @@ class FireUnit
 public:
 	//------------ transform関係 ------------//
 	ModelObj obj;
-	float size;						//大きさの比率
-	Vector3 frontVec{ 0,0,1 };		//正面ベクトル
-	Transform target;				//ターゲット
-	Vector3 offset;					//プレイヤー座標とのずれ
-	Easing::EaseTimer floatingTimer;//ふよふよさせるタイマー
+	float size;							//大きさの比率
+	Vector3 frontVec{ 0,0,1 };			//正面ベクトル
+	Transform target;					//ターゲット
+	Vector3 offset;						//プレイヤー座標とのずれ
+	Easing::EaseTimer floatingTimer;	//ふよふよさせるタイマー
+	float adulationAccel;				//追従加速度
 
 	//------------ 炎関係 ------------//
 	float fireGauge;			//炎ゲージ
