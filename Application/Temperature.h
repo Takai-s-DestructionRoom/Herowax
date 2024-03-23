@@ -31,6 +31,7 @@ private:
 	~TemperatureManager() {};
 
 public:
+	float START_TEMPERATURE = 0.0f;
 	float MIN_TEMPERATURE = 40.f;
 	float MAX_TEMPERATURE = 100.f;
 private:

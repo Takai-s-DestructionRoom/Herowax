@@ -24,6 +24,7 @@ TemperatureManager::TemperatureManager() :
 	boaderTemperature = Parameter::GetParam(extract, "クリアタイマーが減るボーダーライン",60.f);
 	clearTimer.maxTime_ = Parameter::GetParam(extract, "クリアにかかる時間",60.f);
 
+	START_TEMPERATURE = Parameter::GetParam(extract,"開始時の温度",40.f);
 	MIN_TEMPERATURE = Parameter::GetParam(extract,"最低温度",40.f);
 	MAX_TEMPERATURE = Parameter::GetParam(extract,"最大温度",100.f);
 	coldBorder = Parameter::GetParam(extract, "冷えてる状態のボーダー",50.f);
@@ -33,7 +34,8 @@ TemperatureManager::TemperatureManager() :
 void TemperatureManager::Init()
 {
 	clearTimer.Reset();
-	temperature = MIN_TEMPERATURE;
+	temperature = START_TEMPERATURE;
+	temperature = Util::Clamp(temperature, MIN_TEMPERATURE, MAX_TEMPERATURE);
 }
 
 void TemperatureManager::Update()
@@ -82,6 +84,7 @@ void TemperatureManager::Update()
 	ImGui::InputFloat("1秒ごとに上がる最大値",&maxPlusTemp, 1.f);
 	ImGui::InputFloat("クリアタイマーが減るボーダーライン", &boaderTemperature,1.f);
 	ImGui::InputFloat("クリアにかかる時間", &clearTimer.maxTime_,1.f);
+	ImGui::InputFloat("開始時の温度", &START_TEMPERATURE,1.f);
 	ImGui::PopItemWidth();		//入力の枠元に戻すやつ
 	if (ImGui::TreeNode("温度:詳細設定"))
 	{
@@ -113,6 +116,8 @@ void TemperatureManager::Save()
 	Parameter::Save("クリアタイマーが減るボーダーライン", boaderTemperature);
 	Parameter::Save("クリアにかかる時間", clearTimer.maxTime_);
 
+	Parameter::Save("開始時の温度", START_TEMPERATURE);
+	Parameter::Save("最低温度", MIN_TEMPERATURE);
 	Parameter::Save("最低温度", MIN_TEMPERATURE);
 	Parameter::Save("最大温度", MAX_TEMPERATURE);
 	Parameter::Save("冷えてる状態のボーダー", coldBorder);
