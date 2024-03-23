@@ -5,11 +5,12 @@
 #include "Quaternion.h"
 #include "TimeManager.h"
 #include "ParticleManager.h"
+#include "ImGui.h"
 
-FireUnit::FireUnit():
-	size(0.5f),fireGauge(0.f), maxFireGauge(5.f),
-	fireStock(0), maxFireStock(5), floatingTimer(1.f),isFireStock(false),
-	dist(2.f), rotTimer(2.5f),frameCount(0),fireAddFrame(3)
+FireUnit::FireUnit() :
+	size(0.5f), fireGauge(0.f), maxFireGauge(5.f),
+	fireStock(0), maxFireStock(5), floatingTimer(1.f), isFireStock(false),
+	dist(2.f), rotTimer(2.5f), frameCount(0), fireAddFrame(3)
 {
 	obj = ModelObj(Model::Load("./Resources/Model/Sphere.obj", "Sphere", true));
 	obj.mTuneMaterial.mColor = Color::kFireOutside;
@@ -30,7 +31,7 @@ void FireUnit::Update()
 {
 	//情報をfiremanagerへ送信
 	FireManager::GetInstance()->SetTarget(&obj);
-	
+
 	//ゲージが溜まって、ストックも最大じゃないなら
 	if (fireGauge >= maxFireGauge && fireStock < maxFireStock)
 	{
@@ -59,9 +60,27 @@ void FireUnit::Update()
 		}
 	}
 
-	//ふよふよさせる
-	floatingTimer.RoopReverse();
-	offset.y = 1.f + Easing::InQuad(floatingTimer.GetTimeRate()) * 0.5f;
+	Vector3 targetToObjVec = target.position - obj.mTransform.position;
+	if (targetToObjVec.LengthSq() > 2.f)
+	{
+		adulationAccel += 0.01f;
+	}
+
+	if (targetToObjVec.LengthSq() < 3.f)
+	{
+		adulationAccel -= 0.015f;
+	}
+
+	adulationAccel = Util::Clamp(adulationAccel, 0.f, 0.5f);			//無限に増減しないよう抑える
+
+	obj.mTransform.position.x +=
+		targetToObjVec.GetNormalize().x * adulationAccel;
+	obj.mTransform.position.y +=
+		targetToObjVec.GetNormalize().y * adulationAccel;
+	obj.mTransform.position.z +=
+		targetToObjVec.GetNormalize().z * adulationAccel;
+
+	obj.mTransform.scale *= size;
 
 	FireRotation();
 	FireShot();
@@ -114,12 +133,26 @@ void FireUnit::Update()
 	//更新してからバッファに送る
 	obj.mTransform.UpdateMatrix();
 	obj.TransferBuffer(Camera::sNowCamera->mViewProjection);
+
+
+	ImGui::SetNextWindowSize({ 300, 100 });
+
+	ImGuiWindowFlags window_flags = 0;
+	window_flags |= ImGuiWindowFlags_NoResize;
+
+	ImGui::Begin("FireUnit", NULL, window_flags);
+
+	ImGui::Text("加速度:%f",adulationAccel);
+	ImGui::Text("オフセット:%f,%f,%f",offset.x,offset.y,offset.z);
+	ImGui::Text("座標:%f,%f,%f",obj.mTransform.position.x, obj.mTransform.position.y, obj.mTransform.position.z);
+
+	ImGui::End();
 }
 
 void FireUnit::Draw()
 {
 	obj.Draw();
-	for (auto& fire:fireObj)
+	for (auto& fire : fireObj)
 	{
 		fire.Draw();
 	}
@@ -157,6 +190,13 @@ void FireUnit::FireGaugeCharge(float gauge)
 void FireUnit::SetTransform(Transform transform)
 {
 	target = transform;
+
+	offset = { 2.f,1.f,-1.f };
+	offset *= Quaternion::Euler(transform.rotation);
+	//ふよふよさせる
+	floatingTimer.RoopReverse();
+	//offset.y = 1.f + Easing::InQuad(floatingTimer.GetTimeRate()) * 0.5f;
+
 	target.position += offset;
 
 	//正面ベクトルを取得
@@ -166,22 +206,36 @@ void FireUnit::SetTransform(Transform transform)
 	FireManager::GetInstance()->SetThorwVec(frontVec);
 	FireManager::GetInstance()->SetEndReferencePoint(transform.position);
 
-	obj.mTransform = target;
-	obj.mTransform.scale *= size;
+	//Y座標だけは別で代入しておく(ふよふよさせたいから)
+	//obj.mTransform.position.y = target.position.y;
 }
 
 void FireUnit::FireRotation()
 {
 	rotTimer.Roop();
 
+	//カメラから注視点へのベクトル
+	Vector3 cameraVec = Camera::sNowCamera->mViewProjection.mTarget - Camera::sNowCamera->mViewProjection.mEye;
+	//カメラの角度
+	float cameraRad = atan2f(cameraVec.x, cameraVec.z);
+	//なぜか前方ベクトルだと横向きになるので無理やり90度足して直す
+	float frontVecRad = atan2f(frontVec.x, frontVec.y) + Util::AngleToRadian(90.f);
+
 	for (size_t i = 0; i < fireObj.size(); i++)
 	{
+		//ぐるぐる角度出す
 		float angle = Util::AngleToRadian((360.f / (float)maxFireStock) * (float)i);
 		angle += Util::AngleToRadian(rotTimer.GetTimeRate() * 360.f);
 
+		//ローカル座標に代入
 		Vector3 plusPos;
 		plusPos.x = dist * cosf(angle);
 		plusPos.y = dist * sinf(angle);
-		std::next(fireObj.begin(), i)->mTransform.position = obj.mTransform.position + plusPos;
+		//カメラに対して平行になるように
+		plusPos *= Matrix4::RotationY(cameraRad + frontVecRad);
+
+		//ユニット基準にして代入
+		std::next(fireObj.begin(), i)->mTransform.position = 
+			obj.mTransform.position + plusPos;
 	}
 }
