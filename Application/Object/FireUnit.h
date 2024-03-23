@@ -13,8 +13,10 @@ public:
 	Vector3 frontVec{ 0,0,1 };			//正面ベクトル
 	Transform target;					//ターゲット
 	Vector3 offset;						//プレイヤー座標とのずれ
+	Vector3 offsetOrigin;				//プレイヤー座標とのずれ(ローカル)
 	Easing::EaseTimer floatingTimer;	//ふよふよさせるタイマー
 	float adulationAccel;				//追従加速度
+	float accelAmount;					//1Fあたりの加速度
 
 	//------------ 炎関係 ------------//
 	float fireGauge;			//炎ゲージ

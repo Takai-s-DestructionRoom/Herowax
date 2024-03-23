@@ -10,12 +10,14 @@
 FireUnit::FireUnit() :
 	size(0.5f), fireGauge(0.f), maxFireGauge(5.f),
 	fireStock(0), maxFireStock(5), floatingTimer(1.f), isFireStock(false),
-	dist(2.f), rotTimer(2.5f), frameCount(0), fireAddFrame(3)
+	dist(2.f), rotTimer(2.5f), frameCount(0), fireAddFrame(3),
+	accelAmount(0.01f)
 {
 	obj = ModelObj(Model::Load("./Resources/Model/Sphere.obj", "Sphere", true));
 	obj.mTuneMaterial.mColor = Color::kFireOutside;
 
-	offset = { 2.f,1.f,-1.f };
+	offsetOrigin = { 2.f,1.f,-2.f };
+	offset = offsetOrigin;
 }
 
 void FireUnit::Init()
@@ -61,17 +63,18 @@ void FireUnit::Update()
 	}
 
 	Vector3 targetToObjVec = target.position - obj.mTransform.position;
-	if (targetToObjVec.LengthSq() > 2.f)
+	if (targetToObjVec.LengthSq() > offsetOrigin.LengthSq())
 	{
-		adulationAccel += 0.01f;
+		adulationAccel += accelAmount;
 	}
 
-	if (targetToObjVec.LengthSq() < 3.f)
+	if (targetToObjVec.LengthSq() < offsetOrigin.LengthSq() * 1.5f)
 	{
-		adulationAccel -= 0.015f;
+		adulationAccel -= accelAmount * 1.5f;
 	}
 
-	adulationAccel = Util::Clamp(adulationAccel, 0.f, 0.5f);			//無限に増減しないよう抑える
+	//無限に増減しないよう抑える
+	adulationAccel = Util::Clamp(adulationAccel, 0.f, accelAmount * 60.f);
 
 	obj.mTransform.position.x +=
 		targetToObjVec.GetNormalize().x * adulationAccel;
@@ -135,7 +138,7 @@ void FireUnit::Update()
 	obj.TransferBuffer(Camera::sNowCamera->mViewProjection);
 
 
-	ImGui::SetNextWindowSize({ 300, 100 });
+	ImGui::SetNextWindowSize({ 300, 150 });
 
 	ImGuiWindowFlags window_flags = 0;
 	window_flags |= ImGuiWindowFlags_NoResize;
@@ -145,6 +148,10 @@ void FireUnit::Update()
 	ImGui::Text("加速度:%f",adulationAccel);
 	ImGui::Text("オフセット:%f,%f,%f",offset.x,offset.y,offset.z);
 	ImGui::Text("座標:%f,%f,%f",obj.mTransform.position.x, obj.mTransform.position.y, obj.mTransform.position.z);
+
+	ImGui::SliderFloat("加速度", &accelAmount, 0.f, 0.1f);
+	ImGui::SliderFloat("プレイヤーとの距離X", &offsetOrigin.x, 0.f, 5.f);
+	ImGui::SliderFloat("プレイヤーとの距離Z", &offsetOrigin.z, -5.f, 0.f);
 
 	ImGui::End();
 }
@@ -191,7 +198,7 @@ void FireUnit::SetTransform(Transform transform)
 {
 	target = transform;
 
-	offset = { 2.f,1.f,-1.f };
+	offset = offsetOrigin;
 	offset *= Quaternion::Euler(transform.rotation);
 	//ふよふよさせる
 	floatingTimer.RoopReverse();
