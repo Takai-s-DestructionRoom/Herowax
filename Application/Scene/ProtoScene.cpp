@@ -15,6 +15,8 @@
 
 ProtoScene::ProtoScene()
 {
+	TextureManager::Load("./Resources/Brush.png", "brush");
+
 	skydome = ModelObj(Model::Load("./Resources/Model/Skydome/Skydome.obj", "Skydome"));
 	skydome.mTransform.scale = { 5, 5, 5 };
 	skydome.mTransform.UpdateMatrix();

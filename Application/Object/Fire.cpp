@@ -8,9 +8,9 @@ Fire::Fire(std::vector<Vector3> splinePoints_):
 {
 	splinePoints = splinePoints_;
 
-	obj = ModelObj(Model::Load("./Resources/Model/Sphere.obj", "Sphere", true));
+	obj = PaintableModelObj(Model::Load("./Resources/Model/Sphere.obj", "Sphere", true));
 	obj.mTuneMaterial.mColor = Color::kFireOutside;
-
+	obj.SetupPaint();
 	targetCircle = ModelObj(Model::Load("./Resources/Model/targetMark/targetMark.obj", "targetMark", true));
 }
 

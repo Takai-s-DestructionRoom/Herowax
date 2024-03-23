@@ -6,7 +6,8 @@
 
 Tower::Tower() : GameObject(), hp(0), maxHP(10.f),shakeTimer(0.3f),shakePower(1.5f)
 {
-	obj = ModelObj(Model::Load("./Resources/Model/Birdnest/Birdnest.obj", "Birdnest", true));
+	obj = PaintableModelObj(Model::Load("./Resources/Model/Birdnest/Birdnest.obj", "Birdnest", true));
+	obj.SetupPaint();
 }
 
 Tower::~Tower()

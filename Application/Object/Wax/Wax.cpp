@@ -15,9 +15,9 @@ Wax::Wax():GameObject(),
 	disolveValue(0.f)
 {
 	state = std::make_unique<WaxNormal>();
-	obj = ModelObj(Model::Load("./Resources/Model/wax/wax.obj", "wax", true));
+	obj = PaintableModelObj(Model::Load("./Resources/Model/wax/wax.obj", "wax", true));
 	obj.mTuneMaterial.mColor = waxOriginColor;
-
+	obj.SetupPaint();
 	TextureManager::Load("./Resources/DissolveMap.png","DissolveMap");
 }
 

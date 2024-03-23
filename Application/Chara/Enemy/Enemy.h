@@ -5,6 +5,7 @@
 #include "WaxGroup.h"
 #include "EnemyUI.h"
 #include "Quaternion.h"
+#include "Vector2.h"
 
 class Enemy : public GameObject
 {
@@ -46,6 +47,9 @@ private:
 	ModelObj* target = nullptr;
 	//攻撃してきた対象
 	ModelObj* attackTarget = nullptr;
+	//固まってることを分かりやすくするオブジェクト
+	ModelObj attach;
+
 
 	std::unique_ptr<EnemyState> state;			//状態管理
 	std::string stateStr;		//状態を文字列で保存
@@ -56,6 +60,7 @@ public:
 	Easing::EaseTimer solidTimer;	//動けなくなっている時間
 
 	Vector3 shack;
+	Color changeColor = { 1,1,1,1 };
 
 public:
 
@@ -72,6 +77,9 @@ public:
 	void SetTarget(ModelObj* target_);
 
 	void SetGroundPos(float groundPos_) { groundPos = groundPos_; }
+
+	//自分自身をランダムに塗る関数
+	void RandomPaint(const Vector2& paintSize,const Color& paintColor);
 
 	/// <summary>
 	/// 状態変更

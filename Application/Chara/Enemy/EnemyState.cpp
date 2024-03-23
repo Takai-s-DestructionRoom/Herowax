@@ -4,6 +4,9 @@
 #include "Temperature.h"
 #include "WaxManager.h"
 #include "ParticleManager.h"
+#include "Camera.h"
+#include "Float4.h"
+#include "ColPrimitive3D.h"
 
 EnemyNormal::EnemyNormal()
 {

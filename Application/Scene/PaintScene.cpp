@@ -13,9 +13,9 @@
 PaintScene::PaintScene()
 {
 	skydome = PaintableModelObj(Model::Load("./Resources/Model/Skydome/Skydome.obj", "Skydome", true));
-
+	
 	sprite = Sprite(TextureManager::Load("./Resources/Brush.png", "brush"), { 0.5f, 0.5f });
-
+	
 	objA = PaintableModelObj(Model::Load("./Resources/Model/sphere.obj", "Sphere", true));
 	objA.mTuneMaterial.mDiffuse = { 0, 1, 0 };
 	objA.mTransform.position = { -3, 1, 2 };
