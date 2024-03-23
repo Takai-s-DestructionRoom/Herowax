@@ -1,6 +1,7 @@
 #include "WaxGroup.h"
 #include "WaxManager.h"
 #include "Enemy.h"
+#include "Util.h"
 
 WaxGroup::WaxGroup():
 	hp(10.f),maxHP(10.f),damageSustained(0),isAlive(true)

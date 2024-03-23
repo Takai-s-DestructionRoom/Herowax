@@ -46,6 +46,11 @@ void Enemy::Update()
 	moveVec.x = 0;
 	moveVec.z = 0;
 
+	//ステートに入る前に、前フレームに足したシェイクを引いて元に戻す
+	obj.mTransform.position -= shack;
+	//シェイクを元に戻す
+	shack = { 0,0,0 };
+
 	//各ステート時の固有処理
 	state->Update(this);	//移動速度に関係するので移動の更新より前に置く
 
@@ -76,6 +81,9 @@ void Enemy::Update()
 	//減速率は大きいほどスピード下がるから1.0から引くようにしてる
 	moveVec += pVec * moveSpeed *
 		(1.f - slowMag) * (1.f - slowCoatingMag);
+
+	//シェイクの値
+	moveVec += shack;
 
 	//座標加算
 	obj.mTransform.position += moveVec;

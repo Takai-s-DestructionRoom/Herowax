@@ -18,7 +18,7 @@ isAttack(false), atkSpeed(1.f), atkRange({ 3.f,5.f }), atkSize(0.f), atkPower(1)
 atkCoolTimer(0.3f), atkTimer(0.5f), atkHeight(1.f), solidTimer(5.f),
  isFireStock(false)
 {
-	obj = ModelObj(Model::Load("./Resources/Model/Cube.obj", "Cube", true));
+	obj = ModelObj(Model::Load("./Resources/Model/player/player_bird.obj", "player_bird", true));
 
 	std::map<std::string, std::string> extract = Parameter::Extract("Player");
 	moveSpeed = Parameter::GetParam(extract, "移動速度", 1.f);
@@ -131,6 +131,8 @@ void Player::Update()
 
 	ImGui::Text("Lスティック移動、Aボタンジャンプ、Rで攻撃");
 	ImGui::Text("WASD移動、スペースジャンプ、右クリで攻撃");
+
+	ImGui::ColorEdit4("プレイヤーの色", &obj.mTuneMaterial.mColor.r);
 
 	if (ImGui::TreeNode("移動系"))
 	{

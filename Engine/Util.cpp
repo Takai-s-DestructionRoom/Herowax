@@ -194,6 +194,18 @@ void Util::DebugLogC(std::wstring log)
 	}
 }
 
+Vector3 Util::GetRandVector3(const Vector3& value, float min, float max, const Vector3& factor)
+{
+	Vector3 temp = value;
+	float posrand = GetRand(min, max);
+	temp.x += posrand * factor.x;
+	posrand = GetRand(min, max);
+	temp.y += posrand * factor.y;
+	posrand = GetRand(min, max);
+	temp.z += posrand * factor.z;
+	return temp;
+}
+
 Vector3 Util::Spline(const std::vector<Vector3>& points, float t)
 {
 	//ひとつしか入っていないならそのまま返す

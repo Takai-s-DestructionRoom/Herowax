@@ -95,6 +95,11 @@ void EnemyManager::Update()
 	ImGui::SliderFloat("knockRandZE", &knockRandZE, -Util::PI, Util::PI);
 	ImGui::SliderFloat("無敵時間さん", &mutekiTime, 0.0f,1.0f);
 
+	for (auto& enemy : enemys)
+	{
+		ImGui::Text("ステート:%s", enemy->GetState().c_str());
+	}
+
 	if (ImGui::Button("Reset")) {
 		enemys.clear();
 	}
