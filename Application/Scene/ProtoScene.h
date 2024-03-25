@@ -13,6 +13,7 @@
 #include "Tower.h"
 #include "EnemyManager.h"
 #include "EnemySpawner.h"
+#include "EggUI.h"
 
 #include "Level.h"
 #include "Wave.h"
@@ -30,6 +31,7 @@ private:
 	ModelObj skydome;	//天球
 	Player player;
 	Wave wave;
+	EggUI eggUI;
 
 	Camera camera = Camera();
 	float cameraDist = -20.f;	//注視点からカメラの距離

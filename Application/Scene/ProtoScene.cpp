@@ -32,6 +32,8 @@ ProtoScene::ProtoScene()
 	Level::Get()->Load();
 	
 	wave.Load();
+
+	EggUI::LoadResource();
 }
 
 void ProtoScene::Init()
@@ -54,10 +56,13 @@ void ProtoScene::Init()
 	FireManager::GetInstance()->Init();
 	TemperatureManager::GetInstance()->Init();
 
-	EnemyManager::GetInstance()->SetGround(&Level::Get()->ground);
-
 	//とりあえず最初のステージを設定しておく
 	Level::Get()->Extract("test");
+
+	EnemyManager::GetInstance()->SetGround(&Level::Get()->ground);
+
+	eggUI.Init();
+	eggUI.SetTower(&Level::Get()->tower);
 }
 
 void ProtoScene::Update()
@@ -293,6 +298,8 @@ void ProtoScene::Update()
 	TemperatureManager::GetInstance()->Update();
 	ParticleManager::GetInstance()->Update();
 
+	eggUI.Update();
+
 	light.Update();
 
 	skydome.TransferBuffer(camera.mViewProjection);
@@ -344,6 +351,7 @@ void ProtoScene::Draw()
 	FireManager::GetInstance()->Draw();
 	TemperatureManager::GetInstance()->Draw();
 	player.Draw();
+	eggUI.Draw();
 
 	Level::Get()->Draw();
 

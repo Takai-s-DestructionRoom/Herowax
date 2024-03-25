@@ -615,6 +615,9 @@
     <ClCompile Include="Application\Object\FireUnit.cpp">
       <Filter>ソース ファイル\Application\Object\Fire</Filter>
     </ClCompile>
+    <ClCompile Include="Application\EggUI.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Shader\Basic\BasicPS.hlsl">
@@ -1122,6 +1125,9 @@
     </ClInclude>
     <ClInclude Include="Application\Object\FireUnit.h">
       <Filter>ヘッダー ファイル\Application\Object\Fire</Filter>
+    </ClInclude>
+    <ClInclude Include="Application\EggUI.h">
+      <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

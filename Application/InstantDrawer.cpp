@@ -27,7 +27,8 @@ void InstantDrawer::DrawInit()
 
 void InstantDrawer::DrawGraph(const float& x, const float& y, 
 	float sizerateX, float sizerateY, float angle,
-	const std::string& handle, const Anchor& anchor)
+	const std::string& handle, const Color& color,
+	const Anchor& anchor)
 {
 	//ハンドルが空なら描画をキャンセル
 	if (handle == "")return;
@@ -41,6 +42,7 @@ void InstantDrawer::DrawGraph(const float& x, const float& y,
 			instant.mTransform.position = { x,y,0 };
 			instant.mTransform.rotation = { 0,0,Util::AngleToRadian(angle) };
 			instant.mTransform.scale = { sizerateX,sizerateY,0 };
+			instant.mMaterial.mColor = color;
 			switch (anchor)
 			{
 			case InstantDrawer::Anchor::LEFT:
