@@ -61,7 +61,6 @@ void IEmitter3D::Update()
 		{
 			particle.scale = Easing::lerp(particle.startScale, particle.endScale, particle.easeTimer.GetTimeRate());
 		}
-		particle.scale = Easing::lerp(particle.startScale, particle.endScale, particle.easeTimer.GetTimeRate());
 
 		//初期のランダム角度をもとに回す
 		particle.rot += particle.plusRot * elapseSpeed_;
@@ -83,10 +82,7 @@ void IEmitter3D::Update()
 		}
 
 		//重力加算
-		if (isGravity_)
-		{
-			particle.pos.y -= particle.gravity * elapseSpeed_;
-		}
+		particle.pos.y -= particle.gravity * isGravity_ * elapseSpeed_;
 	}
 
 	//頂点情報がリセットされないので更新時には毎フレームリセット
@@ -390,11 +386,12 @@ void IEmitter3D::Add(uint32_t addNum, float life, Color color, TextureHandle tex
 
 	for (uint32_t i = 0; i < addNum; i++)
 	{
-		//指定した最大数超えてたら生成しない
-		if (particles_.size() >= maxParticle_)
-		{
-			return;
-		}
+		//----- エミッターを逐一生成するので生成数はまず超えないから消す -----//
+		////指定した最大数超えてたら生成しない
+		//if (particles_.size() >= maxParticle_)
+		//{
+		//	return;
+		//}
 
 		//リストに要素を追加
 		particles_.emplace_back();
@@ -446,7 +443,7 @@ void IEmitter3D::Add(uint32_t addNum, float life, Color color, TextureHandle tex
 void IEmitter3D::AddRing(uint32_t addNum, float life, Color color, TextureHandle tex,
 	float startRadius, float endRadius, float minScale, float maxScale,
 	float minVeloY, float maxVeloY, Vector3 minRot, Vector3 maxRot,
-	float growingTimer,float endScale, bool isGravity, bool isBillboard)
+	float growingTimer, float endScale, bool isGravity, bool isBillboard)
 {
 	isGravity_ = isGravity;
 	isBillboard_ = isBillboard;
@@ -457,11 +454,12 @@ void IEmitter3D::AddRing(uint32_t addNum, float life, Color color, TextureHandle
 
 	for (uint32_t i = 0; i < addNumClamp; i++)
 	{
-		//指定した最大数超えてたら生成しない
-		if (particles_.size() >= maxParticle_)
-		{
-			return;
-		}
+		//----- エミッターを逐一生成するので生成数はまず超えないから消す -----//
+		////指定した最大数超えてたら生成しない
+		//if (particles_.size() >= maxParticle_)
+		//{
+		//	return;
+		//}
 
 		//リストに要素を追加
 		particles_.emplace_back();
