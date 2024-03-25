@@ -95,6 +95,15 @@ void EnemyManager::Update()
 	ImGui::SliderFloat("knockRandZE", &knockRandZE, -Util::PI, Util::PI);
 	ImGui::SliderFloat("無敵時間さん", &mutekiTime, 0.0f,1.0f);
 
+	static Color changeColor = { 1,1,1,1 };
+	ImGui::ColorEdit4("ロウで固まってるときの色", &changeColor.r);
+
+	for (auto& enemy : enemys)
+	{
+		ImGui::Text("ステート:%s", enemy->GetState().c_str());
+		enemy->changeColor = changeColor;
+	}
+
 	if (ImGui::Button("Reset")) {
 		enemys.clear();
 	}

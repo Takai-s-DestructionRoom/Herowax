@@ -7,8 +7,6 @@ Color Wax::waxOriginColor = { 0.8f, 0.6f, 0.35f, 1.f };
 Color Wax::waxEndColor = { 0.8f, 0.0f, 0.f, 1.f };
 
 Wax::Wax():GameObject(),
-	
-	
 	atkSpeed(1.f),
 	atkPower(1),
 	igniteTimer(0.25f),
@@ -17,9 +15,9 @@ Wax::Wax():GameObject(),
 	disolveValue(0.f)
 {
 	state = std::make_unique<WaxNormal>();
-	obj = ModelObj(Model::Load("./Resources/Model/wax/wax.obj", "wax", true));
+	obj = PaintableModelObj(Model::Load("./Resources/Model/wax/wax.obj", "wax", true));
 	obj.mTuneMaterial.mColor = waxOriginColor;
-
+	obj.SetupPaint();
 	TextureManager::Load("./Resources/DissolveMap.png","DissolveMap");
 }
 

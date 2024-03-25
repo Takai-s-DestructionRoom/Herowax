@@ -167,6 +167,8 @@ namespace Util {
     //デバッグ出力(debugBoolが立っている時処理)
     void DebugLogC(std::wstring log);
 
+    Vector3 GetRandVector3(const Vector3& value, float min, float max, const Vector3& factor = { 1.f,1.f,1.f });
+
     /// <summary>
     /// Spline挙動を作る
     /// </summary>

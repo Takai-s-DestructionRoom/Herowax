@@ -4,6 +4,9 @@
 #include "Temperature.h"
 #include "WaxManager.h"
 #include "ParticleManager.h"
+#include "Camera.h"
+#include "Float4.h"
+#include "ColPrimitive3D.h"
 
 EnemyNormal::EnemyNormal()
 {
@@ -41,7 +44,7 @@ EnemyAllStop::EnemyAllStop()
 void EnemyAllStop::Update(Enemy* enemy)
 {
 	//タイマー開始
-	if (!enemy->solidTimer.GetStarted()) {
+	if (!enemy->solidTimer.GetStarted() && enemy->GetHP() > 0) {
 		enemy->solidTimer.Start();
 	}
 
@@ -60,6 +63,16 @@ void EnemyAllStop::Update(Enemy* enemy)
 	if (enemy->solidTimer.GetEnd()) {
 		enemy->solidTimer.Reset();
 		enemy->ChangeState<EnemyNormal>();
+	}
+
+	if (enemy->solidTimer.GetTimeRate() > 0.5f && 
+		enemy->solidTimer.GetRun()) {
+		
+		//シェイクを算出
+		enemy->shack = Util::GetRandVector3(enemy->obj.mTransform.position, -1.f, 1.f, { 1,0,1 });
+		
+		//この値を移動値に足したいので、移動した分の値だけを算出
+		enemy->shack -= enemy->obj.mTransform.position;
 	}
 }
 
@@ -91,18 +104,24 @@ void EnemyBurning::Update(Enemy* enemy)
 	//色を赤に変更
 	enemy->obj.mTuneMaterial.mColor = Color::kRed;
 
-	//燃えてるときパーティクル出す
-	ParticleManager::GetInstance()->AddSimple(
-		enemy->GetCenterPos(), enemy->obj.mTransform.scale * 0.5f, 1, 0.3f,
-		Color::kFireOutside, TextureManager::Load("./Resources/fireEffect.png"),
-		1.5f, 3.f, { -0.1f,0.1f,-0.1f }, { 0.1f,0.5f,0.1f },
-		0.05f, -Vector3::ONE * 0.1f, Vector3::ONE * 0.1f, 0.05f,0.f, false, true);
-	//中心の炎
-	ParticleManager::GetInstance()->AddSimple(
-		enemy->GetCenterPos(), enemy->obj.mTransform.scale * 0.3f, 1, 0.2f,
-		Color::kFireInside, TextureManager::Load("./Resources/fireEffect.png"),
-		2.f, 4.f, { -0.1f,0.1f,-0.1f }, { 0.1f,0.4f,0.1f },
-		0.01f, -Vector3::ONE * 0.1f, Vector3::ONE * 0.1f, 0.05f, 0.f, false, true);
+	frameCount++;
+	if (frameCount >= fireAddFrame)
+	{
+		//燃えてるときパーティクル出す
+		ParticleManager::GetInstance()->AddSimple(
+			enemy->GetCenterPos(), enemy->obj.mTransform.scale * 0.5f, 2, 0.3f,
+			Color::kFireOutside, TextureManager::Load("./Resources/fireEffect.png"),
+			1.5f, 3.f, { -0.1f,0.1f,-0.1f }, { 0.1f,0.5f,0.1f },
+			0.05f, -Vector3::ONE * 0.1f, Vector3::ONE * 0.1f, 0.05f, 0.f, false, true);
+		//中心の炎
+		ParticleManager::GetInstance()->AddSimple(
+			enemy->GetCenterPos(), enemy->obj.mTransform.scale * 0.3f, 2, 0.2f,
+			Color::kFireInside, TextureManager::Load("./Resources/fireEffect.png"),
+			2.f, 4.f, { -0.1f,0.1f,-0.1f }, { 0.1f,0.4f,0.1f },
+			0.01f, -Vector3::ONE * 0.1f, Vector3::ONE * 0.1f, 0.05f, 0.f, false, true);
+
+		frameCount = 0;
+	}
 
 	//減速率いじるかわかんないので保留
 

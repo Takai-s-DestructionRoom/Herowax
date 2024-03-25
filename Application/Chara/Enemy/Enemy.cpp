@@ -14,7 +14,8 @@ isAttack(false), atkPower(0.f), atkCoolTimer(1.f),
 gravity(0.2f), groundPos(0)
 {
 	state = std::make_unique<EnemyNormal>();
-	obj = ModelObj(Model::Load("./Resources/Model/firewisp/firewisp.obj", "firewisp", true));
+	obj = PaintableModelObj(Model::Load("./Resources/Model/firewisp/firewisp.obj", "firewisp", true));
+	obj.SetupPaint();
 	target = target_;
 
 	std::map<std::string, std::string> extract = Parameter::Extract("Enemy");
@@ -24,6 +25,7 @@ gravity(0.2f), groundPos(0)
 	mutekiTimer.maxTime_ = Parameter::GetParam(extract, "無敵時間さん", 0.1f);
 
 	obj.mTransform.scale = { 2,2,2 };
+	attach = ModelObj(Model::Load("./Resources/Model/WaxAttach/WaxAttach.obj", "WaxAttach", true));
 }
 
 Enemy::~Enemy()
@@ -45,6 +47,11 @@ void Enemy::Update()
 {
 	moveVec.x = 0;
 	moveVec.z = 0;
+
+	//ステートに入る前に、前フレームに足したシェイクを引いて元に戻す
+	obj.mTransform.position -= shack;
+	//シェイクを元に戻す
+	shack = { 0,0,0 };
 
 	//各ステート時の固有処理
 	state->Update(this);	//移動速度に関係するので移動の更新より前に置く
@@ -77,6 +84,9 @@ void Enemy::Update()
 	moveVec += pVec * moveSpeed *
 		(1.f - slowMag) * (1.f - slowCoatingMag);
 
+	//シェイクの値
+	moveVec += shack;
+
 	//座標加算
 	obj.mTransform.position += moveVec;
 
@@ -86,6 +96,8 @@ void Enemy::Update()
 		moveVec.y = 0;
 	}
 
+	obj.mTuneMaterial.mColor = changeColor;
+
 	UpdateCollider();
 
 	//更新してからバッファに送る
@@ -94,6 +106,10 @@ void Enemy::Update()
 
 	ui.Update(this);
 
+	attach.mTransform.position = obj.mTransform.position;
+
+	attach.mTransform.UpdateMatrix();
+	attach.TransferBuffer(Camera::sNowCamera->mViewProjection);
 }
 
 void Enemy::Draw()
@@ -102,7 +118,10 @@ void Enemy::Draw()
 	{
 		obj.Draw();
 		ui.Draw();
-		//DrawCollider();
+
+		/*if (GetState() == "AllStop") {
+			attach.Draw();
+		}*/
 	}
 }
 
@@ -163,6 +182,21 @@ void Enemy::KnockBack(const Vector3& pVec)
 void Enemy::SetTarget(ModelObj* target_)
 {
 	target = target_;
+}
+
+void Enemy::RandomPaint(const Vector2& paintSize, const Color& paintColor)
+{
+	ColPrimitive3D::Ray ray;
+
+	//ランダムな方向へずらした位置を取得
+	ray.start = Util::GetRandVector3(obj.mTransform.position, -100.f, 100.f);
+	//そこから自身へのベクトルを生成
+	ray.dir = obj.mTransform.position - ray.start;
+	ray.dir.Normalize();
+
+	//当たった箇所にペイント
+	obj.Paint(ray, "brush", paintColor,
+		paintSize, Camera::sNowCamera->mViewProjection.mMatrix);
 }
 
 void Enemy::SetIsEscape(bool flag)
@@ -227,6 +261,12 @@ void Enemy::DealDamage(uint32_t damage, const Vector3& dir, ModelObj* target_)
 		obj.mTuneMaterial.mColor, TextureManager::Load("./Resources/hit_circle.png"),
 		0.f, 0.f, Vector3::ZERO, Vector3::ZERO,
 		0.f, Vector3::ONE * 0.1f, Vector3::ONE * 0.1f, 0.1f, 3.f, false, true);
+
+	//適当に自分を塗る
+	for (int32_t i = 0; i < 3; i++)
+	{
+		RandomPaint({100.f,100.f}, Wax::waxOriginColor);
+	}
 }
 
 void Enemy::SetDeath()

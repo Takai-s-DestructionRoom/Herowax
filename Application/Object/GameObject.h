@@ -1,6 +1,7 @@
 #pragma once
 #include "ModelObj.h"
 #include "ColPrimitive3D.h"
+#include "PaintableModelObj.h"
 
 //モデルを持ち、画面に描画されるオブジェクトの基底クラス
 class GameObject
@@ -9,7 +10,7 @@ public:
 	bool isAlive;				//生きてるか否か
 
 	//------------ その他 ------------//
-	ModelObj obj;				//オブジェクト
+	PaintableModelObj obj;				//オブジェクト
 	ModelObj drawerObj;			//当たり判定描画オブジェクト
 	
 	ColPrimitive3D::Sphere collider;	//Sphereの当たり判定

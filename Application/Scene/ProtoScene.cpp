@@ -15,6 +15,8 @@
 
 ProtoScene::ProtoScene()
 {
+	TextureManager::Load("./Resources/Brush.png", "brush");
+
 	skydome = ModelObj(Model::Load("./Resources/Model/Skydome/Skydome.obj", "Skydome"));
 	skydome.mTransform.scale = { 5, 5, 5 };
 	skydome.mTransform.UpdateMatrix();
@@ -135,7 +137,7 @@ void ProtoScene::Update()
 						//enemyにダメージ
 						Vector3 knockVec = player.atkVec;
 						knockVec.y = 0;
-						enemy->DealDamage(WaxManager::GetInstance()->waxDamage,
+						enemy->DealDamage(wax->atkPower,
 							knockVec, &player.obj);
 
 						//お試し実装:自分が攻撃を当てた相手が自分を追いかけてくる
@@ -237,20 +239,53 @@ void ProtoScene::Update()
 	
 
 	//別グループ内のロウが当たった時の処理
-	for (auto& group1 : *wGroups)
+	for (auto itr = wGroups->begin(); itr != wGroups->end();itr++)
 	{
-		for (auto& group2 : *wGroups)
-		{
-			if (group1 == group2)continue;
+		if (itr._Ptr->_Next == nullptr)break;
 		
-			//こうしたい
-			if (WaxManager::GetInstance()->CheckHitWaxGroups(group1, group2)) {
+		for (auto itr2 = itr; itr2 != wGroups->end();)
+		{
+			if (itr2._Ptr->_Next == nullptr)break;
+
+			if (itr == itr2) {
+				itr2++;
+				continue;
+			}
+			if (WaxManager::GetInstance()->CheckHitWaxGroups((*itr), (*itr2)))
+			{
 				//どれか一つがぶつかったなら、グループすべてが移動する
-				group1->waxs.splice(group1->waxs.end(), std::move(group2->waxs));
-				group1->SetSameSolidTime();
+				if ((*itr2)->waxs.size() <= 0) {
+					itr2++;
+					continue;
+				}
+				(*itr)->waxs.splice((*itr)->waxs.end(), std::move((*itr2)->waxs));
+				(*itr)->SetSameSolidTime();
+				itr2 = wGroups->erase(itr2);
+			}
+			else {
+				itr2++;
 			}
 		}
 	}
+
+	//for (auto& group1 : *wGroups)
+	//{
+	//	for (auto& group2 : *wGroups)
+	//	{
+	//		if (group1 == group2)continue;
+	//	
+	//		//こうしたい
+	//		if (WaxManager::GetInstance()->CheckHitWaxGroups(group1, group2)) {
+	//			//どれか一つがぶつかったなら、グループすべてが移動する
+	//			group1->waxs.splice(group1->waxs.end(), std::move(group2->waxs));
+	//			group1->SetSameSolidTime();
+	//			//こうするか、
+	//			wGroups->erase(group2);
+	//			//こうする
+	//			WaxManager::GetInstance()->Delete();
+	//		}
+	//	}
+	//}
 
 #pragma endregion
 	WaxManager::GetInstance()->Update();
