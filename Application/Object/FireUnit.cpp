@@ -10,7 +10,7 @@
 FireUnit::FireUnit() :
 	size(0.5f), fireGauge(0.f), maxFireGauge(5.f),
 	fireStock(0), maxFireStock(5), floatingTimer(1.f), isFireStock(false),
-	dist(2.f), rotTimer(2.5f), frameCount(0), fireAddFrame(3),
+	dist(2.f), rotTimer(2.5f), frameCount(0), fireAddFrame(5),
 	accelAmount(0.01f)
 {
 	obj = ModelObj(Model::Load("./Resources/Model/Sphere.obj", "Sphere", true));
@@ -93,15 +93,15 @@ void FireUnit::Update()
 	{
 		//炎パーティクル出す
 		ParticleManager::GetInstance()->AddSimple(
-			obj.mTransform.position, obj.mTransform.scale * 0.5f, 1, 0.4f,
+			obj.mTransform.position, obj.mTransform.scale * 0.5f, 2, 0.4f,
 			Color::kFireOutside, TextureManager::Load("./Resources/fireEffect.png"),
-			1.5f, 3.f, { -0.1f,0.1f,-0.1f }, { 0.1f,0.5f,0.1f },
+			2.f, 3.5f, { -0.1f,0.1f,-0.1f }, { 0.1f,0.5f,0.1f },
 			0.05f, -Vector3::ONE * 0.1f, Vector3::ONE * 0.1f, 0.05f, 0.f, false, true);
 		//中心の炎
 		ParticleManager::GetInstance()->AddSimple(
-			obj.mTransform.position, obj.mTransform.scale * 0.3f, 1, 0.2f,
+			obj.mTransform.position, obj.mTransform.scale * 0.3f, 2, 0.2f,
 			Color::kFireInside, TextureManager::Load("./Resources/fireEffect.png"),
-			1.5f, 3.f, { -0.1f,0.1f,-0.1f }, { 0.1f,0.4f,0.1f },
+			2.5f, 3.5f, { -0.1f,0.1f,-0.1f }, { 0.1f,0.4f,0.1f },
 			0.01f, -Vector3::ONE * 0.1f, Vector3::ONE * 0.1f, 0.05f, 0.f, false, true);
 	}
 
@@ -112,15 +112,15 @@ void FireUnit::Update()
 		{
 			//炎パーティクル出す
 			ParticleManager::GetInstance()->AddSimple(
-				fire.mTransform.position, fire.mTransform.scale * 0.3f, 1, 0.2f,
+				fire.mTransform.position, fire.mTransform.scale * 0.4f, 1, 0.3f,
 				Color::kFireOutside, TextureManager::Load("./Resources/fireEffect.png"),
-				1.f, 2.f, { -0.1f,0.1f,-0.1f }, { 0.1f,0.5f,0.1f },
+				1.f, 2.5f, { -0.1f,0.1f,-0.1f }, { 0.1f,0.5f,0.1f },
 				0.05f, -Vector3::ONE * 0.1f, Vector3::ONE * 0.1f, 0.05f, 0.f, false, true);
 			//中心の炎
 			ParticleManager::GetInstance()->AddSimple(
-				fire.mTransform.position, fire.mTransform.scale * 0.2f, 1, 0.1f,
+				fire.mTransform.position, fire.mTransform.scale * 0.2f, 1, 0.2f,
 				Color::kFireInside, TextureManager::Load("./Resources/fireEffect.png"),
-				1.f, 2.f, { -0.1f,0.1f,-0.1f }, { 0.1f,0.4f,0.1f },
+				1.f, 2.5f, { -0.1f,0.1f,-0.1f }, { 0.1f,0.4f,0.1f },
 				0.01f, -Vector3::ONE * 0.1f, Vector3::ONE * 0.1f, 0.05f, 0.f, false, true);
 		}
 

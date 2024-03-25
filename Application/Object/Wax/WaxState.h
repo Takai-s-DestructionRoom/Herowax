@@ -32,7 +32,7 @@ public:
 	void Update(Wax* wax)override;
 
 private:
-	uint32_t fireAddFrame = 3;	//炎を何フレームに一回追加するか
+	uint32_t fireAddFrame = 5;	//炎を何フレームに一回追加するか
 	uint32_t frameCount;		//フレームカウント
 };
 

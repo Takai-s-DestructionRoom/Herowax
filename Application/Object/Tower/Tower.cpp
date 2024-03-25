@@ -2,6 +2,9 @@
 #include "Temperature.h"
 #include "Camera.h"
 #include "ParticleManager.h"
+#include "SceneManager.h"
+#include "ResultScene.h"
+#include "SimpleSceneTransition.h"
 #include "ImGui.h"
 
 Tower::Tower() : GameObject(), hp(0), maxHP(10.f),shakeTimer(0.3f),shakePower(1.5f)
@@ -49,6 +52,9 @@ void Tower::Update()
 				25, 0.5f, obj.mTuneMaterial.mColor, "", 1.5f, 2.5f,
 				{ -0.5f,-0.5f,-0.5f }, { 0.5f,0.5f,0.5f },
 				0.05f, -Vector3::ONE * 0.1f, Vector3::ONE * 0.1f, 0.1f);
+
+			//死んだらシーン遷移
+			SceneManager::GetInstance()->Change<ResultScene, SimpleSceneTransition>();
 		}
 		isAlive = false;
 	}

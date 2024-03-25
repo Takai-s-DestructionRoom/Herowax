@@ -13,9 +13,6 @@ public:
 	std::list<std::unique_ptr<IEmitter3D>> emitters_;			//パーティクルエミッター群
 	std::list<std::unique_ptr<IEmitter3D>> polygonEmitters_;	//ポリゴンパーティクルエミッター群
 
-	uint32_t fireAddFrame;		//炎を何フレームに一回追加するか
-	uint32_t frameCount;		//フレームカウント
-
 public:
 	//シングルトンインスタンス取得
 	static ParticleManager* GetInstance();
