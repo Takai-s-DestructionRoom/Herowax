@@ -36,7 +36,7 @@ public:
 	float atkSpeed;					//攻撃の射出速度
 	Vector2 atkRange{};				//攻撃範囲
 	float atkSize;					//攻撃範囲の大きさ
-	uint32_t atkPower;				//攻撃力
+	int32_t atkPower;				//攻撃力
 	Easing::EaseTimer atkCoolTimer;	//攻撃のクールタイム
 	Easing::EaseTimer atkTimer;		//攻撃時間計測用
 	Easing::EaseTimer solidTimer;	//固まるまでの時間(調整用)
