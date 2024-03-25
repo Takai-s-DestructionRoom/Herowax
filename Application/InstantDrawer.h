@@ -50,7 +50,8 @@ public:
 	static void DrawGraph(
 		const float& x, const float& y,
 		float sizerateX,float sizerateY,float angle,
-		const std::string& handle, const Anchor& anchor = Anchor::CENTER);
+		const std::string& handle, const Color& color = { 1,1,1,1 },
+		const Anchor& anchor = Anchor::CENTER);
 
 	/// <summary>
 	/// ビルボードで描画する

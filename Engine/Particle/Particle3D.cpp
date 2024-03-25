@@ -68,7 +68,6 @@ void IEmitter3D::Update()
 		{
 			particle.scale = Easing::lerp(particle.startScale, particle.endScale, particle.easeTimer.GetTimeRate());
 		}
-		particle.scale = Easing::lerp(particle.startScale, particle.endScale, particle.easeTimer.GetTimeRate());
 
 		//初期のランダム角度をもとに回す
 		particle.rot += particle.plusRot * elapseSpeed_;
@@ -90,39 +89,38 @@ void IEmitter3D::Update()
 		}
 
 		//重力加算
-		if (isGravity_)
-		{
-			particle.pos.y -= particle.gravity * elapseSpeed_;
-		}
-	}
-
-	//頂点情報がリセットされないので更新時には毎フレームリセット
-	for (auto& v : vertices)
-	{
-		v.pos = Vector3::ZERO;
-		v.rot = Vector3::ZERO;
-		v.scale = 0.f;
+		particle.pos.y -= particle.gravity * isGravity_ * elapseSpeed_;
 	}
 
 	//頂点バッファへデータ転送
 	//パーティクルの情報を1つずつ反映
-	for (size_t i = 0; i < particles_.size(); i++)
+	for (size_t i = 0; i < vertices.size(); i++)
 	{
-		VertexParticle vertex;
+		if (particles_.size() > i)
+		{
+			VertexParticle vertex;
 
-		//座標
-		vertex.pos = particles_[i].pos;
-		//回転
-		vertex.rot = particles_[i].rot;
-		//色
-		vertex.color = particles_[i].color;
-		//スケール
-		vertex.scale = particles_[i].scale;
-		//タイマー
-		vertex.timer = particles_[i].easeTimer.GetTimeRate();
+			//座標
+			vertex.pos = particles_[i].pos;
+			//回転
+			vertex.rot = particles_[i].rot;
+			//色
+			vertex.color = particles_[i].color;
+			//スケール
+			vertex.scale = particles_[i].scale;
+			//タイマー
+			vertex.timer = particles_[i].easeTimer.GetTimeRate();
 
-		assert(vertices.size() >= particles_.size());
-		vertices.at(i) = vertex;
+			assert(vertices.size() >= particles_.size());
+			vertices.at(i) = vertex;
+		}
+		else
+		{
+			//頂点情報がリセットされないので更新時には毎フレームリセット
+			vertices[i].pos = Vector3::ZERO;
+			vertices[i].rot = Vector3::ZERO;
+			vertices[i].scale = 0.f;
+		}
 	}
 
 	//毎回頂点情報が変わるので更新する
@@ -398,11 +396,12 @@ void IEmitter3D::Add(uint32_t addNum, float life, Color color, TextureHandle tex
 
 	for (uint32_t i = 0; i < addNum; i++)
 	{
-		//指定した最大数超えてたら生成しない
-		if (particles_.size() >= maxParticle_)
-		{
-			return;
-		}
+		//----- エミッターを逐一生成するので生成数はまず超えないから消す -----//
+		////指定した最大数超えてたら生成しない
+		//if (particles_.size() >= maxParticle_)
+		//{
+		//	return;
+		//}
 
 		//リストに要素を追加
 		particles_.emplace_back();
@@ -454,7 +453,7 @@ void IEmitter3D::Add(uint32_t addNum, float life, Color color, TextureHandle tex
 void IEmitter3D::AddRing(uint32_t addNum, float life, Color color, TextureHandle tex,
 	float startRadius, float endRadius, float minScale, float maxScale,
 	float minVeloY, float maxVeloY, Vector3 minRot, Vector3 maxRot,
-	float growingTimer,float endScale, bool isGravity, bool isBillboard)
+	float growingTimer, float endScale, bool isGravity, bool isBillboard)
 {
 	isGravity_ = isGravity;
 	isBillboard_ = isBillboard;
@@ -465,11 +464,12 @@ void IEmitter3D::AddRing(uint32_t addNum, float life, Color color, TextureHandle
 
 	for (uint32_t i = 0; i < addNumClamp; i++)
 	{
-		//指定した最大数超えてたら生成しない
-		if (particles_.size() >= maxParticle_)
-		{
-			return;
-		}
+		//----- エミッターを逐一生成するので生成数はまず超えないから消す -----//
+		////指定した最大数超えてたら生成しない
+		//if (particles_.size() >= maxParticle_)
+		//{
+		//	return;
+		//}
 
 		//リストに要素を追加
 		particles_.emplace_back();

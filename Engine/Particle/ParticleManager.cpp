@@ -63,11 +63,7 @@ void ParticleManager::Draw()
 {
 	for (auto& emitter : emitters_)
 	{
-		//パーティクルがあるときだけ描画処理回す
-		if (emitter->GetParticlesDead() == false)
-		{
-			emitter->Draw();
-		}
+		emitter->Draw();
 	}
 }
 

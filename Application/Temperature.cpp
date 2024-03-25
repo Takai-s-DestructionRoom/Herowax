@@ -6,6 +6,7 @@
 #include "Parameter.h"
 #include "SceneManager.h"
 #include "ResultScene.h"
+#include "SimpleSceneTransition.h"
 
 TemperatureManager* TemperatureManager::GetInstance()
 {
@@ -68,6 +69,14 @@ void TemperatureManager::Update()
 		SceneManager::GetInstance()->Change<ResultScene>();
 	}
 	clearTimer.Update();
+
+	//温度0になったらリザルトへ飛ばす
+	if (temperature <= MIN_TEMPERATURE)
+	{
+		Init();
+
+		SceneManager::GetInstance()->Change<ResultScene, SimpleSceneTransition>();
+	}
 
 #pragma region ImGui
 	ImGui::SetNextWindowSize({ 350, 210 });

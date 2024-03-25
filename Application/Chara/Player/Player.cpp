@@ -32,6 +32,7 @@ atkCoolTimer(0.3f), atkTimer(0.5f), atkHeight(1.f), solidTimer(5.f),
 	atkRange.y = Parameter::GetParam(extract, "攻撃範囲Y", 5.f);
 	atkCoolTimer.maxTime_ = Parameter::GetParam(extract, "クールタイム", 0.3f);
 	solidTimer.maxTime_ = Parameter::GetParam(extract, "固まるまでの時間", 5.f);
+	atkPower = (int32_t)Parameter::GetParam(extract, "敵に与えるダメージ", 10.0f);
 
 	pabloRange = Parameter::GetParam(extract, "パブロ攻撃の広がり", 5.f);
 	pabloSideRange = Parameter::GetParam(extract, "パブロ攻撃の横の広がり", 5.f);
@@ -155,6 +156,7 @@ void Player::Update()
 		ImGui::Checkbox("攻撃中でも次の攻撃を出せるか", &isMugenAttack);
 		ImGui::Checkbox("炎をストック性にするか", &isFireStock);
 
+		ImGui::InputInt("敵に与えるダメージ", &atkPower, 1);
 		ImGui::SliderFloat("攻撃時間", &atkTimer.maxTime_, 0.f, 2.f);
 		ImGui::SliderFloat("射出速度", &atkSpeed, 0.f, 2.f);
 		ImGui::SliderFloat("射出高度", &atkHeight, 0.f, 3.f);
@@ -194,6 +196,7 @@ void Player::Update()
 		Parameter::Save("移動加速度", moveAccelAmount);
 		Parameter::Save("重力", gravity);
 		Parameter::Save("ジャンプ力", jumpPower);
+		Parameter::Save("敵に与えるダメージ",(float)atkPower);
 		Parameter::Save("攻撃時間", atkTimer.maxTime_);
 		Parameter::Save("射出速度", atkSpeed);
 		Parameter::Save("射出高度", atkHeight);
@@ -256,7 +259,7 @@ void Player::MovePad()
 			emitterPos, obj.mTransform.scale * 0.5f,
 			2, 0.5f, obj.mTuneMaterial.mColor, "", 0.3f, 0.7f,
 			{ -0.001f,0.01f,-0.001f }, { 0.001f,0.03f,0.001f },
-			0.01f, -Vector3::ONE * 0.1f, Vector3::ONE * 0.1f, 0.05f, 0.f, false, false);
+			0.01f, -Vector3::ONE * 0.1f, Vector3::ONE * 0.1f, 0.1f, 0.f, false, false);
 	}
 	else
 	{

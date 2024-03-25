@@ -75,7 +75,7 @@ protected:
 	bool isElapse_ = true;					//経過時間の影響受けるかフラグ
 	float elapseSpeed_;
 
-	const uint32_t maxParticle_ = 256;		//最大数
+	const uint32_t maxParticle_ = 64;		//最大数
 	std::vector<Particle3D> particles_;		//パーティクル配列
 
 	bool isActive_ = true;					//有効にするかフラグ
