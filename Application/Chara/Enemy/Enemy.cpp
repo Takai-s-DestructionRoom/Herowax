@@ -263,6 +263,12 @@ void Enemy::DealDamage(uint32_t damage, const Vector3& dir, ModelObj* target_)
 		0.f, Vector3::ONE * 0.1f, Vector3::ONE * 0.1f, 0.1f, 3.f, false, true);
 
 	//適当に自分を塗る
+	//for (auto& data : obj.mModel->mData)
+	//{
+	//	//白テクスチャを貼る
+	//	data->mMaterial.mTexture =
+	//		TextureManager::Load("./Resources/waxAttach.png", "waxAttach");
+	//}
 	/*for (int32_t i = 0; i < 3; i++)
 	{
 		RandomPaint({100.f,100.f}, Wax::waxOriginColor);

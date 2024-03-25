@@ -50,7 +50,6 @@ private:
 	//固まってることを分かりやすくするオブジェクト
 	ModelObj attach;
 
-
 	std::unique_ptr<EnemyState> state;			//状態管理
 	std::string stateStr;		//状態を文字列で保存
 

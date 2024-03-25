@@ -353,6 +353,38 @@ void ProtoScene::Update()
 		cameraAngle.y = 0.f;
 	}
 
+	static Vector3 fpsPos;
+	static float fpsDist = cameraDist;
+	//static Vector2 fpsAngle = cameraAngle;
+
+	if (ImGui::Checkbox("FPS視点に切り替え", &changeFPS)) {
+		if (changeFPS) {
+			fpsDist = cameraDist;
+			//fpsAngle = cameraAngle;
+			fpsPos = camera.mViewProjection.mEye;
+		}
+		else {
+			cameraDist = fpsDist;
+			//cameraAngle = fpsAngle;
+			camera.mViewProjection.mEye = fpsPos;
+		}
+	}
+	if (changeFPS) {
+		camera.mViewProjection.mEye = player.GetPos();
+		camera.mViewProjection.UpdateMatrix();
+		cameraDist = 0.01f;
+
+		if (stick.LengthSq() > 0.0f) {
+			float moveSpeed = cameraSpeed;
+
+			if (!std::signbit(stick.y)) {
+				moveSpeed *= -1;
+			}
+			
+			cameraAngle.x -= moveSpeed;
+		}
+	}
+
 	if (ImGui::Button("セーブ")) {
 		Parameter::Begin("Camera");
 		Parameter::Save("カメラ距離", cameraDist);
