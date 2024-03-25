@@ -63,6 +63,9 @@ void ProtoScene::Init()
 
 	eggUI.Init();
 	eggUI.SetTower(&Level::Get()->tower);
+
+	//std::map < std::string, std::string > extract = Parameter::Extract("DebugBool");
+	//Util::debugBool = Parameter::GetParam(extract, "debugBool", false);
 }
 
 void ProtoScene::Update()
@@ -333,6 +336,26 @@ void ProtoScene::Update()
 		Parameter::Save("カメラアングルX", cameraAngle.x);
 		Parameter::Save("カメラアングルY", cameraAngle.y);
 		Parameter::Save("カメラの移動速度", cameraSpeed);
+		Parameter::End();
+	}
+
+	ImGui::End();
+
+	ImGui::SetNextWindowSize({ 400, 200 });
+
+	window_flags = 0;
+	window_flags |= ImGuiWindowFlags_NoResize;
+
+	// デバッグモード //
+	ImGui::Begin("デバッグ", NULL, window_flags);
+	ImGui::Text("デバッグモード中はシーン切り替えが発生しません");
+	ImGui::Text("デバッグモードはF5で切り替えもできます");
+	if (ImGui::Checkbox("デバッグモード切り替え", &Util::debugBool)) {
+		ImGui::Text("デバッグモード中です");
+	}
+	if (ImGui::Button("セーブ")) {
+		Parameter::Begin("DebugBool");
+		Parameter::Save("debugBool", Util::debugBool);
 		Parameter::End();
 	}
 

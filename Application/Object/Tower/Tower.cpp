@@ -53,8 +53,11 @@ void Tower::Update()
 				{ -0.5f,-0.5f,-0.5f }, { 0.5f,0.5f,0.5f },
 				0.05f, -Vector3::ONE * 0.1f, Vector3::ONE * 0.1f, 0.1f);
 
-			//死んだらシーン遷移
-			SceneManager::GetInstance()->Change<ResultScene, SimpleSceneTransition>();
+			//デバッグ中なら遷移しない
+			if (!Util::debugBool) {
+				//死んだらシーン遷移
+				SceneManager::GetInstance()->Change<ResultScene, SimpleSceneTransition>();
+			}
 		}
 		isAlive = false;
 	}

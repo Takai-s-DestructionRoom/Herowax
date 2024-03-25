@@ -65,8 +65,11 @@ void TemperatureManager::Update()
 	}
 	if (clearTimer.GetEnd())
 	{
-		//クリアのフラグとか立てる
-		SceneManager::GetInstance()->Change<ResultScene>();
+		//デバッグ中なら遷移しない
+		if (!Util::debugBool) {
+			//クリアのフラグとか立てる
+			SceneManager::GetInstance()->Change<ResultScene>();
+		}
 	}
 	clearTimer.Update();
 
@@ -75,7 +78,10 @@ void TemperatureManager::Update()
 	{
 		Init();
 
-		SceneManager::GetInstance()->Change<ResultScene, SimpleSceneTransition>();
+		//デバッグ中なら遷移しない
+		if (!Util::debugBool) {
+			SceneManager::GetInstance()->Change<ResultScene, SimpleSceneTransition>();
+		}
 	}
 
 #pragma region ImGui
