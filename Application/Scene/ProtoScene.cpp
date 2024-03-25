@@ -64,8 +64,8 @@ void ProtoScene::Init()
 	eggUI.Init();
 	eggUI.SetTower(&Level::Get()->tower);
 
-	//std::map < std::string, std::string > extract = Parameter::Extract("DebugBool");
-	//Util::debugBool = Parameter::GetParam(extract, "debugBool", false);
+	extract = Parameter::Extract("DebugBool");
+	Util::debugBool = Parameter::GetParam(extract, "debugBool", false);
 }
 
 void ProtoScene::Update()
@@ -324,12 +324,35 @@ void ProtoScene::Update()
 	ImGui::Begin("Camera", NULL, window_flags);
 
 	ImGui::Text("座標:%f,%f,%f",
-		camera.mViewProjection.mEye.x, camera.mViewProjection.mEye.y, camera.mViewProjection.mEye.z);
+		camera.mViewProjection.mEye.x, 
+		camera.mViewProjection.mEye.y, 
+		camera.mViewProjection.mEye.z);
 	ImGui::SliderFloat("カメラ距離:%f", &cameraDist, -500.f, 0.f);
 	ImGui::SliderAngle("カメラアングルX:%f", &cameraAngle.x);
 	ImGui::SliderAngle("カメラアングルY:%f", &cameraAngle.y);
 	ImGui::SliderFloat("カメラの移動速度", &cameraSpeed,0.0f,0.5f);
 	
+	static bool changeCamera = false;
+	static float saveDist = cameraDist;
+	static Vector2 saveAngle = cameraAngle;
+	
+	if (ImGui::Checkbox("上から視点に切り替え", &changeCamera)) {
+		if (changeCamera) {
+			saveDist = cameraDist;
+			saveAngle = cameraAngle;
+		}
+		else {
+			cameraDist = saveDist;
+			cameraAngle = saveAngle;
+		}
+	}
+
+	if (changeCamera) {
+		cameraDist = -160.f;
+		cameraAngle.x = 70.f;
+		cameraAngle.y = 0.f;
+	}
+
 	if (ImGui::Button("セーブ")) {
 		Parameter::Begin("Camera");
 		Parameter::Save("カメラ距離", cameraDist);
