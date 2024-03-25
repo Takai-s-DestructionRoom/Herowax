@@ -65,7 +65,7 @@ public:
 public:
 
 	Enemy(ModelObj* target_);
-	~Enemy();
+	virtual ~Enemy();
 	void Init() override;
 	void Update() override;
 	void Draw() override;

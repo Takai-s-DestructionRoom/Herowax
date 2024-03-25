@@ -56,6 +56,7 @@ protected:
 
 private:
 	//コピー禁止
+	GameObject(const GameObject& a) = delete;
 	GameObject& operator=(const GameObject&) = delete;
 };
 

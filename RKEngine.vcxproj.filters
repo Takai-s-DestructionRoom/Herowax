@@ -613,7 +613,7 @@
       <Filter>ソース ファイル\Application\Wave</Filter>
     </ClCompile>
     <ClCompile Include="Application\Object\FireUnit.cpp">
-      <Filter>ソース ファイル\Application\Object\Fire</Filter>
+      <Filter>ソース ファイル</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -1121,7 +1121,7 @@
       <Filter>ヘッダー ファイル\Application\Wave</Filter>
     </ClInclude>
     <ClInclude Include="Application\Object\FireUnit.h">
-      <Filter>ヘッダー ファイル\Application\Object\Fire</Filter>
+      <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -1,4 +1,5 @@
 #include "Util.h"
+#include <cassert>
 
 using namespace std;
 
@@ -127,6 +128,7 @@ int32_t Util::GetRand(int32_t min, int32_t max)
 
 float Util::GetRand(float min, float max)
 {
+	assert(min <= max);
 	std::random_device rd;
 	std::default_random_engine eng(rd());
 	std::uniform_real_distribution<float> distr(min, max);

@@ -35,14 +35,21 @@ void IEmitter3D::Init()
 void IEmitter3D::Update()
 {
 	//寿命が尽きたパーティクルを全削除
-	for (uint32_t i = 0; i < particles_.size(); i++)
+	for (auto itr = particles_.begin(); itr != particles_.end();) {
+		if (itr->aliveTimer.GetEnd()) {
+			itr = particles_.erase(itr);
+			continue;
+		}
+		itr++;
+	}
+	/*for (uint32_t i = 0; i < particles_.size(); i++)
 	{
 		if (particles_[i].aliveTimer.GetEnd())
 		{
 			particles_.erase(particles_.begin() + i);
 			i--;
 		}
-	}
+	}*/
 
 	//全パーティクル更新
 	for (auto& particle : particles_)
@@ -114,6 +121,7 @@ void IEmitter3D::Update()
 		//タイマー
 		vertex.timer = particles_[i].easeTimer.GetTimeRate();
 
+		assert(vertices.size() >= particles_.size());
 		vertices.at(i) = vertex;
 	}
 

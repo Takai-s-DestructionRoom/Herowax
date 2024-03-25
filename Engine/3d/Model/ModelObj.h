@@ -23,7 +23,7 @@ public:
 	SRConstBuffer<ViewProjectionBuffer> mViewProjectionBuff;
 
 	ModelObj() {};
-	~ModelObj() {}
+	virtual ~ModelObj() {}
 	ModelObj(Model* model) : mModel(model) {};
 	ModelObj(ModelHandle handle) : mModel(ModelManager::Get(handle)) {};
 
