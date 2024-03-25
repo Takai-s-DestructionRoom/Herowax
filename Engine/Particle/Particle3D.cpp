@@ -85,32 +85,34 @@ void IEmitter3D::Update()
 		particle.pos.y -= particle.gravity * isGravity_ * elapseSpeed_;
 	}
 
-	//頂点情報がリセットされないので更新時には毎フレームリセット
-	for (auto& v : vertices)
-	{
-		v.pos = Vector3::ZERO;
-		v.rot = Vector3::ZERO;
-		v.scale = 0.f;
-	}
-
 	//頂点バッファへデータ転送
 	//パーティクルの情報を1つずつ反映
-	for (size_t i = 0; i < particles_.size(); i++)
+	for (size_t i = 0; i < vertices.size(); i++)
 	{
-		VertexParticle vertex;
+		if (particles_.size() > i)
+		{
+			VertexParticle vertex;
 
-		//座標
-		vertex.pos = particles_[i].pos;
-		//回転
-		vertex.rot = particles_[i].rot;
-		//色
-		vertex.color = particles_[i].color;
-		//スケール
-		vertex.scale = particles_[i].scale;
-		//タイマー
-		vertex.timer = particles_[i].easeTimer.GetTimeRate();
+			//座標
+			vertex.pos = particles_[i].pos;
+			//回転
+			vertex.rot = particles_[i].rot;
+			//色
+			vertex.color = particles_[i].color;
+			//スケール
+			vertex.scale = particles_[i].scale;
+			//タイマー
+			vertex.timer = particles_[i].easeTimer.GetTimeRate();
 
-		vertices.at(i) = vertex;
+			vertices.at(i) = vertex;
+		}
+		else
+		{
+			//頂点情報がリセットされないので更新時には毎フレームリセット
+			vertices[i].pos = Vector3::ZERO;
+			vertices[i].rot = Vector3::ZERO;
+			vertices[i].scale = 0.f;
+		}
 	}
 
 	//毎回頂点情報が変わるので更新する
