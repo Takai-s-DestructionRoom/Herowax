@@ -43,9 +43,9 @@ isFireStock(false)
 	initPos.x = Parameter::GetParam(extract, "初期座標X", 0.f);
 	initPos.y = Parameter::GetParam(extract, "初期座標Y", 0.f);
 	initPos.z = Parameter::GetParam(extract, "初期座標Z", 0.f);
-	initRot.x = Parameter::GetParam(extract, "初期向きX", 0.f);
-	initRot.y = Parameter::GetParam(extract, "初期向きY", 0.f);
-	initRot.z = Parameter::GetParam(extract, "初期向きZ", 0.f);
+	initRot.x = Parameter::GetParam(extract, "初期方向X", 0.f);
+	initRot.y = Parameter::GetParam(extract, "初期方向Y", 0.f);
+	initRot.z = Parameter::GetParam(extract, "初期方向Z", 0.f);
 
 	attackState = std::make_unique<PlayerNormal>();
 }
@@ -238,6 +238,12 @@ void Player::Update()
 		Parameter::Save("パブロ攻撃時の移動速度低下係数", pabloSpeedMag);
 		Parameter::Save("パブロ攻撃を移動しながら撃った時の係数", pabloShotSpeedMag);
 		Parameter::Save("ショットが出る基準", shotDeadZone);
+		Parameter::Save("初期座標X", initPos.x);
+		Parameter::Save("初期座標Y", initPos.y);
+		Parameter::Save("初期座標Z", initPos.z);
+		Parameter::Save("初期方向X", initRot.x);
+		Parameter::Save("初期方向Y", initRot.y);
+		Parameter::Save("初期方向Z", initRot.z);
 		Parameter::End();
 	}
 
