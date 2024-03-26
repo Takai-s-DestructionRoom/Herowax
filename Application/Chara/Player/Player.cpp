@@ -16,7 +16,7 @@ moveSpeed(1.f), moveAccelAmount(0.05f), isGround(true), hp(0), maxHP(10.f),
 isJumping(false), jumpTimer(0.2f), jumpHeight(0.f), maxJumpHeight(5.f), jumpPower(2.f), jumpSpeed(0.f),
 isAttack(false), atkSpeed(1.f), atkRange({ 3.f,5.f }), atkSize(0.f), atkPower(1),
 atkCoolTimer(0.3f), atkTimer(0.5f), atkHeight(1.f), solidTimer(5.f),
- isFireStock(false)
+isFireStock(false)
 {
 	obj = PaintableModelObj(Model::Load("./Resources/Model/player/player_bird.obj", "player_bird", true));
 	obj.SetupPaint();
@@ -40,6 +40,13 @@ atkCoolTimer(0.3f), atkTimer(0.5f), atkHeight(1.f), solidTimer(5.f),
 	pabloShotSpeedMag = Parameter::GetParam(extract, "パブロ攻撃を移動しながら撃った時の係数", 2.0f);
 	shotDeadZone = Parameter::GetParam(extract, "ショットが出る基準", 0.5f);
 
+	initPos.x = Parameter::GetParam(extract, "初期座標X", 0.f);
+	initPos.y = Parameter::GetParam(extract, "初期座標Y", 0.f);
+	initPos.z = Parameter::GetParam(extract, "初期座標Z", 0.f);
+	initRot.x = Parameter::GetParam(extract, "初期向きX", 0.f);
+	initRot.y = Parameter::GetParam(extract, "初期向きY", 0.f);
+	initRot.z = Parameter::GetParam(extract, "初期向きZ", 0.f);
+
 	attackState = std::make_unique<PlayerNormal>();
 }
 
@@ -47,6 +54,16 @@ void Player::Init()
 {
 	hp = maxHP;
 	fireUnit.Init();
+
+	//初期値適用
+	obj.mTransform.position = initPos;
+
+	Vector3 rot;
+	rot.x = Util::AngleToRadian(initRot.x);
+	rot.y = Util::AngleToRadian(initRot.y);
+	rot.z = Util::AngleToRadian(initRot.z);
+	obj.mTransform.rotation = rot;
+	obj.mTransform.UpdateMatrix();
 }
 
 void Player::Update()
@@ -148,6 +165,18 @@ void Player::Update()
 		ImGui::SliderFloat("重力:%f", &gravity, 0.f, 0.2f);
 		ImGui::SliderFloat("ジャンプ力:%f", &jumpPower, 0.f, 5.f);
 
+		if (ImGui::TreeNode("初期状態設定"))
+		{
+			ImGui::SliderFloat("初期座標X", &initPos.x, -100.f, 100.f);
+			ImGui::SliderFloat("初期座標Y", &initPos.y, -100.f, 100.f);
+			ImGui::SliderFloat("初期座標Z", &initPos.z, -100.f, 100.f);
+			ImGui::SliderFloat("初期方向X", &initRot.x, 0.f, 360.f);
+			ImGui::SliderFloat("初期方向Y", &initRot.y, 0.f, 360.f);
+			ImGui::SliderFloat("初期方向Z", &initRot.z, 0.f, 360.f);
+
+			ImGui::TreePop();
+		}
+
 		ImGui::TreePop();
 	}
 	if (ImGui::TreeNode("攻撃系"))
@@ -188,7 +217,7 @@ void Player::Update()
 	}
 
 	if (ImGui::Button("Reset")) {
-		SetPos({ 0, 0, 0 });
+		Init();
 	}
 	if (ImGui::Button("セーブ")) {
 		Parameter::Begin("Player");
@@ -196,7 +225,7 @@ void Player::Update()
 		Parameter::Save("移動加速度", moveAccelAmount);
 		Parameter::Save("重力", gravity);
 		Parameter::Save("ジャンプ力", jumpPower);
-		Parameter::Save("敵に与えるダメージ",(float)atkPower);
+		Parameter::Save("敵に与えるダメージ", (float)atkPower);
 		Parameter::Save("攻撃時間", atkTimer.maxTime_);
 		Parameter::Save("射出速度", atkSpeed);
 		Parameter::Save("射出高度", atkHeight);
@@ -427,7 +456,7 @@ void Player::Rotation()
 		obj.mTransform.rotation = aLookat.ToEuler();
 	}
 
-	Vector2 LStick = RInput::GetInstance()->GetLStick(true,false);
+	Vector2 LStick = RInput::GetInstance()->GetLStick(true, false);
 	if (LStick.LengthSq() > 0) {
 		//カメラから注視点へのベクトル
 		Vector3 cameraVec = Camera::sNowCamera->mViewProjection.mTarget -
@@ -509,7 +538,7 @@ void Player::PabloAttack()
 	sidePabloVec.Normalize();
 
 	//発射数の半分(切り捨て)はマイナス横ベクトル方向へずらす
-	
+
 	//imguiでいじれるようにするのと、前方向へのランダムを作る
 
 	//発射数分ロウを生成、座標を生成するたびプラス横ベクトル方向へずらす
@@ -545,7 +574,7 @@ void Player::PabloAttack()
 		//そのまま係数を掛ける
 		float hoge = stick.LengthSq() * pabloShotSpeedMag;
 		//最低でも1になってほしいのでclamp
-		hoge = Util::Clamp(hoge, 1.f,100.f);
+		hoge = Util::Clamp(hoge, 1.f, 100.f);
 		float atkVal = atkSpeed * hoge;
 
 		WaxManager::GetInstance()->Create(
@@ -559,7 +588,7 @@ void Player::PabloAttack()
 Vector3 Player::GetFrontVec()
 {
 	//正面ベクトルを取得
-	Vector3 frontVec = {0,0,1};
+	Vector3 frontVec = { 0,0,1 };
 	frontVec.Normalize();
 
 	frontVec *= Quaternion::Euler(obj.mTransform.rotation);

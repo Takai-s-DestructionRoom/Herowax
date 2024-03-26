@@ -23,7 +23,9 @@ public:
 	float jumpPower;				//ジャンプ力(初速)
 	float jumpSpeed;				//ジャンプ速度
 	float gravity = 0.098f;			//重力
-	Vector3 stickVec = { 0,0,1 };		//正面ベクトル
+	Vector3 stickVec = { 0,0,1 };	//正面ベクトル
+	Vector3 initPos = { 0,0,0 };	//初期位置
+	Vector3 initRot = { 0,0,0 };	//初期向き
 
 	//------------ HP関連 ------------//
 	float hp;				//現在のヒットポイント
