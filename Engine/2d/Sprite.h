@@ -53,6 +53,7 @@ private:
 public:
 	Sprite();
 	Sprite(TextureHandle texture, Vector2 anchor = { 0.5f, 0.5f });
+	virtual ~Sprite() = default;
 
 	//テクスチャを変更する
 	void SetTexture(TextureHandle texture);

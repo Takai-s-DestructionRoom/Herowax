@@ -16,6 +16,8 @@ public:
 	std::string loadOrderFilename;	//参照するorderDataのハンドル
 	Easing::EaseTimer lifeTimer;
 
+	float startTiming;	//スポナーが稼働開始するタイミング
+
 private:
 	SpawnOrderData orderData;
 
@@ -25,6 +27,12 @@ public:
 	void Init(const std::string& loadfile);
 	void Update()override;
 	void Draw()override;
+
+	//このスポナーが敵を出現させているか(待機状態でないか)
+	bool GetStarted();
+
+	//タイマーのカウント開始
+	void Start();
 
 	//敵を出現
 	void PopEnemy(const Vector3 position,const SpawnOrderOnce& order);

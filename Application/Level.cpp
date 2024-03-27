@@ -80,6 +80,8 @@ void Level::Extract(const std::string& handle)
 
 	nowLevel = LevelLoader::Get()->GetData(handle);
 
+	std::vector<float> saveStartTiming;
+
 	for (auto objectData = nowLevel->mObjects.begin(); 
 		objectData != nowLevel->mObjects.end(); objectData++)
 	{
@@ -98,6 +100,9 @@ void Level::Extract(const std::string& handle)
 				objectData->scaling,
 				objectData->rotation,
 				objectData->spawnerOrder);
+
+			SpawnOrderData temp = SpawnDataLoader::Load(objectData->spawnerOrder);
+			saveStartTiming.push_back(temp.startTiming);
 		}
 		if (objectData->setObjectName == "Tower")
 		{
@@ -119,4 +124,6 @@ void Level::Extract(const std::string& handle)
 			objects.back().mTransform.rotation = objectData->rotation;
 		}
 	}
+
+	spawnerManager->Start(saveStartTiming);
 }

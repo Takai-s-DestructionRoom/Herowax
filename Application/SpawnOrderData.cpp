@@ -35,12 +35,17 @@ SpawnOrderData SpawnDataLoader::Load(const std::string& filename)
 	while (getline(file, line)) {
 		std::istringstream line_stream(line);
 
-		//全体の時間が明記された行の時間を取る
+		//全体の時間を取る
 		if (Util::ContainString(line, "全体の時間")) {
 			std::vector<std::string> strs = Util::StringSplit(line, ":");
 			result.maxTime = std::stof(strs[1]);
 		}
-		//それ以外なら敵の出現情報なので読み込む
+		//出現タイミングを取る
+		if (Util::ContainString(line, "出現タイミング")) {
+			std::vector<std::string> strs = Util::StringSplit(line, ":");
+			result.startTiming = std::stof(strs[1]);
+		}
+		//敵の出現情報なので読み込む
 		if(Util::ContainString(line, "敵の出現情報")){
 			std::vector<std::string> strs = Util::StringSplit(line, ":");
 			result.orders.emplace_back();
@@ -63,6 +68,7 @@ void SpawnDataLoader::Save(const SpawnOrderData& saveOrder, const std::string& s
 	writing_file.open(path, std::ios::out);
 
 	writing_file << "全体の時間:" << saveOrder.maxTime << std::endl;
+	writing_file << "出現タイミング:" << saveOrder.startTiming << std::endl;
 	for (auto& order : saveOrder.orders)
 	{
 		writing_file << "敵の出現情報" << ":";
@@ -101,7 +107,14 @@ void SpawnDataLoader::OrderCreateGUI()
 	//スポナー自体の生存時間設定
 	ImGui::PushItemWidth(100);
 	ImGui::InputFloat("スポナーの生存時間", &saveOrderData.maxTime,1.0f);
+	ImGui::InputFloat("スポナーの出現タイミング", &saveOrderData.startTiming, 1.0f);
+
+	if (ImGui::Button("セーブ")) {
+		SpawnDataLoader::Save(saveOrderData, saveFileName);
+	}
 	
+	ImGui::Text("-----------------------");
+
 	//敵のハンドル一覧をプルダウンで表示
 	std::vector<const char*> temp;
 	temp.push_back(enemyHandles::enemy.c_str());
@@ -139,6 +152,7 @@ void SpawnDataLoader::OrderCreateGUI()
 
 	//データ一覧表示
 	ImGui::Text("セーブ予定のデータ");
+
 	int32_t i = 0;
 	for (auto itr = saveOrderData.orders.begin(); itr != saveOrderData.orders.end();)
 	{

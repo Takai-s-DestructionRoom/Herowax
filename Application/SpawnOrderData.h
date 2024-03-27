@@ -24,6 +24,9 @@ class SpawnOrderData
 public:
 	//スポナーの生存時間
 	float maxTime = 0.0f;
+	//スポナー本体の出現タイミング
+	float startTiming = 0.0f;
+
 	std::vector<SpawnOrderOnce> orders;
 };
 
@@ -45,6 +48,7 @@ public:
 	static void Save(const SpawnOrderData& saveOrder, const std::string& saveFileName_);
 
 private:
+	//読み込みで使うデータたち
 	static std::ofstream writing_file;
 	static std::string saveFileName;
 	static SpawnOrderData saveOrderData;

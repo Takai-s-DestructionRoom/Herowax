@@ -22,6 +22,7 @@ public:
 	{
 		Init(texture, size);
 	}
+	virtual ~BillboardImage() = default;
 
 	//初期化処理
 	void Init(TextureHandle texture, Vector2 size);

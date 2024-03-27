@@ -67,6 +67,8 @@ public:
 
 	//------------ その他 ------------//
 	std::unique_ptr<PlayerState> attackState;
+	std::unique_ptr<PlayerState> nextState;
+	bool changingState = false;
 
 	PlayerUI ui;
 
@@ -95,7 +97,8 @@ public:
 	//状態変更
 	template <typename ChangePlayerState>
 	void ChangeState() {
-		state = std::make_unique<ChangePlayerState>();
+		nextState = std::make_unique<ChangePlayerState>();
+		changingState = true;
 	};
 
 	// ゲッター //

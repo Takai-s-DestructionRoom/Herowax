@@ -29,6 +29,9 @@ public:
 	Easing::EaseTimer extinguishTimer;	//蝋が燃え尽きて消えるまでの時間
 	
 	std::unique_ptr<WaxState> state;			//燃焼の状態管理
+	std::unique_ptr<WaxState> nextState;		//遷移先
+	bool changingState = false;
+
 	std::string stateStr;		//状態を文字列に保存用
 
 	//------------ 固形関連 ------------//
@@ -68,7 +71,8 @@ public:
 	//状態変更
 	template <typename ChangeWaxState>
 	void ChangeState() {
-		state = std::make_unique<ChangeWaxState>();
+		changingState = true;
+		nextState = std::make_unique<ChangeWaxState>();
 	};
 
 	// ゲッター //

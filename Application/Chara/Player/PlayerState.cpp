@@ -20,8 +20,8 @@ void PlayerNormal::Update(Player* player)
 	//player->obj.mTransform.rotation = aLookat.ToEuler();
 
 	//入力があればステート遷移
-	if (RInput::GetInstance()->GetRTrigger()) {
-		player->attackState = std::make_unique<PlayerPablo>();
+	if (RInput::GetInstance()->GetRTrigger() || RInput::GetKey(DIK_P)) {
+		player->ChangeState<PlayerPablo>();
 		//通常の移動速度に戻す
 		player->moveSpeed *= player->pabloSpeedMag;
 
@@ -35,8 +35,8 @@ void PlayerNormal::Update(Player* player)
 void PlayerPablo::Update(Player* player)
 {
 	//入力があればステート遷移
-	if (!RInput::GetInstance()->GetRTrigger()) {
-		player->attackState = std::make_unique<PlayerNormal>();
+	if (!RInput::GetInstance()->GetRTrigger() || !RInput::GetKey(DIK_P)) {
+		player->ChangeState<PlayerNormal>();
 		//通常の移動速度に戻す
 		player->moveSpeed /= player->pabloSpeedMag;
 	}

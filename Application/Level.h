@@ -34,7 +34,5 @@ public:
 	ModelObj ground;	//地面
 	Tower tower;		//タワー
 	SpawnerManager* spawnerManager = SpawnerManager::GetInstance();	//スポナー
-private:
-
 };
 
