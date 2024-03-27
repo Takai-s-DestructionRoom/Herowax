@@ -16,7 +16,7 @@ moveSpeed(1.f), moveAccelAmount(0.05f), isGround(true), hp(0), maxHP(10.f),
 isJumping(false), jumpTimer(0.2f), jumpHeight(0.f), maxJumpHeight(5.f), jumpPower(2.f), jumpSpeed(0.f),
 isAttack(false), atkSpeed(1.f), atkRange({ 3.f,5.f }), atkSize(0.f), atkPower(1),
 atkCoolTimer(0.3f), atkTimer(0.5f), atkHeight(1.f), solidTimer(5.f),
-isFireStock(false)
+isFireStock(false), isWaxStock(false), maxWaxStock(20)
 {
 	obj = PaintableModelObj(Model::Load("./Resources/Model/player/player_bird.obj", "player_bird", true));
 	obj.SetupPaint();
@@ -54,6 +54,8 @@ void Player::Init()
 {
 	hp = maxHP;
 	fireUnit.Init();
+
+	waxStock = maxWaxStock;
 
 	//初期値適用
 	obj.mTransform.position = initPos;
@@ -135,6 +137,15 @@ void Player::Update()
 
 	ui.Update(this);
 
+	WaxCollect();
+
+	if (isWaxStock == false)
+	{
+		waxStock = maxWaxStock;
+	}
+	//ストックがおかしな値にならないように
+	waxStock = Util::Clamp(waxStock, 0, maxWaxStock);
+
 	fireUnit.SetTransform(obj.mTransform);
 	fireUnit.SetIsFireStock(isFireStock);
 	fireUnit.Update();
@@ -183,6 +194,7 @@ void Player::Update()
 	{
 		ImGui::Text("攻撃中か:%d", isAttack);
 		ImGui::Checkbox("攻撃中でも次の攻撃を出せるか", &isMugenAttack);
+		ImGui::Checkbox("ロウをストック性にするか", &isWaxStock);
 		ImGui::Checkbox("炎をストック性にするか", &isFireStock);
 
 		ImGui::InputInt("敵に与えるダメージ", &atkPower, 1);
@@ -193,6 +205,8 @@ void Player::Update()
 		ImGui::SliderFloat("攻撃範囲Y", &atkRange.y, 0.f, 10.f);
 		ImGui::SliderFloat("クールタイム", &atkCoolTimer.maxTime_, 0.f, 2.f);
 		ImGui::SliderFloat("固まるまでの時間", &solidTimer.maxTime_, 0.f, 10.f);
+		ImGui::InputInt("ロウの最大ストック数", &maxWaxStock, 1, 100);
+		ImGui::Text("ロウのストック数:%d", waxStock);
 		ImGui::Text("炎のストック数:%d", fireUnit.fireStock);
 
 		ImGui::TreePop();
@@ -489,32 +503,38 @@ void Player::Rotation()
 
 void Player::Attack()
 {
-	if (isAttack == false || isMugenAttack)
+	if (waxStock > 0)
 	{
-		if ((RInput::GetInstance()->GetPadButton(XINPUT_GAMEPAD_RIGHT_SHOULDER) ||
-			RInput::GetInstance()->GetMouseClick(1)) &&
-			!atkCoolTimer.GetRun())
+		if (isAttack == false || isMugenAttack)
 		{
-			isAttack = true;
-			atkTimer.Start();
-
-			//ホントは塗った面積に応じて溜めたい
-			fireUnit.FireGaugeCharge(1.f);
-
-			//入力時の出現位置と方向を記録
-			atkVec = GetFrontVec();
-			atkVec.y = atkHeight;
-
-			//生成
-			WaxManager::GetInstance()->Create(
-				obj.mTransform, atkPower, atkVec, atkSpeed,
-				atkRange, atkSize, atkTimer.maxTime_, solidTimer.maxTime_);
-
-			//すぐ攻撃のクールタイム始まるように
-			if (isMugenAttack)
+			if ((RInput::GetInstance()->GetPadButton(XINPUT_GAMEPAD_RIGHT_SHOULDER) ||
+				RInput::GetInstance()->GetMouseClick(1)) &&
+				!atkCoolTimer.GetRun())
 			{
-				atkCoolTimer.Start();
-				atkTimer.Reset();
+				//ストック減らす
+				waxStock--;
+
+				isAttack = true;
+				atkTimer.Start();
+
+				//ホントは塗った面積に応じて溜めたい
+				fireUnit.FireGaugeCharge(1.f);
+
+				//入力時の出現位置と方向を記録
+				atkVec = GetFrontVec();
+				atkVec.y = atkHeight;
+
+				//生成
+				WaxManager::GetInstance()->Create(
+					obj.mTransform, atkPower, atkVec, atkSpeed,
+					atkRange, atkSize, atkTimer.maxTime_, solidTimer.maxTime_);
+
+				//すぐ攻撃のクールタイム始まるように
+				if (isMugenAttack)
+				{
+					atkCoolTimer.Start();
+					atkTimer.Reset();
+				}
 			}
 		}
 	}
@@ -522,9 +542,12 @@ void Player::Attack()
 
 void Player::PabloAttack()
 {
-	//攻撃中なら次の攻撃が出せない
-	if (atkCoolTimer.GetRun())return;
+	//攻撃中かストックないなら次の攻撃が出せない
+	if (atkCoolTimer.GetRun() || waxStock <= 0)return;
 	atkCoolTimer.Start();
+
+	//ストック減らす
+	waxStock--;
 
 	Vector3 pabloVec = { 0,0,0 };
 	//入力があるならそっちへ
@@ -588,6 +611,21 @@ void Player::PabloAttack()
 			atkVec, atkVal,
 			atkRange, atkSize,
 			atkTimer.maxTime_, solidTimer.maxTime_);
+	}
+}
+
+void Player::WaxCollect()
+{
+	if ((RInput::GetInstance()->GetPadButton(XINPUT_GAMEPAD_X) ||
+		RInput::GetInstance()->GetKeyDown(DIK_Q)))
+	{
+		if (isWaxStock)
+		{
+			//ロウ全部消して
+			WaxManager::GetInstance()->Init();
+			//ストック最大に
+			waxStock = maxWaxStock;
+		}
 	}
 }
 
