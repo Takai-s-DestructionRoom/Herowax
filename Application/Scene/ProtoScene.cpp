@@ -299,6 +299,7 @@ void ProtoScene::Update()
 	WaxManager::GetInstance()->Update();
 	FireManager::GetInstance()->Update();
 	TemperatureManager::GetInstance()->Update();
+	ParticleManager::GetInstance()->SetPlayerPos(player.GetCenterPos());
 	ParticleManager::GetInstance()->Update();
 
 	eggUI.Update();

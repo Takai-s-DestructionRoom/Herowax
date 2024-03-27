@@ -3,6 +3,7 @@
 #include "RImGui.h"
 #include "RingParticle.h"
 #include "SimpleParticle.h"
+#include "HomingParticle.h"
 
 ParticleManager* ParticleManager::GetInstance()
 {
@@ -34,6 +35,7 @@ void ParticleManager::Update()
 		else
 		{
 			//更新処理して次の要素へ
+			emit->get()->SetTargetPos(playerPos);
 			emit->get()->Update();
 			++emit;
 		}
@@ -53,6 +55,7 @@ void ParticleManager::Update()
 	{
 		particleSize += emitter->GetParticlesSize();
 	}
+
 	ImGui::Text("生存個体数:%d", particleSize);
 
 	ImGui::End();
@@ -90,6 +93,18 @@ void ParticleManager::AddSimple(
 {
 	emitters_.emplace_back();
 	emitters_.back() = std::make_unique<SimpleParticle>();
+	emitters_.back()->SetPos(emitPos);
+	emitters_.back()->SetScale(emitScale);
+	emitters_.back()->Add(
+		addNum, life, color, tex, minScale, maxScale,
+		minVelo, maxVelo, accelPower, minRot, maxRot,
+		growingTimer, endScale, isGravity, isBillboard);
+}
+
+void ParticleManager::AddHoming(Vector3 emitPos, Vector3 emitScale, uint32_t addNum, float life, Color color, TextureHandle tex, float minScale, float maxScale, Vector3 minVelo, Vector3 maxVelo, float accelPower, Vector3 minRot, Vector3 maxRot, float growingTimer, float endScale, bool isGravity, bool isBillboard)
+{
+	emitters_.emplace_back();
+	emitters_.back() = std::make_unique<HomingParticle>();
 	emitters_.back()->SetPos(emitPos);
 	emitters_.back()->SetScale(emitScale);
 	emitters_.back()->Add(

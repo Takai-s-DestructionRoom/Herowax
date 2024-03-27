@@ -195,6 +195,7 @@
     <ClCompile Include="Application\Object\FireManager.cpp" />
     <ClCompile Include="Application\Level.cpp" />
     <ClCompile Include="Application\Object\FireUnit.cpp" />
+    <ClCompile Include="Engine\Particle\HomingParticle.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Engine\Base\Material.cpp" />
     <ClCompile Include="Engine\Math\Matrix4.cpp" />
@@ -749,6 +750,7 @@
     <ClInclude Include="Application\Chara\Player\PlayerUI.h" />
     <ClInclude Include="Application\Object\FireUnit.h" />
     <ClInclude Include="Application\Wave.h" />
+    <ClInclude Include="Engine\Particle\HomingParticle.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Shader\Bloom\Bloom.hlsli" />

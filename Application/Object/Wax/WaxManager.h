@@ -45,6 +45,9 @@ public:
 
 	//現在の温度ボーナスを返す(計算済み)
 	float GetCalcHeatBonus();
+
+	//回収される
+	void Collect(Vector3 pos);
 	
 	uint32_t GetWaxNum();
 

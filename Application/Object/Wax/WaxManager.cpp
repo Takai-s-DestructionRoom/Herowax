@@ -240,6 +240,19 @@ float WaxManager::GetCalcHeatBonus()
 	return heatBonus * (float)isBurningNum;
 }
 
+void WaxManager::Collect(Vector3 pos)
+{
+	/*for (auto& group : waxGroups)
+	{
+		for (auto& wax : group->waxs)
+		{
+			wax->;
+		}
+	}*/
+
+	waxGroups.clear();
+}
+
 uint32_t WaxManager::GetWaxNum()
 {
 	int32_t waxNum = 0;
