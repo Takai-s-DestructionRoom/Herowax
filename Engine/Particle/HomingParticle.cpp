@@ -23,16 +23,13 @@ void HomingParticle::Update()
 		}
 		else if (particle.easeTimer.GetRun())
 		{
-			////現在地と目的地の単位ベクトル
-			//Vector3 targetToPlayer = targetPos - particle.pos;
-			//Vector3 plusVec =
-			//	targetToPlayer.GetNormalize();
-
-
-			//particle.pos += plusVec;
-
+			//イージングで目的地まで飛ばす
 			particle.pos =
 				InQuadVec3(particle.startPos, targetPos, particle.easeTimer.GetTimeRate());
+		}
+		else if (particle.easeTimer.GetEnd())
+		{
+			particle.scale = 0.f;
 		}
 	}
 }

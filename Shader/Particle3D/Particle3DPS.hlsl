@@ -5,23 +5,24 @@ SamplerState smp : register(s0);      // 0番スロットに設定されたサ�
 
 float4 main(GSOutput input) : SV_TARGET
 {
-    float m_ambient = 0.3f;
-    float m_diffuse = 0.8f;
-    float m_specular = 0.5f;
+    float3 m_ambient = { 0.1f, 0.1f, 0.1f };
+    float3 m_diffuse = { 0.8f, 0.8f, 0.8f };
+    float3 m_specular = { 0.5f, 0.5f, 0.5f };
     
     // テクスチャマッピング
     float4 texcolor = tex.Sample(smp, input.uv);
     
-	// 光沢度
+	//光沢度
     const float shininess = 4.0f;
-	// 頂点から視点への方向ベクトル
+	
+	//視点へのベクトル
     float3 eyedir = normalize(cameraPos - input.worldpos.xyz);
 	
-	// 環境反射光
-    float3 ambient = m_ambient * ambientColor;
-    
-	// シェーディングによる色
-    float4 shadecolor = float4(ambient, 1.0f);
+	//環境反射光
+    float3 ambient = m_ambient;
+	
+	//シェーディング結果の色
+    float4 shadecolor = float4(ambientColor * ambient, 1);
 	
     //平行光源
     for (uint i = 0; i < DIRECTIONAL_LIGHT_NUM; i++)
@@ -29,13 +30,13 @@ float4 main(GSOutput input) : SV_TARGET
         if (directionalLights[i].active)
         {
             // ライトに向かうベクトルと法線の内積
-            float3 dotlightnormal = dot(directionalLights[i].lightVec, input.normal);
+            float3 dotlightnormal = dot(-directionalLights[i].lightVec, input.normal);
 	        // 反射光ベクトル
-            float3 reflect = normalize(-directionalLights[i].lightVec + 2 * dotlightnormal * input.normal);
+            float3 reflect = normalize(directionalLights[i].lightVec + 2.0f * dotlightnormal * input.normal);
             // 拡散反射光
-            float3 diffuse = dotlightnormal * 0.3f;
+            float3 diffuse = saturate(dotlightnormal) * m_diffuse;
 	        // 鏡面反射光
-            float3 specular = pow(saturate(dot(reflect, eyedir)), shininess) * 0.0f;
+            float3 specular = pow(saturate(dot(reflect, eyedir)), shininess) * m_specular;
 	        //ハーフランバート係数
             float3 cos = pow(dotlightnormal * 0.5f + 0.5f, 2.0f);
 	        // 全て加算する
@@ -60,9 +61,9 @@ float4 main(GSOutput input) : SV_TARGET
             // ライトに向かうベクトルと法線の内積
             float3 dotlightnormal = dot(lightVec, input.normal);
 	        // 反射光ベクトル
-            float3 reflect = normalize(-lightVec + 2 * dotlightnormal * input.normal);
+            float3 reflect = normalize(-lightVec + 2.0f * dotlightnormal * input.normal);
             // 拡散反射光
-            float3 diffuse = dotlightnormal * m_diffuse;
+            float3 diffuse = saturate(dotlightnormal) * m_diffuse;
 	        // 鏡面反射光
             float3 specular = pow(saturate(dot(reflect, eyedir)), shininess) * m_specular;
 	        //ハーフランバート係数
@@ -96,9 +97,9 @@ float4 main(GSOutput input) : SV_TARGET
             // ライトに向かうベクトルと法線の内積
             float3 dotlightnormal = dot(lightVec, input.normal);
 	        // 反射光ベクトル
-            float3 reflect = normalize(-lightVec + 2 * dotlightnormal * input.normal);
+            float3 reflect = normalize(-lightVec + 2.0f * dotlightnormal * input.normal);
             // 拡散反射光
-            float3 diffuse = dotlightnormal * m_diffuse;
+            float3 diffuse = saturate(dotlightnormal) * m_diffuse;
 	        // 鏡面反射光
             float3 specular = pow(saturate(dot(reflect, eyedir)), shininess) * m_specular;
 	        // 全て加算する

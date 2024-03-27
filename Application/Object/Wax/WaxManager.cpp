@@ -1,4 +1,5 @@
 #include "WaxManager.h"
+#include "ParticleManager.h"
 #include "ImGui.h"
 #include "Temperature.h"
 #include "Parameter.h"
@@ -240,15 +241,19 @@ float WaxManager::GetCalcHeatBonus()
 	return heatBonus * (float)isBurningNum;
 }
 
-void WaxManager::Collect(Vector3 pos)
+void WaxManager::Collect()
 {
-	/*for (auto& group : waxGroups)
+	for (auto& group : waxGroups)
 	{
 		for (auto& wax : group->waxs)
 		{
-			wax->;
+			ParticleManager::GetInstance()->AddHoming(
+				wax->obj.mTransform.position, wax->obj.mTransform.scale,
+				10, 0.8f, wax->waxOriginColor, "", 0.8f, 1.5f,
+				-Vector3::ONE * 0.3f, Vector3::ONE * 0.3f,
+				0.03f, -Vector3::ONE * 0.1f, Vector3::ONE * 0.1f, 0.3f,0.5f);
 		}
-	}*/
+	}
 
 	waxGroups.clear();
 }

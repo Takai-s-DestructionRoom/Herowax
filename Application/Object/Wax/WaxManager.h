@@ -47,7 +47,7 @@ public:
 	float GetCalcHeatBonus();
 
 	//回収される
-	void Collect(Vector3 pos);
+	void Collect();
 	
 	uint32_t GetWaxNum();
 

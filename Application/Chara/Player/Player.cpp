@@ -629,7 +629,7 @@ void Player::WaxCollect()
 		if (isWaxStock)
 		{
 			//ロウ全部消して
-			WaxManager::GetInstance()->Init();
+			WaxManager::GetInstance()->Collect();
 			//ストック最大に
 			waxStock = maxWaxStock;
 		}
