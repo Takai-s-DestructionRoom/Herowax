@@ -18,8 +18,6 @@ void EnemySpawner::Init()
 {
 	hp = maxHP;
 
-	lifeTimer.Start();
-
 	loadOrderFilename = "test";
 	Load(loadOrderFilename);
 }
@@ -27,8 +25,6 @@ void EnemySpawner::Init()
 void EnemySpawner::Init(const std::string& loadfile)
 {
 	hp = maxHP;
-
-	lifeTimer.Start();
 
 	loadOrderFilename = loadfile;
 	Load(loadOrderFilename);
@@ -44,7 +40,8 @@ void EnemySpawner::Update()
 		if (order.spawnCompletion)continue;
 
 		//スポーン時間を超えたら
-		if (order.spawnTiming <= lifeTimer.nowTime_)
+		if (order.spawnTiming <= lifeTimer.nowTime_ && 
+			lifeTimer.GetRun())
 		{
 			//敵の出現
 			PopEnemy(obj.mTransform.position, order);
@@ -67,7 +64,20 @@ void EnemySpawner::Update()
 
 void EnemySpawner::Draw()
 {
+	//タイマーが開始していないなら描画しない
+	if (!GetStarted())return;
+
 	obj.Draw();
+}
+
+bool EnemySpawner::GetStarted()
+{
+	return lifeTimer.GetStarted();
+}
+
+void EnemySpawner::Start()
+{
+	lifeTimer.Start();
 }
 
 void EnemySpawner::PopEnemy(const Vector3 position, const SpawnOrderOnce& order)
@@ -91,5 +101,6 @@ void EnemySpawner::Load(const std::string fileName)
 {
 	SpawnOrderData temp = SpawnDataLoader::Load(fileName);
 	lifeTimer.maxTime_ = temp.maxTime;
+	startTiming = temp.startTiming;
 	orderData.orders = temp.orders;
 }

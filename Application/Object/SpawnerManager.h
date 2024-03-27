@@ -14,12 +14,21 @@ public:
 	void Update();
 	//描画
 	void Draw();
-	//指定座標に配置
-	void Create(const Vector3& position, const Vector3& scale,const Vector3& rotation,const std::string& loadfile = "test");
+	//指定座標に配置、開始タイミングを設定
+	void Create(const Vector3& position,
+		const Vector3& scale,
+		const Vector3& rotation,
+		const std::string& loadfile = "test");
+
+	void Start(const std::vector<float>& startTimings);
 
 public:
 	std::list<EnemySpawner> spawners;	//スポナーども
 	//今は見えるオブジェクトとしておいているけど、
 	//今後見えなくなったり、移動したりするかも？
+
+private:
+	//スポナーの出現タイミングを管理するタイマー
+	Easing::EaseTimer spawnerPopManagetimer;
 };
 
