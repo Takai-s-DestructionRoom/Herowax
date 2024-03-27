@@ -158,6 +158,7 @@
     <ClCompile Include="Application\Chara\Enemy\EnemyUI.cpp" />
     <ClCompile Include="Application\BombSolider.cpp" />
     <ClCompile Include="Application\EggUI.cpp" />
+    <ClCompile Include="Application\BreakableObj.cpp" />
     <ClCompile Include="Engine\Easing.cpp" />
     <ClCompile Include="Engine\Base\RenderTarget.cpp" />
     <ClCompile Include="Engine\Base\SRIndexBuffer.cpp" />
@@ -644,6 +645,7 @@
     <ClInclude Include="Application\Chara\Enemy\EnemyUI.h" />
     <ClInclude Include="Application\BombSolider.h" />
     <ClInclude Include="Application\EggUI.h" />
+    <ClInclude Include="Application\BreakableObj.h" />
     <ClInclude Include="Engine\Easing.h" />
     <ClInclude Include="Engine\Base\Rect.h" />
     <ClInclude Include="Engine\Base\RenderTarget.h" />

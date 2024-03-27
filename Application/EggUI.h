@@ -7,19 +7,19 @@
 class EggUI
 {
 private:
-	Vector2 position;
-	Vector2 size;
-	Color color;
+	Vector2 position = { 0,0 };
+	Vector2 size = {0,0};
+	Color color = { 0,0,0,0 };
 	Color pinchColor = { 1,0,0,1 };
 	Color warningColor = { 1,0.4f,0.4f,1 };
 
-	Vector2 shake;
-	float shakePower;
+	Vector2 shake = { 0,0 };;
+	float shakePower = 0;
 
 	Tower* tower = nullptr;
 
-	Easing::EaseTimer shakeTimer;
-	int32_t oldHP;
+	Easing::EaseTimer shakeTimer = 1.0f;
+	int32_t oldHP = 0;
 
 public:
 	static void LoadResource();
