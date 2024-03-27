@@ -1,15 +1,26 @@
 #pragma once
 #include "Vector2.h"
 #include "Vector3.h"
+#include "Color.h"
+#include <array>
 
 class Player;
+
+enum class UIType
+{
+	waxGauge,
+	fireGauge,
+
+	max
+};
 
 class PlayerUI
 {
 public:
-	Vector3 position;
-	Vector2 size;
-	Vector2 maxSize;
+	std::array<Vector3, 2> position;
+	std::array<Vector2, 2> size;
+	std::array<Vector2, 2> maxSize;
+	std::array<Color, 2> gaugeColor;
 public:
 	static void LoadResource();
 	PlayerUI();

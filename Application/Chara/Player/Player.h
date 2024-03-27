@@ -44,6 +44,10 @@ public:
 	Easing::EaseTimer solidTimer;	//固まるまでの時間(調整用)
 
 	bool isMugenAttack = false;		//攻撃中でも次の攻撃を出せるフラグ
+
+	int32_t waxStock;			//ロウストック
+	int32_t maxWaxStock;		//ロウストック最大値
+	bool isWaxStock;			//ストック性にするかフラグ
 	
 	//----------- 挑発関連 ------------//
 	bool isTauntMode = false;		//ロウを直接当てると敵の追いかける対象が自分に変わるモード
@@ -84,6 +88,9 @@ public:
 
 	//パブロ攻撃処理のまとめ
 	void PabloAttack();
+
+	//ロウを回収
+	void WaxCollect();
 
 	//状態変更
 	template <typename ChangePlayerState>
