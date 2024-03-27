@@ -74,6 +74,13 @@ void Wax::Update()
 
 	//燃焼周りのステートの更新
 	state->Update(this);
+	//変化があったら
+	if (changingState) {
+		//ステート遷移
+		std::swap(state, nextState);
+		changingState = false;
+		nextState = nullptr;
+	}
 
 	UpdateCollider();
 

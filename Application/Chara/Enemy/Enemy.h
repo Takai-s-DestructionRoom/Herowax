@@ -51,6 +51,7 @@ private:
 	ModelObj attach;
 
 	std::unique_ptr<EnemyState> state;			//状態管理
+	std::unique_ptr<EnemyState> nextState;		//次のステート
 	std::string stateStr;		//状態を文字列で保存
 
 	EnemyUI ui;
@@ -60,6 +61,8 @@ public:
 
 	Vector3 shack;
 	Color changeColor = { 1,1,1,1 };
+
+	bool changingState = false;
 
 public:
 
@@ -88,9 +91,10 @@ public:
 	template <typename ChangeEnemyState>
 	void ChangeState() {
 		std::unique_ptr<EnemyState> change = std::make_unique<ChangeEnemyState>();
-		//より優先度が高いステートであれば遷移する
+		//より優先度が高いステートであれば遷移準備
 		if (state->GetPriority() <= change->GetPriority()) {
-			state = std::make_unique<ChangeEnemyState>();
+			changingState = true;
+			nextState = std::make_unique<ChangeEnemyState>();
 		}
 	};
 

@@ -83,6 +83,13 @@ void Player::Update()
 	Rotation();
 
 	attackState->Update(this);
+	//前のステートと異なれば
+	if (changingState) {
+		//ステートを変化させる
+		std::swap(attackState, nextState);
+		changingState = false;
+		nextState = nullptr;
+	}
 
 	//-----------クールタイム管理-----------//
 	atkTimer.Update();

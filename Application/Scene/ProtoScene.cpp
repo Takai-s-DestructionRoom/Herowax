@@ -249,12 +249,8 @@ void ProtoScene::Update()
 	//別グループ内のロウが当たった時の処理
 	for (auto itr = wGroups->begin(); itr != wGroups->end();itr++)
 	{
-		if (itr._Ptr->_Next == nullptr)break;
-		
 		for (auto itr2 = itr; itr2 != wGroups->end();)
 		{
-			if (itr2._Ptr->_Next == nullptr)break;
-
 			if (itr == itr2) {
 				itr2++;
 				continue;
@@ -262,10 +258,6 @@ void ProtoScene::Update()
 			if (WaxManager::GetInstance()->CheckHitWaxGroups((*itr), (*itr2)))
 			{
 				//どれか一つがぶつかったなら、グループすべてが移動する
-				if ((*itr2)->waxs.size() <= 0) {
-					itr2++;
-					continue;
-				}
 				(*itr)->waxs.splice((*itr)->waxs.end(), std::move((*itr2)->waxs));
 				(*itr)->SetSameSolidTime();
 				itr2 = wGroups->erase(itr2);
