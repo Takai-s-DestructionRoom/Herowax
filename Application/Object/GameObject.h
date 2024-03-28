@@ -14,6 +14,7 @@ public:
 	ModelObj drawerObj;			//当たり判定描画オブジェクト
 	
 	ColPrimitive3D::Sphere collider;	//Sphereの当たり判定
+	float colliderSize;					//当たり判定のサイズ
 
 public:
 	GameObject();
@@ -49,6 +50,8 @@ public:
 	void SetRota(const Vector3& rota) { obj.mTransform.rotation = rota; }
 	//生きてるかフラグ設定
 	void SetIsAlive(bool alive) { isAlive = alive; }
+	//コライダーの大きさ設定(元の大きさからの比率)
+	void SetColSize(float size) { colliderSize = size; }
 
 protected:
 	//当たり判定の更新
