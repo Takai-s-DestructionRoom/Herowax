@@ -2,7 +2,7 @@
 #include "Camera.h"
 #include <Renderer.h>
 
-GameObject::GameObject() : isAlive(true)
+GameObject::GameObject() : isAlive(true), colliderSize(1.f)
 {
 	drawerObj = ModelObj(Model::Load("./Resources/Model/Sphere.obj", "Sphere", true));
 }
@@ -30,8 +30,8 @@ void GameObject::UpdateCollider()
 	float maxR = GetScale().x;
 	if (maxR < GetScale().y)maxR = GetScale().y;
 	if (maxR < GetScale().z)maxR = GetScale().z;
-	
-	collider.r = maxR;
+
+	collider.r = maxR * colliderSize;	//比率もかけて大きさいじれるように
 
 	drawerObj.mTransform.position = collider.pos;
 	drawerObj.mTransform.scale = { collider.r ,collider.r ,collider.r };
