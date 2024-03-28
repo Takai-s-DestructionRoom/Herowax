@@ -66,6 +66,8 @@ void ProtoScene::Init()
 
 	nest.Init();
 
+	nest.SetGround(Level::Get()->ground);
+
 	extract = Parameter::Extract("DebugBool");
 	Util::debugBool = Parameter::GetParam(extract, "debugBool", false);
 }

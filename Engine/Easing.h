@@ -48,6 +48,9 @@ namespace Easing
 	//イージング関数
 	float InOutBack(float start, float end, float timeRate);
 
+	//半分の時間で頂点に到達し、残りの半分の時間で元の位置に戻る
+	float GoAndBackInQuad(float start, float end, float timeRate);
+
 	//イージング用のタイマー(秒数)
 	class EaseTimer
 	{
