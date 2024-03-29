@@ -9,6 +9,9 @@
 #include "Camera.h"
 #include "ModelObj.h"
 #include "Sprite.h"
+#include "Bloom.h"
+#include "CrossFilter.h"
+#include "Distortion.h"
 
 class TitleScene : public IScene
 {
@@ -23,8 +26,16 @@ private:
 	ModelObj skydome;	//天球
 
 	Camera camera = Camera();
-	Vector2 mAngle = { 0, 0 };
+	float cameraDist = -20.f;	//注視点からカメラの距離
+	Vector2 cameraAngle{};		//カメラアングル
 	LightGroup light;
 
 	Sprite titleLogo;	//タイトル
+
+	ModelObj obj;
+
+	Bloom bloom;
+	CrossFilter crossFilter;
+	Distortion distortion;
+	bool isPostEffect;
 };

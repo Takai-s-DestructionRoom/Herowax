@@ -274,6 +274,12 @@
     <Filter Include="ヘッダー ファイル\Application\Wave">
       <UniqueIdentifier>{931d90cf-69f5-4502-a01d-7399fd053bfa}</UniqueIdentifier>
     </Filter>
+    <Filter Include="シェーダー ファイル\Distortion">
+      <UniqueIdentifier>{2abd8466-d87c-4688-9d0c-a8e319c6cb19}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="シェーダー ファイル\Noise">
+      <UniqueIdentifier>{95adcd20-e020-4d30-b49b-2bf9ca994b23}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Engine\2d\Sprite.cpp">
@@ -624,6 +630,9 @@
     <ClCompile Include="Application\BreakableObj.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
+    <ClCompile Include="Engine\PostEffect\Distortion.cpp">
+      <Filter>ソース ファイル\Engine\PostEffect</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Shader\Basic\BasicPS.hlsl">
@@ -766,6 +775,18 @@
     </FxCompile>
     <FxCompile Include="Shader\ParticleBillboard\ParticleBillboardVS.hlsl">
       <Filter>シェーダー ファイル\ParticleBillboard</Filter>
+    </FxCompile>
+    <FxCompile Include="Shader\Distortion\DistortionPS.hlsl">
+      <Filter>シェーダー ファイル\Distortion</Filter>
+    </FxCompile>
+    <FxCompile Include="Shader\Distortion\DistortionVS.hlsl">
+      <Filter>シェーダー ファイル\Distortion</Filter>
+    </FxCompile>
+    <FxCompile Include="Shader\Noise\NoisePS.hlsl">
+      <Filter>シェーダー ファイル\Noise</Filter>
+    </FxCompile>
+    <FxCompile Include="Shader\Noise\NoiseVS.hlsl">
+      <Filter>シェーダー ファイル\Noise</Filter>
     </FxCompile>
   </ItemGroup>
   <ItemGroup>
@@ -1141,6 +1162,9 @@
     <ClInclude Include="Application\BreakableObj.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
+    <ClInclude Include="Engine\PostEffect\Distortion.h">
+      <Filter>ヘッダー ファイル\Engine\PostEffect</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="Shader\Bloom\Bloom.hlsli">
@@ -1211,6 +1235,12 @@
     </None>
     <None Include="Shader\Include\VSStruct.hlsli">
       <Filter>シェーダー ファイル\Include</Filter>
+    </None>
+    <None Include="Shader\Distortion\Distortion.hlsli">
+      <Filter>シェーダー ファイル\Distortion</Filter>
+    </None>
+    <None Include="Shader\Noise\Noise.hlsli">
+      <Filter>シェーダー ファイル\Noise</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>
