@@ -2,6 +2,7 @@
 #include "ProtoScene.h"
 #include "RInput.h"
 #include "SceneManager.h"
+#include "TimeManager.h"
 #include "ImGui.h"
 
 TitleScene::TitleScene():isPostEffect(true)
@@ -49,6 +50,10 @@ void TitleScene::Update()
 	obj.mTransform.UpdateMatrix();
 	obj.TransferBuffer(camera.mViewProjection);
 
+	static float timer = 0.f;
+	timer += TimeManager::deltaTime;
+	distortion.SetTimer(timer);
+
 	//F6かメニューボタン押されたらプロトシーンへ
 	if (RInput::GetInstance()->GetKeyDown(DIK_F6) ||
 		RInput::GetInstance()->GetPadButtonDown(XINPUT_GAMEPAD_START))
@@ -65,6 +70,7 @@ void TitleScene::Update()
 	ImGui::Begin("PostEffect", NULL, window_flags);
 
 	ImGui::Checkbox("ポストエフェクトかけるか",&isPostEffect);
+	ImGui::Text("タイマー:%f",distortion.noiseSetting.time);
 
 	ImGui::End();
 

@@ -14,8 +14,13 @@
 class Distortion
 {
 public:
+	struct NoiseSetting {
+		float fineness = 48.f;		//ノイズの細かさ(値が大きいほど細かくなる)
+		float time = 0.f;			//uvずらす用タイマー
+	};
+
 	struct BlurSetting {
-		float sigma = 0.002f;
+		float sigma = 0.01f;
 		float stepwidth = 0.001f;
 	};
 
@@ -23,19 +28,23 @@ public:
 
 	SRVertexBuffer mVertBuff;
 	SRIndexBuffer mIndexBuff;
-	SRConstBuffer<BlurSetting> mConstBuff;
+	SRConstBuffer<NoiseSetting> noiseConstBuff;
+	SRConstBuffer<BlurSetting> blurConstBuff;
 
-	BlurSetting mSetting{};
-	uint32_t mLevel = 3;
+	NoiseSetting noiseSetting{};
+	BlurSetting blurSetting{};
+	uint32_t mLevel = 1;
 
 	Distortion();
 
 	void Draw();
 
+	void SetTimer(float time) { noiseSetting.time = time; }
+
 protected:
-	static RootSignature& GetRootSignatureA();
-	static RootSignature& GetRootSignatureB();
-	static GraphicsPipeline& GetGraphicsPipelineA(); //ノイズ
-	static GraphicsPipeline& GetGraphicsPipelineB(); //ガウスぼかし
-	static GraphicsPipeline& GetGraphicsPipelineC(); //加算合成
+	static RootSignature& GetRootSignatureNoise();
+	static RootSignature& GetRootSignatureBlur();
+	static GraphicsPipeline& GetGraphicsPipelineNoise();	//ノイズ
+	static GraphicsPipeline& GetGraphicsPipelineBlur();		//ガウスぼかし
+	static GraphicsPipeline& GetGraphicsPipelineAdd();		//加算合成
 };
