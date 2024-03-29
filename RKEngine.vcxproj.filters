@@ -761,6 +761,9 @@
     <FxCompile Include="Shader\ParticleBillboard\ParticleBillboardVS.hlsl">
       <Filter>シェーダー ファイル\ParticleBillboard</Filter>
     </FxCompile>
+    <FxCompile Include="Shader\MeltDeform\MeltDeformVS.hlsl">
+      <Filter>シェーダー ファイル</Filter>
+    </FxCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\2d\Sprite.h">

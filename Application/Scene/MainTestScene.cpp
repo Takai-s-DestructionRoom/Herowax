@@ -10,6 +10,7 @@
 MainTestScene::MainTestScene()
 {
 	skydome = ModelObj(Model::Load("./Resources/Model/Skydome/Skydome.obj", "Skydome", true));
+	testModel = ModelObj(Model::Load("./Resources/Model/firewisp/firewisp.obj", "testModel", true));
 
 	camera.mViewProjection.mEye = { 0, 0, -10 };
 	camera.mViewProjection.mTarget = { 0, 0, 0 };
@@ -25,55 +26,85 @@ void MainTestScene::Init()
 {
 	Camera::sNowCamera = &camera;
 	LightGroup::sNowLight = &light;
+
+	meltBuff->factor = 1;
+	meltBuff->falloff = 1;
+	meltBuff->radius = 1;
+	meltBuff->clampAtBottom = true;
+	meltBuff->top = 1;
+	meltBuff->bottom = 0;
 }
 
 void MainTestScene::Update()
 {
-	/*for (int i = 0; i < 10; i++) {
-		testList.emplace_back();
-		testList.back().model = ModelObj(Model::Load("Resources/Model/Sphere.obj", "Sphere", true));
-		testList.back().model.mTransform.scale = { 0.5f, 0.5f, 0.5f };
-		testList.back().model.mTuneMaterial.mColor = Color(Util::GetRand(0.0f, 1.0f), Util::GetRand(0.0f, 1.0f), Util::GetRand(0.0f, 1.0f), 1);
-		testList.back().vec = Vector3(Util::GetRand(-20.0f, 20.0f), Util::GetRand(-20.0f, 20.0f), Util::GetRand(-20.0f, 20.0f));
-	}*/
-	
-	for (auto itr = testList.begin(); itr != testList.end();) {
-		Test& T = *itr;
-		T.timer += TimeManager::deltaTime;
-		if (T.timer >= 2.0f) {
-			itr = testList.erase(itr);
-			continue;
-		}
+	ImGui::SetNextWindowPos({ ImGui::GetMainViewport()->WorkPos.x + 800, ImGui::GetMainViewport()->WorkPos.y + 10 }, ImGuiCond_Once);
+	ImGui::SetNextWindowSize({ 400, 500 });
 
-		T.model.mTransform.position += T.vec * TimeManager::deltaTime;
-		T.model.mTransform.UpdateMatrix();
-		T.model.TransferBuffer(camera.mViewProjection);
-		itr++;
-	}
+	ImGuiWindowFlags window_flags = 0;
+	ImGui::Begin("Melt Control", NULL, window_flags);
+	ImGui::Text("modelAxis");
+	ImGui::DragFloat3("Pos##model", &testModel.mTransform.position.x, 0.05f);
+	static Vector3 lRot;
+	ImGui::DragFloat3("Rot##model", &lRot.x, 0.5f);
+	testModel.mTransform.rotation = { Util::AngleToRadian(lRot.x), Util::AngleToRadian(lRot.y), Util::AngleToRadian(lRot.z) };
+	ImGui::DragFloat3("Sca##model", &testModel.mTransform.scale.x, 0.05f);
+	ImGui::Checkbox("WireFrame", &useWireframe);
+	ImGui::Separator();
+	ImGui::Text("meltAxis");
+	ImGui::DragFloat3("Pos##melt", &meltAxis.position.x, 0.05f);
+	ImGui::DragFloat3("Rot##melt", &meltAxis.rotation.x, 0.5f);
+	ImGui::DragFloat3("Sca##melt", &meltAxis.scale.x, 0.05f);
+	ImGui::Separator();
+	ImGui::Text("meltParam");
+	ImGui::DragFloat("factor", &meltBuff->factor, 0.05f, 0, 1);
+	ImGui::DragFloat("falloff", &meltBuff->falloff, 0.05f);
+	ImGui::DragFloat("radius", &meltBuff->radius, 0.05f);
+	ImGui::DragFloat("top", &meltBuff->top, 0.05f);
+	ImGui::DragFloat("bottom", &meltBuff->bottom, 0.05f);
+	ImGui::Checkbox("clampAtBottom", &meltBuff->clampAtBottom);
+	ImGui::End();
 
 	light.Update();
 	camera.Update();
 
+	testModel.mTransform.UpdateMatrix();
+	meltAxis.UpdateMatrix();
+	meltBuff->matMeshToAxis = -meltAxis.matrix * testModel.mTransform.matrix;
+	meltBuff->matAxisToMesh = -meltBuff->matMeshToAxis;
+
 	skydome.TransferBuffer(camera.mViewProjection);
+	testModel.TransferBuffer(camera.mViewProjection);
 }
 
 void MainTestScene::Draw()
 {
-	//skydome.Draw();
+	skydome.Draw();
 
-	PipelineStateDesc desc = RDirectX::GetDefPipeline().mDesc;
-	desc.RasterizerState.FillMode = D3D12_FILL_MODE_WIREFRAME;
-	GraphicsPipeline pipe = GraphicsPipeline::GetOrCreate("WireObject", desc);
+	RootSignatureDesc rootDesc = RDirectX::GetDefRootSignature().mDesc;
+	rootDesc.RootParamaters.emplace_back();
+	rootDesc.RootParamaters.back().ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV; //定数バッファビュー
+	rootDesc.RootParamaters.back().Descriptor.ShaderRegister = 10; //定数バッファ番号
+	rootDesc.RootParamaters.back().Descriptor.RegisterSpace = 0; //デフォルト値
+	rootDesc.RootParamaters.back().ShaderVisibility = D3D12_SHADER_VISIBILITY_ALL; //全シェーダから見える
+	RootSignature rSig = RootSignature::GetOrCreate("MeltDeform", rootDesc);
 
-	for (auto itr = testList.begin(); itr != testList.end();) {
-		Test& T = *itr;
-		auto orders = T.model.GetRenderOrder();
-		for (RenderOrder& order : orders) {
-			order.pipelineState = pipe.mPtr.Get();
-			Renderer::DrawCall("Opaque", order);
-		}
-		//T.model.Draw();
-		itr++;
+	std::string id = "MeltDeform";
+	
+	PipelineStateDesc pipeDesc = RDirectX::GetDefPipeline().mDesc;
+	pipeDesc.VS = Shader::GetOrCreate("MeltDeformVS", "./Shader/MeltDeform/MeltDeformVS.hlsl", "main", "vs_5_1");
+	if (useWireframe) {
+		pipeDesc.RasterizerState.FillMode = D3D12_FILL_MODE_WIREFRAME;
+		id = "MeltDeformWire";
+	}
+	pipeDesc.pRootSignature = rSig.mPtr.Get();
+	GraphicsPipeline pipe = GraphicsPipeline::GetOrCreate(id, pipeDesc);
+
+	auto orders = testModel.GetRenderOrder();
+	for (RenderOrder& order : orders) {
+		order.rootData.push_back(RootData(RootDataType::SRBUFFER_CBV, meltBuff.mBuff));
+		order.mRootSignature = rSig.mPtr.Get();
+		order.pipelineState = pipe.mPtr.Get();
+		Renderer::DrawCall("Opaque", order);
 	}
 
 	SimpleDrawer::DrawBox(100, 100, 200, 200, 0, { 1, 1, 1, 1 }, true);

@@ -27,12 +27,20 @@ private:
 
 	ModelObj skydome;
 
+	ModelObj testModel;
 
-	float timer = 0;
-	struct Test {
-		ModelObj model;
-		Vector3 vec;
-		float timer = 0;
+	Transform meltAxis;
+	struct TestSetting {
+		float factor;
+		float falloff;
+		float radius;
+		float top;
+		float bottom;
+		float pad[3];
+		Matrix4 matMeshToAxis;
+		Matrix4 matAxisToMesh;
+		bool clampAtBottom;
 	};
-	std::list<Test> testList;
+	SRConstBuffer<TestSetting> meltBuff;
+	bool useWireframe = false;
 };
