@@ -261,6 +261,8 @@
     <ClCompile Include="Application\SpawnOrderData.cpp" />
     <ClCompile Include="Application\Chara\Player\PlayerUI.cpp" />
     <ClCompile Include="Application\Wave.cpp" />
+    <ClCompile Include="Application\PhysicsCircle.cpp" />
+    <ClCompile Include="Application\RayMarchTestScene.cpp" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Shader\Basic\BasicPS.hlsl">
@@ -753,6 +755,8 @@
     <ClInclude Include="Application\Object\FireUnit.h" />
     <ClInclude Include="Application\Wave.h" />
     <ClInclude Include="Engine\Particle\HomingParticle.h" />
+    <ClInclude Include="Application\PhysicsCircle.h" />
+    <ClInclude Include="Application\RayMarchTestScene.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Shader\Bloom\Bloom.hlsli" />
