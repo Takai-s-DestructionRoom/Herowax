@@ -1,11 +1,21 @@
 #include "BreakableObj.h"
 #include "Camera.h"
 #include "RImGui.h"
+#include "Parameter.h"
+#include "TimeManager.h"
+#include "string"
 
 BreakableObj::BreakableObj()
 {
 	root = ModelObj(Model::Load("./Resources/Model/Birdnest_Breakable/Birdnest_Breakable.obj", "Birdnest_Breakable"));
 	root.mTransform.position = { 0,10,0 };
+
+	std::map<std::string, std::string> extract = Parameter::Extract("breakObj");
+	shotPower = Parameter::GetParam(extract,"横の強さ", shotPower);
+	gravity = 	Parameter::GetParam(extract, "重力の強さ", gravity);
+	minY = Parameter::GetParam(extract, "飛び上がる強さ_min", minY);
+	maxY = Parameter::GetParam(extract, "飛び上がる強さ_max", maxY);
+	rotSpeed = Parameter::GetParam(extract,"回転速度", rotSpeed);
 }
 
 void BreakableObj::Init()
@@ -37,8 +47,7 @@ void BreakableObj::Update()
 	window_flags |= ImGuiWindowFlags_NoResize;
 
 	ImGui::Begin("BreakableObj", NULL, window_flags);
-	int32_t i = 0;
-
+	
 	//破壊
 	if (ImGui::Button("破壊")) {
 		for (auto& part : parts)
@@ -58,17 +67,43 @@ void BreakableObj::Update()
 	ImGui::DragFloat3("親の位置", &root.mTransform.position.x);
 	ImGui::DragFloat3("親の大きさ", &root.mTransform.scale.x);
 	ImGui::DragFloat3("親の回転", &root.mTransform.rotation.x);
+
+	ImGui::InputFloat("横の強さ", &shotPower,1.0f);
+	ImGui::SliderFloat("重力の強さ", &gravity,-10.f,0.0f);
+	ImGui::InputFloat("飛び上がる強さ:min", &minY,1.0f);
+	ImGui::InputFloat("飛び上がる強さ:max", &maxY,1.0f);
+	ImGui::InputFloat("回転速度", &rotSpeed,1.0f);
+
+	if (ImGui::Button("セーブ")) {
+		Parameter::Begin("breakObj");
+		Parameter::Save("横の強さ", shotPower);
+		Parameter::Save("重力の強さ", gravity);
+		Parameter::Save("飛び上がる強さ_min", minY);
+		Parameter::Save("飛び上がる強さ_max", maxY);
+		Parameter::Save("回転速度", rotSpeed);
+		Parameter::End();
+	}
+
 	for (auto& part : parts)
 	{
-		ImGui::Text("----------%d番-----------", i);
-		ImGui::DragFloat3(std::string("位置" + std::to_string(i)).c_str(),
-			&part.obj.mTransform.position.x);
-		ImGui::DragFloat3(std::string("大きさ" + std::to_string(i)).c_str(),
-			&part.obj.mTransform.scale.x);
-		ImGui::DragFloat3(std::string("回転" + std::to_string(i)).c_str(),
-			&part.obj.mTransform.rotation.x);
-		i++;
+		part.gravity = gravity;
+		part.shotPower = shotPower;
+		part.minY = minY;
+		part.maxY = maxY;
+		part.setRotSpeed = rotSpeed;
 	}
+
+	//for (auto& part : parts)
+	//{
+	//	ImGui::Text("----------%d番-----------", i);
+	//	ImGui::DragFloat3(std::string("位置" + std::to_string(i)).c_str(),
+	//		&part.obj.mTransform.position.x);
+	//	ImGui::DragFloat3(std::string("大きさ" + std::to_string(i)).c_str(),
+	//		&part.obj.mTransform.scale.x);
+	//	ImGui::DragFloat3(std::string("回転" + std::to_string(i)).c_str(),
+	//		&part.obj.mTransform.rotation.x);
+	//	i++;
+	//}
 	
 	ImGui::End();
 
@@ -107,35 +142,28 @@ void BreakablePart::Init()
 void BreakablePart::Update()
 {
 	lowerTimer.Update();
-	moveVec = { 0,0,0 };
+	//moveVec = { 0,0,0 };
 	
-	//ショットベクトルはだんだん弱くする
-	shotPower = Easing::InQuad(setShotPower, 0.0f, lowerTimer.GetTimeRate());
-
-	//lowerTimerの1.2倍のタイマーで動く
-	//上から下のシンプル挙動にしてみる
-	gravity = Easing::InQuad(0.0f, -setShotPower, lowerTimer.GetTimeRate());
-
-	if (lowerTimer.GetEnd()) {
-		shotPower = 0.0f;
-		rotRand = { 0,0,0 };
-	}
-
-	//中心から離れるように飛び散る
-	moveVec += shotVec * shotPower;
-	moveVec.y += shotVec.y * gravity;
+	moveVec.y += gravity;
 
 	//移動加算
 	obj.mTransform.position += moveVec;
 
-	//回転加算
-	obj.mTransform.rotation += rotRand * lowerTimer.GetTimeRate();
-
 	//地面を下回ったら戻す
-	if (obj.mTransform.position.y <= groundY) {
+	if (obj.mTransform.position.y  <= 
+		groundY) 
+	{
 		obj.mTransform.position.y = groundY;
 		gravity = 0.0f;
+		moveVec = { 0,0,0 };
+		shotVec = { 0,0,0 };
+		rotSpeed = 0.0f;
 	}
+
+	//回転加算
+	//指定した軸に指定した強さで回転する
+	obj.mTransform.rotation +=
+		(rotQuater.ToEuler() * rotSpeed);
 
 	//更新
 	obj.mTransform.UpdateMatrix();
@@ -153,14 +181,23 @@ void BreakablePart::CreateShotVec()
 	Vector3 randVec = { 1,1,1 };
 	randVec = Util::GetRandVector3(randVec, -1.f, 1.f);
 	shotVec = randVec;
-	shotVec.y = 1.0f;
+	//Yは上向きにランダム
 	shotVec.Normalize();
-	//Yは上向きに
-	gravity = 1.f;
+	shotVec.y = Util::GetRand(minY, maxY);
+
+	moveVec = shotVec * shotPower;
 
 	rotRand = { 1,1,1 };
 	rotRand = Util::GetRandVector3(rotRand, -1.f, 1.f);
 	rotRand.Normalize();
 
+	rotAngle = Util::GetRand(0.f, Util::PI2);
+
+	rotQuater = Quaternion::AngleAxis(rotRand, rotAngle);
+
+	rotSpeed = setRotSpeed;
+
+	obj.mTransform.rotation = {0.0f,0.0f,0.0f};
+	
 	lowerTimer.Start();
 }

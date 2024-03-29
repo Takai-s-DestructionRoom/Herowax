@@ -2,6 +2,7 @@
 #include "ModelObj.h"
 #include <vector>
 #include "Easing.h"
+#include "Quaternion.h"
 
 class BreakablePart 
 {
@@ -21,15 +22,21 @@ public:
 
 	float groundY = 0.0f;
 
-private:
 	Vector3 moveVec = { 0,0,0 };
 	Vector3 shotVec = { 0,0,0 };		//跳ぶ位置
-	float shotPower = 0.0f;				//跳ぶ強さ
+	float shotPower = 3.0f;				//跳ぶ強さ
 	float gravity = 0.0f;				//重力
 	
-	Vector3 rotRand = { 0,0,0 };
+	float minY = 0.5f;
+	float maxY = 1.0f;
 
-	float setShotPower = 3.f;			//設定用の跳ぶ強さ
+	float setRotSpeed = 0.1f;
+private:
+	Vector3 rotRand = { 0,0,0 };		//回転方向
+	float rotSpeed = 0.1f;
+	float rotAngle = 0;
+	Quaternion rotQuater;
+
 	Easing::EaseTimer lowerTimer = 0.5f;		//勢いが無くなるまでの時間
 };
 
@@ -48,5 +55,14 @@ public:
 	std::list<Model> models;	//分割したモデルの本体を保持しておく
 
 	ModelObj root;	//親(描画はしない)
+
+private:
+	float shotPower = 3.0f;				//跳ぶ強さ
+	float gravity = -1.0f;				//重力
+
+	float minY = 0.5f;
+	float maxY = 1.0f;
+
+	float rotSpeed = 0.1f;
 };
 
