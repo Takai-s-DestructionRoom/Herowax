@@ -9,43 +9,44 @@
 #include "Util.h"
 
 // 3Dのパーティクル //
-// エミッターも含む //
+//粒子1粒
+struct Particle3D
+{
+	//座標
+	Vector3 pos;
+	Vector3 startPos;
+	//大きさ
+	float scale;
+	float startScale;	//開始時の大きさ
+	float endScale;		//終了時の大きさ
+	//角度
+	Vector3 rot;
+	Vector3 plusRot;	//更新処理で回転させるときに使う用
+	//速度
+	Vector3 velo;
+	//加速度
+	Vector3 accel;
+	//重力
+	float gravity = 0.098f;
+
+	//色
+	Color color;
+	//生存時間
+	Easing::EaseTimer aliveTimer;
+
+	//イージング用タイマー
+	Easing::EaseTimer easeTimer = 1.0f;
+	Easing::EaseTimer growingTimer = 0.1f;
+
+	//エミッター座標からの距離
+	float radius = 0.f;
+	float startRadius = 0.f;	//開始時の距離
+	float endRadius = 0.f;		//終了時の距離
+};
+
+// エミッター //
 class IEmitter3D
 {
-	//粒子1粒
-	struct Particle3D
-	{
-		//座標
-		Vector3 pos;
-		//大きさ
-		float scale;
-		float startScale;	//開始時の大きさ
-		float endScale;		//終了時の大きさ
-		//角度
-		Vector3 rot;
-		Vector3 plusRot;	//更新処理で回転させるときに使う用
-		//速度
-		Vector3 velo;
-		//加速度
-		Vector3 accel;
-		//重力
-		float gravity = 0.098f;
-
-		//色
-		Color color;
-		//生存時間
-		Easing::EaseTimer aliveTimer;
-
-		//イージング用タイマー
-		Easing::EaseTimer easeTimer = 1.0f;
-		Easing::EaseTimer growingTimer = 0.1f;
-
-		//エミッター座標からの距離
-		float radius = 0.f;
-		float startRadius = 0.f;	//開始時の距離
-		float endRadius = 0.f;		//終了時の距離
-	};
-
 protected:
 	Transform transform;
 	SRConstBuffer<TransformBuffer> transformBuff;
@@ -70,6 +71,8 @@ protected:
 	uint32_t particleTimer_ = 0;
 	//何フレームに一回パーティクル追加するか
 	uint32_t addInterval_;
+
+	Vector3 targetPos;	//向かう場所
 
 	//経過時間のスピード(スローモーション用)
 	bool isElapse_ = true;					//経過時間の影響受けるかフラグ
@@ -145,7 +148,7 @@ public:
 	//重力フラグ設定
 	void SetIsGravity(bool isGravity) { isGravity_ = isGravity; }
 	//ビルボードフラグ設定
-	void SetIsisBillboard(bool isBillboard) { isBillboard_ = isBillboard; }
+	void SetIsBillboard(bool isBillboard) { isBillboard_ = isBillboard; }
 
 	//拡縮用タイマーが切り替わる時間設定(秒)
 	void SetScalingTimer(float timer);
@@ -157,4 +160,7 @@ public:
 	void SetElapseSpeed(const float elapseSpeed) { elapseSpeed_ = elapseSpeed; }
 	//拡縮用タイマー開始
 	void SetIsElapse(bool isElapse) { isElapse_ = isElapse; }
+
+	//向かう場所設定
+	void SetTargetPos(Vector3 pos) { targetPos = pos; }
 };

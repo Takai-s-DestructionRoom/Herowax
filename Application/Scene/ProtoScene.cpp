@@ -64,6 +64,10 @@ void ProtoScene::Init()
 	eggUI.Init();
 	eggUI.SetTower(&Level::Get()->tower);
 
+	nest.Init();
+
+	nest.SetGround(Level::Get()->ground);
+
 	extract = Parameter::Extract("DebugBool");
 	Util::debugBool = Parameter::GetParam(extract, "debugBool", false);
 }
@@ -268,32 +272,15 @@ void ProtoScene::Update()
 		}
 	}
 
-	//for (auto& group1 : *wGroups)
-	//{
-	//	for (auto& group2 : *wGroups)
-	//	{
-	//		if (group1 == group2)continue;
-	//	
-	//		//こうしたい
-	//		if (WaxManager::GetInstance()->CheckHitWaxGroups(group1, group2)) {
-	//			//どれか一つがぶつかったなら、グループすべてが移動する
-	//			group1->waxs.splice(group1->waxs.end(), std::move(group2->waxs));
-	//			group1->SetSameSolidTime();
-	//			//こうするか、
-	//			wGroups->erase(group2);
-	//			//こうする
-	//			WaxManager::GetInstance()->Delete();
-	//		}
-	//	}
-	//}
-
 #pragma endregion
 	WaxManager::GetInstance()->Update();
 	FireManager::GetInstance()->Update();
 	TemperatureManager::GetInstance()->Update();
+	ParticleManager::GetInstance()->SetPlayerPos(player.GetCenterPos());
 	ParticleManager::GetInstance()->Update();
 
 	eggUI.Update();
+	nest.Update();
 
 	light.Update();
 
@@ -422,6 +409,7 @@ void ProtoScene::Draw()
 	TemperatureManager::GetInstance()->Draw();
 	player.Draw();
 	eggUI.Draw();
+	nest.Draw();
 
 	Level::Get()->Draw();
 

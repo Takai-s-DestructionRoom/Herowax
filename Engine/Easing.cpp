@@ -173,6 +173,19 @@ float Easing::InOutBack(float start, float end, float timeRate)
 	return start + dif;
 }
 
+float Easing::GoAndBackInQuad(float start, float end, float timeRate)
+{
+	//半分までは上へ
+	if (timeRate < 0.5f) {
+		return Easing::InQuad(start, end, timeRate * 2.0f);
+	}
+	//それ以降は元に
+	else {
+		return Easing::InQuad(end,start,
+			(timeRate - 0.5f) * 2.f);
+	}
+}
+
 void Easing::EaseTimer::Reset()
 {
 	nowTime_ = 0.0f;

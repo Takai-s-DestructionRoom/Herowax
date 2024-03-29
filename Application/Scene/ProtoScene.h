@@ -17,6 +17,7 @@
 
 #include "Level.h"
 #include "Wave.h"
+#include "BreakableObj.h"
 
 class ProtoScene : public IScene
 {
@@ -32,11 +33,12 @@ private:
 	Player player;
 	Wave wave;
 	EggUI eggUI;
+	BreakableObj nest;
 
 	Camera camera = Camera();
 	float cameraDist = -20.f;	//注視点からカメラの距離
 	Vector2 cameraAngle{};		//カメラアングル
-	float cameraSpeed;			//カメラの移動速度
+	float cameraSpeed = 0.0f;	//カメラの移動速度
 	Vector2 mAngle = { 0, 0 };
 	LightGroup light;
 

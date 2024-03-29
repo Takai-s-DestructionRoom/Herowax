@@ -158,6 +158,7 @@
     <ClCompile Include="Application\Chara\Enemy\EnemyUI.cpp" />
     <ClCompile Include="Application\BombSolider.cpp" />
     <ClCompile Include="Application\EggUI.cpp" />
+    <ClCompile Include="Application\BreakableObj.cpp" />
     <ClCompile Include="Engine\Easing.cpp" />
     <ClCompile Include="Engine\Base\RenderTarget.cpp" />
     <ClCompile Include="Engine\Base\SRIndexBuffer.cpp" />
@@ -195,6 +196,7 @@
     <ClCompile Include="Application\Object\FireManager.cpp" />
     <ClCompile Include="Application\Level.cpp" />
     <ClCompile Include="Application\Object\FireUnit.cpp" />
+    <ClCompile Include="Engine\Particle\HomingParticle.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Engine\Base\Material.cpp" />
     <ClCompile Include="Engine\Math\Matrix4.cpp" />
@@ -651,6 +653,7 @@
     <ClInclude Include="Application\Chara\Enemy\EnemyUI.h" />
     <ClInclude Include="Application\BombSolider.h" />
     <ClInclude Include="Application\EggUI.h" />
+    <ClInclude Include="Application\BreakableObj.h" />
     <ClInclude Include="Engine\Easing.h" />
     <ClInclude Include="Engine\Base\Rect.h" />
     <ClInclude Include="Engine\Base\RenderTarget.h" />
@@ -757,6 +760,7 @@
     <ClInclude Include="Application\Chara\Player\PlayerUI.h" />
     <ClInclude Include="Application\Object\FireUnit.h" />
     <ClInclude Include="Application\Wave.h" />
+    <ClInclude Include="Engine\Particle\HomingParticle.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Shader\Bloom\Bloom.hlsli" />

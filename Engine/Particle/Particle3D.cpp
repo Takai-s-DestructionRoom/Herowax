@@ -42,14 +42,6 @@ void IEmitter3D::Update()
 		}
 		itr++;
 	}
-	/*for (uint32_t i = 0; i < particles_.size(); i++)
-	{
-		if (particles_[i].aliveTimer.GetEnd())
-		{
-			particles_.erase(particles_.begin() + i);
-			i--;
-		}
-	}*/
 
 	//全パーティクル更新
 	for (auto& particle : particles_)
