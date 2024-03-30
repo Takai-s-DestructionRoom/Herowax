@@ -413,6 +413,9 @@ void ProtoScene::Draw()
 
 	Level::Get()->Draw();
 
+	//distortion.Draw();
+	bloom.Draw();
+
 	//更新
 	InstantDrawer::AllUpdate();
 	InstantDrawer::AllDraw2D();

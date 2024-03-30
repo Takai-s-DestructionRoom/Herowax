@@ -14,6 +14,8 @@
 #include "EnemyManager.h"
 #include "EnemySpawner.h"
 #include "EggUI.h"
+#include "Distortion.h"
+#include "Bloom.h"
 
 #include "Level.h"
 #include "Wave.h"
@@ -46,4 +48,6 @@ private:
 	float scale[3] = { 1, 1, 1 };
 
 	bool changeFPS = false;
+	//Distortion distortion;
+	Bloom bloom;
 };

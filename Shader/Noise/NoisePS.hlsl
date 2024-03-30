@@ -66,15 +66,14 @@ float3 normalNoise(float2 uv, float2 size)
 float4 main(OutputVS i) : SV_TARGET
 {
     //float2 uvMove = { i.uv.x, i.uv.y * time };
-    
+    //return float4(normalNoise(i.uv, float2(16.f, 16.f)), 1);
     
     float3 dist = normalNoise(i.uv, float2(16.f, 16.f)); // perlinノイズで算出した法線を得る
-    dist = dist * 2.0 - 1.0; // 範囲を0.0～1.0から-1.0～1.0へ変換
+    dist = dist * 2 - 1; // 範囲を0.0～1.0から-1.0～1.0へ変換
     dist *= 0.1f; // 歪み強度を乗算(歪み強度をシェーダーパラメータとして調整可能にする)
 
-    i.uv.xy += dist.xy; // 歪み量だけ、メインテクスチャのUVをずらす
+    i.uv += dist.xy; // 歪み量だけ、メインテクスチャのUVをずらす
 
     float4 texcolor = float4(tex.Sample(smp, i.uv));
     return texcolor;
-
 }

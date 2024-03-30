@@ -34,8 +34,8 @@ private:
 
 	ModelObj obj;
 
-	Bloom bloom;
-	CrossFilter crossFilter;
+	//Bloom bloom;
+	//CrossFilter crossFilter;
 	Distortion distortion;
 	bool isPostEffect;
 };

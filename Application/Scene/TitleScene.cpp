@@ -52,7 +52,7 @@ void TitleScene::Update()
 
 	static float timer = 0.f;
 	timer += TimeManager::deltaTime;
-	distortion.SetTimer(timer);
+	//distortion.SetTimer(timer);
 
 	//F6かメニューボタン押されたらプロトシーンへ
 	if (RInput::GetInstance()->GetKeyDown(DIK_F6) ||
@@ -70,7 +70,8 @@ void TitleScene::Update()
 	ImGui::Begin("PostEffect", NULL, window_flags);
 
 	ImGui::Checkbox("ポストエフェクトかけるか",&isPostEffect);
-	ImGui::Text("タイマー:%f",distortion.noiseSetting.time);
+	//ImGui::SliderFloat("ノイズ密度",&distortion.noiseSetting.fineness,0.f,1000.f);
+	//ImGui::Text("タイマー:%f",distortion.noiseSetting.time);
 
 	ImGui::End();
 
