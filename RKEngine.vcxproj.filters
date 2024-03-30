@@ -274,6 +274,9 @@
     <Filter Include="ヘッダー ファイル\Application\Wave">
       <UniqueIdentifier>{931d90cf-69f5-4502-a01d-7399fd053bfa}</UniqueIdentifier>
     </Filter>
+    <Filter Include="シェーダー ファイル\SlimeShader">
+      <UniqueIdentifier>{20aa1731-e734-4a40-b7de-5feba339ad7c}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Engine\2d\Sprite.cpp">
@@ -624,11 +627,11 @@
     <ClCompile Include="Application\BreakableObj.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Application\RayMarchTestScene.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
     <ClCompile Include="Application\PhysicsCircle.cpp">
       <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Application\RayMarchTestScene.cpp">
+      <Filter>ソース ファイル\Application\Scene</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -772,6 +775,12 @@
     </FxCompile>
     <FxCompile Include="Shader\ParticleBillboard\ParticleBillboardVS.hlsl">
       <Filter>シェーダー ファイル\ParticleBillboard</Filter>
+    </FxCompile>
+    <FxCompile Include="Shader\SlimeShader\SlimeShaderPS.hlsl">
+      <Filter>シェーダー ファイル\SlimeShader</Filter>
+    </FxCompile>
+    <FxCompile Include="Shader\SlimeShader\SlimeShaderVS.hlsl">
+      <Filter>シェーダー ファイル\SlimeShader</Filter>
     </FxCompile>
   </ItemGroup>
   <ItemGroup>
@@ -1147,11 +1156,11 @@
     <ClInclude Include="Application\BreakableObj.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Application\RayMarchTestScene.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
     <ClInclude Include="Application\PhysicsCircle.h">
       <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Application\RayMarchTestScene.h">
+      <Filter>ヘッダー ファイル\Application\Scene</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -1223,6 +1232,9 @@
     </None>
     <None Include="Shader\Include\VSStruct.hlsli">
       <Filter>シェーダー ファイル\Include</Filter>
+    </None>
+    <None Include="Shader\SlimeShader\SlimeShader.hlsli">
+      <Filter>シェーダー ファイル\SlimeShader</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>

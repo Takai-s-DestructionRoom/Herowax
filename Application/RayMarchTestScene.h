@@ -1,8 +1,10 @@
 #pragma once
 #include "IScene.h"
-#include "PhysicsCircle.h"
 #include "Util.h"
 #include <vector>
+#include "ModelObj.h"
+#include "DebugCamera.h"
+#include "LightGroup.h"
 
 class RayMarchTestScene : public IScene
 {
@@ -14,10 +16,11 @@ public:
 	void Draw();
 	void Finalize();
 
+	GraphicsPipeline SlimeShaderPipeLine();
+
 public:
-	std::vector<PhysicsCircle> circles;
-	//PhysicsCircle circle = {Vector2(Util::WIN_WIDTH / 2,Util::WIN_HEIGHT / 2),3.f};
-	Vector2 downPos;
-	ColPrimitive3D::Ray ground;
+	ModelObj plane; 
+	DebugCamera camera = DebugCamera({ 0, 0, -5 });
+	LightGroup light;
 };
 
