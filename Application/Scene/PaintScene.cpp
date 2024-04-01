@@ -26,10 +26,6 @@ PaintScene::PaintScene()
 	objB.mTransform.scale = { 3.0f, 3.0f, 3.0f };
 	objB.mTransform.UpdateMatrix();
 
-	skydome.SetupPaint();
-	objA.SetupPaint();
-	objB.SetupPaint();
-
 	camera.mViewProjection.mEye = { 0, 0, -10 };
 	camera.mViewProjection.mTarget = { 0, 0, 0 };
 	camera.mViewProjection.UpdateMatrix();
@@ -43,6 +39,10 @@ void PaintScene::Init()
 {
 	Camera::sNowCamera = &camera;
 	LightGroup::sNowLight = &light;
+
+	skydome.SetupPaint();
+	objA.SetupPaint();
+	objB.SetupPaint();
 }
 
 void PaintScene::Update()

@@ -52,8 +52,6 @@ void SceneManager::Update() {
 	if (!instance->mRunningSceneChanges.empty()) {
 		SceneChange& sc = *instance->mRunningSceneChanges.begin();
 
-		if (sc.increment >= 2 && sc.increment <= 4) cancel = true;
-
 		if (sc.increment == 0) {
 			sc.transition->Close();
 			sc.increment++;
@@ -150,6 +148,8 @@ void SceneManager::Update() {
 				instance->mLoadingMark.mMaterial.mColor.a = instance->mLoadingAlpha * (1 - fx);
 			}
 		}
+
+		if (sc.increment >= 2 && sc.increment <= 4) cancel = true;
 	}
 	else {
 		instance->mLoadingTimer = 0;

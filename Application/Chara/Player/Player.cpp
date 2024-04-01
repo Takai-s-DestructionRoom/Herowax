@@ -18,8 +18,6 @@ isAttack(false), atkSpeed(1.f), atkRange({ 3.f,5.f }), atkSize(0.f), atkPower(1)
 atkCoolTimer(0.3f), atkTimer(0.5f), atkHeight(1.f), solidTimer(5.f),
 isFireStock(false), isWaxStock(false), maxWaxStock(20)
 {
-	obj = PaintableModelObj(Model::Load("./Resources/Model/player/player_bird.obj", "player_bird", true));
-	obj.SetupPaint();
 	std::map<std::string, std::string> extract = Parameter::Extract("Player");
 	moveSpeed = Parameter::GetParam(extract, "移動速度", 1.f);
 	moveAccelAmount = Parameter::GetParam(extract, "移動加速度", 0.05f);
@@ -52,6 +50,9 @@ isFireStock(false), isWaxStock(false), maxWaxStock(20)
 
 void Player::Init()
 {
+	obj = PaintableModelObj(Model::Load("./Resources/Model/player/player_bird.obj", "player_bird", true));
+	obj.SetupPaint();
+
 	hp = maxHP;
 	fireUnit.Init();
 
