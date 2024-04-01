@@ -68,3 +68,14 @@ struct VSOutput
     float3 normal : NORMAL; //法線ベクトル
     float2 uv : TEXCOORD; // uv値
 };
+
+static const int MAX_SPHERE_COUNT = 256;
+
+cbuffer ConstBufferDataSlime : register(b4)
+{
+    float smoothValue;
+    int sphereNum;
+    int rayMatchNum;
+    float clipValue;
+    float4 Spheres[MAX_SPHERE_COUNT];
+}
