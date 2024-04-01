@@ -31,7 +31,8 @@ float getDistance(float3 pos)
     float dist = 100000; //ありえへん値
     for (int i = 0; i < sphereNum; i++)
     {
-        dist = smoothMin(dist, sphereDistanceFunction(Spheres[i], pos), smoothValue);
+        dist = smoothMin(dist, distanceFunc(Spheres[i], pos), smoothValue);
+        //dist = smoothMin(dist, sphereDistanceFunction(Spheres[i], pos), smoothValue);
     }
     
     return dist;
@@ -85,20 +86,19 @@ PS_OUT main(VSOutput input)
 
     float3 pos = input.wpos.xyz;
     //視線から伸ばすベクトル
-    float3 rayDir = normalize(pos.xyz - cameraPos);
-    
-    //for (int x = 0; x < sphereNum; x++)
-    //{
-    //    float3 center = float3(rand(x), rand(x + 1), rand(x + 2) * 8 - 4);
-    //    float radius = rand(x + 3) * 0.25f;
-    //    Spheres[x] = float4(center, radius);
-    //}
+    float3 rayDir = normalize(input.wpos.xyz - cameraPos);
      
+    float rLen = 0.0; // レイに継ぎ足す長さ
+    float3 rPos = cameraPos; // レイの先端位置
+    float dist = 0.0f;
     for (int i = 0; i < rayMatchNum; i++)
     {
-        float dist = getDistance(pos);
-        if (dist < clipValue)
-        {       
+        dist = getDistance(rPos);
+        rLen += dist;
+        rPos = cameraPos + rayDir * rLen;
+    
+        if (abs(dist) < clipValue)
+        {
             //リムライトをつける
             float3 norm = getNormal(pos);
             float3 baseColor = float3(0.8f, 0.6f, 0.35f);
@@ -114,17 +114,12 @@ PS_OUT main(VSOutput input)
             output.depth = getDepth(pos);
             
             return output;
-            //return float4(color, 1) * texcolor * shadecolor; //塗りつぶし
         }
-        
-        pos += dist * rayDir;
     }
 	
-    //return color; //塗りつぶし
     PS_OUT output;
     output.color = float4(0, 0, 0, 0);
     output.depth = 0;
     
     return output;
-    //return texcolor * shadecolor;
 }

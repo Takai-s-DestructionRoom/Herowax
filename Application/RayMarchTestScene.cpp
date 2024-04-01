@@ -49,11 +49,11 @@ void RayMarchTestScene::Update()
 	Vector3 cameraVec = camera.mViewProjection.mTarget - camera.mViewProjection.mEye;
 	cameraVec.Normalize();
 
-	static float cameraDist = 0.5f;
+	static float cameraDist = 7.f;
 	static bool checkLookAt = false;
 
-	//plane.mTransform.position = camera.mViewProjection.mEye + (cameraVec * cameraDist);
-
+	plane.mTransform.position = camera.mViewProjection.mEye + (cameraVec * cameraDist);
+	plane.mTransform.rotation = Quaternion::LookAt(cameraVec).ToEuler();
 	//plane.Update(camera.mViewProjection);
 	plane.mTransform.UpdateMatrix();
 	plane.TransferBuffer(camera.mViewProjection);
@@ -87,17 +87,13 @@ void RayMarchTestScene::Update()
 		camera.mViewProjection.mTarget.z);
 	ImGui::Checkbox("板描画切り替え", &isPlaneDraw);
 	ImGui::Checkbox("球描画切り替え", &isSphereMeshDraw);
-	ImGui::SliderFloat("板のカメラまでの距離", &cameraDist,0.0f,10.f);
+	ImGui::SliderFloat("板のカメラまでの距離", &cameraDist,0.0f,100.f);
 	ImGui::DragFloat3("position", &plane.mTransform.position.x);
 	ImGui::DragFloat3("scale", &plane.mTransform.scale.x);
 	ImGui::DragFloat3("rotation", &plane.mTransform.rotation.x);
-	/*static Vector2 size = plane.mImage.GetSize();
-	ImGui::DragFloat2("size", &size.x, 0.1f);
-	plane.mImage.SetSize(size);*/
 	ImGui::SliderFloat("slimeValue", &slimeBuff->slimeValue,1.f,50.f);
-	ImGui::SliderInt("sphereNum", &sphereNum,1,256);
-	ImGui::SliderInt("rayMatchNum", &slimeBuff->rayMatchNum,1,64);
-	ImGui::SliderFloat("clipValue", &slimeBuff->clipValue,0.0001f,1.0f);
+	ImGui::SliderInt("rayMatchNum", &slimeBuff->rayMatchNum,1,256);
+	ImGui::InputFloat("clipValue", &slimeBuff->clipValue,0.00001f);
 	ImGui::End();
 
 	slimeBuff->sphereNum = sphereNum;
@@ -138,24 +134,6 @@ void RayMarchTestScene::Draw()
 
 		Renderer::DrawCall("Opaque", order);
 	}
-
-	/*RenderOrder order;
-	order.pipelineState = pipe.mPtr.Get();
-	order.mRootSignature = pipe.mDesc.pRootSignature;
-	order.vertBuff = plane.mImage.mVertBuff;
-	order.indexBuff = plane.mImage.mIndexBuff;
-	order.indexCount = 6;
-	order.rootData = {
-		{RootDataType::SRBUFFER_CBV, plane.mImage.mMaterialBuff.mBuff },
-		{RootDataType::SRBUFFER_CBV, plane.mImage.mTransformBuff.mBuff },
-		{RootDataType::SRBUFFER_CBV, plane.mImage.mViewProjectionBuff.mBuff },
-		{RootDataType::LIGHT},
-		{TextureManager::Get(plane.mImage.GetTexture()).mGpuHandle},
-		{RootDataType::SRBUFFER_CBV,slimeBuff.mBuff}
-	};
-
-	Renderer::DrawCall("Opaque", order);
-	*/
 
 	InstantDrawer::AllUpdate();
 	InstantDrawer::AllDraw2D();
@@ -239,7 +217,6 @@ void RandomSphere::Update()
 	timer.Update();
 	if (timer.GetEnd()) {
 		
-		//obj.mTransform.position = { 0,0,0 };
 		timer.Start();
 		moveVec = -moveVec;
 		
