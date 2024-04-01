@@ -6,6 +6,7 @@
 #include "PlayerState.h"
 #include "PlayerUI.h"
 #include "FireUnit.h"
+#include "ColPrimitive3D.h"
  
 class Player : public GameObject
 {
@@ -48,6 +49,10 @@ public:
 	int32_t waxStock;			//ロウストック
 	int32_t maxWaxStock;		//ロウストック最大値
 	bool isWaxStock;			//ストック性にするかフラグ
+
+	Vector2 waxCollectRange;			//ロウ回収する範囲
+	ColPrimitive3D::Ray collectCol;		//ロウ回収する範囲当たり判定
+	ModelObj collectRangeModel;			//ロウ回収範囲描画用
 	
 	//----------- 挑発関連 ------------//
 	bool isTauntMode = false;		//ロウを直接当てると敵の追いかける対象が自分に変わるモード
@@ -106,6 +111,8 @@ public:
 	bool GetTauntMode() { return isTauntMode; };
 	//正面ベクトルを取得
 	Vector3 GetFrontVec();
+	//足元の座標取得
+	Vector3 GetFootPos();
 
 	// セッター //
 };

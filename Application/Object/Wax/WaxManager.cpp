@@ -20,7 +20,7 @@ bool WaxManager::CheckHitWaxGroups(std::unique_ptr<WaxGroup>& group1,
 	}
 	for (auto& wax1 : group1->waxs) {
 		for (auto& wax2 : group2->waxs) {
-			
+
 			//どっちも固まり始めておらず
 			if (!wax1->isSolid && !wax2->isSolid)
 			{
@@ -114,8 +114,8 @@ WaxManager::WaxManager() :
 {
 	//生成時に変数をセーブデータから引っ張ってくる
 	std::map<std::string, std::string> extract = Parameter::Extract(fileName);
-	heatUpTemperature = Parameter::GetParam(extract, "ロウが燃えたときの上昇温度",5.f);
-	heatBonus = Parameter::GetParam(extract, "ボーナス上昇温度",2.f);
+	heatUpTemperature = Parameter::GetParam(extract, "ロウが燃えたときの上昇温度", 5.f);
+	heatBonus = Parameter::GetParam(extract, "ボーナス上昇温度", 2.f);
 
 	for (int i = 0; i < 10; i++)
 	{
@@ -128,7 +128,7 @@ WaxManager::WaxManager() :
 		if (i + 1 >= 10) {
 			waxnum = std::to_string(i + 1) + "体以上の時";
 		}
-		waxTime[i] = Parameter::GetParam(extract,waxnum.c_str(), 0.0f);
+		waxTime[i] = Parameter::GetParam(extract, waxnum.c_str(), 0.0f);
 	}
 
 	//ディゾルブで使うパイプラインを生成する
@@ -241,21 +241,50 @@ float WaxManager::GetCalcHeatBonus()
 	return heatBonus * (float)isBurningNum;
 }
 
-void WaxManager::Collect()
+bool ReturnCol(ColPrimitive3D::Ray rayCol, ColPrimitive3D::Sphere sphereCol)
+{
+	Vector3 rayToSphere = sphereCol.pos - rayCol.start;
+
+	//レイとの内積が0以下なら当たってない(レイより後ろに球があるときスルー)
+	if (rayToSphere.Dot(rayCol.dir) < 0)
+	{
+		return false;
+	}
+
+	float t = rayCol.dir.GetNormalize().Dot(rayToSphere);
+
+	//垂線を降ろした点
+	Vector3 a = rayCol.start + rayCol.dir.GetNormalize() * t;
+	//レイから球の最短ベクトル
+	Vector3 b = sphereCol.pos - a;
+
+	float len = b.Length();
+	if (len - (sphereCol.r + rayCol.radius) <= 0.f)
+	{
+		return true;
+	}
+
+	return false;
+}
+
+void WaxManager::Collect(ColPrimitive3D::Ray collider)
 {
 	for (auto& group : waxGroups)
 	{
 		for (auto& wax : group->waxs)
 		{
-			ParticleManager::GetInstance()->AddHoming(
-				wax->obj.mTransform.position, wax->obj.mTransform.scale,
-				10, 0.8f, wax->waxOriginColor, "", 0.8f, 1.5f,
-				-Vector3::ONE * 0.3f, Vector3::ONE * 0.3f,
-				0.03f, -Vector3::ONE * 0.1f, Vector3::ONE * 0.1f, 0.3f,0.5f);
+			if (ReturnCol(collider, wax->collider))
+			{
+				ParticleManager::GetInstance()->AddHoming(
+					wax->obj.mTransform.position, wax->obj.mTransform.scale,
+					10, 0.8f, wax->waxOriginColor, "", 0.8f, 1.5f,
+					-Vector3::ONE * 0.3f, Vector3::ONE * 0.3f,
+					0.03f, -Vector3::ONE * 0.1f, Vector3::ONE * 0.1f, 0.3f, 0.5f);
+
+				wax->isAlive = false;
+			}
 		}
 	}
-
-	waxGroups.clear();
 }
 
 uint32_t WaxManager::GetWaxNum()

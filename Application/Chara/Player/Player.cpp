@@ -47,6 +47,11 @@ isFireStock(false), isWaxStock(false), maxWaxStock(20)
 	initRot.y = Parameter::GetParam(extract, "初期方向Y", 0.f);
 	initRot.z = Parameter::GetParam(extract, "初期方向Z", 0.f);
 
+	collectRangeModel = ModelObj(Model::Load("./Resources/Model/Cube.obj", "Cube", true));
+	waxCollectRange.x = Parameter::GetParam(extract, "ロウ回収範囲X", 5.f);
+	waxCollectRange.y = Parameter::GetParam(extract, "ロウ回収範囲Y", 100.f);
+	collectRangeModel.mTuneMaterial.mColor.a = Parameter::GetParam(extract, "範囲objの透明度", 0.5f);
+
 	attackState = std::make_unique<PlayerNormal>();
 }
 
@@ -236,6 +241,14 @@ void Player::Update()
 
 		ImGui::TreePop();
 	}
+	if (ImGui::TreeNode("ロウ回収系"))
+	{
+		ImGui::SliderFloat("ロウ回収範囲X", &waxCollectRange.x, 0.f, 100.f);
+		ImGui::SliderFloat("ロウ回収範囲Y", &waxCollectRange.y, 0.f, 1000.f);
+		ImGui::SliderFloat("範囲objの透明度", &collectRangeModel.mTuneMaterial.mColor.a, 0.f, 1.f);
+
+		ImGui::TreePop();
+	}
 
 	if (ImGui::Button("Reset")) {
 		Init();
@@ -265,6 +278,9 @@ void Player::Update()
 		Parameter::Save("初期方向X", initRot.x);
 		Parameter::Save("初期方向Y", initRot.y);
 		Parameter::Save("初期方向Z", initRot.z);
+		Parameter::Save("ロウ回収範囲X", waxCollectRange.x);
+		Parameter::Save("ロウ回収範囲Y", waxCollectRange.y);
+		Parameter::Save("範囲objの透明度", collectRangeModel.mTuneMaterial.mColor.a);
 		Parameter::End();
 	}
 
@@ -277,6 +293,7 @@ void Player::Draw()
 	if (isAlive)
 	{
 		obj.Draw();
+		collectRangeModel.Draw();
 		fireUnit.Draw();
 
 		ui.Draw();
@@ -623,14 +640,27 @@ void Player::PabloAttack()
 
 void Player::WaxCollect()
 {
-	if ((RInput::GetInstance()->GetPadButton(XINPUT_GAMEPAD_X) ||
+	//トランスフォームはプレイヤー基準に
+	collectRangeModel.mTransform = obj.mTransform;
+	collectRangeModel.mTransform.scale = { waxCollectRange.x,0.1f,waxCollectRange.y };
+	//大きさ分前に置く
+	collectRangeModel.mTransform.position += GetFrontVec() * waxCollectRange.y * 0.5f;
+	collectRangeModel.mTransform.UpdateMatrix();
+	collectRangeModel.TransferBuffer(Camera::sNowCamera->mViewProjection);
+
+	//当たり判定で使うレイの設定
+	collectCol.dir = GetFrontVec();
+	collectCol.start = GetFootPos();
+	collectCol.radius = waxCollectRange.x * 0.5f;
+
+	if ((RInput::GetInstance()->GetPadButtonDown(XINPUT_GAMEPAD_X) ||
 		RInput::GetInstance()->GetKeyDown(DIK_Q)))
 	{
 		if (isWaxStock)
 		{
 			//ロウ全部消して
-			WaxManager::GetInstance()->Collect();
-			//ストック最大に
+			WaxManager::GetInstance()->Collect(collectCol);
+			//ストック最大に(敵の数とか回収したロウに応じて変化する形に変更)
 			waxStock = maxWaxStock;
 		}
 	}
@@ -644,4 +674,13 @@ Vector3 Player::GetFrontVec()
 
 	frontVec *= Quaternion::Euler(obj.mTransform.rotation);
 	return frontVec;
+}
+
+Vector3 Player::GetFootPos()
+{
+	Vector3 result;
+
+	result = obj.mTransform.position;
+	result.y += obj.mTransform.scale.y;
+	return result;
 }

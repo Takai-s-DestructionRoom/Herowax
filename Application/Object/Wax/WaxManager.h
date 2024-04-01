@@ -1,6 +1,7 @@
 #pragma once
 #include "Wax.h"
 #include "WaxGroup.h"
+#include "ColPrimitive3D.h"
 
 // 蝋群管理 //
 class WaxManager final
@@ -47,7 +48,7 @@ public:
 	float GetCalcHeatBonus();
 
 	//回収される
-	void Collect();
+	void Collect(ColPrimitive3D::Ray collider);
 	
 	uint32_t GetWaxNum();
 
