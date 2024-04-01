@@ -7,7 +7,7 @@
 #include "IScene.h"
 #include "LightGroup.h"
 #include "Camera.h"
-#include "ModelObj.h"
+#include "Player.h"
 #include "Sprite.h"
 #include "Bloom.h"
 #include "CrossFilter.h"
@@ -32,7 +32,7 @@ private:
 
 	Sprite titleLogo;	//タイトル
 
-	ModelObj obj;
+	Player player;
 
 	//Bloom bloom;
 	//CrossFilter crossFilter;

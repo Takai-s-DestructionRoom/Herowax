@@ -48,6 +48,8 @@ private:
 	float scale[3] = { 1, 1, 1 };
 
 	bool changeFPS = false;
-	//Distortion distortion;
+
+	bool isPostEffect;
+	Distortion distortion;
 	Bloom bloom;
 };

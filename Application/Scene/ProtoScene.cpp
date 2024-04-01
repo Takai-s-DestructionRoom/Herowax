@@ -302,6 +302,7 @@ void ProtoScene::Update()
 	// カメラ //
 	ImGui::Begin("Camera", NULL, window_flags);
 
+	ImGui::Checkbox("ポストエフェクトかけるか", &isPostEffect);
 	ImGui::Text("座標:%f,%f,%f",
 		camera.mViewProjection.mEye.x, 
 		camera.mViewProjection.mEye.y, 
@@ -413,8 +414,11 @@ void ProtoScene::Draw()
 
 	Level::Get()->Draw();
 
-	//distortion.Draw();
-	bloom.Draw();
+	if (isPostEffect)
+	{
+		distortion.Draw();
+		//bloom.Draw();
+	}
 
 	//更新
 	InstantDrawer::AllUpdate();

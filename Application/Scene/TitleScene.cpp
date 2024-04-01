@@ -22,7 +22,7 @@ void TitleScene::Init()
 	titleLogo.SetAnchor({ 0.f, 0.f });
 	//titleLogo.mTransform.scale = { 2.f, 2.f,1.f };
 
-	obj = ModelObj(Model::Load("./Resources/Model/player/player_bird.obj", "player_bird", true));
+	player.Init();
 }
 
 void TitleScene::Update()
@@ -35,9 +35,9 @@ void TitleScene::Update()
 	cameraVec *= cameraDist;
 
 	//プレイヤーと一定の距離を保って着いていく
-	camera.mViewProjection.mEye = obj.mTransform.position + cameraVec;
+	camera.mViewProjection.mEye = player.obj.mTransform.position + cameraVec;
 	//プレイヤーの方向いてくれる
-	camera.mViewProjection.mTarget = obj.mTransform.position;
+	camera.mViewProjection.mTarget = player.obj.mTransform.position;
 	camera.mViewProjection.UpdateMatrix();
 
 	camera.mViewProjection.UpdateMatrix();
@@ -47,8 +47,7 @@ void TitleScene::Update()
 	titleLogo.mTransform.UpdateMatrix();
 	titleLogo.TransferBuffer();
 
-	obj.mTransform.UpdateMatrix();
-	obj.TransferBuffer(camera.mViewProjection);
+	player.Update();
 
 	static float timer = 0.f;
 	timer += TimeManager::deltaTime;
@@ -98,7 +97,7 @@ void TitleScene::Update()
 void TitleScene::Draw()
 {
 	titleLogo.Draw();
-	obj.Draw();
+	player.Draw();
 
 	if (isPostEffect)
 	{
