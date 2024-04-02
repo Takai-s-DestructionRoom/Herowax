@@ -14,10 +14,10 @@ static const int MAX_SPHERE_COUNT = 256;
 
 struct SlimeBuffer
 {
-	float slimeValue;
+	float slimeValue = 1.0f;
 	int32_t sphereNum;
-	int32_t rayMatchNum = 16;
-	float clipValue = 0.001f;
+	int32_t rayMatchNum = 32;
+	float clipValue = 0.5f;
 
 	Float4 spheres[MAX_SPHERE_COUNT];
 };
@@ -29,6 +29,7 @@ public:
 	ModelObj obj;
 	Easing::EaseTimer timer = 3.0f;
 	Vector3 moveVec = { 0,0,0 };
+	float moveSpeed = 0.01f;
 
 public:
 	void Init();
@@ -51,7 +52,7 @@ public:
 public:
 
 private:
-	ModelObj plane;	//レイマーチングが見えるようになるオブジェクト
+	BillboardImage plane;	//レイマーチングが見えるようになるオブジェクト
 	//こういう形式じゃなくて、どこからでもレイマーチングオブジェクトが見えるようにしたい
 
 	std::vector<RandomSphere> spheres;

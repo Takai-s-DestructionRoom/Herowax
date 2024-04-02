@@ -10,15 +10,18 @@
 void RayMarchTestScene::Init()
 {
 	InstantDrawer::PreCreate();
-	plane = ModelObj(Model::Load("./Resources/Model/Cube.obj", "firewisp", true));
+	//raymarchCube = ModelObj(Model::Load("./Resources/Model/Cube.obj", "Cube", true));
 	
-	//plane.mUseBillboardY = true;
-	//plane.Init("white2x2", { 1.f, 1.f });
-	//plane.mImage.mMaterial.mColor = Color::kWhite;
-
+	plane.mUseBillboardY = false;
+	plane.Init("white2x2", { 1.f, 1.f });
+	plane.mImage.mMaterial.mColor = Color::kWhite;
+	
 	plane.mTransform.position = { 0,0,0 };
-	plane.mTransform.scale = { 10,10,10 };
+	plane.mTransform.scale = { 1,1,1 };
 	plane.mTransform.rotation = { 0,0,0 };
+
+	//大きさを画面と同じに
+	//plane.mImage.SetSize(Vector2(8.f,5.f),true);
 
 	camera.mViewProjection.mEye = { 0, 0, -10 };
 	camera.mViewProjection.mTarget = { 0, 0, 0 };
@@ -27,10 +30,8 @@ void RayMarchTestScene::Init()
 	Camera::sNowCamera = &camera;
 	LightGroup::sNowLight = &light;
 
-	slimeBuff->slimeValue = 7.5f;
-	slimeBuff->sphereNum = 64;
-	slimeBuff->rayMatchNum = 16;
-
+	slimeBuff->sphereNum = 128;
+	
 	spheres.clear();
 	for (int32_t i = 0; i < sphereNum; i++)
 	{
@@ -49,15 +50,21 @@ void RayMarchTestScene::Update()
 	Vector3 cameraVec = camera.mViewProjection.mTarget - camera.mViewProjection.mEye;
 	cameraVec.Normalize();
 
-	static float cameraDist = 7.f;
-	static bool checkLookAt = false;
+	static float cameraDist = 5.f;
 
-	plane.mTransform.position = camera.mViewProjection.mEye + (cameraVec * cameraDist);
-	plane.mTransform.rotation = Quaternion::LookAt(cameraVec).ToEuler();
-	//plane.Update(camera.mViewProjection);
-	plane.mTransform.UpdateMatrix();
-	plane.TransferBuffer(camera.mViewProjection);
+	//カメラからビルボードの距離をそのままサイズにぶち込んで
+	//絶対にビルボードがカメラ画角すべてを埋めるようにする
+	Vector3 billboardVec = plane.mTransform.position - camera.mViewProjection.mEye;
+	float billboardLength = billboardVec.LengthSq() / 2;
+	plane.mImage.SetSize(Vector2(billboardLength, billboardLength));
 
+	//こうしているのは、描画したいメタボールが描画の基準となっている
+	//オブジェクトから離れすぎると描画されなくなってしまうため
+	//ビルボードのワールドの位置は変えずに、無理やり画角に収まるようにしたパワー
+
+	//描画したいロウ(waxGroup)1つに対してbillboardimageも一つ持つ感じ?
+	plane.Update(camera.mViewProjection);
+	
 	//バッファにデータ転送(今はメッシュ描画も行いたいのでモデルオブジェで
 	//作っているが、後々posとradiusだけのデータに置き換えて送るようにする)
 	for (int32_t i = 0; i < sphereNum; i++)
@@ -77,6 +84,9 @@ void RayMarchTestScene::Update()
 	window_flags |= ImGuiWindowFlags_NoResize;
 
 	ImGui::Begin("RayMarchTest", NULL);
+	if (ImGui::Button("カメラの正面に置く")) {
+		plane.mTransform.position = camera.mViewProjection.mEye + cameraVec * cameraDist;
+	}
 	ImGui::Text("CameraPos x:%f y:%f z:%f",
 		camera.mViewProjection.mEye.x,
 		camera.mViewProjection.mEye.y,
@@ -89,11 +99,11 @@ void RayMarchTestScene::Update()
 	ImGui::Checkbox("球描画切り替え", &isSphereMeshDraw);
 	ImGui::SliderFloat("板のカメラまでの距離", &cameraDist,0.0f,100.f);
 	ImGui::DragFloat3("position", &plane.mTransform.position.x);
-	ImGui::DragFloat3("scale", &plane.mTransform.scale.x);
-	ImGui::DragFloat3("rotation", &plane.mTransform.rotation.x);
-	ImGui::SliderFloat("slimeValue", &slimeBuff->slimeValue,1.f,50.f);
+	ImGui::Text("size x:%f y:%f", plane.mImage.GetSize().x, plane.mImage.GetSize().y);
+	ImGui::DragFloat3("rotation", &plane.mTransform.rotation.x, 0.01f);
+	ImGui::SliderFloat("slimeValue", &slimeBuff->slimeValue,0.01f,1.0f);
 	ImGui::SliderInt("rayMatchNum", &slimeBuff->rayMatchNum,1,256);
-	ImGui::InputFloat("clipValue", &slimeBuff->clipValue,0.00001f);
+	ImGui::InputFloat("clipValue", &slimeBuff->clipValue,0.001f);
 	ImGui::End();
 
 	slimeBuff->sphereNum = sphereNum;
@@ -114,11 +124,11 @@ void RayMarchTestScene::Draw()
 
 	GraphicsPipeline pipe = SlimeShaderPipeLine();
 
-	for (std::shared_ptr<ModelMesh> data : plane.mModel->mData) {
+	/*for (std::shared_ptr<ModelMesh> data : raymarchCube.mModel->mData) {
 		std::vector<RootData> rootData = {
-			{ RootDataType::SRBUFFER_CBV, plane.mMaterialBuffMap[data->mMaterial.mName].mBuff },
-			{ RootDataType::SRBUFFER_CBV, plane.mTransformBuff.mBuff },
-			{ RootDataType::SRBUFFER_CBV, plane.mViewProjectionBuff.mBuff },
+			{ RootDataType::SRBUFFER_CBV, raymarchCube.mMaterialBuffMap[data->mMaterial.mName].mBuff },
+			{ RootDataType::SRBUFFER_CBV, raymarchCube.mTransformBuff.mBuff },
+			{ RootDataType::SRBUFFER_CBV, raymarchCube.mViewProjectionBuff.mBuff },
 			{ RootDataType::LIGHT },
 			{ TextureManager::Get(data->mMaterial.mTexture).mGpuHandle },
 			{ RootDataType::SRBUFFER_CBV ,slimeBuff.mBuff}
@@ -133,7 +143,24 @@ void RayMarchTestScene::Draw()
 		order.indexCount = static_cast<uint32_t>(data->mIndices.size());
 
 		Renderer::DrawCall("Opaque", order);
-	}
+	}*/
+
+	RenderOrder order;
+	order.pipelineState = pipe.mPtr.Get();
+	order.mRootSignature = pipe.mDesc.pRootSignature;
+	order.vertBuff = plane.mImage.mVertBuff;
+	order.indexBuff = plane.mImage.mIndexBuff;
+	order.indexCount = 6;
+	order.rootData = {
+		{RootDataType::SRBUFFER_CBV, plane.mImage.mMaterialBuff.mBuff },
+		{RootDataType::SRBUFFER_CBV, plane.mImage.mTransformBuff.mBuff },
+		{RootDataType::SRBUFFER_CBV, plane.mImage.mViewProjectionBuff.mBuff },
+		{RootDataType::LIGHT},
+		{TextureManager::Get(plane.mImage.GetTexture()).mGpuHandle},
+		{RootDataType::SRBUFFER_CBV, slimeBuff.mBuff },
+	};
+
+	Renderer::DrawCall("Transparent", order);
 
 	InstantDrawer::AllUpdate();
 	InstantDrawer::AllDraw2D();
@@ -207,18 +234,20 @@ void RandomSphere::Init()
 
 	float radius = Util::GetRand(1.0f, 3.0f);
 	obj.mTransform.scale = { radius,radius,radius };
+	moveSpeed = Util::GetRand(0.01f, 0.05f);
 
 	timer.Start();
 }
 void RandomSphere::Update() 
 {
-	obj.mTransform.position += moveVec * 0.03f;
+	obj.mTransform.position += moveVec * moveSpeed;
 
 	timer.Update();
 	if (timer.GetEnd()) {
 		
 		timer.Start();
 		moveVec = -moveVec;
+		moveSpeed = Util::GetRand(0.01f, 0.05f);
 		
 		float radius = Util::GetRand(1.0f, 3.0f);
 		obj.mTransform.scale = { radius,radius,radius };

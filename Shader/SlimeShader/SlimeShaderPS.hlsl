@@ -3,18 +3,8 @@
 Texture2D<float4> mainTex : register(t0); //0番スロットに設定されたテクスチャ
 SamplerState smp : register(s0); //0番スロットに設定されたサンプラー
 
-float3 trans(float3 p)
-{
-    return fmod(p, 4.0) - 2.0;
-}
-
-float distanceFunc(float4 sphere,float3 p)
-{
-    return length(trans(p)) - sphere.w;
-}
-
 //球の距離関数
-float sphereDistanceFunction(float4 sphere, float3 pos)
+float distanceFuncSphere(float4 sphere, float3 pos)
 {
     return length(sphere.xyz - pos) - sphere.w;
 }
@@ -31,8 +21,15 @@ float getDistance(float3 pos)
     float dist = 100000; //ありえへん値
     for (int i = 0; i < sphereNum; i++)
     {
-        dist = smoothMin(dist, distanceFunc(Spheres[i], pos), smoothValue);
-        //dist = smoothMin(dist, sphereDistanceFunction(Spheres[i], pos), smoothValue);
+        dist = smoothMin(dist, distanceFuncSphere(Spheres[i], pos), smoothValue);
+        //条件を満たすだけ小さくなったら抜ける
+        //参考にしたやつにない部分なので、描画が荒くなってたらこいつが原因っぽいけど、
+        //これがないとループ回数増えまくって激重になる
+        if (abs(dist) < clipValue)
+        {
+            break;
+        }
+
     }
     
     return dist;
@@ -56,11 +53,6 @@ float getDepth(float3 pos)
     return (vpPos.z / vpPos.w) * 0.5f + 0.5f;
 }
 
-float rand(float2 seed)
-{
-    return frac(sin(dot(seed.xy, float2(12.9898, 78.233))) * 43758.5453);
-}
-
 struct PS_OUT
 {
     float4 color : SV_TARGET;
@@ -72,31 +64,17 @@ PS_OUT main(VSOutput input)
     float4 texcolor = float4(mainTex.Sample(smp, input.uv));
     texcolor = texcolor * m_color;
 	
-	//光沢度
-    const float shininess = 4.0f;
-	
-	//視点へのベクトル
-    float3 eyedir = normalize(cameraPos - input.wpos.xyz);
-	
-	//環境反射光
-    float3 ambient = m_ambient;
-	
-	//シェーディング結果の色
-    float4 shadecolor = float4(ambientColor * ambient, 1);
-
+    //レイの開始点をオブジェクトからにすることで
+    //どれだけ離れてもraymarchを回す回数が一定になるため、描画されるようになる
     float3 pos = input.wpos.xyz;
     //視線から伸ばすベクトル
     float3 rayDir = normalize(input.wpos.xyz - cameraPos);
-     
-    float rLen = 0.0; // レイに継ぎ足す長さ
-    float3 rPos = cameraPos; // レイの先端位置
-    float dist = 0.0f;
+
     for (int i = 0; i < rayMatchNum; i++)
     {
-        dist = getDistance(rPos);
-        rLen += dist;
-        rPos = cameraPos + rayDir * rLen;
-    
+        float dist = getDistance(pos);
+        pos += dist * rayDir;
+        
         if (abs(dist) < clipValue)
         {
             //リムライトをつける
@@ -118,7 +96,7 @@ PS_OUT main(VSOutput input)
     }
 	
     PS_OUT output;
-    output.color = float4(0, 0, 0, 0);
+    output.color = float4(0,0,0,0);
     output.depth = 0;
     
     return output;
