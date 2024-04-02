@@ -46,8 +46,7 @@ isFireStock(false), isWaxStock(false), maxWaxStock(20)
 	initRot.z = Parameter::GetParam(extract, "初期方向Z", 0.f);
 
 	collectRangeModel = ModelObj(Model::Load("./Resources/Model/Cube.obj", "Cube", true));
-	waxCollectRange.x = Parameter::GetParam(extract, "ロウ回収範囲X", 5.f);
-	waxCollectRange.y = Parameter::GetParam(extract, "ロウ回収範囲Y", 100.f);
+	waxCollectRange = Parameter::GetParam(extract, "ロウ回収範囲X", 5.f);
 	collectRangeModel.mTuneMaterial.mColor.a = Parameter::GetParam(extract, "範囲objの透明度", 0.5f);
 
 	attackState = std::make_unique<PlayerNormal>();
@@ -244,8 +243,7 @@ void Player::Update()
 	}
 	if (ImGui::TreeNode("ロウ回収系"))
 	{
-		ImGui::SliderFloat("ロウ回収範囲X", &waxCollectRange.x, 0.f, 100.f);
-		ImGui::SliderFloat("ロウ回収範囲Y", &waxCollectRange.y, 0.f, 1000.f);
+		ImGui::SliderFloat("ロウ回収範囲X", &waxCollectRange, 0.f, 100.f);
 		ImGui::SliderFloat("範囲objの透明度", &collectRangeModel.mTuneMaterial.mColor.a, 0.f, 1.f);
 
 		ImGui::TreePop();
@@ -279,8 +277,7 @@ void Player::Update()
 		Parameter::Save("初期方向X", initRot.x);
 		Parameter::Save("初期方向Y", initRot.y);
 		Parameter::Save("初期方向Z", initRot.z);
-		Parameter::Save("ロウ回収範囲X", waxCollectRange.x);
-		Parameter::Save("ロウ回収範囲Y", waxCollectRange.y);
+		Parameter::Save("ロウ回収範囲", waxCollectRange);
 		Parameter::Save("範囲objの透明度", collectRangeModel.mTuneMaterial.mColor.a);
 		Parameter::End();
 	}
@@ -643,16 +640,16 @@ void Player::WaxCollect()
 {
 	//トランスフォームはプレイヤー基準に
 	collectRangeModel.mTransform = obj.mTransform;
-	collectRangeModel.mTransform.scale = { waxCollectRange.x,0.1f,waxCollectRange.y };
+	collectRangeModel.mTransform.scale = { waxCollectRange,0.1f,1000.f };
 	//大きさ分前に置く
-	collectRangeModel.mTransform.position += GetFrontVec() * waxCollectRange.y * 0.5f;
+	collectRangeModel.mTransform.position += GetFrontVec() * 1000.f * 0.5f;
 	collectRangeModel.mTransform.UpdateMatrix();
 	collectRangeModel.TransferBuffer(Camera::sNowCamera->mViewProjection);
 
 	//当たり判定で使うレイの設定
 	collectCol.dir = GetFrontVec();
 	collectCol.start = GetFootPos();
-	collectCol.radius = waxCollectRange.x * 0.5f;
+	collectCol.radius = waxCollectRange * 0.5f;
 
 	if ((RInput::GetInstance()->GetPadButtonDown(XINPUT_GAMEPAD_X) ||
 		RInput::GetInstance()->GetKeyDown(DIK_Q)))

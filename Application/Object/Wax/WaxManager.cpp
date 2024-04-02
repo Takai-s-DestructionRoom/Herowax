@@ -241,7 +241,7 @@ float WaxManager::GetCalcHeatBonus()
 	return heatBonus * (float)isBurningNum;
 }
 
-bool ReturnCol(ColPrimitive3D::Ray rayCol, ColPrimitive3D::Sphere sphereCol)
+bool RayToSphereCol(ColPrimitive3D::Ray rayCol, ColPrimitive3D::Sphere sphereCol)
 {
 	Vector3 rayToSphere = sphereCol.pos - rayCol.start;
 
@@ -270,19 +270,26 @@ bool ReturnCol(ColPrimitive3D::Ray rayCol, ColPrimitive3D::Sphere sphereCol)
 void WaxManager::Collect(ColPrimitive3D::Ray collider)
 {
 	Wax* farObj = nullptr;
+	//bool isExistence = false;
 
 	for (auto& group : waxGroups)
 	{
 		for (auto& wax : group->waxs)
 		{
-			if (ReturnCol(collider, wax->collider))
+			//回収範囲内にいるなら
+			if (RayToSphereCol(collider, wax->collider))
 			{
+				//今一番遠いロウがないなら入れておく
 				if (farObj == nullptr)
 				{
 					farObj = wax.get();
 				}
+				//現状一番遠いロウとの距離
 				float oldLen = (collider.start - farObj->GetPos()).Length();
+				//今のロウとの距離
 				float len = (collider.start - wax->GetPos()).Length();
+
+				//一番遠いロウが更新されたら入れ替える
 				if (len > oldLen)
 				{
 					farObj = wax.get();
@@ -291,14 +298,16 @@ void WaxManager::Collect(ColPrimitive3D::Ray collider)
 		}
 	}
 
-	ParticleManager::GetInstance()->AddHoming(
-		farObj->obj.mTransform.position, farObj->obj.mTransform.scale,
-		10, 0.8f, farObj->waxOriginColor, "", 0.8f, 1.5f,
-		-Vector3::ONE * 0.3f, Vector3::ONE * 0.3f,
-		0.03f, -Vector3::ONE * 0.1f, Vector3::ONE * 0.1f, 0.3f, 0.5f);
+	//もし範囲内にロウがあった時
+	if (farObj != nullptr)
+	{
+		//一番遠いロウが決まったらパーティクル出して殺す
+		
 
-	farObj->isAlive = false;
-	farObj = nullptr;
+		farObj->collectPos = collider.start;
+		farObj->ChangeState<WaxCollect>();
+		//farObj = nullptr;	//消す
+	}
 }
 
 uint32_t WaxManager::GetWaxNum()

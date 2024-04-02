@@ -43,3 +43,13 @@ public:
 private:
 	Vector3 saveScale = { 0,0,0 };
 };
+
+class WaxCollect : public WaxState
+{
+public:
+	void Update(Wax* wax)override;
+
+private:
+	float accel = 0.f;			//回収の加速度
+	float accelAmount = 0.1f;	//回収の加速度合い
+};
