@@ -11,20 +11,27 @@
 #include "GraphicsPipeline.h"
 #include "Easing.h"
 
-static const int MAX_SPHERE_COUNT = 256;
+static const int MAX_SPHERE_COUNT = 1024;
 
 //テスト用にランダムに動く球
 class RandomSphere
 {
 public:
 	ColPrimitive3D::Sphere collider;
-	Easing::EaseTimer timer = 3.0f;
-	Vector3 moveVec = { 0,0,0 };
-	float moveSpeed = 0.01f;
+	bool isAlive = false;			//生きてるか
+	
+private:
+	Vector3 moveVec = { 0,0,0 };	//移動ベクトル
+	float moveSpeed = 0.01f;		//移動速度
+	float acceralation = 0.01f;		//落下加速度
+	float repercussion = 0.3f;		//跳ね返るときの強さ
+	int32_t repercussionNum = 0;	//跳ね返った回数
 
 public:
 	void Init();
 	void Update();
+
+	void HitCheck(const ColPrimitive3D::Plane& plane);
 };
 
 struct SlimeBuffer
@@ -48,10 +55,10 @@ private:
 	GraphicsPipeline SlimeShaderPipeLine();
 
 public:
+	std::vector<RandomSphere> spheres;	//シェーダーに送る球たち
 
 private:
 	BillboardImage screen; //球を移すスクリーンビルボード
-	std::vector<RandomSphere> spheres;	//シェーダーに送る球たち
 	bool isPlaneDraw = false;	//テスト用 ビルボードを描画するか
 
 	SRConstBuffer<SlimeBuffer> slimeBuff;	//シェーダーで使う情報

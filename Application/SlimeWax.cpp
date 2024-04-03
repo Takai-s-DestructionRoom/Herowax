@@ -29,15 +29,27 @@ void SlimeWax::Init()
 	{
 		spheres.emplace_back();
 		spheres.back().Init();
+		spheres.back().collider.pos = { 0,10,0 };
 	}
 }
 
 void SlimeWax::Update()
 {
-	//クランプ数を超えるならクランプする
-	if (rayMatchNum * spheres.size() >= rayMarchClampNum) {
-		rayMatchNum = rayMarchClampNum / (int32_t)spheres.size();
+	//死んでいるロウがあれば戻す
+	for (auto& sphere : spheres)
+	{
+		if (!sphere.isAlive)
+		{
+			sphere.Init();
+			sphere.collider.pos = { 0,10,0 };
+			sphere.isAlive = true;
+		}
 	}
+
+	////クランプ数を超えるならクランプする
+	//if (rayMatchNum * spheres.size() >= rayMarchClampNum) {
+	//	rayMatchNum = rayMarchClampNum / (int32_t)spheres.size();
+	//}
 
 	//カメラからビルボードの距離をそのままサイズにぶち込んで
 	//絶対にビルボードがカメラ画角すべてを埋めるようにする
@@ -51,15 +63,21 @@ void SlimeWax::Update()
 
 	//一番近い位置に配置
 	float minLength = 10000000.f;
+	float maxHeight = -10000000.f;
+	Vector3 save = screen.mTransform.position;
 	for (auto& sphere : spheres)
 	{
 		Vector3 sphereVec = sphere.collider.pos - Camera::sNowCamera->mViewProjection.mEye;
 		float rfMinLength = sphereVec.LengthSq() / 2;
 		if (minLength > rfMinLength) {
 			minLength = rfMinLength;
-			screen.mTransform.position = sphere.collider.pos - sphereVec.GetNormalize() * 5;
+			save = sphere.collider.pos - sphereVec.GetNormalize() * 5;
 		}
+		maxHeight = max(maxHeight, sphere.collider.pos.y);
 	}
+	
+	screen.mTransform.position = save;
+	//screen.mTransform.position.y = maxHeight;
 
 	screen.Update(Camera::sNowCamera->mViewProjection);
 
@@ -82,6 +100,8 @@ void SlimeWax::Update()
 	window_flags |= ImGuiWindowFlags_NoResize;
 
 	ImGui::Begin("RayMarchTest", NULL);
+	ImGui::Text("minLength %f", minLength);
+	ImGui::Text("save x:%f y:%f z:%f", save.x, save.y, save.z);
 	ImGui::Text("CameraPos x:%f y:%f z:%f",
 		Camera::sNowCamera->mViewProjection.mEye.x,
 		Camera::sNowCamera->mViewProjection.mEye.y,
@@ -90,7 +110,7 @@ void SlimeWax::Update()
 		Camera::sNowCamera->mViewProjection.mTarget.x,
 		Camera::sNowCamera->mViewProjection.mTarget.y,
 		Camera::sNowCamera->mViewProjection.mTarget.z);
-	ImGui::SliderInt("球の数(再生成しないと変わらない)", &changeNum,1,128);
+	ImGui::SliderInt("球の数(再生成しないと変わらない)", &changeNum,1, MAX_SPHERE_COUNT);
 	if (ImGui::Button("球再生成")) {
 		sphereNum = changeNum;
 		spheres.clear();
@@ -103,8 +123,10 @@ void SlimeWax::Update()
 	}
 	ImGui::Checkbox("板描画切り替え", &isPlaneDraw);
 	ImGui::DragFloat3("position", &screen.mTransform.position.x);
-	ImGui::Text("size x:%f y:%f", screen.mImage.GetSize().x, 
-		screen.mImage.GetSize().y);
+	/*ImGui::Text("size x:%f y:%f", screen.mImage.GetSize().x, screen.mImage.GetSize().y);*/
+	static Vector2 size = screen.mImage.GetSize();
+	ImGui::DragFloat2("size", &size.x);
+	screen.mImage.SetSize(size);
 	ImGui::DragFloat3("rotation", &screen.mTransform.rotation.x, 0.01f);
 	ImGui::SliderFloat("slimeValue", &slimeValue,0.01f,1.0f);
 	ImGui::SliderInt("rayMatchNum", &rayMatchNum,1,64);
@@ -209,28 +231,41 @@ GraphicsPipeline SlimeWax::SlimeShaderPipeLine()
 	return pipe;
 }
 
-
 void RandomSphere::Init()
 {
-	moveVec = Util::GetRandVector3({ 1,1,1 }, -1.0f, 1.0f);
+	moveVec = { 0,0,0 };
+
+	moveVec.x = Util::GetRand(-0.1f, 0.1f);
+	moveVec.z = Util::GetRand(-0.1f, 0.1f);
 
 	collider.r = Util::GetRand(1.0f, 3.0f);
-	moveSpeed = Util::GetRand(0.01f, 0.05f);
+	moveSpeed = Util::GetRand(0.5f, 1.5f);
 
-	timer.Start();
+	isAlive = true;
 }
 
 void RandomSphere::Update()
 {
+	moveVec.y -= acceralation;
+	
 	collider.pos += moveVec * moveSpeed;
+	collider.r -= acceralation;
 
-	timer.Update();
-	if (timer.GetEnd()) {
+	if (collider.r <= 0) {
+		isAlive = false;
+		collider.r = 0;
+	}
+}
 
-		timer.Start();
-		moveVec = -moveVec;
-		moveSpeed = Util::GetRand(0.01f, 0.05f);
-
-		collider.r = Util::GetRand(1.0f, 3.0f);
+void RandomSphere::HitCheck(const ColPrimitive3D::Plane& plane)
+{
+	if (ColPrimitive3D::CheckSphereToPlane(collider, plane)) {
+		moveVec.y = 0;
+		float calc = 0.02f * repercussionNum;
+		float hoge = 1.0f - calc;
+		hoge = Util::Clamp(hoge, 0.0f, 1000.f);
+		moveVec.y += repercussion * hoge;
+		
+		repercussionNum ++;
 	}
 }

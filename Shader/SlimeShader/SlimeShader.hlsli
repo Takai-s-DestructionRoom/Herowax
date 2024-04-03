@@ -69,7 +69,7 @@ struct VSOutput
     float2 uv : TEXCOORD; // uv’l
 };
 
-static const int MAX_SPHERE_COUNT = 256;
+static const int MAX_SPHERE_COUNT = 1024;
 
 cbuffer ConstBufferDataSlime : register(b4)
 {

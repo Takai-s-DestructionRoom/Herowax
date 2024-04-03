@@ -26,6 +26,9 @@ public:
 private:
 	SlimeWax slimeWax;
 
+	ModelObj skydome;
+	ModelObj plane;
+	
 	DebugCamera camera = DebugCamera({ 0, 0, -5 });
 	LightGroup light;
 };
