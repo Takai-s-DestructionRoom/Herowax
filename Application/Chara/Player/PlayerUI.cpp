@@ -2,6 +2,8 @@
 #include "Player.h"
 #include "InstantDrawer.h"
 #include "Texture.h"
+#include "Camera.h"
+#include "ImGui.h"
 
 void PlayerUI::LoadResource()
 {
@@ -20,6 +22,9 @@ PlayerUI::PlayerUI()
 		size[i] = { 5.f,0.2f };
 		maxSize[i] = size[i] * 1.1f;
 	}
+
+	iconSize = { 10.f,10.f };
+	iconColor = Color::kRed;
 }
 
 void PlayerUI::Update(Player* player)
@@ -37,6 +42,29 @@ void PlayerUI::Update(Player* player)
 
 	size[(uint32_t)UIType::fireGauge].x =
 		maxSize[(uint32_t)UIType::fireGauge].x * player->fireUnit.fireGauge / player->fireUnit.maxFireGauge;
+
+	Vector3 playerPos = { player->obj.mTransform.position.x,player->obj.mTransform.position.z,0 };
+	//Vector3 playerPos = { 10.f,20.f,30.f };
+	screenPos = Camera::sMinimapCamera->mViewProjection.WorldToScreen(playerPos);
+
+	ImGui::SetNextWindowSize({ 350, 100 });
+
+	ImGuiWindowFlags window_flags = 0;
+	window_flags |= ImGuiWindowFlags_NoResize;
+
+	// カメラ //
+	ImGui::Begin("MinimapIcon", NULL, window_flags);
+
+	ImGui::Text("座標:%f,%f",
+		screenPos.x,
+		screenPos.y);
+
+	ImGui::Text("ワールド座標:%f,%f,%f",
+		player->obj.mTransform.position.x,
+		player->obj.mTransform.position.y,
+		player->obj.mTransform.position.z);
+
+	ImGui::End();
 }
 
 void PlayerUI::Draw()
@@ -48,4 +76,7 @@ void PlayerUI::Draw()
 		InstantDrawer::DrawGraph3D(backPos, maxSize[i].x, maxSize[i].y, "white2x2", Color::kBlack);
 		InstantDrawer::DrawGraph3D(position[i], size[i].x, size[i].y, "white2x2", gaugeColor[i]);
 	}
+
+	InstantDrawer::DrawGraph(screenPos.x, screenPos.y,
+		iconSize.x, iconSize.y, 0, "white2x2", iconColor);
 }

@@ -21,6 +21,11 @@ public:
 	std::array<Vector2, 2> size;
 	std::array<Vector2, 2> maxSize;
 	std::array<Color, 2> gaugeColor;
+
+	Vector2 screenPos;
+	Vector2 iconSize;
+	Color iconColor;
+
 public:
 	static void LoadResource();
 	PlayerUI();

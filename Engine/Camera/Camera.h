@@ -25,5 +25,6 @@ public:
 	virtual void Update() {}
 
 	static Camera* sNowCamera;
+	static Camera* sMinimapCamera;
 };
 

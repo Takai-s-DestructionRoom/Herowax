@@ -28,6 +28,8 @@ public:
 	void Update() override;
 	void Draw() override;
 
+	void MinimapCameraUpdate();
+
 private:
 	ModelObj skydome;	//天球
 	Player player;
@@ -35,10 +37,13 @@ private:
 	EggUI eggUI;
 	BreakableObj nest;
 
-	Camera camera = Camera();
-	float cameraDist = -20.f;	//注視点からカメラの距離
-	Vector2 cameraAngle{};		//カメラアングル
-	float cameraSpeed = 0.0f;	//カメラの移動速度
+	Camera minimapCamera = Camera();	//ミニマップ用の仮想カメラ
+	float mmCameraDist = -100.f;		//注視点からカメラの距離
+
+	Camera camera = Camera();			//通常カメラ
+	float cameraDist = -20.f;			//注視点からカメラの距離
+	Vector2 cameraAngle{};				//カメラアングル
+	float cameraSpeed = 0.0f;			//カメラの移動速度
 	Vector2 mAngle = { 0, 0 };
 	LightGroup light;
 

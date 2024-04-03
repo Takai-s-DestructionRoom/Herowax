@@ -39,6 +39,7 @@ ProtoScene::ProtoScene()
 void ProtoScene::Init()
 {
 	Camera::sNowCamera = &camera;
+	Camera::sMinimapCamera = &minimapCamera;
 
 	std::map<std::string, std::string> extract = Parameter::Extract("Camera");
 	cameraDist = Parameter::GetParam(extract,"カメラ距離", -20.f);
@@ -103,6 +104,8 @@ void ProtoScene::Update()
 	//プレイヤーの方向いてくれる
 	camera.mViewProjection.mTarget = player.GetPos();
 	camera.mViewProjection.UpdateMatrix();
+
+	MinimapCameraUpdate();
 
 	//ここに無限に当たり判定増やしていくの嫌なのであとで何か作ります
 	//クソ手抜き当たり判定
@@ -435,4 +438,20 @@ void ProtoScene::Draw()
 	//更新
 	InstantDrawer::AllUpdate();
 	InstantDrawer::AllDraw2D();
+}
+
+void ProtoScene::MinimapCameraUpdate()
+{
+	Vector3 mmCameraVec = { 0, 0, 1 };
+	//カメラアングル適応
+	mmCameraVec *= Quaternion::AngleAxis(Vector3(1, 0, 0).Cross(mmCameraVec), 90.f);
+	mmCameraVec *= Quaternion::AngleAxis(Vector3(0, 1, 0).Cross(mmCameraVec), 0.f);
+	//カメラの距離適応
+	mmCameraVec *= mmCameraDist;
+
+	//プレイヤーと一定の距離を保って着いていく
+	minimapCamera.mViewProjection.mEye = mmCameraVec;
+	//プレイヤーの方向いてくれる
+	minimapCamera.mViewProjection.mTarget = Vector3::ZERO;
+	minimapCamera.mViewProjection.UpdateMatrix();
 }
