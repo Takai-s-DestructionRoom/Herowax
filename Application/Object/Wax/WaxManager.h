@@ -50,7 +50,7 @@ public:
 	float GetCalcHeatBonus();
 
 	//回収される
-	void Collect(ColPrimitive3D::Ray collider);
+	bool Collect(ColPrimitive3D::Ray collider);
 	
 	uint32_t GetWaxNum();
 

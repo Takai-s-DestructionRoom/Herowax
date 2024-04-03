@@ -657,6 +657,22 @@ void Player::WaxCollect()
 	collectCol.start = GetFootPos();
 	collectCol.radius = waxCollectRange * 0.5f;
 
+	//回収したロウに応じてストック増やす
+	if (isWaxStock && WaxManager::GetInstance()->isCollected)
+	{
+		if (waxCollectAmount > 0)
+		{
+			waxStock += waxCollectAmount;
+			waxCollectAmount = 0;
+		}
+
+		//最大量を超えて回収してたら最大量を増やす
+		if (waxStock > maxWaxStock)
+		{
+			maxWaxStock = waxStock;
+		}
+	}
+
 	//回収ボタンポチーw
 	if ((RInput::GetInstance()->GetPadButtonDown(XINPUT_GAMEPAD_LEFT_SHOULDER) ||
 		RInput::GetInstance()->GetLTriggerDown()||
@@ -666,9 +682,9 @@ void Player::WaxCollect()
 		if (isWaxStock && WaxManager::GetInstance()->isCollected)
 		{
 			//ロウ回収
-			WaxManager::GetInstance()->Collect(collectCol);
+			waxCollectAmount = WaxManager::GetInstance()->Collect(collectCol);
 			//ストック最大に(敵の数とか回収したロウに応じて変化する形に変更)
-			waxStock = maxWaxStock;
+			//waxStock = maxWaxStock;
 		}
 	}
 }

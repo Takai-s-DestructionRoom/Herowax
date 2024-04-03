@@ -268,7 +268,7 @@ bool RayToSphereCol(ColPrimitive3D::Ray rayCol, ColPrimitive3D::Sphere sphereCol
 	return false;
 }
 
-void WaxManager::Collect(ColPrimitive3D::Ray collider)
+bool WaxManager::Collect(ColPrimitive3D::Ray collider)
 {
 	Wax* farObj = nullptr;
 	//bool isExistence = false;
@@ -306,7 +306,12 @@ void WaxManager::Collect(ColPrimitive3D::Ray collider)
 		farObj->collectPos = collider.start;
 		farObj->ChangeState<WaxCollect>();
 		//farObj = nullptr;	//消す
+
+		isCollected = false;
+		return true;
 	}
+
+	return false;
 }
 
 uint32_t WaxManager::GetWaxNum()
