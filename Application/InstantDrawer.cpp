@@ -129,6 +129,8 @@ void InstantDrawer::AllDraw2D()
 
 void InstantDrawer::PreCreate()
 {
+	if (Get()->mCreated) return;
+	Get()->mCreated = true;
 	for (int32_t i = 0; i < SP_MAX; i++)
 	{
 		Get()->sSprites.emplace_back();

@@ -35,7 +35,8 @@ public:
 
 	//コピー対策
 	SRVertexBuffer(const SRVertexBuffer& o) {
-		std::lock_guard<std::recursive_mutex> lock(sMutex);
+		std::lock_guard<std::recursive_mutex> lock(SRBufferAllocator::GetInstance()->sMutex);
+		std::lock_guard<std::recursive_mutex> lock2(sMutex);
 		if (mData != nullptr) {
 			mData->count--;
 			if (mData->count == 0) {
@@ -47,7 +48,8 @@ public:
 	}
 
 	SRVertexBuffer& operator=(const SRVertexBuffer& o) {
-		std::lock_guard<std::recursive_mutex> lock(sMutex);
+		std::lock_guard<std::recursive_mutex> lock(SRBufferAllocator::GetInstance()->sMutex);
+		std::lock_guard<std::recursive_mutex> lock2(sMutex);
 		if (this != &o) {
 			if (mData != nullptr) {
 				mData->count--;

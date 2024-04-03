@@ -81,6 +81,7 @@ private:
 		return &instance;
 	}
 
+	bool mCreated = false;
 	//この描画クラスで1画面に同時に描画できる最大数
 	static const int SP_MAX = 100;
 	std::list<InstantSprite> sSprites;

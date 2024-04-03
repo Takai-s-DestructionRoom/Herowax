@@ -58,7 +58,6 @@ public:
 
 		SceneChange sc{};
 		sc.futureMakeScene = std::make_shared<std::future<std::shared_ptr<IScene>>>(std::async(std::launch::deferred, [] {
-			std::lock_guard<std::recursive_mutex> lock(SRBufferAllocator::sMutex);
 			std::shared_ptr<IScene> newScene = std::make_shared<SceneClassName>();
 			return newScene;
 		}));

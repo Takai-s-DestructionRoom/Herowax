@@ -89,6 +89,8 @@ void DebugGUI::Show()
 			ImGui::Text("SRBuffer");
 			ImGui::Text(("Using : " + buffUsingSizeStr + " / " + buffTotalSizeStr + "(%.2lf%%)").c_str(), static_cast<double>(buffUsingSize) / buffTotalSize * 100);
 			ImGui::Text("(Raw : %lld / %lld)", buffUsingSize, buffTotalSize);
+			ImGui::Text(Util::StringFormat("UsingRegion: %lld", SRBufferAllocator::GetUsingRegionCount()).c_str());
+			ImGui::Text(Util::StringFormat("FreeRegion: %lld", SRBufferAllocator::GetFreeRegionCount()).c_str());
 			ImGui::ProgressBar(static_cast<float>(buffUsingSize) / buffTotalSize);
 			ImGui::EndTabItem();
 		}

@@ -89,32 +89,6 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 	}
 #endif
 
-	class HOGEO {
-	public:
-		HOGEO() {
-			Util::DebugLog("hoge const");
-		}
-
-		~HOGEO() {
-			Util::DebugLog("hoge dest");
-			if (hoge) {
-				Util::DebugLog("HOGE!");
-			}
-		}
-
-		void Init() {
-			hoge = true;
-		}
-
-	private:
-		bool hoge;
-	};
-
-	HOGEO hogehoge = HOGEO();
-	hogehoge.Init();
-	hogehoge = HOGEO();
-	hogehoge.Init();
-
 	///////////////////
 
 	D3D12_VIEWPORT viewportS{};

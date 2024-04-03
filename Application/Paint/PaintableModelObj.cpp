@@ -11,6 +11,37 @@ PaintableModelObj::~PaintableModelObj()
 	}
 }
 
+PaintableModelObj::PaintableModelObj(const PaintableModelObj& o)
+	: ModelObj(o)
+{
+	if (this != &o) {
+		if (mSetuped) {
+			for (RenderTexture* rt : mRenderTargets) {
+				RenderTarget::DeleteRenderTextureAtEndFrame(rt);
+			}
+		}
+	}
+
+	this->mSetuped = o.mSetuped;
+	this->mRenderTargets = o.mRenderTargets;
+}
+
+PaintableModelObj& PaintableModelObj::operator=(const PaintableModelObj& o)
+{
+	ModelObj::operator=(o);
+	if (this != &o) {
+		if (mSetuped) {
+			for (RenderTexture* rt : mRenderTargets) {
+				RenderTarget::DeleteRenderTextureAtEndFrame(rt);
+			}
+		}
+	}
+
+	this->mSetuped = o.mSetuped;
+	this->mRenderTargets = o.mRenderTargets;
+	return *this;
+}
+
 void PaintableModelObj::SetupPaint()
 {
 	mSetuped = true;

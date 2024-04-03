@@ -104,6 +104,16 @@ public:
 		return static_cast<size_t>(GetInstance()->mPtrBufferEnd - GetInstance()->mPtrBufferBegin + 1);
 	}
 
+	static size_t GetUsingRegionCount() {
+		std::lock_guard<std::recursive_mutex> lock(GetInstance()->sMutex);
+		return GetInstance()->mUsingRegions.size();
+	}
+
+	static size_t GetFreeRegionCount() {
+		std::lock_guard<std::recursive_mutex> lock(GetInstance()->sMutex);
+		return GetInstance()->mFreeRegions.size();
+	}
+
 	void DeFlag();
 	void ResizeBuffer();
 
