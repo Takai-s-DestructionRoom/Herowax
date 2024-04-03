@@ -119,7 +119,7 @@ void SlimeWax::Update()
 			spheres.emplace_back();
 			spheres.back().Init();
 		}
-		rayMatchNum = rayMarchClampNum / (int32_t)spheres.size();
+		//rayMatchNum = rayMarchClampNum / (int32_t)spheres.size();
 	}
 	ImGui::Checkbox("板描画切り替え", &isPlaneDraw);
 	ImGui::DragFloat3("position", &screen.mTransform.position.x);
