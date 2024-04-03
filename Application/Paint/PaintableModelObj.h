@@ -18,6 +18,12 @@ public:
 
 	~PaintableModelObj();
 
+	//コピーコンストラクタ
+	PaintableModelObj(const PaintableModelObj& o);
+
+	//コピー代入
+	PaintableModelObj& operator=(const PaintableModelObj& o);
+
 	//テクスチャペイント用の準備をする
 	//どっかで呼んでください
 	void SetupPaint();

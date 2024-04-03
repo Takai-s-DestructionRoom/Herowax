@@ -31,7 +31,7 @@ void SceneManager::Finalize()
 }
 
 SceneManager::SceneManager() {
-	mLoadingMark = Sprite(TextureManager::Load("Resources/loadingMark.png", "LoadingMark"));
+	mLoadingMark = Sprite(TextureManager::Load("Resources/Internals/loadingMark.png", "LoadingMark"));
 }
 
 SceneManager::~SceneManager()

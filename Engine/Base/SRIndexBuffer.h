@@ -34,7 +34,8 @@ public:
 
 	//コピー対策
 	SRIndexBuffer(const SRIndexBuffer& o) {
-		std::lock_guard<std::recursive_mutex> lock(sMutex);
+		std::lock_guard<std::recursive_mutex> lock(SRBufferAllocator::GetInstance()->sMutex);
+		std::lock_guard<std::recursive_mutex> lock2(sMutex);
 		if (mData != nullptr) {
 			mData->count--;
 			if (mData->count == 0) {
@@ -46,7 +47,8 @@ public:
 	}
 
 	SRIndexBuffer& operator=(const SRIndexBuffer& o) {
-		std::lock_guard<std::recursive_mutex> lock(sMutex);
+		std::lock_guard<std::recursive_mutex> lock(SRBufferAllocator::GetInstance()->sMutex);
+		std::lock_guard<std::recursive_mutex> lock2(sMutex);
 		if (this != &o) {
 			if (mData != nullptr) {
 				mData->count--;
