@@ -165,8 +165,17 @@ void ProtoScene::Update()
 				}
 
 				//燃えてるロウと当たったら燃えてる状態に遷移
-				if (isCollision && wax->GetState() != "Normal") {
+				if (isCollision && wax->GetState() == "WaxBurning") {
 					enemy->ChangeState<EnemyBurning>();
+				}
+
+				//回収中ものと通常の状態なら
+				if (isCollision && wax->stateStr == "WaxCollect")
+				{
+					//死ぬ
+					enemy->SetDeath();
+
+					player.waxCollectAmount++;
 				}
 			}
 		}

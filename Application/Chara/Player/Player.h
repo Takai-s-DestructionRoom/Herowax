@@ -68,7 +68,7 @@ public:
 	float pabloSpeedMag;		//パブロ攻撃時の移動速度
 	float shotDeadZone = 1.0f;
 	float pabloShotSpeedMag = 2.f;	//プレイヤーの正面に出すための係数
-	int32_t waxNum = 5;
+	int32_t waxNum = 5;				//一度に出るロウの数
 
 	//------------ 炎関係 ------------//
 	FireUnit fireUnit;

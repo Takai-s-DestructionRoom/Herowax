@@ -574,9 +574,6 @@ void Player::PabloAttack()
 	if (atkCoolTimer.GetRun() || waxStock <= 0)return;
 	atkCoolTimer.Start();
 
-	//ストック減らす
-	waxStock--;
-
 	Vector3 pabloVec = { 0,0,0 };
 	//入力があるならそっちへ
 	pabloVec = GetFrontVec();
@@ -618,6 +615,9 @@ void Player::PabloAttack()
 
 	for (int32_t i = 0; i < waxNum; i++)
 	{
+		//ストック減らす
+		waxStock--;
+
 		Transform spawnTrans = obj.mTransform;
 		//横のランダムを決定
 		spawnTrans.position.x += Util::GetRand(sideRandMin.x, sideRandMax.x);
