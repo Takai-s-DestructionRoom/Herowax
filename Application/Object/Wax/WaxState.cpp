@@ -121,6 +121,7 @@ void WaxCollect::Update(Wax* wax)
 {
 	wax->SetStateStr("WaxCollect");
 
+	WaxManager::GetInstance()->isCollected = false;
 	accel += accelAmount;
 
 	Vector3 moveVec =
@@ -133,13 +134,10 @@ void WaxCollect::Update(Wax* wax)
 	//到達したら殺す
 	if (moveVec.Length() <= 2.f)
 	{
-		ParticleManager::GetInstance()->AddHoming(
-			wax->obj.mTransform.position, wax->obj.mTransform.scale,
-			10, 0.8f, wax->waxOriginColor, "", 0.8f, 1.5f,
-			-Vector3::ONE * 0.3f, Vector3::ONE * 0.3f,
-			0.03f, -Vector3::ONE * 0.1f, Vector3::ONE * 0.1f, 0.3f, 0.5f);
-
+		wax->DeadParticle();
 		wax->isAlive = false;
 		accel = 0.f;
+
+		WaxManager::GetInstance()->isCollected = true;
 	}
 }

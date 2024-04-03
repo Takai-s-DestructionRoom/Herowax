@@ -28,6 +28,8 @@ public:
 	float heatUpTemperature;	//蝋が燃えたときに上がる温度
 	uint32_t waxDamage;
 
+	bool isCollected = true;	//回収し終えたか
+
 public:
 	//シングルトンインスタンス取得
 	static WaxManager* GetInstance();

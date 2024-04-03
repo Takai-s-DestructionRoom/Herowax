@@ -46,10 +46,12 @@ public:
 
 	bool isMugenAttack = false;		//攻撃中でも次の攻撃を出せるフラグ
 
+	//----------- ロウ回収関連 ------------//
 	int32_t waxStock;			//ロウストック
 	int32_t maxWaxStock;		//ロウストック最大値
 	bool isWaxStock;			//ストック性にするかフラグ
 
+	bool isCollect;						//回収できる状態か
 	float waxCollectRange;				//ロウ回収する範囲
 	ColPrimitive3D::Ray collectCol;		//ロウ回収する範囲当たり判定
 	ModelObj collectRangeModel;			//ロウ回収範囲描画用
@@ -79,6 +81,7 @@ public:
 
 public:
 	Player();
+
 	void Init()override;
 	void Update()override;
 	void Draw()override;
@@ -115,4 +118,5 @@ public:
 	Vector3 GetFootPos();
 
 	// セッター //
+	void SetIsCollect(bool frag) { isCollect = frag; }
 };

@@ -76,6 +76,8 @@ public:
 		nextState = std::make_unique<ChangeWaxState>();
 	};
 
+	void DeadParticle();
+
 	// ゲッター //
 	//固まった瞬間かどうかを返す
 	bool GetIsSolidNow();

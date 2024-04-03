@@ -16,7 +16,7 @@ moveSpeed(1.f), moveAccelAmount(0.05f), isGround(true), hp(0), maxHP(10.f),
 isJumping(false), jumpTimer(0.2f), jumpHeight(0.f), maxJumpHeight(5.f), jumpPower(2.f), jumpSpeed(0.f),
 isAttack(false), atkSpeed(1.f), atkRange({ 3.f,5.f }), atkSize(0.f), atkPower(1),
 atkCoolTimer(0.3f), atkTimer(0.5f), atkHeight(1.f), solidTimer(5.f),
-isFireStock(false), isWaxStock(false), maxWaxStock(20)
+isFireStock(false), isWaxStock(true), maxWaxStock(20)
 {
 	std::map<std::string, std::string> extract = Parameter::Extract("Player");
 	moveSpeed = Parameter::GetParam(extract, "移動速度", 1.f);
@@ -245,6 +245,7 @@ void Player::Update()
 	{
 		ImGui::SliderFloat("ロウ回収範囲X", &waxCollectRange, 0.f, 100.f);
 		ImGui::SliderFloat("範囲objの透明度", &collectRangeModel.mTuneMaterial.mColor.a, 0.f, 1.f);
+		ImGui::Text("回収できる状態か:%d", WaxManager::GetInstance()->isCollected);
 
 		ImGui::TreePop();
 	}
@@ -338,7 +339,9 @@ void Player::MovePad()
 	}
 
 	moveAccel = Util::Clamp(moveAccel, 0.f, 1.f);			//無限に増減しないよう抑える
-	moveVec *= moveSpeed * moveAccel;						//移動速度をかけ合わせたら完成
+	moveVec *= 
+		moveSpeed * moveAccel * 
+		WaxManager::GetInstance()->isCollected;				//移動速度をかけ合わせたら完成(回収中は動けない)
 	obj.mTransform.position += moveVec;						//完成したものを座標に足し合わせる
 
 	//接地時にAボタン押すと
@@ -393,8 +396,8 @@ void Player::MoveKey()
 	keyVec.x = (float)(RInput::GetInstance()->GetKey(DIK_D) - RInput::GetInstance()->GetKey(DIK_A));
 	keyVec.y = (float)(RInput::GetInstance()->GetKey(DIK_W) - RInput::GetInstance()->GetKey(DIK_S));
 
-	//キー入力されてたら
-	if (keyVec.LengthSq() > 0.f) {
+	//キー入力されてて回収中じゃないなら
+	if (keyVec.LengthSq() > 0.f && WaxManager::GetInstance()->isCollected) {
 		//カメラから注視点へのベクトル
 		Vector3 cameraVec = Camera::sNowCamera->mViewProjection.mTarget - Camera::sNowCamera->mViewProjection.mEye;
 		//カメラの角度
@@ -415,7 +418,9 @@ void Player::MoveKey()
 	}
 
 	moveAccel = Util::Clamp(moveAccel, 0.f, moveVec.LengthSq());
-	moveVec *= moveSpeed * moveAccel;						//移動速度をかけ合わせたら完成
+	moveVec *=
+		moveSpeed * moveAccel *
+		WaxManager::GetInstance()->isCollected;				//移動速度をかけ合わせたら完成(回収中は動けない)
 	obj.mTransform.position += moveVec;						//完成したものを座標に足し合わせる
 
 	//接地時にスペース押すと
@@ -499,7 +504,8 @@ void Player::Rotation()
 	}
 
 	Vector2 LStick = RInput::GetInstance()->GetLStick(true, false);
-	if (LStick.LengthSq() > 0) {
+	//スティック入力されてて回収中じゃなければ
+	if (LStick.LengthSq() > 0 && WaxManager::GetInstance()->isCollected) {
 		//カメラから注視点へのベクトル
 		Vector3 cameraVec = Camera::sNowCamera->mViewProjection.mTarget -
 			Camera::sNowCamera->mViewProjection.mEye;
@@ -651,12 +657,14 @@ void Player::WaxCollect()
 	collectCol.start = GetFootPos();
 	collectCol.radius = waxCollectRange * 0.5f;
 
+	//回収ボタンポチーw
 	if ((RInput::GetInstance()->GetPadButtonDown(XINPUT_GAMEPAD_X) ||
 		RInput::GetInstance()->GetKeyDown(DIK_Q)))
 	{
-		if (isWaxStock)
+		//ロウがストック性かつ回収できる状態なら
+		if (isWaxStock && WaxManager::GetInstance()->isCollected)
 		{
-			//ロウ全部消して
+			//ロウ回収
 			WaxManager::GetInstance()->Collect(collectCol);
 			//ストック最大に(敵の数とか回収したロウに応じて変化する形に変更)
 			waxStock = maxWaxStock;

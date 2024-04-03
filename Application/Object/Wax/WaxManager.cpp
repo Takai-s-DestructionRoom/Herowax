@@ -138,6 +138,7 @@ WaxManager::WaxManager() :
 void WaxManager::Init()
 {
 	waxGroups.clear();
+	isCollected = true;
 }
 
 void WaxManager::Update()
@@ -301,9 +302,7 @@ void WaxManager::Collect(ColPrimitive3D::Ray collider)
 	//もし範囲内にロウがあった時
 	if (farObj != nullptr)
 	{
-		//一番遠いロウが決まったらパーティクル出して殺す
-		
-
+		//回収モードにする
 		farObj->collectPos = collider.start;
 		farObj->ChangeState<WaxCollect>();
 		//farObj = nullptr;	//消す
