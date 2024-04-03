@@ -1,0 +1,5 @@
+sphereNum:32
+slimeValue:1
+rayMatchNum:64
+clipValue:1
+rayMarchClampNum:2048

@@ -7,16 +7,6 @@ using namespace std;
 
 std::ofstream Parameter::writing_file;
 
-void Parameter::Save(std::string handle, std::string data)
-{
-	//ハンドル側に":"を入れるなほげが
-	if (Util::ContainString(handle,":") )
-	{
-		assert(0);
-	}
-	writing_file << handle << ":" << data << std::endl;
-}
-
 void Parameter::Begin(std::string filename)
 {
 	std::string outputName = "";
@@ -27,8 +17,28 @@ void Parameter::Begin(std::string filename)
 	writing_file.open(path, std::ios::out);
 }
 
+void Parameter::Save(std::string handle, std::string data)
+{
+	//ハンドル側に":"を入れるなほげが
+	if (Util::ContainString(handle, ":"))
+	{
+		assert(0);
+	}
+	writing_file << handle << ":" << data << std::endl;
+}
+
 void Parameter::Save(const std::string& handle, float data)
 {
+	//ハンドル側に":"を入れるなほげが
+	if (Util::ContainString(handle, ":"))
+	{
+		assert(0 && "ハンドル側に:を入れるなほげが");
+	}
+	writing_file << handle << ":" << data << std::endl;;
+}
+
+void Parameter::Save(const std::string& handle, int32_t data)
+{	
 	//ハンドル側に":"を入れるなほげが
 	if (Util::ContainString(handle, ":"))
 	{

@@ -277,6 +277,9 @@
     <Filter Include="シェーダー ファイル\SlimeShader">
       <UniqueIdentifier>{20aa1731-e734-4a40-b7de-5feba339ad7c}</UniqueIdentifier>
     </Filter>
+    <Filter Include="ソース ファイル\Application\Object\SlimeWax">
+      <UniqueIdentifier>{ece5df52-a5df-4d55-9954-8d4bcf121980}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Engine\2d\Sprite.cpp">
@@ -632,6 +635,9 @@
     </ClCompile>
     <ClCompile Include="Application\RayMarchTestScene.cpp">
       <Filter>ソース ファイル\Application\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="Application\SlimeWax.cpp">
+      <Filter>ソース ファイル</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -1161,6 +1167,9 @@
     </ClInclude>
     <ClInclude Include="Application\RayMarchTestScene.h">
       <Filter>ヘッダー ファイル\Application\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="Application\SlimeWax.h">
+      <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

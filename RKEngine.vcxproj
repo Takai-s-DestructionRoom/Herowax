@@ -263,6 +263,7 @@
     <ClCompile Include="Application\Wave.cpp" />
     <ClCompile Include="Application\PhysicsCircle.cpp" />
     <ClCompile Include="Application\RayMarchTestScene.cpp" />
+    <ClCompile Include="Application\SlimeWax.cpp" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Shader\Basic\BasicPS.hlsl">
@@ -773,6 +774,7 @@
     <ClInclude Include="Engine\Particle\HomingParticle.h" />
     <ClInclude Include="Application\PhysicsCircle.h" />
     <ClInclude Include="Application\RayMarchTestScene.h" />
+    <ClInclude Include="Application\SlimeWax.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Shader\Bloom\Bloom.hlsli" />
