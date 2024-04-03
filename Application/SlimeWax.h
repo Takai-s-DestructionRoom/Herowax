@@ -27,6 +27,8 @@ private:
 	float repercussion = 0.3f;		//跳ね返るときの強さ
 	int32_t repercussionNum = 0;	//跳ね返った回数
 
+	Vector3 ground = { 0,0,0 };
+
 public:
 	void Init();
 	void Update();
@@ -52,13 +54,20 @@ public:
 	void Draw()override;
 
 private:
-	GraphicsPipeline SlimeShaderPipeLine();
+	GraphicsPipeline SlimeShaderPipeLine();	//パイプライン生成
+	Vector3 GetNearSpherePosition();		//一番カメラに近い球の位置を返す
+	void ScreenSizeForce();					//サイズ変更
+	void TransferBuffer();					//バッファへ転送
+	void ImGui();							//ImGui
 
 public:
-	std::vector<RandomSphere> spheres;	//シェーダーに送る球たち
+	std::vector<RandomSphere> spheres;		//シェーダーに送る球たち
 
+	Vector3 sphereCenter = {0,0,0};			//球の生成位置
+	Vector3 masterMoveVec = { 0,0,0 };		//これが動くとすべてのオブジェクトが動く
 private:
-	BillboardImage screen; //球を移すスクリーンビルボード
+
+	BillboardImage screen;			//球を映すスクリーンビルボード
 	bool isPlaneDraw = false;	//テスト用 ビルボードを描画するか
 
 	SRConstBuffer<SlimeBuffer> slimeBuff;	//シェーダーで使う情報
@@ -68,11 +77,9 @@ private:
 	int32_t rayMatchNum = 16;	//1ピクセル当たりどのくらいレイを飛ばすか
 	float clipValue = 1.0f;		//計算結果がどのくらい近かったら描画するか
 								//(だいたいリムライトの強さと思ってもらって問題ない)
-
-	//レイマーチの周回数と球の合計数を掛けた値の上限値
-	//(シェーダーで1ピクセル当たりにループする回数)
-	int32_t rayMarchClampNum = 2048;
-
+	
 	int32_t changeNum = 0;
+
+	std::vector<Vector3> spline;
 };
 

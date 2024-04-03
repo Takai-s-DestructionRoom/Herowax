@@ -22,14 +22,15 @@ void SlimeWax::Init()
 	slimeValue = Parameter::GetParam(extract,"slimeValue", slimeValue);
 	rayMatchNum = (int32_t)Parameter::GetParam(extract,"rayMatchNum", (float)rayMatchNum);
 	clipValue = Parameter::GetParam(extract,"clipValue", clipValue);
-	rayMarchClampNum = (int32_t)Parameter::GetParam(extract,"rayMarchClampNum", (float)rayMarchClampNum);
+	
+	sphereCenter = { 0,10,0 };
 
 	spheres.clear();
 	for (int32_t i = 0; i < sphereNum; i++)
 	{
 		spheres.emplace_back();
 		spheres.back().Init();
-		spheres.back().collider.pos = { 0,10,0 };
+		spheres.back().collider.pos = sphereCenter;
 	}
 }
 
@@ -41,114 +42,29 @@ void SlimeWax::Update()
 		if (!sphere.isAlive)
 		{
 			sphere.Init();
-			sphere.collider.pos = { 0,10,0 };
+			sphere.collider.pos = sphereCenter;
 			sphere.isAlive = true;
 		}
 	}
 
-	////クランプ数を超えるならクランプする
-	//if (rayMatchNum * spheres.size() >= rayMarchClampNum) {
-	//	rayMatchNum = rayMarchClampNum / (int32_t)spheres.size();
-	//}
+	ScreenSizeForce();
 
-	//カメラからビルボードの距離をそのままサイズにぶち込んで
-	//絶対にビルボードがカメラ画角すべてを埋めるようにする
-	Vector3 billboardVec = screen.mTransform.position - Camera::sNowCamera->mViewProjection.mEye;
-	float billboardLength = billboardVec.LengthSq() / 2;
-	screen.mImage.SetSize(Vector2(billboardLength, billboardLength));
-
-	//こうしているのは、描画したいメタボールが描画の基準となっている
-	//オブジェクトから離れすぎると描画されなくなってしまうため
-	//ビルボードのワールドの位置は変えずに、無理やり画角に収まるようにしたパワー
+	ImGui();
 
 	//一番近い位置に配置
-	float minLength = 10000000.f;
-	float maxHeight = -10000000.f;
-	Vector3 save = screen.mTransform.position;
-	for (auto& sphere : spheres)
-	{
-		Vector3 sphereVec = sphere.collider.pos - Camera::sNowCamera->mViewProjection.mEye;
-		float rfMinLength = sphereVec.LengthSq() / 2;
-		if (minLength > rfMinLength) {
-			minLength = rfMinLength;
-			save = sphere.collider.pos - sphereVec.GetNormalize() * 5;
-		}
-		maxHeight = max(maxHeight, sphere.collider.pos.y);
-	}
+	screen.mTransform.position = GetNearSpherePosition();
 	
-	screen.mTransform.position = save;
-	//screen.mTransform.position.y = maxHeight;
-
 	screen.Update(Camera::sNowCamera->mViewProjection);
 
-	//バッファにデータ転送(今はメッシュ描画も行いたいのでモデルオブジェで
-	//作っているが、後々posとradiusだけのデータに置き換えて送るようにする)
-	for (int32_t i = 0; i < sphereNum; i++)
+	sphereCenter += masterMoveVec;
+	for (auto& sphere : spheres)
 	{
-		spheres[i].Update();
-
-		slimeBuff->spheres[i].x = spheres[i].collider.pos.x;
-		slimeBuff->spheres[i].y = spheres[i].collider.pos.y;
-		slimeBuff->spheres[i].z = spheres[i].collider.pos.z;
-		//wをradiusとして扱うようにしてデータ圧縮
-		slimeBuff->spheres[i].w = spheres[i].collider.r;
+		//sphere.collider.pos += masterMoveVec; 
+		sphere.Update();
 	}
+	masterMoveVec = { 0,0,0 };
 
-	ImGui::SetNextWindowSize({ 300, 200 });
-
-	ImGuiWindowFlags window_flags = 0;
-	window_flags |= ImGuiWindowFlags_NoResize;
-
-	ImGui::Begin("RayMarchTest", NULL);
-	ImGui::Text("minLength %f", minLength);
-	ImGui::Text("save x:%f y:%f z:%f", save.x, save.y, save.z);
-	ImGui::Text("CameraPos x:%f y:%f z:%f",
-		Camera::sNowCamera->mViewProjection.mEye.x,
-		Camera::sNowCamera->mViewProjection.mEye.y,
-		Camera::sNowCamera->mViewProjection.mEye.z);
-	ImGui::Text("CameraTarget x:%f y:%f z:%f",
-		Camera::sNowCamera->mViewProjection.mTarget.x,
-		Camera::sNowCamera->mViewProjection.mTarget.y,
-		Camera::sNowCamera->mViewProjection.mTarget.z);
-	ImGui::SliderInt("球の数(再生成しないと変わらない)", &changeNum,1, MAX_SPHERE_COUNT);
-	if (ImGui::Button("球再生成")) {
-		sphereNum = changeNum;
-		spheres.clear();
-		for (int32_t i = 0; i < sphereNum; i++)
-		{
-			spheres.emplace_back();
-			spheres.back().Init();
-		}
-		//rayMatchNum = rayMarchClampNum / (int32_t)spheres.size();
-	}
-	ImGui::Checkbox("板描画切り替え", &isPlaneDraw);
-	ImGui::DragFloat3("position", &screen.mTransform.position.x);
-	/*ImGui::Text("size x:%f y:%f", screen.mImage.GetSize().x, screen.mImage.GetSize().y);*/
-	static Vector2 size = screen.mImage.GetSize();
-	ImGui::DragFloat2("size", &size.x);
-	screen.mImage.SetSize(size);
-	ImGui::DragFloat3("rotation", &screen.mTransform.rotation.x, 0.01f);
-	ImGui::SliderFloat("slimeValue", &slimeValue,0.01f,1.0f);
-	ImGui::SliderInt("rayMatchNum", &rayMatchNum,1,64);
-	ImGui::InputFloat("clipValue", &clipValue,0.001f);
-	ImGui::SliderInt("rayMarchClampNum", &rayMarchClampNum,0,2048);
-	if (ImGui::Button("セーブ")) {
-		Parameter::Begin("slimeWax");
-		Parameter::Save("sphereNum", sphereNum);
-		Parameter::Save("slimeValue", slimeValue);
-		Parameter::Save("rayMatchNum", rayMatchNum);
-		Parameter::Save("clipValue", clipValue);
-		Parameter::Save("rayMarchClampNum", rayMarchClampNum);
-		Parameter::End();
-	}
-
-	ImGui::End();
-
-	//バッファへ転送
-	slimeBuff->sphereNum = sphereNum;
-	slimeBuff->slimeValue = slimeValue;
-	slimeBuff->rayMatchNum = rayMatchNum;
-	slimeBuff->clipValue = clipValue;
+	TransferBuffer();
 }
 
 void SlimeWax::Draw()
@@ -173,7 +89,7 @@ void SlimeWax::Draw()
 		{RootDataType::SRBUFFER_CBV, slimeBuff.mBuff },
 	};
 
-	Renderer::DrawCall("Opaque", order);
+	Renderer::DrawCall("Transparent", order);
 }
 
 GraphicsPipeline SlimeWax::SlimeShaderPipeLine()
@@ -231,6 +147,102 @@ GraphicsPipeline SlimeWax::SlimeShaderPipeLine()
 	return pipe;
 }
 
+void SlimeWax::TransferBuffer()
+{
+	//バッファにデータ転送(今はメッシュ描画も行いたいのでモデルオブジェで
+	//作っているが、後々posとradiusだけのデータに置き換えて送るようにする)
+	for (int32_t i = 0; i < sphereNum; i++)
+	{
+		slimeBuff->spheres[i].x = spheres[i].collider.pos.x;
+		slimeBuff->spheres[i].y = spheres[i].collider.pos.y;
+		slimeBuff->spheres[i].z = spheres[i].collider.pos.z;
+		//wをradiusとして扱うようにしてデータ圧縮
+		slimeBuff->spheres[i].w = spheres[i].collider.r;
+	}
+
+	//バッファへ転送
+	slimeBuff->sphereNum = sphereNum;
+	slimeBuff->slimeValue = slimeValue;
+	slimeBuff->rayMatchNum = rayMatchNum;
+	slimeBuff->clipValue = clipValue;
+
+}
+
+void SlimeWax::ImGui()
+{
+	ImGui::SetNextWindowSize({ 300, 200 });
+
+	ImGuiWindowFlags window_flags = 0;
+	window_flags |= ImGuiWindowFlags_NoResize;
+
+	ImGui::Begin("RayMarchTest", NULL);
+	ImGui::DragFloat3("masterMoveVec", &masterMoveVec.x);
+	ImGui::SliderInt("球の数(再生成しないと変わらない)", &changeNum, 1, MAX_SPHERE_COUNT);
+	if (ImGui::Button("球再生成")) {
+		sphereNum = changeNum;
+		spheres.clear();
+		for (int32_t i = 0; i < sphereNum; i++)
+		{
+			spheres.emplace_back();
+			spheres.back().Init();
+			spheres.back().collider.pos = sphereCenter;
+		}
+	}
+	ImGui::Checkbox("板描画切り替え", &isPlaneDraw);
+	ImGui::DragFloat3("position", &screen.mTransform.position.x);
+	/*ImGui::Text("size x:%f y:%f", screen.mImage.GetSize().x, screen.mImage.GetSize().y);*/
+	static Vector2 size = screen.mImage.GetSize();
+	ImGui::DragFloat2("size", &size.x);
+	screen.mImage.SetSize(size);
+	ImGui::DragFloat3("rotation", &screen.mTransform.rotation.x, 0.01f);
+	ImGui::SliderFloat("slimeValue", &slimeValue, 0.01f, 1.0f);
+	ImGui::SliderInt("rayMatchNum", &rayMatchNum, 1, 64);
+	ImGui::InputFloat("clipValue", &clipValue, 0.001f);
+	if (ImGui::Button("セーブ")) {
+		Parameter::Begin("slimeWax");
+		Parameter::Save("sphereNum", sphereNum);
+		Parameter::Save("slimeValue", slimeValue);
+		Parameter::Save("rayMatchNum", rayMatchNum);
+		Parameter::Save("clipValue", clipValue);
+		Parameter::End();
+	}
+	ImGui::End();
+
+}
+
+void SlimeWax::ScreenSizeForce()
+{
+	//カメラからビルボードの距離をそのままサイズにぶち込んで
+	//絶対にビルボードがカメラ画角すべてを埋めるようにする
+	Vector3 billboardVec = screen.mTransform.position - Camera::sNowCamera->mViewProjection.mEye;
+	float billboardLength = billboardVec.LengthSq() / 2;
+	billboardLength = max(billboardLength, 10000.f);
+	screen.mImage.SetSize(Vector2(billboardLength, billboardLength));
+
+	//こうしているのは、描画したいメタボールが描画の基準となっている
+	//オブジェクトから離れすぎると描画されなくなってしまうため
+	//ビルボードのワールドの位置は変えずに、無理やり画角に収まるようにしたパワー
+}
+
+Vector3 SlimeWax::GetNearSpherePosition()
+{
+	//一番近い位置に配置
+	float minLength = 10000000.f;
+	float maxHeight = -10000000.f;
+	Vector3 save = screen.mTransform.position;
+	for (auto& sphere : spheres)
+	{
+		Vector3 sphereVec = sphere.collider.pos - Camera::sNowCamera->mViewProjection.mEye;
+		float rfMinLength = sphereVec.LengthSq() / 2;
+		if (minLength > rfMinLength) {
+			minLength = rfMinLength;
+			save = sphere.collider.pos - sphereVec.GetNormalize() * 5;
+		}
+		maxHeight = max(maxHeight, sphere.collider.pos.y);
+	}
+	return save;
+}
+
 void RandomSphere::Init()
 {
 	moveVec = { 0,0,0 };
@@ -267,5 +279,11 @@ void RandomSphere::HitCheck(const ColPrimitive3D::Plane& plane)
 		moveVec.y += repercussion * hoge;
 		
 		repercussionNum ++;
+	}
+
+	//いったん地面より下にロウがいかないように
+	//挙動としてはいらないコードかも
+	if (collider.pos.y < plane.distance) {
+		collider.pos.y = plane.distance;
 	}
 }

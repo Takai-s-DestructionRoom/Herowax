@@ -29,7 +29,6 @@ float getDistance(float3 pos)
         {
             break;
         }
-
     }
     
     return dist;
