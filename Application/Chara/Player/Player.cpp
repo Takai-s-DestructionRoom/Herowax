@@ -170,8 +170,8 @@ void Player::Update()
 
 	ImGui::Begin("Player", NULL, window_flags);
 
-	ImGui::Text("Lスティック移動、Aボタンジャンプ、Rで攻撃");
-	ImGui::Text("WASD移動、スペースジャンプ、右クリで攻撃");
+	ImGui::Text("Lスティック移動、Aボタンジャンプ、Rで攻撃,Lでロウ回収");
+	ImGui::Text("WASD移動、スペースジャンプ、右クリで攻撃,Pでパブロ攻撃,Qでロウ回収");
 
 	ImGui::ColorEdit4("プレイヤーの色", &obj.mTuneMaterial.mColor.r);
 
@@ -658,7 +658,8 @@ void Player::WaxCollect()
 	collectCol.radius = waxCollectRange * 0.5f;
 
 	//回収ボタンポチーw
-	if ((RInput::GetInstance()->GetPadButtonDown(XINPUT_GAMEPAD_X) ||
+	if ((RInput::GetInstance()->GetPadButtonDown(XINPUT_GAMEPAD_LEFT_SHOULDER) ||
+		RInput::GetInstance()->GetLTriggerDown()||
 		RInput::GetInstance()->GetKeyDown(DIK_Q)))
 	{
 		//ロウがストック性かつ回収できる状態なら
