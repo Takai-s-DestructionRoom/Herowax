@@ -116,3 +116,28 @@ void WaxExtinguish::Update(Wax* wax)
 		wax->SetIsAlive(false);
 	}
 }
+
+void WaxCollect::Update(Wax* wax)
+{
+	wax->SetStateStr("WaxCollect");
+
+	WaxManager::GetInstance()->isCollected = false;
+	accel += accelAmount;
+
+	Vector3 moveVec =
+		wax->collectPos - wax->obj.mTransform.position;
+	wax->obj.mTransform.position += moveVec.GetNormalize() * accel;
+
+	//色が変わる
+	wax->obj.mTuneMaterial.mColor = Color::kGreen;
+
+	//到達したら殺す
+	if (moveVec.Length() <= 2.f)
+	{
+		wax->DeadParticle();
+		wax->isAlive = false;
+		accel = 0.f;
+
+		WaxManager::GetInstance()->isCollected = true;
+	}
+}

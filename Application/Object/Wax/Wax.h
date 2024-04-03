@@ -44,6 +44,7 @@ public:
 	bool isGround;				//接地してるかフラグ
 	uint32_t groupNum;			//所属グループの要素番号
 	float disolveValue;			//ディゾルブの強さ
+	Vector3 collectPos;			//回収される場所
 
 private:
 	SRConstBuffer<DisolveBuffer> mDisolveBuff;
@@ -74,6 +75,8 @@ public:
 		changingState = true;
 		nextState = std::make_unique<ChangeWaxState>();
 	};
+
+	void DeadParticle();
 
 	// ゲッター //
 	//固まった瞬間かどうかを返す

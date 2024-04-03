@@ -39,6 +39,7 @@ namespace ColPrimitive3D
 	{
 		Vector3 start;
 		Vector3 dir;
+		float radius;	//疑似的なレイの太さ
 	};
 
 	//線分

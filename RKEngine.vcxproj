@@ -142,6 +142,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Engine\Collision\AABBCollider.cpp" />
     <ClCompile Include="Application\Chara\Enemy\EnemySpawner.cpp" />
     <ClCompile Include="Application\InstantDrawer.cpp" />
     <ClCompile Include="Application\LevelData.cpp" />
@@ -261,6 +262,7 @@
     <ClCompile Include="Application\SpawnOrderData.cpp" />
     <ClCompile Include="Application\Chara\Player\PlayerUI.cpp" />
     <ClCompile Include="Application\Wave.cpp" />
+    <ClCompile Include="Engine\Collision\PlaneCollider.cpp" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Shader\Basic\BasicPS.hlsl">
@@ -637,6 +639,7 @@
     </FxCompile>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Engine\Collision\AABBCollider.h" />
     <ClInclude Include="Application\Chara\Enemy\EnemySpawner.h" />
     <ClInclude Include="Application\InstantDrawer.h" />
     <ClInclude Include="Application\LevelData.h" />
@@ -761,6 +764,7 @@
     <ClInclude Include="Application\Object\FireUnit.h" />
     <ClInclude Include="Application\Wave.h" />
     <ClInclude Include="Engine\Particle\HomingParticle.h" />
+    <ClInclude Include="Engine\Collision\PlaneCollider.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Shader\Bloom\Bloom.hlsli" />

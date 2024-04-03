@@ -214,6 +214,7 @@ void ProtoScene::Update()
 		}
 	}
 	
+
 	player.Update();
 	Level::Get()->Update();
 
@@ -242,6 +243,14 @@ void ProtoScene::Update()
 						{
 							//燃えている状態へ遷移
 							wax2->ChangeState<WaxIgnite>();
+						}
+
+						//回収中ものと通常の状態なら
+						if (wax1->stateStr == "WaxCollect" && wax2->IsNormal())
+						{
+							//死ぬ
+							wax1->DeadParticle();
+							wax2->isAlive = false;
 						}
 					}
 				}

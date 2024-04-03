@@ -2,6 +2,7 @@
 #include "Camera.h"
 #include "Renderer.h"
 #include "WaxManager.h"
+#include "ParticleManager.h"
 
 Color Wax::waxOriginColor = { 0.8f, 0.6f, 0.35f, 1.f };
 Color Wax::waxEndColor = { 0.8f, 0.0f, 0.f, 1.f };
@@ -19,6 +20,15 @@ Wax::Wax():GameObject(),
 	obj.mTuneMaterial.mColor = waxOriginColor;
 	obj.SetupPaint();
 	TextureManager::Load("./Resources/DissolveMap.png","DissolveMap");
+}
+
+void Wax::DeadParticle()
+{
+	ParticleManager::GetInstance()->AddHoming(
+		obj.mTransform.position, obj.mTransform.scale,
+		10, 0.8f, waxOriginColor, "", 0.8f, 1.5f,
+		-Vector3::ONE * 0.3f, Vector3::ONE * 0.3f,
+		0.03f, -Vector3::ONE * 0.1f, Vector3::ONE * 0.1f, 0.3f, 0.5f);
 }
 
 bool Wax::GetIsSolidNow()

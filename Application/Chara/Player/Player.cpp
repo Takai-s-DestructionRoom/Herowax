@@ -16,7 +16,7 @@ moveSpeed(1.f), moveAccelAmount(0.05f), isGround(true), hp(0), maxHP(10.f),
 isJumping(false), jumpTimer(0.2f), jumpHeight(0.f), maxJumpHeight(5.f), jumpPower(2.f), jumpSpeed(0.f),
 isAttack(false), atkSpeed(1.f), atkRange({ 3.f,5.f }), atkSize(0.f), atkPower(1),
 atkCoolTimer(0.3f), atkTimer(0.5f), atkHeight(1.f), solidTimer(5.f),
-isFireStock(false), isWaxStock(false), maxWaxStock(20)
+isFireStock(false), isWaxStock(true), maxWaxStock(20)
 {
 	std::map<std::string, std::string> extract = Parameter::Extract("Player");
 	moveSpeed = Parameter::GetParam(extract, "移動速度", 1.f);
@@ -44,6 +44,10 @@ isFireStock(false), isWaxStock(false), maxWaxStock(20)
 	initRot.x = Parameter::GetParam(extract, "初期方向X", 0.f);
 	initRot.y = Parameter::GetParam(extract, "初期方向Y", 0.f);
 	initRot.z = Parameter::GetParam(extract, "初期方向Z", 0.f);
+
+	collectRangeModel = ModelObj(Model::Load("./Resources/Model/Cube.obj", "Cube", true));
+	waxCollectRange = Parameter::GetParam(extract, "ロウ回収範囲X", 5.f);
+	collectRangeModel.mTuneMaterial.mColor.a = Parameter::GetParam(extract, "範囲objの透明度", 0.5f);
 
 	attackState = std::make_unique<PlayerNormal>();
 }
@@ -166,8 +170,8 @@ void Player::Update()
 
 	ImGui::Begin("Player", NULL, window_flags);
 
-	ImGui::Text("Lスティック移動、Aボタンジャンプ、Rで攻撃");
-	ImGui::Text("WASD移動、スペースジャンプ、右クリで攻撃");
+	ImGui::Text("Lスティック移動、Aボタンジャンプ、Rで攻撃,Lでロウ回収");
+	ImGui::Text("WASD移動、スペースジャンプ、右クリで攻撃,Pでパブロ攻撃,Qでロウ回収");
 
 	ImGui::ColorEdit4("プレイヤーの色", &obj.mTuneMaterial.mColor.r);
 
@@ -237,6 +241,14 @@ void Player::Update()
 
 		ImGui::TreePop();
 	}
+	if (ImGui::TreeNode("ロウ回収系"))
+	{
+		ImGui::SliderFloat("ロウ回収範囲X", &waxCollectRange, 0.f, 100.f);
+		ImGui::SliderFloat("範囲objの透明度", &collectRangeModel.mTuneMaterial.mColor.a, 0.f, 1.f);
+		ImGui::Text("回収できる状態か:%d", WaxManager::GetInstance()->isCollected);
+
+		ImGui::TreePop();
+	}
 
 	if (ImGui::Button("Reset")) {
 		Init();
@@ -266,6 +278,8 @@ void Player::Update()
 		Parameter::Save("初期方向X", initRot.x);
 		Parameter::Save("初期方向Y", initRot.y);
 		Parameter::Save("初期方向Z", initRot.z);
+		Parameter::Save("ロウ回収範囲", waxCollectRange);
+		Parameter::Save("範囲objの透明度", collectRangeModel.mTuneMaterial.mColor.a);
 		Parameter::End();
 	}
 
@@ -278,6 +292,7 @@ void Player::Draw()
 	if (isAlive)
 	{
 		obj.Draw();
+		collectRangeModel.Draw();
 		fireUnit.Draw();
 
 		ui.Draw();
@@ -324,7 +339,9 @@ void Player::MovePad()
 	}
 
 	moveAccel = Util::Clamp(moveAccel, 0.f, 1.f);			//無限に増減しないよう抑える
-	moveVec *= moveSpeed * moveAccel;						//移動速度をかけ合わせたら完成
+	moveVec *= 
+		moveSpeed * moveAccel * 
+		WaxManager::GetInstance()->isCollected;				//移動速度をかけ合わせたら完成(回収中は動けない)
 	obj.mTransform.position += moveVec;						//完成したものを座標に足し合わせる
 
 	//接地時にAボタン押すと
@@ -379,8 +396,8 @@ void Player::MoveKey()
 	keyVec.x = (float)(RInput::GetInstance()->GetKey(DIK_D) - RInput::GetInstance()->GetKey(DIK_A));
 	keyVec.y = (float)(RInput::GetInstance()->GetKey(DIK_W) - RInput::GetInstance()->GetKey(DIK_S));
 
-	//キー入力されてたら
-	if (keyVec.LengthSq() > 0.f) {
+	//キー入力されてて回収中じゃないなら
+	if (keyVec.LengthSq() > 0.f && WaxManager::GetInstance()->isCollected) {
 		//カメラから注視点へのベクトル
 		Vector3 cameraVec = Camera::sNowCamera->mViewProjection.mTarget - Camera::sNowCamera->mViewProjection.mEye;
 		//カメラの角度
@@ -401,7 +418,9 @@ void Player::MoveKey()
 	}
 
 	moveAccel = Util::Clamp(moveAccel, 0.f, moveVec.LengthSq());
-	moveVec *= moveSpeed * moveAccel;						//移動速度をかけ合わせたら完成
+	moveVec *=
+		moveSpeed * moveAccel *
+		WaxManager::GetInstance()->isCollected;				//移動速度をかけ合わせたら完成(回収中は動けない)
 	obj.mTransform.position += moveVec;						//完成したものを座標に足し合わせる
 
 	//接地時にスペース押すと
@@ -485,7 +504,8 @@ void Player::Rotation()
 	}
 
 	Vector2 LStick = RInput::GetInstance()->GetLStick(true, false);
-	if (LStick.LengthSq() > 0) {
+	//スティック入力されてて回収中じゃなければ
+	if (LStick.LengthSq() > 0 && WaxManager::GetInstance()->isCollected) {
 		//カメラから注視点へのベクトル
 		Vector3 cameraVec = Camera::sNowCamera->mViewProjection.mTarget -
 			Camera::sNowCamera->mViewProjection.mEye;
@@ -624,14 +644,30 @@ void Player::PabloAttack()
 
 void Player::WaxCollect()
 {
-	if ((RInput::GetInstance()->GetPadButton(XINPUT_GAMEPAD_X) ||
+	//トランスフォームはプレイヤー基準に
+	collectRangeModel.mTransform = obj.mTransform;
+	collectRangeModel.mTransform.scale = { waxCollectRange,0.1f,1000.f };
+	//大きさ分前に置く
+	collectRangeModel.mTransform.position += GetFrontVec() * 1000.f * 0.5f;
+	collectRangeModel.mTransform.UpdateMatrix();
+	collectRangeModel.TransferBuffer(Camera::sNowCamera->mViewProjection);
+
+	//当たり判定で使うレイの設定
+	collectCol.dir = GetFrontVec();
+	collectCol.start = GetFootPos();
+	collectCol.radius = waxCollectRange * 0.5f;
+
+	//回収ボタンポチーw
+	if ((RInput::GetInstance()->GetPadButtonDown(XINPUT_GAMEPAD_LEFT_SHOULDER) ||
+		RInput::GetInstance()->GetLTriggerDown()||
 		RInput::GetInstance()->GetKeyDown(DIK_Q)))
 	{
-		if (isWaxStock)
+		//ロウがストック性かつ回収できる状態なら
+		if (isWaxStock && WaxManager::GetInstance()->isCollected)
 		{
-			//ロウ全部消して
-			WaxManager::GetInstance()->Collect();
-			//ストック最大に
+			//ロウ回収
+			WaxManager::GetInstance()->Collect(collectCol);
+			//ストック最大に(敵の数とか回収したロウに応じて変化する形に変更)
 			waxStock = maxWaxStock;
 		}
 	}
@@ -645,4 +681,13 @@ Vector3 Player::GetFrontVec()
 
 	frontVec *= Quaternion::Euler(obj.mTransform.rotation);
 	return frontVec;
+}
+
+Vector3 Player::GetFootPos()
+{
+	Vector3 result;
+
+	result = obj.mTransform.position;
+	result.y += obj.mTransform.scale.y;
+	return result;
 }
