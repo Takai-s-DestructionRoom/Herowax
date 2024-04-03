@@ -116,6 +116,7 @@ WaxManager::WaxManager() :
 	std::map<std::string, std::string> extract = Parameter::Extract(fileName);
 	heatUpTemperature = Parameter::GetParam(extract, "ロウが燃えたときの上昇温度", 5.f);
 	heatBonus = Parameter::GetParam(extract, "ボーナス上昇温度", 2.f);
+	accelAmount = Parameter::GetParam(extract, "回収時の加速度", 0.1f);
 
 	for (int i = 0; i < 10; i++)
 	{
@@ -167,6 +168,8 @@ void WaxManager::Update()
 	ImGui::InputFloat("ロウが燃えたときの上昇温度", &heatUpTemperature, 1.0f);
 	ImGui::InputFloat("ボーナス上昇温度", &heatBonus, 1.0f);
 
+	ImGui::InputFloat("回収時の加速度", &accelAmount, 0.05f);
+
 	ImGui::Text("敵を捕まえたときの固まっている秒数");
 	for (int i = 0; i < 10; i++)
 	{
@@ -190,6 +193,7 @@ void WaxManager::Update()
 		Parameter::Begin(fileName);
 		Parameter::Save("ロウが燃えたときの上昇温度", heatUpTemperature);
 		Parameter::Save("ボーナス上昇温度", heatBonus);
+		Parameter::Save("回収時の加速度", accelAmount);
 		for (int i = 0; i < 10; i++)
 		{
 			std::string waxnum = std::to_string(i + 1) + "体の時";

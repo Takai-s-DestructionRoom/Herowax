@@ -51,5 +51,4 @@ public:
 
 private:
 	float accel = 0.f;			//回収の加速度
-	float accelAmount = 0.1f;	//回収の加速度合い
 };

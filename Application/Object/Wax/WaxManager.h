@@ -29,6 +29,7 @@ public:
 	uint32_t waxDamage;
 
 	bool isCollected = true;	//回収し終えたか
+	float accelAmount = 0.1f;	//回収の加速度合い
 
 public:
 	//シングルトンインスタンス取得

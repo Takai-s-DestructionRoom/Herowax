@@ -121,7 +121,7 @@ void WaxCollect::Update(Wax* wax)
 {
 	wax->SetStateStr("WaxCollect");
 
-	accel += accelAmount;
+	accel += WaxManager::GetInstance()->accelAmount;
 
 	Vector3 moveVec =
 		wax->collectPos - wax->obj.mTransform.position;
