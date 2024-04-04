@@ -7,11 +7,12 @@
 void EnemyUI::LoadResource()
 {
 	TextureManager::Load("./Resources/white2x2.png", "white2x2");
+	TextureManager::Load("./Resources/minimap_icon.png", "minimapIcon");
 }
 
 EnemyUI::EnemyUI() : position(1,1,1),size(4,1)
 {
-	iconSize = { 3.f,3.f };
+	iconSize = { 0.2f,0.2f };
 	iconColor = Color::kRed;
 }
 
@@ -29,6 +30,8 @@ void EnemyUI::Update(Enemy* enemy)
 			enemy->obj.mTransform.position,
 			50.f, static_cast<float>(RWindow::GetHeight()) - 200.f,
 			100.f, 100.f, 0, 1);
+
+	iconAngle = Util::RadianToAngle(enemy->obj.mTransform.rotation.y);
 }
 
 void EnemyUI::Draw()
@@ -41,5 +44,5 @@ void EnemyUI::Draw()
 	InstantDrawer::DrawGraph3D(position, size.x, size.y, "white2x2", Color::kRed);
 
 	InstantDrawer::DrawGraph(screenPos.x, screenPos.y,
-		iconSize.x, iconSize.y, 0, "white2x2", iconColor);
+		iconSize.x, iconSize.y, iconAngle, "minimapIcon", iconColor);
 }

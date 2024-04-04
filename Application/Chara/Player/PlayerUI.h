@@ -24,6 +24,7 @@ public:
 
 	Vector2 screenPos;
 	Vector2 iconSize;
+	float iconAngle;
 	Color iconColor;
 
 public:

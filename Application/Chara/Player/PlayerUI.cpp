@@ -23,7 +23,7 @@ PlayerUI::PlayerUI()
 		maxSize[i] = size[i] * 1.1f;
 	}
 
-	iconSize = { 5.f,5.f };
+	iconSize = { 0.3f,0.3f };
 	iconColor = Color::kWhite;
 }
 
@@ -49,6 +49,8 @@ void PlayerUI::Update(Player* player)
 			player->obj.mTransform.position,
 			50.f, static_cast<float>(RWindow::GetHeight()) - 200.f,
 			100.f, 100.f, 0, 1);
+
+	iconAngle = Util::RadianToAngle(player->obj.mTransform.rotation.y);
 
 	ImGui::SetNextWindowSize({ 350, 100 });
 
@@ -81,5 +83,5 @@ void PlayerUI::Draw()
 	}
 
 	InstantDrawer::DrawGraph(screenPos.x, screenPos.y,
-		iconSize.x, iconSize.y, 0, "white2x2", iconColor);
+		iconSize.x, iconSize.y, iconAngle, "minimapIcon", iconColor);
 }
