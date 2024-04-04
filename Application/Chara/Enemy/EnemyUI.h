@@ -1,6 +1,7 @@
 #pragma once
 #include "Vector2.h"
 #include "Vector3.h"
+#include "Color.h"
 
 class Enemy;
 
@@ -10,6 +11,10 @@ public:
 	Vector3 position;
 	Vector2 size;
 	Vector2 maxSize;
+
+	Vector2 screenPos;
+	Vector2 iconSize;
+	Color iconColor;
 public:
 	static void LoadResource();
 	EnemyUI();

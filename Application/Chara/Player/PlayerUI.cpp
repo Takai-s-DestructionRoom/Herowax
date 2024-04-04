@@ -23,8 +23,8 @@ PlayerUI::PlayerUI()
 		maxSize[i] = size[i] * 1.1f;
 	}
 
-	iconSize = { 10.f,10.f };
-	iconColor = Color::kRed;
+	iconSize = { 5.f,5.f };
+	iconColor = Color::kWhite;
 }
 
 void PlayerUI::Update(Player* player)
@@ -43,9 +43,12 @@ void PlayerUI::Update(Player* player)
 	size[(uint32_t)UIType::fireGauge].x =
 		maxSize[(uint32_t)UIType::fireGauge].x * player->fireUnit.fireGauge / player->fireUnit.maxFireGauge;
 
-	Vector3 playerPos = { player->obj.mTransform.position.x,player->obj.mTransform.position.z,0 };
-	//Vector3 playerPos = { 10.f,20.f,30.f };
-	screenPos = Camera::sMinimapCamera->mViewProjection.WorldToScreen(playerPos);
+	//スクリーン座標を求める
+	screenPos =
+		Camera::sMinimapCamera->mViewProjection.WorldToScreen(
+			player->obj.mTransform.position,
+			50.f, static_cast<float>(RWindow::GetHeight()) - 200.f,
+			100.f, 100.f, 0, 1);
 
 	ImGui::SetNextWindowSize({ 350, 100 });
 

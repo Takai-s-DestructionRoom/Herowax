@@ -21,9 +21,14 @@ private:
 	Easing::EaseTimer shakeTimer = 1.0f;
 	int32_t oldHP = 0;
 
+	Vector2 screenPos;
+	Vector2 iconSize;
+	Color iconColor;
+
 public:
 	static void LoadResource();
 
+	EggUI();
 	void Init();
 	void Update();
 	void Draw();

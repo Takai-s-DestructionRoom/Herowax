@@ -3,10 +3,17 @@
 #include "InstantDrawer.h"
 #include "RImGui.h"
 #include "Parameter.h"
+#include "Camera.h"
 
 void EggUI::LoadResource()
 {
 	TextureManager::Load("Resources/egg.png", "eggUI");
+}
+
+EggUI::EggUI()
+{
+	iconSize = { 7.f,7.f };
+	iconColor = Color::kYellow;
 }
 
 void EggUI::Init()
@@ -61,6 +68,13 @@ void EggUI::Update()
 		position += shake;
 	}
 
+	//スクリーン座標を求める
+	screenPos =
+		Camera::sMinimapCamera->mViewProjection.WorldToScreen(
+			tower->obj.mTransform.position,
+			50.f, static_cast<float>(RWindow::GetHeight()) - 200.f,
+			100.f, 100.f, 0, 1);
+
 	ImGui::SetNextWindowSize({ 300, 200 });
 
 	ImGuiWindowFlags window_flags = 0;
@@ -94,6 +108,9 @@ void EggUI::Draw()
 {
 	InstantDrawer::DrawGraph(position.x, position.y,
 		size.x, size.y, 0, "eggUI",color);
+
+	InstantDrawer::DrawGraph(screenPos.x, screenPos.y,
+		iconSize.x, iconSize.y, 0, "white2x2", iconColor);
 }
 
 void EggUI::SetTower(Tower* tower_)

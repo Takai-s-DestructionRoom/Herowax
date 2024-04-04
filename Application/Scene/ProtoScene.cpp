@@ -46,6 +46,7 @@ void ProtoScene::Init()
 	cameraAngle.x = Parameter::GetParam(extract,"カメラアングルX", Util::AngleToRadian(20.f));
 	cameraAngle.y = Parameter::GetParam(extract,"カメラアングルY", 0.f);
 	cameraSpeed = Parameter::GetParam(extract,"カメラの移動速度", 0.01f);
+	mmCameraDist = Parameter::GetParam(extract,"ミニマップ用カメラ距離", -250.f);
 
 	LightGroup::sNowLight = &light;
 
@@ -332,6 +333,7 @@ void ProtoScene::Update()
 	ImGui::SliderAngle("カメラアングルX:%f", &cameraAngle.x);
 	ImGui::SliderAngle("カメラアングルY:%f", &cameraAngle.y);
 	ImGui::SliderFloat("カメラの移動速度", &cameraSpeed,0.0f,0.5f);
+	ImGui::SliderFloat("ミニマップ用カメラ距離:%f", &mmCameraDist, -1000.f, 0.f);
 	
 	static bool changeCamera = false;
 	static float saveDist = cameraDist;
@@ -392,6 +394,7 @@ void ProtoScene::Update()
 		Parameter::Save("カメラアングルX", cameraAngle.x);
 		Parameter::Save("カメラアングルY", cameraAngle.y);
 		Parameter::Save("カメラの移動速度", cameraSpeed);
+		Parameter::Save("ミニマップ用カメラ距離", mmCameraDist);
 		Parameter::End();
 	}
 
@@ -444,8 +447,8 @@ void ProtoScene::MinimapCameraUpdate()
 {
 	Vector3 mmCameraVec = { 0, 0, 1 };
 	//カメラアングル適応
-	mmCameraVec *= Quaternion::AngleAxis(Vector3(1, 0, 0).Cross(mmCameraVec), 90.f);
-	mmCameraVec *= Quaternion::AngleAxis(Vector3(0, 1, 0).Cross(mmCameraVec), 0.f);
+	mmCameraVec *= Quaternion::AngleAxis(Vector3(1, 0, 0).Cross(mmCameraVec), 0.f);
+	mmCameraVec *= Quaternion::AngleAxis(Vector3(0, 1, 0).Cross(mmCameraVec), Util::AngleToRadian(89.9f));
 	//カメラの距離適応
 	mmCameraVec *= mmCameraDist;
 

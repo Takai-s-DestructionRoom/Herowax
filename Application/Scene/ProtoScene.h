@@ -38,7 +38,7 @@ private:
 	BreakableObj nest;
 
 	Camera minimapCamera = Camera();	//ミニマップ用の仮想カメラ
-	float mmCameraDist = -100.f;		//注視点からカメラの距離
+	float mmCameraDist = -250.f;		//注視点からカメラの距離
 
 	Camera camera = Camera();			//通常カメラ
 	float cameraDist = -20.f;			//注視点からカメラの距離
