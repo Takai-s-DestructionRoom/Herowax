@@ -9,7 +9,6 @@ EnemySpawner::EnemySpawner() : GameObject(),
 	spawnRandomPos(5.f)
 {
 	obj = PaintableModelObj(Model::Load("./Resources/Model/stick.obj", "Stick", true));
-	obj.SetupPaint();
 	//色変更
 	obj.mTuneMaterial.mColor = Color(0.3f, 0.3f, 0.3f, 1);
 }

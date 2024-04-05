@@ -267,6 +267,7 @@
     <ClCompile Include="Application\RayMarchTestScene.cpp" />
     <ClCompile Include="Application\SlimeWax.cpp" />
     <ClCompile Include="Engine\Collision\PlaneCollider.cpp" />
+    <ClCompile Include="Application\Minimap.cpp" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Shader\Billboard\BillboardPS.hlsl">
@@ -482,10 +483,10 @@
     <FxCompile Include="Shader\PaintedBasic\PaintedBasicPS.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='DebugIT|x64'">Pixel</ShaderType>
-      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
-      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='DebugIT|x64'">5.0</ShaderModel>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.1</ShaderModel>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='DebugIT|x64'">5.1</ShaderModel>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
-      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.1</ShaderModel>
     </FxCompile>
     <FxCompile Include="Shader\Particle3D\Particle3DGS.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Geometry</ShaderType>
@@ -805,6 +806,7 @@
     <ClInclude Include="Application\RayMarchTestScene.h" />
     <ClInclude Include="Application\SlimeWax.h" />
     <ClInclude Include="Engine\Collision\PlaneCollider.h" />
+    <ClInclude Include="Application\Minimap.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Shader\Billboard\Billboard.hlsli" />

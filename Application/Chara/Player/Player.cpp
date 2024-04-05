@@ -55,7 +55,6 @@ isFireStock(false), isWaxStock(true), maxWaxStock(20)
 void Player::Init()
 {
 	obj = PaintableModelObj(Model::Load("./Resources/Model/player/player_bird.obj", "player_bird", true));
-	obj.SetupPaint();
 
 	hp = maxHP;
 	fireUnit.Init();

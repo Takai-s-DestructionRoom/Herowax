@@ -18,7 +18,6 @@ gravity(0.2f), groundPos(0)
 	nextState = nullptr;
 	nextAttackState = nullptr;
 	obj = PaintableModelObj(Model::Load("./Resources/Model/firewisp/firewisp.obj", "firewisp", true));
-	obj.SetupPaint();
 	target = target_;
 
 	std::map<std::string, std::string> extract = Parameter::Extract("Enemy");
@@ -169,8 +168,8 @@ void Enemy::KnockBack(const Vector3& pVec)
 
 		//ターゲットの方向を向いてくれる
 		Quaternion aLookat = Quaternion::LookAt(aVec);
-		//モデルが90度ずれた方向を向いているので無理やり修正(モデル変更時にチェック)
-		aLookat *= Quaternion::AngleAxis({ 0,1,0 }, -Util::PI / 2);
+		////モデルが90度ずれた方向を向いているので無理やり修正(モデル変更時にチェック)
+		//aLookat *= Quaternion::AngleAxis({ 0,1,0 }, -Util::PI / 2);
 
 		//喰らい時のモーション遷移
 		knockRadianX = Easing::InQuad(knockRadianStart.x, 0, knockbackTimer.GetTimeRate());
@@ -195,8 +194,8 @@ void Enemy::KnockBack(const Vector3& pVec)
 		//普段はターゲットの方向を向く
 		//ターゲットの方向を向いてくれる
 		Quaternion pLookat = Quaternion::LookAt(pVec);
-		//モデルが90度ずれた方向を向いているので無理やり修正(モデル変更時にチェック)
-		pLookat *= Quaternion::AngleAxis({ 0,1,0 }, -Util::PI / 2);
+		////モデルが90度ずれた方向を向いているので無理やり修正(モデル変更時にチェック)
+		//pLookat *= Quaternion::AngleAxis({ 0,1,0 }, -Util::PI / 2);
 
 		//euler軸へ変換
 		obj.mTransform.rotation = pLookat.ToEuler();
@@ -206,21 +205,6 @@ void Enemy::KnockBack(const Vector3& pVec)
 void Enemy::SetTarget(ModelObj* target_)
 {
 	target = target_;
-}
-
-void Enemy::RandomPaint(const Vector2& paintSize, const Color& paintColor)
-{
-	ColPrimitive3D::Ray ray;
-
-	//ランダムな方向へずらした位置を取得
-	ray.start = Util::GetRandVector3(obj.mTransform.position, -100.f, 100.f);
-	//そこから自身へのベクトルを生成
-	ray.dir = obj.mTransform.position - ray.start;
-	ray.dir.Normalize();
-
-	//当たった箇所にペイント
-	obj.Paint(ray, "brush", paintColor,
-		paintSize, Camera::sNowCamera->mViewProjection.mMatrix);
 }
 
 void Enemy::SetIsEscape(bool flag)
