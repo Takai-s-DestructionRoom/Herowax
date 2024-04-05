@@ -64,9 +64,9 @@ void ProtoScene::Init()
 	eggUI.Init();
 	eggUI.SetTower(&Level::Get()->tower);
 
-	nest.Init();
+	//nest.Init();
 
-	nest.SetGround(Level::Get()->ground);
+	//nest.SetGround(Level::Get()->ground);
 
 	extract = Parameter::Extract("DebugBool");
 	Util::debugBool = Parameter::GetParam(extract, "debugBool", false);
@@ -299,7 +299,7 @@ void ProtoScene::Update()
 	ParticleManager::GetInstance()->Update();
 
 	eggUI.Update();
-	nest.Update();
+	//nest.Update();
 
 	light.Update();
 
@@ -428,7 +428,7 @@ void ProtoScene::Draw()
 	TemperatureManager::GetInstance()->Draw();
 	player.Draw();
 	eggUI.Draw();
-	nest.Draw();
+	//nest.Draw();
 
 	Level::Get()->Draw();
 
