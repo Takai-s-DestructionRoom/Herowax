@@ -12,6 +12,7 @@
 #include "FireManager.h"
 #include "Parameter.h"
 #include "SpawnOrderData.h"
+#include "Minimap.h"
 
 ProtoScene::ProtoScene()
 {
@@ -39,12 +40,14 @@ ProtoScene::ProtoScene()
 void ProtoScene::Init()
 {
 	Camera::sNowCamera = &camera;
+	Camera::sMinimapCamera = &minimapCamera;
 
 	std::map<std::string, std::string> extract = Parameter::Extract("Camera");
 	cameraDist = Parameter::GetParam(extract,"カメラ距離", -20.f);
 	cameraAngle.x = Parameter::GetParam(extract,"カメラアングルX", Util::AngleToRadian(20.f));
 	cameraAngle.y = Parameter::GetParam(extract,"カメラアングルY", 0.f);
 	cameraSpeed = Parameter::GetParam(extract,"カメラの移動速度", 0.01f);
+	mmCameraDist = Parameter::GetParam(extract,"ミニマップ用カメラ距離", -250.f);
 
 	LightGroup::sNowLight = &light;
 
@@ -67,6 +70,8 @@ void ProtoScene::Init()
 	//nest.Init();
 
 	//nest.SetGround(Level::Get()->ground);
+
+	Minimap::GetInstance()->Init();
 
 	extract = Parameter::Extract("DebugBool");
 	Util::debugBool = Parameter::GetParam(extract, "debugBool", false);
@@ -107,6 +112,8 @@ void ProtoScene::Update()
 	//プレイヤーの方向いてくれる
 	camera.mViewProjection.mTarget = player.GetPos();
 	camera.mViewProjection.UpdateMatrix();
+
+	MinimapCameraUpdate();
 
 	//ここに無限に当たり判定増やしていくの嫌なのであとで何か作ります
 	//クソ手抜き当たり判定
@@ -305,6 +312,8 @@ void ProtoScene::Update()
 	eggUI.Update();
 	//nest.Update();
 
+	Minimap::GetInstance()->Update();
+
 	light.Update();
 
 	skydome.TransferBuffer(camera.mViewProjection);
@@ -334,6 +343,7 @@ void ProtoScene::Update()
 	ImGui::SliderAngle("カメラアングルX:%f", &cameraAngle.x);
 	ImGui::SliderAngle("カメラアングルY:%f", &cameraAngle.y);
 	ImGui::SliderFloat("カメラの移動速度", &cameraSpeed,0.0f,0.5f);
+	ImGui::SliderFloat("ミニマップ用カメラ距離:%f", &mmCameraDist, -1000.f, 0.f);
 	
 	static bool changeCamera = false;
 	static float saveDist = cameraDist;
@@ -394,6 +404,7 @@ void ProtoScene::Update()
 		Parameter::Save("カメラアングルX", cameraAngle.x);
 		Parameter::Save("カメラアングルY", cameraAngle.y);
 		Parameter::Save("カメラの移動速度", cameraSpeed);
+		Parameter::Save("ミニマップ用カメラ距離", mmCameraDist);
 		Parameter::End();
 	}
 
@@ -426,18 +437,35 @@ void ProtoScene::Update()
 
 void ProtoScene::Draw()
 {
+	Minimap::GetInstance()->Draw();
 	ParticleManager::GetInstance()->Draw();
 	skydome.Draw();
 	WaxManager::GetInstance()->Draw();
 	FireManager::GetInstance()->Draw();
 	TemperatureManager::GetInstance()->Draw();
-	player.Draw();
 	eggUI.Draw();
 	//nest.Draw();
 
 	Level::Get()->Draw();
+	player.Draw();
 
 	//更新
 	InstantDrawer::AllUpdate();
 	InstantDrawer::AllDraw2D();
+}
+
+void ProtoScene::MinimapCameraUpdate()
+{
+	Vector3 mmCameraVec = { 0, 0, 1 };
+	//カメラアングル適応
+	mmCameraVec *= Quaternion::AngleAxis(Vector3(1, 0, 0).Cross(mmCameraVec), 0.f);
+	mmCameraVec *= Quaternion::AngleAxis(Vector3(0, 1, 0).Cross(mmCameraVec), Util::AngleToRadian(89.9f));
+	//カメラの距離適応
+	mmCameraVec *= mmCameraDist;
+
+	//プレイヤーと一定の距離を保って着いていく
+	minimapCamera.mViewProjection.mEye = mmCameraVec;
+	//プレイヤーの方向いてくれる
+	minimapCamera.mViewProjection.mTarget = Vector3::ZERO;
+	minimapCamera.mViewProjection.UpdateMatrix();
 }

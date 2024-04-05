@@ -3,6 +3,7 @@
 #include "Color.h"
 #include "Tower.h"
 #include "Easing.h"
+#include "Sprite.h"
 
 class EggUI
 {
@@ -21,9 +22,14 @@ private:
 	Easing::EaseTimer shakeTimer = 1.0f;
 	int32_t oldHP = 0;
 
+	Vector2 screenPos;
+	Vector2 iconSize;
+	Sprite minimapIcon;
+
 public:
 	static void LoadResource();
 
+	EggUI();
 	void Init();
 	void Update();
 	void Draw();

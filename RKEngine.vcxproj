@@ -267,6 +267,7 @@
     <ClCompile Include="Application\RayMarchTestScene.cpp" />
     <ClCompile Include="Application\SlimeWax.cpp" />
     <ClCompile Include="Engine\Collision\PlaneCollider.cpp" />
+    <ClCompile Include="Application\Minimap.cpp" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Shader\Basic\BasicPS.hlsl">
@@ -789,6 +790,7 @@
     <ClInclude Include="Application\RayMarchTestScene.h" />
     <ClInclude Include="Application\SlimeWax.h" />
     <ClInclude Include="Engine\Collision\PlaneCollider.h" />
+    <ClInclude Include="Application\Minimap.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Shader\Bloom\Bloom.hlsli" />

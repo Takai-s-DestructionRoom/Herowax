@@ -3,10 +3,19 @@
 #include "InstantDrawer.h"
 #include "RImGui.h"
 #include "Parameter.h"
+#include "Renderer.h"
+#include "Minimap.h"
 
 void EggUI::LoadResource()
 {
 	TextureManager::Load("Resources/egg.png", "eggUI");
+}
+
+EggUI::EggUI()
+{
+	iconSize = { 7.f,7.f };
+	minimapIcon.SetTexture(TextureManager::Load("./Resources/white2x2.png", "white2x2"));
+	minimapIcon.mMaterial.mColor = Color::kYellow;
 }
 
 void EggUI::Init()
@@ -61,6 +70,20 @@ void EggUI::Update()
 		position += shake;
 	}
 
+	//スクリーン座標を求める
+	screenPos = Minimap::GetInstance()->GetScreenPos(tower->obj.mTransform.position);
+	minimapIcon.mTransform.position = { screenPos.x,screenPos.y,0.f };
+	//回転適用
+	minimapIcon.mTransform.rotation.z =
+		tower->obj.mTransform.rotation.y;
+	//決めたサイズに
+	minimapIcon.mTransform.scale = { iconSize.x,iconSize.y,1.f };
+
+	//更新忘れずに
+	minimapIcon.mTransform.UpdateMatrix();
+	minimapIcon.TransferBuffer();
+
+	//ImGui::SetNextWindowSize({ 300, 200 });
 	//ImGui::SetNextWindowSize({ 300, 200 });
 
 	//ImGuiWindowFlags window_flags = 0;
@@ -94,6 +117,13 @@ void EggUI::Draw()
 {
 	InstantDrawer::DrawGraph(position.x, position.y,
 		size.x, size.y, 0, "eggUI",color);
+
+	//描画範囲制限
+	Renderer::SetScissorRects({ Minimap::GetInstance()->rect });
+	minimapIcon.Draw();
+
+	//元の範囲に戻してあげる
+	Renderer::SetScissorRects({ Minimap::GetInstance()->defaultRect });
 }
 
 void EggUI::SetTower(Tower* tower_)
