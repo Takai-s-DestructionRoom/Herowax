@@ -18,7 +18,7 @@ float getDepth(float3 pos)
     return (vpPos.z / vpPos.w);
 }
 
-float4 main(VSOutput input)
+float4 main(VSOutput input) : SV_Target
 { 
     float4 texcolor = float4(tex.Sample(smp, input.uv));
     texcolor = texcolor * m_color;
