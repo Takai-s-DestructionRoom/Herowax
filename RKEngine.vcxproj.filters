@@ -639,6 +639,9 @@
     <ClCompile Include="Engine\Collision\AABBCollider.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
+    <ClCompile Include="Application\Minimap.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
     <ClCompile Include="Application\PhysicsCircle.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
@@ -1181,6 +1184,9 @@
       <Filter>ヘッダー ファイル\Engine\Collision</Filter>
     </ClInclude>
     <ClInclude Include="Engine\Collision\AABBCollider.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Application\Minimap.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
     <ClInclude Include="Application\PhysicsCircle.h">

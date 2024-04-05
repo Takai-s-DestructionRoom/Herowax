@@ -169,8 +169,8 @@ void Enemy::KnockBack(const Vector3& pVec)
 
 		//ターゲットの方向を向いてくれる
 		Quaternion aLookat = Quaternion::LookAt(aVec);
-		//モデルが90度ずれた方向を向いているので無理やり修正(モデル変更時にチェック)
-		aLookat *= Quaternion::AngleAxis({ 0,1,0 }, -Util::PI / 2);
+		////モデルが90度ずれた方向を向いているので無理やり修正(モデル変更時にチェック)
+		//aLookat *= Quaternion::AngleAxis({ 0,1,0 }, -Util::PI / 2);
 
 		//喰らい時のモーション遷移
 		knockRadianX = Easing::InQuad(knockRadianStart.x, 0, knockbackTimer.GetTimeRate());
@@ -195,8 +195,8 @@ void Enemy::KnockBack(const Vector3& pVec)
 		//普段はターゲットの方向を向く
 		//ターゲットの方向を向いてくれる
 		Quaternion pLookat = Quaternion::LookAt(pVec);
-		//モデルが90度ずれた方向を向いているので無理やり修正(モデル変更時にチェック)
-		pLookat *= Quaternion::AngleAxis({ 0,1,0 }, -Util::PI / 2);
+		////モデルが90度ずれた方向を向いているので無理やり修正(モデル変更時にチェック)
+		//pLookat *= Quaternion::AngleAxis({ 0,1,0 }, -Util::PI / 2);
 
 		//euler軸へ変換
 		obj.mTransform.rotation = pLookat.ToEuler();

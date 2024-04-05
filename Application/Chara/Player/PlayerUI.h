@@ -2,6 +2,7 @@
 #include "Vector2.h"
 #include "Vector3.h"
 #include "Color.h"
+#include "Sprite.h"
 #include <array>
 
 class Player;
@@ -21,6 +22,11 @@ public:
 	std::array<Vector2, 2> size;
 	std::array<Vector2, 2> maxSize;
 	std::array<Color, 2> gaugeColor;
+
+	Vector2 screenPos;
+	Vector2 iconSize;
+	Sprite minimapIcon;
+
 public:
 	static void LoadResource();
 	PlayerUI();
