@@ -463,9 +463,11 @@ void ProtoScene::MinimapCameraUpdate()
 	//カメラの距離適応
 	mmCameraVec *= mmCameraDist;
 
-	//プレイヤーと一定の距離を保って着いていく
+	//アスペクト比1:1に
+	minimapCamera.mViewProjection.mAspect = 1.f / 1.f;
+	
 	minimapCamera.mViewProjection.mEye = mmCameraVec;
-	//プレイヤーの方向いてくれる
+	
 	minimapCamera.mViewProjection.mTarget = Vector3::ZERO;
 	minimapCamera.mViewProjection.UpdateMatrix();
 }

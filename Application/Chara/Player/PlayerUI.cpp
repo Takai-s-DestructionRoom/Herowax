@@ -27,6 +27,12 @@ PlayerUI::PlayerUI()
 	iconSize = { 0.3f,0.3f };
 	minimapIcon.SetTexture(TextureManager::Load("./Resources/minimap_icon.png", "minimapIcon"));
 	minimapIcon.mMaterial.mColor = Color::kWhite;
+
+	rangeSize = { 5.f,200.f };
+	minimapIconRange.SetTexture(TextureManager::Load("./Resources/white2x2.png", "white2x2"));
+	minimapIconRange.SetAnchor({0.5f,1.f});
+	minimapIconRange.mMaterial.mColor = Color::kWhite;
+	minimapIconRange.mMaterial.mColor.a = 0.5f;
 }
 
 void PlayerUI::Update(Player* player)
@@ -57,6 +63,20 @@ void PlayerUI::Update(Player* player)
 	//更新忘れずに
 	minimapIcon.mTransform.UpdateMatrix();
 	minimapIcon.TransferBuffer();
+
+
+	//スクリーン座標を求める
+	screenPosRange = Minimap::GetInstance()->GetScreenPos(player->obj.mTransform.position);
+	minimapIconRange.mTransform.position = { screenPosRange.x,screenPosRange.y,0.f };
+	//回転適用
+	minimapIconRange.mTransform.rotation.z =
+		player->obj.mTransform.rotation.y;
+	//決めたサイズに
+	minimapIconRange.mTransform.scale = { rangeSize.x,rangeSize.y,1.f };
+
+	//更新忘れずに
+	minimapIconRange.mTransform.UpdateMatrix();
+	minimapIconRange.TransferBuffer();
 }
 
 void PlayerUI::Draw()
@@ -71,6 +91,7 @@ void PlayerUI::Draw()
 
 	//描画範囲制限
 	Renderer::SetScissorRects({ Minimap::GetInstance()->rect });
+	minimapIconRange.Draw();
 	minimapIcon.Draw();
 
 	//元の範囲に戻してあげる

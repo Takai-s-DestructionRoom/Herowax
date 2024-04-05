@@ -229,10 +229,9 @@ void WaxManager::Draw()
 {
 	for (auto& group : waxGroups)
 	{
-		//group->Draw();
+		group->Draw();
 		for (auto& wax : group->waxs)
 		{
-			//wax->Draw();
 			if (isViewCol) {
 				wax->DrawCollider();
 			}
