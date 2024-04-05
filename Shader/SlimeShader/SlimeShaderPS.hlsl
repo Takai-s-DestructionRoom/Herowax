@@ -49,7 +49,10 @@ float getDepth(float3 pos)
 {
     float4 vpPos = mul(matViewProjection, float4(pos, 1.0f));
 
-    return (vpPos.z / vpPos.w) * 0.5f + 0.5f;
+    //OpenGLŠÂ‹«‚¾‚Æ‚±‚Á‚¿‚ÌŽ®‚ðŽg‚í‚È‚¢‚Æ‚¢‚¯‚È‚¢‚ç‚µ‚¢
+    //return (vpPos.z / vpPos.w) * 0.5f + 0.5f;
+    //DirectXŠÂ‹«‚È‚ç‚±‚Á‚¿
+    return (vpPos.z / vpPos.w);
 }
 
 struct PS_OUT

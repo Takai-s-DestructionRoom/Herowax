@@ -48,12 +48,12 @@ void SlimeWax::Update()
 		}
 	}
 
-	//ScreenSizeForce();
+	ScreenSizeForce();
 	
 	ImGui();
 
 	//一番近い位置に配置
-	//screen.mTransform.position = GetNearSpherePosition();
+	screen.mTransform.position = GetNearSpherePosition();
 	
 	screen.Update(Camera::sNowCamera->mViewProjection);
 	//cube.mTransform.UpdateMatrix();
