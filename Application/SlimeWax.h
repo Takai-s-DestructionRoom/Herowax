@@ -68,6 +68,7 @@ public:
 private:
 
 	BillboardImage screen;			//球を映すスクリーンビルボード
+	//ModelObj cube;			//球を映すスクリーンビルボード
 	bool isPlaneDraw = false;	//テスト用 ビルボードを描画するか
 
 	SRConstBuffer<SlimeBuffer> slimeBuff;	//シェーダーで使う情報

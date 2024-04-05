@@ -1,6 +1,7 @@
 #pragma once
 #include "Wax.h"
 #include "WaxGroup.h"
+#include "SlimeWax.h"
 
 // 蝋群管理 //
 class WaxManager final
@@ -26,6 +27,8 @@ public:
 	uint32_t isBurningNum = 0;
 	float heatUpTemperature;	//蝋が燃えたときに上がる温度
 	uint32_t waxDamage;
+
+	SlimeWax slimeWax;
 
 public:
 	//シングルトンインスタンス取得

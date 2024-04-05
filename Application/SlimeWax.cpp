@@ -14,6 +14,12 @@ void SlimeWax::Init()
 	screen.mTransform.position = { 0,0,0 };
 	screen.mTransform.scale = { 1,1,1 };
 	screen.mTransform.rotation = { 0,0,0 };
+	
+	/*cube = ModelObj(Model::Load("./Resources/Model/Cube.obj", "Cube"));
+
+	cube.mTransform.position = { 0,0,0 };
+	cube.mTransform.scale = { 1,1,1 };
+	cube.mTransform.rotation = { 0,0,0 };*/
 
 	//パラメータ読み込み
 	std::map <std::string, std::string> extract = Parameter::Extract("slimeWax");
@@ -23,38 +29,35 @@ void SlimeWax::Init()
 	rayMatchNum = (int32_t)Parameter::GetParam(extract,"rayMatchNum", (float)rayMatchNum);
 	clipValue = Parameter::GetParam(extract,"clipValue", clipValue);
 	
-	sphereCenter = { 0,10,0 };
-
 	spheres.clear();
-	for (int32_t i = 0; i < sphereNum; i++)
-	{
-		spheres.emplace_back();
-		spheres.back().Init();
-		spheres.back().collider.pos = sphereCenter;
-	}
 }
 
 void SlimeWax::Update()
 {
-	//死んでいるロウがあれば戻す
-	for (auto& sphere : spheres)
+	//死んでいるロウがあれば消す
+	for (auto itr = spheres.begin(); itr != spheres.end();)
 	{
-		if (!sphere.isAlive)
+		
+		if (!&(*itr).isAlive)
 		{
-			sphere.Init();
-			sphere.collider.pos = sphereCenter;
-			sphere.isAlive = true;
+			itr = spheres.erase(itr);
+		}
+		else
+		{
+			itr++;
 		}
 	}
 
-	ScreenSizeForce();
-
+	//ScreenSizeForce();
+	
 	ImGui();
 
 	//一番近い位置に配置
-	screen.mTransform.position = GetNearSpherePosition();
+	//screen.mTransform.position = GetNearSpherePosition();
 	
 	screen.Update(Camera::sNowCamera->mViewProjection);
+	//cube.mTransform.UpdateMatrix();
+	//cube.TransferBuffer(Camera::sNowCamera->mViewProjection);
 
 	sphereCenter += masterMoveVec;
 	for (auto& sphere : spheres)
@@ -71,7 +74,28 @@ void SlimeWax::Draw()
 {
 	if (isPlaneDraw) {
 		screen.Draw();
+		//cube.Draw();
 	}
+	
+	/*GraphicsPipeline pipe = SlimeShaderPipeLine();
+	for (std::shared_ptr<ModelMesh> data : cube.mModel->mData) {
+		RenderOrder order;
+		order.pipelineState = pipe.mPtr.Get();
+		order.mRootSignature = pipe.mDesc.pRootSignature;
+		order.vertView = &data->mVertBuff.mView;
+		order.indexView = &data->mIndexBuff.mView;
+		order.indexCount = static_cast<uint32_t>(data->mIndices.size());
+		order.rootData = {
+			{ RootDataType::SRBUFFER_CBV, cube.mMaterialBuffMap[data->mMaterial.mName].mBuff },
+			{ RootDataType::SRBUFFER_CBV, cube.mTransformBuff.mBuff },
+			{ RootDataType::SRBUFFER_CBV, cube.mViewProjectionBuff.mBuff },
+			{ RootDataType::LIGHT },
+			{ TextureManager::Get(data->mMaterial.mTexture).mGpuHandle },
+			{ RootDataType::SRBUFFER_CBV, slimeBuff.mBuff}
+		};
+
+		Renderer::DrawCall("Opaque",order);
+	}*/
 
 	GraphicsPipeline pipe = SlimeShaderPipeLine();
 	RenderOrder order;
@@ -151,6 +175,7 @@ void SlimeWax::TransferBuffer()
 {
 	//バッファにデータ転送(今はメッシュ描画も行いたいのでモデルオブジェで
 	//作っているが、後々posとradiusだけのデータに置き換えて送るようにする)
+	sphereNum = (int32_t)spheres.size();
 	for (int32_t i = 0; i < sphereNum; i++)
 	{
 		slimeBuff->spheres[i].x = spheres[i].collider.pos.x;
@@ -165,7 +190,6 @@ void SlimeWax::TransferBuffer()
 	slimeBuff->slimeValue = slimeValue;
 	slimeBuff->rayMatchNum = rayMatchNum;
 	slimeBuff->clipValue = clipValue;
-
 }
 
 void SlimeWax::ImGui()
@@ -174,8 +198,11 @@ void SlimeWax::ImGui()
 
 	ImGuiWindowFlags window_flags = 0;
 	window_flags |= ImGuiWindowFlags_NoResize;
-
 	ImGui::Begin("RayMarchTest", NULL);
+	if (ImGui::Button("カメラ位置に配置")) {
+		//cube.mTransform.position = GetNearSpherePosition();
+		screen.mTransform.position = GetNearSpherePosition();
+	}
 	ImGui::DragFloat3("masterMoveVec", &masterMoveVec.x);
 	ImGui::SliderInt("球の数(再生成しないと変わらない)", &changeNum, 1, MAX_SPHERE_COUNT);
 	if (ImGui::Button("球再生成")) {
@@ -189,8 +216,11 @@ void SlimeWax::ImGui()
 		}
 	}
 	ImGui::Checkbox("板描画切り替え", &isPlaneDraw);
+	/*ImGui::DragFloat3("position", &cube.mTransform.position.x);
+	ImGui::DragFloat3("scale", &cube.mTransform.scale.x);
+	ImGui::DragFloat3("rotation", &cube.mTransform.rotation.x);*/
+
 	ImGui::DragFloat3("position", &screen.mTransform.position.x);
-	/*ImGui::Text("size x:%f y:%f", screen.mImage.GetSize().x, screen.mImage.GetSize().y);*/
 	static Vector2 size = screen.mImage.GetSize();
 	ImGui::DragFloat2("size", &size.x);
 	screen.mImage.SetSize(size);
@@ -230,6 +260,7 @@ Vector3 SlimeWax::GetNearSpherePosition()
 	float minLength = 10000000.f;
 	float maxHeight = -10000000.f;
 	Vector3 save = screen.mTransform.position;
+	//Vector3 save = cube.mTransform.position;
 	for (auto& sphere : spheres)
 	{
 		Vector3 sphereVec = sphere.collider.pos - Camera::sNowCamera->mViewProjection.mEye;

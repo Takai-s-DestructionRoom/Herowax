@@ -1,5 +1,4 @@
 sphereNum:120
-slimeValue:0.796
+slimeValue:0.9
 rayMatchNum:12
 clipValue:1
-rayMarchClampNum:2048

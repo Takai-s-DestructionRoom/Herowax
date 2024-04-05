@@ -111,7 +111,7 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 	TextureManager::Load("Resources/Internals/loadingMark.png", "LoadingMark");
 
 	//初期シーンセット
-	SceneManager::Set<RayMarchTestScene>();
+	SceneManager::Set<ProtoScene>();
 
 	//////////////////////////////////////
 

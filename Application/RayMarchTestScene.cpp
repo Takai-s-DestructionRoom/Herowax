@@ -117,6 +117,7 @@ void RayMarchTestScene::Update()
 	}
 
 	slimeWax.Update();
+	//地面との当たり判定
 	for (auto& slime : slimeWax.spheres)
 	{
 		ColPrimitive3D::Plane planeCol;

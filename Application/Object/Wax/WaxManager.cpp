@@ -138,6 +138,8 @@ WaxManager::WaxManager() :
 void WaxManager::Init()
 {
 	waxGroups.clear();
+
+	slimeWax.Init();
 }
 
 void WaxManager::Update()
@@ -151,6 +153,20 @@ void WaxManager::Update()
 	{
 		waxGroup->Update();
 	}
+
+	slimeWax.spheres.clear();
+	//ロウを入れる
+	for (auto& group : waxGroups)
+	{
+		for (auto& wax : group->waxs)
+		{
+			slimeWax.spheres.emplace_back();
+			slimeWax.spheres.back().collider.pos = wax->obj.mTransform.position;
+			slimeWax.spheres.back().collider.r = wax->obj.mTransform.scale.x;
+		}
+	}
+
+	slimeWax.Update();
 
 #pragma region ImGui
 	ImGui::SetNextWindowSize({ 350, 180 });
@@ -217,6 +233,8 @@ void WaxManager::Draw()
 			}
 		}
 	}
+
+	slimeWax.Draw();
 }
 
 void WaxManager::Create(Transform transform, uint32_t power, Vector3 vec,
