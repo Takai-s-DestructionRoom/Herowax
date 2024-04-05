@@ -25,7 +25,7 @@ gravity(0.2f), groundPos(0)
 
 	mutekiTimer.maxTime_ = Parameter::GetParam(extract, "無敵時間さん", 0.1f);
 
-	obj.mTransform.scale = { 2,2,2 };
+	obj.mTransform.scale = { 3,3,3 };
 	attach = ModelObj(Model::Load("./Resources/Model/WaxAttach/WaxAttach.obj", "WaxAttach", true));
 }
 
@@ -127,6 +127,10 @@ void Enemy::Draw()
 	{
 		obj.Draw();
 		ui.Draw();
+
+		if (isDrawCollider) {
+			DrawCollider();
+		}
 
 		/*if (GetState() == "AllStop") {
 			attach.Draw();

@@ -64,6 +64,8 @@ public:
 
 	bool changingState = false;
 
+	bool isDrawCollider = false;
+
 public:
 
 	Enemy(ModelObj* target_);

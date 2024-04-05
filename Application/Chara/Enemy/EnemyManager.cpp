@@ -24,6 +24,11 @@ EnemyManager::EnemyManager()
 	knockRandZS = Parameter::GetParam(extract, "knockRandZS", Util::PI / 4);
 	knockRandZE = Parameter::GetParam(extract, "knockRandZE", Util::PI / 2);
 	mutekiTime = Parameter::GetParam(extract, "無敵時間さん", 0.1f);
+
+	enemySize.x = Parameter::GetParam(extract,"敵の大きさX", enemySize.x);
+	enemySize.y = Parameter::GetParam(extract,"敵の大きさY", enemySize.y);
+	enemySize.z = Parameter::GetParam(extract,"敵の大きさZ", enemySize.z);
+	collideSize = Parameter::GetParam(extract,"敵の当たり判定の大きさ", collideSize);
 }
 
 void EnemyManager::SetTarget(ModelObj* target_)
@@ -78,6 +83,10 @@ void EnemyManager::Update()
 
 	ImGui::Begin("Enemy", NULL, window_flags);
 
+	ImGui::DragFloat3("敵の大きさ", &enemySize.x, 0.1f);
+	ImGui::DragFloat("敵の当たり判定の大きさ", &collideSize, 0.1f);
+	static bool hitChecker = false;
+	ImGui::Checkbox("当たり判定描画", &hitChecker);
 	ImGui::Text("パッドのLボタンでタワーの位置に敵出現");
 	ImGui::Text("EnemyNum:%d", enemys.size());
 	ImGui::SliderFloat("減速率", &slowMag, 0.f, 1.f);
@@ -102,6 +111,9 @@ void EnemyManager::Update()
 	{
 		ImGui::Text("ステート:%s", enemy->GetState().c_str());
 		enemy->changeColor = changeColor;
+		enemy->colliderSize = collideSize;
+		enemy->obj.mTransform.scale = enemySize;
+		enemy->isDrawCollider = hitChecker;
 	}
 
 	if (ImGui::Button("Reset")) {
@@ -118,7 +130,12 @@ void EnemyManager::Update()
 		Parameter::Save("knockRandXE", knockRandXE);
 		Parameter::Save("knockRandZS", knockRandZS);
 		Parameter::Save("knockRandZE", knockRandZE);
-		Parameter::Save("無敵時間さん", mutekiTime);
+		Parameter::Save("knockRandZE", knockRandZE);
+		Parameter::Save("knockRandZE", knockRandZE);
+		Parameter::Save("敵の大きさX", enemySize.x);
+		Parameter::Save("敵の大きさY", enemySize.y);
+		Parameter::Save("敵の大きさZ", enemySize.z);
+		Parameter::Save("敵の当たり判定の大きさ", collideSize);
 
 		Parameter::End();
 	}

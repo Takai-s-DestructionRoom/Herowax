@@ -37,6 +37,9 @@ private:
 	//------------ 無敵時間 -------------//
 	float mutekiTime;
 
+	Vector3 enemySize = { 3,3,3 };
+	float collideSize = 3;
+
 public:
 	static EnemyManager* GetInstance();
 
