@@ -283,6 +283,9 @@
     <Filter Include="ヘッダー ファイル\Application\Object\SlimeWax">
       <UniqueIdentifier>{ffdb9945-076d-4c4b-9fb1-df629cd57dec}</UniqueIdentifier>
     </Filter>
+    <Filter Include="シェーダー ファイル\Billboard">
+      <UniqueIdentifier>{0037afb8-06a2-4627-8d13-00cb06da25bc}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Engine\2d\Sprite.cpp">
@@ -803,6 +806,12 @@
     <FxCompile Include="Shader\SlimeShader\SlimeShaderVS.hlsl">
       <Filter>シェーダー ファイル\SlimeShader</Filter>
     </FxCompile>
+    <FxCompile Include="Shader\Billboard\BillboardPS.hlsl">
+      <Filter>シェーダー ファイル\Billboard</Filter>
+    </FxCompile>
+    <FxCompile Include="Shader\Billboard\BillboardVS.hlsl">
+      <Filter>シェーダー ファイル\Billboard</Filter>
+    </FxCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\2d\Sprite.h">
@@ -1268,6 +1277,9 @@
     </None>
     <None Include="Shader\SlimeShader\SlimeShader.hlsli">
       <Filter>シェーダー ファイル\SlimeShader</Filter>
+    </None>
+    <None Include="Shader\Billboard\Billboard.hlsli">
+      <Filter>シェーダー ファイル\Billboard</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>

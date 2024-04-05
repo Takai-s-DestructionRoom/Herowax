@@ -92,7 +92,7 @@ void EnemyManager::Update()
 	}
 
 	ImGui::DragFloat3("敵の大きさ", &enemySize.x, 0.1f);
-	ImGui::DragFloat("敵の当たり判定の大きさ", &collideSize, 0.1f);
+	ImGui::InputFloat("敵の当たり判定の大きさ", &collideSize,0.1f);
 	static bool hitChecker = false;
 	ImGui::Checkbox("当たり判定描画", &hitChecker);
 	ImGui::Text("パッドのLボタンでタワーの位置に敵出現");
