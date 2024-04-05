@@ -7,4 +7,9 @@ knockRandXS:-1.5708
 knockRandXE:0.202
 knockRandZS:-0.935
 knockRandZE:0.965
-無敵時間さん:0.207
+knockRandZE:0.965
+knockRandZE:0.965
+敵の大きさX:4
+敵の大きさY:4
+敵の大きさZ:4
+敵の当たり判定の大きさ:1.8
