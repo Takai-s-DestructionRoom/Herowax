@@ -9,52 +9,27 @@
 #include <ColPrimitive3D.h>
 #include <RenderTarget.h>
 
+struct PaintData {
+	Vector3 ambient = { 1, 1, 1 };
+	float pad = 0;
+	Vector3 diffuse = { 1, 1, 1 };
+	float pad2 = 0;
+	Vector3 specular = { 1, 1, 1 };
+	float pad3 = 0;
+	Color color = { 1, 1, 1, 1 };
+	float dissolveVal = 0; //ディゾルブのかけ具合
+	float hoge = 0;
+};
+
 class PaintableModelObj : public ModelObj
 {
 public:
+	TextureHandle mPaintDissolveMapTex;
+	SRConstBuffer<PaintData> mPaintDataBuff;
+
 	PaintableModelObj() : ModelObj() {};
 	PaintableModelObj(Model* model) : ModelObj(model) {};
 	PaintableModelObj(ModelHandle handle) : ModelObj(ModelManager::Get(handle)) {};
-
-	~PaintableModelObj();
-
-	//コピーコンストラクタ
-	PaintableModelObj(const PaintableModelObj& o);
-
-	//コピー代入
-	PaintableModelObj& operator=(const PaintableModelObj& o);
-
-	//テクスチャペイント用の準備をする
-	//どっかで呼んでください
-	void SetupPaint();
-
-	//ペイントされたテクスチャの色を取得してくる
-	//指定したUVに対応する位置をゲット
-	Color ReadPaint(Vector2 uv, int32_t texNum);
-
-	/// <summary>
-	/// 指定したワールド座標とポリゴンからテクスチャペイントを行う
-	/// </summary>
-	/// <param name="pos">塗る位置(ワールド座標系)</param>
-	/// <param name="hitMeshIndex">塗るメッシュのインデックス</param>
-	/// <param name="hitIndicesIndex">塗るポリゴンのインデックス(3つで1ポリゴンとして何個目か)</param>
-	/// <param name="brush">塗る画像のハンドル</param>
-	/// <param name="color">塗る色(画像に乗算するので元画像が白でないなら何かあれになる)</param>
-	/// <param name="size">塗るサイズ(まだ安定してないかも)</param>
-	/// <param name="matrix">カメラの持つ行列</param>
-	/// <returns>塗れたかどうか</returns>
-	bool Paint(Vector3 pos, int32_t hitMeshIndex, int32_t hitIndicesIndex, TextureHandle brush, Color color, Vector2 size, Matrix4 matrix);
-
-	/// <summary>
-	/// レイで当たり判定を行ってテクスチャペイントを行う
-	/// </summary>
-	/// <param name="ray">レイ</param>
-	/// <param name="brush">塗る画像のハンドル</param>
-	/// <param name="color">塗る色(画像に乗算するので元画像が白でないなら何かあれになる)</param>
-	/// <param name="size">塗るサイズ(まだ安定してないかも)</param>
-	/// <param name="matrix">カメラの持つ行列</param>
-	/// <returns>塗れたかどうか</returns>
-	bool Paint(ColPrimitive3D::Ray ray, TextureHandle brush, Color color, Vector2 size, Matrix4 matrix);
 
 	//各データのバッファへの転送
 	void TransferBuffer(ViewProjection viewprojection) override;
@@ -66,14 +41,7 @@ public:
 	void Draw(std::string stageID = "Opaque") override;
 
 private:
-	bool mSetuped = false;
-	RootSignature* mRootSignature = nullptr;
-	GraphicsPipeline* mPipeline = nullptr;
-	struct Painter {
-		bool isUsing = false;
-		Sprite sprite;
-	};
-	std::vector<Painter> mPainters;
-	std::vector<RenderTexture*> mRenderTargets;
+	static RootSignature* GetRootSig();
+	static GraphicsPipeline* GetPipeline();
 };
 

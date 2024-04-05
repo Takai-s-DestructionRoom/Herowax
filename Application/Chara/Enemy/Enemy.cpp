@@ -16,7 +16,6 @@ gravity(0.2f), groundPos(0)
 	state = std::make_unique<EnemyNormal>();
 	nextState = nullptr;
 	obj = PaintableModelObj(Model::Load("./Resources/Model/firewisp/firewisp.obj", "firewisp", true));
-	obj.SetupPaint();
 	target = target_;
 
 	std::map<std::string, std::string> extract = Parameter::Extract("Enemy");
@@ -191,21 +190,6 @@ void Enemy::KnockBack(const Vector3& pVec)
 void Enemy::SetTarget(ModelObj* target_)
 {
 	target = target_;
-}
-
-void Enemy::RandomPaint(const Vector2& paintSize, const Color& paintColor)
-{
-	ColPrimitive3D::Ray ray;
-
-	//ランダムな方向へずらした位置を取得
-	ray.start = Util::GetRandVector3(obj.mTransform.position, -100.f, 100.f);
-	//そこから自身へのベクトルを生成
-	ray.dir = obj.mTransform.position - ray.start;
-	ray.dir.Normalize();
-
-	//当たった箇所にペイント
-	obj.Paint(ray, "brush", paintColor,
-		paintSize, Camera::sNowCamera->mViewProjection.mMatrix);
 }
 
 void Enemy::SetIsEscape(bool flag)

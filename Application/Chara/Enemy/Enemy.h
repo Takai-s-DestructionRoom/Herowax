@@ -80,9 +80,6 @@ public:
 
 	void SetGroundPos(float groundPos_) { groundPos = groundPos_; }
 
-	//自分自身をランダムに塗る関数
-	void RandomPaint(const Vector2& paintSize,const Color& paintColor);
-
 	/// <summary>
 	/// 状態変更
 	/// 内部で設定している優先度を見て、同値以上であれば遷移、未満であれば何もしない

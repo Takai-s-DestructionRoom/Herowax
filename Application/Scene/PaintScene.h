@@ -35,8 +35,10 @@ private:
 	PaintableModelObj objB;
 
 	//customize
+	float timer = 0;
 	Color paintColor = { 1, 1, 1, 1 };
-	float paintSize = 300;
-
-	Color hogeColor = { 0, 0, 0, 0 };
+	float dissolveVal = 0;
+	Vector3 mAmbient = { 1, 1, 1 };
+	Vector3 mDiffuse = { 1, 1, 1 };
+	Vector3 mSpecular = { 1, 1, 1 };
 };
