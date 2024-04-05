@@ -3,8 +3,8 @@
 #include "InstantDrawer.h"
 #include "RImGui.h"
 #include "Parameter.h"
-#include "Camera.h"
 #include "Renderer.h"
+#include "Minimap.h"
 
 void EggUI::LoadResource()
 {
@@ -71,11 +71,7 @@ void EggUI::Update()
 	}
 
 	//スクリーン座標を求める
-	screenPos =
-		Camera::sMinimapCamera->mViewProjection.WorldToScreen(
-			tower->obj.mTransform.position,
-			50.f, static_cast<float>(RWindow::GetHeight()) - 200.f,
-			150.f, 150.f, 0, 1);
+	screenPos = Minimap::GetInstance()->GetScreenPos(tower->obj.mTransform.position);
 	minimapIcon.mTransform.position = { screenPos.x,screenPos.y,0.f };
 	//回転適用
 	minimapIcon.mTransform.rotation.z =
@@ -121,18 +117,12 @@ void EggUI::Draw()
 	InstantDrawer::DrawGraph(position.x, position.y,
 		size.x, size.y, 0, "eggUI",color);
 
-	//描画範囲
-	RRect rect(
-		50, 200,
-		static_cast<long>(RWindow::GetHeight()) - 200,
-		static_cast<long>(RWindow::GetHeight()) - 50);
-
-	Renderer::SetScissorRects({ rect });
+	//描画範囲制限
+	Renderer::SetScissorRects({ Minimap::GetInstance()->rect });
 	minimapIcon.Draw();
 
 	//元の範囲に戻してあげる
-	RRect defaultRect(0, static_cast<long>(RWindow::GetWidth()), 0, static_cast<long>(RWindow::GetHeight()));
-	Renderer::SetScissorRects({ defaultRect });
+	Renderer::SetScissorRects({ Minimap::GetInstance()->defaultRect });
 }
 
 void EggUI::SetTower(Tower* tower_)

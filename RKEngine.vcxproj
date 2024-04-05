@@ -263,6 +263,7 @@
     <ClCompile Include="Application\Chara\Player\PlayerUI.cpp" />
     <ClCompile Include="Application\Wave.cpp" />
     <ClCompile Include="Engine\Collision\PlaneCollider.cpp" />
+    <ClCompile Include="Application\Minimap.cpp" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Shader\Basic\BasicPS.hlsl">
@@ -765,6 +766,7 @@
     <ClInclude Include="Application\Wave.h" />
     <ClInclude Include="Engine\Particle\HomingParticle.h" />
     <ClInclude Include="Engine\Collision\PlaneCollider.h" />
+    <ClInclude Include="Application\Minimap.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Shader\Bloom\Bloom.hlsli" />

@@ -2,9 +2,9 @@
 #include "Player.h"
 #include "InstantDrawer.h"
 #include "Texture.h"
-#include "Camera.h"
 #include "ImGui.h"
 #include "Renderer.h"
+#include "Minimap.h"
 
 void PlayerUI::LoadResource()
 {
@@ -46,42 +46,17 @@ void PlayerUI::Update(Player* player)
 		maxSize[(uint32_t)UIType::fireGauge].x * player->fireUnit.fireGauge / player->fireUnit.maxFireGauge;
 
 	//スクリーン座標を求める
-	screenPos =
-		Camera::sMinimapCamera->mViewProjection.WorldToScreen(
-			player->obj.mTransform.position,
-			50.f, static_cast<float>(RWindow::GetHeight()) - 200.f,
-			150.f, 150.f, 0, 1);
+	screenPos = Minimap::GetInstance()->GetScreenPos(player->obj.mTransform.position);
 	minimapIcon.mTransform.position = { screenPos.x,screenPos.y,0.f };
 	//回転適用
-	minimapIcon.mTransform.rotation.z = 
+	minimapIcon.mTransform.rotation.z =
 		player->obj.mTransform.rotation.y;
 	//決めたサイズに
 	minimapIcon.mTransform.scale = { iconSize.x,iconSize.y,1.f };
-	
+
 	//更新忘れずに
 	minimapIcon.mTransform.UpdateMatrix();
 	minimapIcon.TransferBuffer();
-
-#pragma region ImGui
-	ImGui::SetNextWindowSize({ 350, 100 });
-
-	ImGuiWindowFlags window_flags = 0;
-	window_flags |= ImGuiWindowFlags_NoResize;
-
-	// カメラ //
-	ImGui::Begin("MinimapIcon", NULL, window_flags);
-
-	ImGui::Text("座標:%f,%f",
-		screenPos.x,
-		screenPos.y);
-
-	ImGui::Text("ワールド座標:%f,%f,%f",
-		player->obj.mTransform.position.x,
-		player->obj.mTransform.position.y,
-		player->obj.mTransform.position.z);
-
-	ImGui::End();
-#pragma endregion
 }
 
 void PlayerUI::Draw()
@@ -94,16 +69,10 @@ void PlayerUI::Draw()
 		InstantDrawer::DrawGraph3D(position[i], size[i].x, size[i].y, "white2x2", gaugeColor[i]);
 	}
 
-	//描画範囲
-	RRect rect(
-		50, 200,
-		static_cast<long>(RWindow::GetHeight()) - 200,
-		static_cast<long>(RWindow::GetHeight()) - 50);
-
-	Renderer::SetScissorRects({rect});
+	//描画範囲制限
+	Renderer::SetScissorRects({ Minimap::GetInstance()->rect });
 	minimapIcon.Draw();
 
 	//元の範囲に戻してあげる
-	RRect defaultRect(0,static_cast<long>(RWindow::GetWidth()), 0,  static_cast<long>(RWindow::GetHeight()));
-	Renderer::SetScissorRects({ defaultRect });
+	Renderer::SetScissorRects({ Minimap::GetInstance()->defaultRect });
 }

@@ -37,8 +37,6 @@ private:
 	EggUI eggUI;
 	BreakableObj nest;
 
-	Sprite boxTex;						//ミニマップ背景
-
 	Camera minimapCamera = Camera();	//ミニマップ用の仮想カメラ
 	float mmCameraDist = -250.f;		//注視点からカメラの距離
 

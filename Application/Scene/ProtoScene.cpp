@@ -12,6 +12,7 @@
 #include "FireManager.h"
 #include "Parameter.h"
 #include "SpawnOrderData.h"
+#include "Minimap.h"
 
 ProtoScene::ProtoScene()
 {
@@ -34,13 +35,6 @@ ProtoScene::ProtoScene()
 	wave.Load();
 
 	EggUI::LoadResource();
-
-	boxTex.SetTexture(TextureManager::Load("./Resources/white2x2.png", "white2x2"));
-	boxTex.mTransform.position = {
-		125.f,static_cast<float>(RWindow::GetHeight()) - 125.f,0.f };
-	boxTex.mTransform.scale = { 75.f,75.f,1.f };
-	boxTex.mMaterial.mColor = Color::kBlack;
-	boxTex.mMaterial.mColor.a = 0.5f;
 }
 
 void ProtoScene::Init()
@@ -76,6 +70,8 @@ void ProtoScene::Init()
 	nest.Init();
 
 	nest.SetGround(Level::Get()->ground);
+
+	Minimap::GetInstance()->Init();
 
 	extract = Parameter::Extract("DebugBool");
 	Util::debugBool = Parameter::GetParam(extract, "debugBool", false);
@@ -312,12 +308,11 @@ void ProtoScene::Update()
 	eggUI.Update();
 	nest.Update();
 
+	Minimap::GetInstance()->Update();
+
 	light.Update();
 
 	skydome.TransferBuffer(camera.mViewProjection);
-
-	boxTex.mTransform.UpdateMatrix();
-	boxTex.TransferBuffer();
 
 	//F6かメニューボタン押されたらリザルトシーンへ
 	if (RInput::GetInstance()->GetKeyDown(DIK_F6) ||
@@ -437,24 +432,17 @@ void ProtoScene::Update()
 
 void ProtoScene::Draw()
 {
-	boxTex.Draw();
-
+	Minimap::GetInstance()->Draw();
 	ParticleManager::GetInstance()->Draw();
 	skydome.Draw();
 	WaxManager::GetInstance()->Draw();
 	FireManager::GetInstance()->Draw();
 	TemperatureManager::GetInstance()->Draw();
-	player.Draw();
 	eggUI.Draw();
 	nest.Draw();
 
 	Level::Get()->Draw();
-
-	InstantDrawer::DrawGraph(
-		125.f,
-		static_cast<float>(RWindow::GetHeight()) - 125.f,
-		0.5f,0.5f,0.f,
-		TextureManager::Load("./Resources/minimap_frame.png", "minimapFrame"));
+	player.Draw();
 
 	//更新
 	InstantDrawer::AllUpdate();
