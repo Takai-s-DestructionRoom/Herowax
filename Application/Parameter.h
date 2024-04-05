@@ -28,11 +28,18 @@ public:
 	/// BeginとEndの間で呼び出す
 	/// 保存したいデータを入れる。基本to_stringで変換して入れるのを想定
 	/// :区切りでデータを保存しているので、handleに":"を使うとバグります
-	/// floatだけよく入れるので用意
 	/// <param name="handle">ファイルの中で手前に付く名前。ImGuiのラベルと同じ感じで使ってください。</param>
 	/// <param name="data">保存したいデータ<</param>
 	static void Save(const std::string& handle, float data);
 
+	/// <summary>
+	/// BeginとEndの間で呼び出す
+	/// 保存したいデータを入れる。基本to_stringで変換して入れるのを想定
+	/// :区切りでデータを保存しているので、handleに":"を使うとバグります
+	/// <param name="handle">ファイルの中で手前に付く名前。ImGuiのラベルと同じ感じで使ってください。</param>
+	/// <param name="data">保存したいデータ<</param>
+	static void Save(const std::string& handle, int32_t data);
+	
 	/// <summary>
 	/// ImGui::Endとほぼ同じ使用感
 	/// 開いているファイルを閉じる

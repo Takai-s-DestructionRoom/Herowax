@@ -1,0 +1,4 @@
+sphereNum:120
+slimeValue:0.9
+rayMatchNum:12
+clipValue:1

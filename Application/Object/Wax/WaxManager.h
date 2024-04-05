@@ -2,6 +2,7 @@
 #include "Wax.h"
 #include "WaxGroup.h"
 #include "ColPrimitive3D.h"
+#include "SlimeWax.h"
 
 // 蝋群管理 //
 class WaxManager final
@@ -30,6 +31,8 @@ public:
 
 	bool isCollected = true;	//回収し終えたか
 	float accelAmount = 0.1f;	//回収の加速度合い
+
+	SlimeWax slimeWax;
 
 public:
 	//シングルトンインスタンス取得
