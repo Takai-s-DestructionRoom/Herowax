@@ -34,6 +34,13 @@ ProtoScene::ProtoScene()
 	wave.Load();
 
 	EggUI::LoadResource();
+
+	boxTex.SetTexture(TextureManager::Load("./Resources/white2x2.png", "white2x2"));
+	boxTex.mTransform.position = {
+		125.f,static_cast<float>(RWindow::GetHeight()) - 125.f,0.f };
+	boxTex.mTransform.scale = { 75.f,75.f,1.f };
+	boxTex.mMaterial.mColor = Color::kBlack;
+	boxTex.mMaterial.mColor.a = 0.5f;
 }
 
 void ProtoScene::Init()
@@ -309,6 +316,9 @@ void ProtoScene::Update()
 
 	skydome.TransferBuffer(camera.mViewProjection);
 
+	boxTex.mTransform.UpdateMatrix();
+	boxTex.TransferBuffer();
+
 	//F6かメニューボタン押されたらリザルトシーンへ
 	if (RInput::GetInstance()->GetKeyDown(DIK_F6) ||
 		RInput::GetInstance()->GetPadButtonDown(XINPUT_GAMEPAD_START))
@@ -427,6 +437,8 @@ void ProtoScene::Update()
 
 void ProtoScene::Draw()
 {
+	boxTex.Draw();
+
 	ParticleManager::GetInstance()->Draw();
 	skydome.Draw();
 	WaxManager::GetInstance()->Draw();
@@ -437,6 +449,12 @@ void ProtoScene::Draw()
 	nest.Draw();
 
 	Level::Get()->Draw();
+
+	InstantDrawer::DrawGraph(
+		125.f,
+		static_cast<float>(RWindow::GetHeight()) - 125.f,
+		0.5f,0.5f,0.f,
+		TextureManager::Load("./Resources/minimap_frame.png", "minimapFrame"));
 
 	//更新
 	InstantDrawer::AllUpdate();
