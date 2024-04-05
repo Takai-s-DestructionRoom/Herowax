@@ -85,11 +85,15 @@ void ProtoScene::Update()
 	if (stick.LengthSq() > 0.0f) {
 		float moveSpeed = cameraSpeed;
 
-		if (!std::signbit(stick.x)) {
-			moveSpeed *= -1;
+		if (abs(stick.x) > 0.3f) {
+			cameraAngle.y += moveSpeed * -stick.x;
 		}
-		cameraAngle.y += moveSpeed;
+		if (abs(stick.y) > 0.3f) {
+			cameraAngle.x += moveSpeed * stick.y;
+		}
 	}
+	cameraAngle.x = Util::Clamp(cameraAngle.x, 0.f,Util::AngleToRadian(89.f));
+	//cameraAngle.x += moveSpeed;
 
 	Vector3 cameraVec = { 0, 0, 1 };
 	//カメラアングル適応
@@ -321,6 +325,7 @@ void ProtoScene::Update()
 	// カメラ //
 	ImGui::Begin("Camera", NULL, window_flags);
 
+	ImGui::Text("スティック x: % f y : % f", stick.x, stick.y);
 	ImGui::Text("座標:%f,%f,%f",
 		camera.mViewProjection.mEye.x, 
 		camera.mViewProjection.mEye.y, 
