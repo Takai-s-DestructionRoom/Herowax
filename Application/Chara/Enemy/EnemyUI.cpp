@@ -3,6 +3,7 @@
 #include "InstantDrawer.h"
 #include "Texture.h"
 #include "Camera.h"
+#include "Renderer.h"
 
 void EnemyUI::LoadResource()
 {
@@ -13,7 +14,8 @@ void EnemyUI::LoadResource()
 EnemyUI::EnemyUI() : position(1,1,1),size(4,1)
 {
 	iconSize = { 0.2f,0.2f };
-	iconColor = Color::kRed;
+	minimapIcon.SetTexture(TextureManager::Load("./Resources/minimap_icon.png", "minimapIcon"));
+	minimapIcon.mMaterial.mColor = Color::kRed;
 }
 
 void EnemyUI::Update(Enemy* enemy)
@@ -29,9 +31,18 @@ void EnemyUI::Update(Enemy* enemy)
 		Camera::sMinimapCamera->mViewProjection.WorldToScreen(
 			enemy->obj.mTransform.position,
 			50.f, static_cast<float>(RWindow::GetHeight()) - 200.f,
-			100.f, 100.f, 0, 1);
+			150.f, 150.f, 0, 1);
 
-	iconAngle = Util::RadianToAngle(enemy->obj.mTransform.rotation.y);
+	minimapIcon.mTransform.position = { screenPos.x,screenPos.y,0.f };
+	//回転適用
+	minimapIcon.mTransform.rotation.z =
+		enemy->obj.mTransform.rotation.y;
+	//決めたサイズに
+	minimapIcon.mTransform.scale = { iconSize.x,iconSize.y,1.f };
+
+	//更新忘れずに
+	minimapIcon.mTransform.UpdateMatrix();
+	minimapIcon.TransferBuffer();
 }
 
 void EnemyUI::Draw()
@@ -43,6 +54,16 @@ void EnemyUI::Draw()
 	InstantDrawer::DrawGraph3D(backPos, maxSize.x, maxSize.y, "white2x2", Color::kBlack);
 	InstantDrawer::DrawGraph3D(position, size.x, size.y, "white2x2", Color::kRed);
 
-	InstantDrawer::DrawGraph(screenPos.x, screenPos.y,
-		iconSize.x, iconSize.y, iconAngle, "minimapIcon", iconColor);
+	//描画範囲
+	RRect rect(
+		50, 200,
+		static_cast<long>(RWindow::GetHeight()) - 200,
+		static_cast<long>(RWindow::GetHeight()) - 50);
+
+	Renderer::SetScissorRects({ rect });
+	minimapIcon.Draw();
+
+	//元の範囲に戻してあげる
+	RRect defaultRect(0, static_cast<long>(RWindow::GetWidth()), 0, static_cast<long>(RWindow::GetHeight()));
+	Renderer::SetScissorRects({ defaultRect });
 }

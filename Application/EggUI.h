@@ -3,6 +3,7 @@
 #include "Color.h"
 #include "Tower.h"
 #include "Easing.h"
+#include "Sprite.h"
 
 class EggUI
 {
@@ -23,7 +24,7 @@ private:
 
 	Vector2 screenPos;
 	Vector2 iconSize;
-	Color iconColor;
+	Sprite minimapIcon;
 
 public:
 	static void LoadResource();

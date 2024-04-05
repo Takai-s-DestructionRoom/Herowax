@@ -2,6 +2,7 @@
 #include "Vector2.h"
 #include "Vector3.h"
 #include "Color.h"
+#include "Sprite.h"
 #include <array>
 
 class Player;
@@ -24,8 +25,7 @@ public:
 
 	Vector2 screenPos;
 	Vector2 iconSize;
-	float iconAngle;
-	Color iconColor;
+	Sprite minimapIcon;
 
 public:
 	static void LoadResource();

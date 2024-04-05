@@ -4,6 +4,7 @@
 #include "RImGui.h"
 #include "Parameter.h"
 #include "Camera.h"
+#include "Renderer.h"
 
 void EggUI::LoadResource()
 {
@@ -13,7 +14,8 @@ void EggUI::LoadResource()
 EggUI::EggUI()
 {
 	iconSize = { 7.f,7.f };
-	iconColor = Color::kYellow;
+	minimapIcon.SetTexture(TextureManager::Load("./Resources/white2x2.png", "white2x2"));
+	minimapIcon.mMaterial.mColor = Color::kYellow;
 }
 
 void EggUI::Init()
@@ -73,7 +75,17 @@ void EggUI::Update()
 		Camera::sMinimapCamera->mViewProjection.WorldToScreen(
 			tower->obj.mTransform.position,
 			50.f, static_cast<float>(RWindow::GetHeight()) - 200.f,
-			100.f, 100.f, 0, 1);
+			150.f, 150.f, 0, 1);
+	minimapIcon.mTransform.position = { screenPos.x,screenPos.y,0.f };
+	//回転適用
+	minimapIcon.mTransform.rotation.z =
+		tower->obj.mTransform.rotation.y;
+	//決めたサイズに
+	minimapIcon.mTransform.scale = { iconSize.x,iconSize.y,1.f };
+
+	//更新忘れずに
+	minimapIcon.mTransform.UpdateMatrix();
+	minimapIcon.TransferBuffer();
 
 	ImGui::SetNextWindowSize({ 300, 200 });
 
@@ -109,8 +121,18 @@ void EggUI::Draw()
 	InstantDrawer::DrawGraph(position.x, position.y,
 		size.x, size.y, 0, "eggUI",color);
 
-	InstantDrawer::DrawGraph(screenPos.x, screenPos.y,
-		iconSize.x, iconSize.y, 0, "white2x2", iconColor);
+	//描画範囲
+	RRect rect(
+		50, 200,
+		static_cast<long>(RWindow::GetHeight()) - 200,
+		static_cast<long>(RWindow::GetHeight()) - 50);
+
+	Renderer::SetScissorRects({ rect });
+	minimapIcon.Draw();
+
+	//元の範囲に戻してあげる
+	RRect defaultRect(0, static_cast<long>(RWindow::GetWidth()), 0, static_cast<long>(RWindow::GetHeight()));
+	Renderer::SetScissorRects({ defaultRect });
 }
 
 void EggUI::SetTower(Tower* tower_)
