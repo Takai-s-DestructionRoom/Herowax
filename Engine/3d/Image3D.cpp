@@ -58,12 +58,12 @@ GraphicsPipeline Image3D::GetPipeline()
 		desc.BlendState.RenderTarget[0].DestBlend = D3D12_BLEND_ONE;
 		return GraphicsPipeline::GetOrCreate("Image3D_OpaqueSub", desc);
 	case BlendMode::TransparentAlpha:
-		desc.BlendState.RenderTarget[0].BlendOpAlpha = D3D12_BLEND_OP_REV_SUBTRACT;
+		desc.BlendState.RenderTarget[0].BlendOpAlpha = D3D12_BLEND_OP_ADD;
 		desc.BlendState.RenderTarget[0].SrcBlendAlpha = D3D12_BLEND_SRC_ALPHA;
-		desc.BlendState.RenderTarget[0].DestBlendAlpha = D3D12_BLEND_ONE;
-		desc.BlendState.RenderTarget[0].BlendOp = D3D12_BLEND_OP_REV_SUBTRACT;
+		desc.BlendState.RenderTarget[0].DestBlendAlpha = D3D12_BLEND_INV_SRC_ALPHA;
+		desc.BlendState.RenderTarget[0].BlendOp = D3D12_BLEND_OP_ADD;
 		desc.BlendState.RenderTarget[0].SrcBlend = D3D12_BLEND_SRC_ALPHA;
-		desc.BlendState.RenderTarget[0].DestBlend = D3D12_BLEND_ONE;
+		desc.BlendState.RenderTarget[0].DestBlend = D3D12_BLEND_INV_SRC_ALPHA;
 		return GraphicsPipeline::GetOrCreate("Image3D_TransparentAlpha", desc);
 	case BlendMode::TransparentAdd:
 		desc.BlendState.RenderTarget[0].BlendOpAlpha = D3D12_BLEND_OP_ADD;

@@ -116,6 +116,7 @@ WaxManager::WaxManager() :
 	std::map<std::string, std::string> extract = Parameter::Extract(fileName);
 	heatUpTemperature = Parameter::GetParam(extract, "ロウが燃えたときの上昇温度", 5.f);
 	heatBonus = Parameter::GetParam(extract, "ボーナス上昇温度", 2.f);
+	accelAmount = Parameter::GetParam(extract, "回収時の加速度", 0.1f);
 
 	for (int i = 0; i < 10; i++)
 	{
@@ -138,6 +139,8 @@ WaxManager::WaxManager() :
 void WaxManager::Init()
 {
 	waxGroups.clear();
+
+	slimeWax.Init();
 	isCollected = true;
 }
 
@@ -153,6 +156,20 @@ void WaxManager::Update()
 		waxGroup->Update();
 	}
 
+	slimeWax.spheres.clear();
+	//ロウを入れる
+	for (auto& group : waxGroups)
+	{
+		for (auto& wax : group->waxs)
+		{
+			slimeWax.spheres.emplace_back();
+			slimeWax.spheres.back().collider.pos = wax->obj.mTransform.position;
+			slimeWax.spheres.back().collider.r = wax->obj.mTransform.scale.x;
+		}
+	}
+
+	slimeWax.Update();
+
 #pragma region ImGui
 	ImGui::SetNextWindowSize({ 350, 180 });
 
@@ -166,6 +183,8 @@ void WaxManager::Update()
 	ImGui::PushItemWidth(100);
 	ImGui::InputFloat("ロウが燃えたときの上昇温度", &heatUpTemperature, 1.0f);
 	ImGui::InputFloat("ボーナス上昇温度", &heatBonus, 1.0f);
+
+	ImGui::InputFloat("回収時の加速度", &accelAmount, 0.05f);
 
 	ImGui::Text("敵を捕まえたときの固まっている秒数");
 	for (int i = 0; i < 10; i++)
@@ -190,6 +209,7 @@ void WaxManager::Update()
 		Parameter::Begin(fileName);
 		Parameter::Save("ロウが燃えたときの上昇温度", heatUpTemperature);
 		Parameter::Save("ボーナス上昇温度", heatBonus);
+		Parameter::Save("回収時の加速度", accelAmount);
 		for (int i = 0; i < 10; i++)
 		{
 			std::string waxnum = std::to_string(i + 1) + "体の時";
@@ -209,15 +229,17 @@ void WaxManager::Draw()
 {
 	for (auto& group : waxGroups)
 	{
-		group->Draw();
+		//group->Draw();
 		for (auto& wax : group->waxs)
 		{
-			wax->Draw();
+			//wax->Draw();
 			if (isViewCol) {
 				wax->DrawCollider();
 			}
 		}
 	}
+
+	slimeWax.Draw();
 }
 
 void WaxManager::Create(Transform transform, uint32_t power, Vector3 vec,
@@ -268,7 +290,7 @@ bool RayToSphereCol(ColPrimitive3D::Ray rayCol, ColPrimitive3D::Sphere sphereCol
 	return false;
 }
 
-void WaxManager::Collect(ColPrimitive3D::Ray collider)
+bool WaxManager::Collect(ColPrimitive3D::Ray collider)
 {
 	Wax* farObj = nullptr;
 	//bool isExistence = false;
@@ -306,7 +328,12 @@ void WaxManager::Collect(ColPrimitive3D::Ray collider)
 		farObj->collectPos = collider.start;
 		farObj->ChangeState<WaxCollect>();
 		//farObj = nullptr;	//消す
+
+		isCollected = false;
+		return true;
 	}
+
+	return false;
 }
 
 uint32_t WaxManager::GetWaxNum()

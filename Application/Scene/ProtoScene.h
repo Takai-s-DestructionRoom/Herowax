@@ -33,7 +33,7 @@ private:
 	Player player;
 	Wave wave;
 	EggUI eggUI;
-	BreakableObj nest;
+	//BreakableObj nest;
 
 	Camera camera = Camera();
 	float cameraDist = -20.f;	//注視点からカメラの距離

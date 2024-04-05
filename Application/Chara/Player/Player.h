@@ -55,6 +55,8 @@ public:
 	float waxCollectRange;				//ロウ回収する範囲
 	ColPrimitive3D::Ray collectCol;		//ロウ回収する範囲当たり判定
 	ModelObj collectRangeModel;			//ロウ回収範囲描画用
+
+	int32_t waxCollectAmount;			//ロウ回収量
 	
 	//----------- 挑発関連 ------------//
 	bool isTauntMode = false;		//ロウを直接当てると敵の追いかける対象が自分に変わるモード
@@ -66,7 +68,7 @@ public:
 	float pabloSpeedMag;		//パブロ攻撃時の移動速度
 	float shotDeadZone = 1.0f;
 	float pabloShotSpeedMag = 2.f;	//プレイヤーの正面に出すための係数
-	int32_t waxNum = 5;
+	int32_t waxNum = 5;				//一度に出るロウの数
 
 	//------------ 炎関係 ------------//
 	FireUnit fireUnit;

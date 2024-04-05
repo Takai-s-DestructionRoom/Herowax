@@ -55,3 +55,9 @@ private:
 	uint32_t fireAddFrame = 5;	//炎を何フレームに一回追加するか
 	uint32_t frameCount;		//フレームカウント
 };
+
+class EnemyPreAttack : public EnemyState
+{
+public:
+
+};

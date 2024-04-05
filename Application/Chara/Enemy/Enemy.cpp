@@ -14,7 +14,9 @@ isAttack(false), atkPower(0.f), atkCoolTimer(1.f),
 gravity(0.2f), groundPos(0)
 {
 	state = std::make_unique<EnemyNormal>();
+	attackState = std::make_unique<EnemyNonAttackState>();
 	nextState = nullptr;
+	nextAttackState = nullptr;
 	obj = PaintableModelObj(Model::Load("./Resources/Model/firewisp/firewisp.obj", "firewisp", true));
 	target = target_;
 
@@ -24,7 +26,7 @@ gravity(0.2f), groundPos(0)
 
 	mutekiTimer.maxTime_ = Parameter::GetParam(extract, "無敵時間さん", 0.1f);
 
-	obj.mTransform.scale = { 2,2,2 };
+	obj.mTransform.scale = { 3,3,3 };
 	attach = ModelObj(Model::Load("./Resources/Model/WaxAttach/WaxAttach.obj", "WaxAttach", true));
 }
 
@@ -62,6 +64,15 @@ void Enemy::Update()
 		std::swap(state, nextState);
 		changingState = false;
 		nextState = nullptr;
+	}
+
+	attackState->Update(this);
+	//前のステートと異なれば
+	if (changingAttackState) {
+		//ステートを変化させる
+		std::swap(attackState, nextAttackState);
+		changingAttackState = false;
+		nextAttackState = nullptr;
 	}
 
 	hp = Util::Clamp(hp, 0.f, maxHP);
@@ -126,6 +137,10 @@ void Enemy::Draw()
 	{
 		obj.Draw();
 		ui.Draw();
+
+		if (isDrawCollider) {
+			DrawCollider();
+		}
 
 		/*if (GetState() == "AllStop") {
 			attach.Draw();

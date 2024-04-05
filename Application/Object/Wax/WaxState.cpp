@@ -121,8 +121,7 @@ void WaxCollect::Update(Wax* wax)
 {
 	wax->SetStateStr("WaxCollect");
 
-	WaxManager::GetInstance()->isCollected = false;
-	accel += accelAmount;
+	accel += WaxManager::GetInstance()->accelAmount;
 
 	Vector3 moveVec =
 		wax->collectPos - wax->obj.mTransform.position;
@@ -132,7 +131,7 @@ void WaxCollect::Update(Wax* wax)
 	wax->obj.mTuneMaterial.mColor = Color::kGreen;
 
 	//到達したら殺す
-	if (moveVec.Length() <= 2.f)
+	if (moveVec.Length() <= accel)
 	{
 		wax->DeadParticle();
 		wax->isAlive = false;

@@ -64,9 +64,9 @@ void ProtoScene::Init()
 	eggUI.Init();
 	eggUI.SetTower(&Level::Get()->tower);
 
-	nest.Init();
+	//nest.Init();
 
-	nest.SetGround(Level::Get()->ground);
+	//nest.SetGround(Level::Get()->ground);
 
 	extract = Parameter::Extract("DebugBool");
 	Util::debugBool = Parameter::GetParam(extract, "debugBool", false);
@@ -85,11 +85,15 @@ void ProtoScene::Update()
 	if (stick.LengthSq() > 0.0f) {
 		float moveSpeed = cameraSpeed;
 
-		if (!std::signbit(stick.x)) {
-			moveSpeed *= -1;
+		if (abs(stick.x) > 0.3f) {
+			cameraAngle.y += moveSpeed * -stick.x;
 		}
-		cameraAngle.y += moveSpeed;
+		if (abs(stick.y) > 0.3f) {
+			cameraAngle.x += moveSpeed * stick.y;
+		}
 	}
+	cameraAngle.x = Util::Clamp(cameraAngle.x, 0.f,Util::AngleToRadian(89.f));
+	//cameraAngle.x += moveSpeed;
 
 	Vector3 cameraVec = { 0, 0, 1 };
 	//カメラアングル適応
@@ -165,8 +169,17 @@ void ProtoScene::Update()
 				}
 
 				//燃えてるロウと当たったら燃えてる状態に遷移
-				if (isCollision && wax->GetState() != "Normal") {
+				if (isCollision && wax->GetState() == "WaxBurning") {
 					enemy->ChangeState<EnemyBurning>();
+				}
+
+				//回収中ものと通常の状態なら
+				if (isCollision && wax->stateStr == "WaxCollect")
+				{
+					//死ぬ
+					enemy->SetDeath();
+
+					player.waxCollectAmount++;
 				}
 			}
 		}
@@ -214,7 +227,6 @@ void ProtoScene::Update()
 		}
 	}
 	
-
 	player.Update();
 	Level::Get()->Update();
 
@@ -249,8 +261,10 @@ void ProtoScene::Update()
 						if (wax1->stateStr == "WaxCollect" && wax2->IsNormal())
 						{
 							//死ぬ
-							wax1->DeadParticle();
+							wax2->DeadParticle();
 							wax2->isAlive = false;
+
+							player.waxCollectAmount++;
 						}
 					}
 				}
@@ -289,7 +303,7 @@ void ProtoScene::Update()
 	ParticleManager::GetInstance()->Update();
 
 	eggUI.Update();
-	nest.Update();
+	//nest.Update();
 
 	light.Update();
 
@@ -311,6 +325,7 @@ void ProtoScene::Update()
 	// カメラ //
 	ImGui::Begin("Camera", NULL, window_flags);
 
+	ImGui::Text("スティック x: % f y : % f", stick.x, stick.y);
 	ImGui::Text("座標:%f,%f,%f",
 		camera.mViewProjection.mEye.x, 
 		camera.mViewProjection.mEye.y, 
@@ -418,7 +433,7 @@ void ProtoScene::Draw()
 	TemperatureManager::GetInstance()->Draw();
 	player.Draw();
 	eggUI.Draw();
-	nest.Draw();
+	//nest.Draw();
 
 	Level::Get()->Draw();
 

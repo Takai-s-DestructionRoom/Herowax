@@ -30,8 +30,12 @@ void GameObject::UpdateCollider()
 	float maxR = GetScale().x;
 	if (maxR < GetScale().y)maxR = GetScale().y;
 	if (maxR < GetScale().z)maxR = GetScale().z;
-
-	collider.r = maxR * colliderSize;	//比率もかけて大きさいじれるように
+	collider.r = maxR;
+	
+	//コライダーの大きさが別で設定できるように
+	if (colliderSize != 1.0f) {
+		collider.r = colliderSize;
+	}
 
 	drawerObj.mTransform.position = collider.pos;
 	drawerObj.mTransform.scale = { collider.r ,collider.r ,collider.r };

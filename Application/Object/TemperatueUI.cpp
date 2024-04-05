@@ -37,7 +37,7 @@ void TemperatureUI::Update()
 
 	//枠の色が今の色
 	//中身の色は線でハッキリ分かれてる
-	ImGui::Begin("温度UI");
+	/*ImGui::Begin("温度UI");
 	ImGui::SliderFloat("X座標", &position.x, 0, Util::WIN_WIDTH);
 	ImGui::SliderFloat("Y座標", &position.y, 0, Util::WIN_HEIGHT);
 	ImGui::SliderFloat("Xのスケール", &size.x, 0, 10);
@@ -54,7 +54,7 @@ void TemperatureUI::Update()
 	{
 		Save();
 	}
-	ImGui::End();
+	ImGui::End();*/
 
 	//minからcoldborderまでがこの色になってほしい
 	//結局同じスピードで3つ重ねて動かすのが一番早いんじゃないか？

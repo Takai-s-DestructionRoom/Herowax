@@ -36,6 +36,8 @@
 #include <DebugGUI.h>
 #include <PathUtil.h>
 
+#include "RayMarchTestScene.h"
+
 using namespace std;
 using namespace DirectX;
 

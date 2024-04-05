@@ -61,25 +61,25 @@ void FireManager::Update()
 	targetCircle.mTransform.UpdateMatrix();
 	targetCircle.TransferBuffer(Camera::sNowCamera->mViewProjection);
 
-#pragma region ImGui
-	ImGui::SetNextWindowSize({ 300, 150 });
-
-	ImGuiWindowFlags window_flags = 0;
-	window_flags |= ImGuiWindowFlags_NoResize;
-	ImGui::Begin("炎", NULL, window_flags);
-
-	ImGui::SliderFloat("炎の着弾位置", &fireRange, -20.f, 20.f);
-	ImGui::InputFloat("炎の着弾時間", &fireImpactTime, 0.1f);
-
-	if (ImGui::Button("セーブ")) {
-		Parameter::Begin("Fire");
-		Parameter::Save("炎の着弾位置", fireRange);
-		Parameter::Save("炎の着弾時間", fireImpactTime);
-		Parameter::End();
-	}
-
-	ImGui::End();
-#pragma endregion
+//#pragma region ImGui
+//	ImGui::SetNextWindowSize({ 300, 150 });
+//
+//	ImGuiWindowFlags window_flags = 0;
+//	window_flags |= ImGuiWindowFlags_NoResize;
+//	ImGui::Begin("炎", NULL, window_flags);
+//
+//	ImGui::SliderFloat("炎の着弾位置", &fireRange, -20.f, 20.f);
+//	ImGui::InputFloat("炎の着弾時間", &fireImpactTime, 0.1f);
+//
+//	if (ImGui::Button("セーブ")) {
+//		Parameter::Begin("Fire");
+//		Parameter::Save("炎の着弾位置", fireRange);
+//		Parameter::Save("炎の着弾時間", fireImpactTime);
+//		Parameter::End();
+//	}
+//
+//	ImGui::End();
+//#pragma endregion
 }
 
 void FireManager::Draw()
