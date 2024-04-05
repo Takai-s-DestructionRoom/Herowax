@@ -69,30 +69,30 @@ void Tower::Update()
 	obj.mTransform.UpdateMatrix();
 	obj.TransferBuffer(Camera::sNowCamera->mViewProjection);
 
-#pragma region ImGui
-	ImGui::SetNextWindowSize({ 150, 100 });
-
-	ImGuiWindowFlags window_flags = 0;
-	window_flags |= ImGuiWindowFlags_NoResize;
-
-	ImGui::Begin("Tower", NULL, window_flags);
-	ImGui::Text("HP:%f", &hp);
-	ImGui::SliderFloat("最大HP", &maxHP,0.f,100.f);
-	ImGui::SliderFloat("揺れる力", &shakePower,0.f,5.f);
-	if (ImGui::Button("HP減少")) {
-		Damage(1.f,Vector3::ONE);
-	}
-
-	if (ImGui::Button("当たり判定の描画")) {
-		isViewCol = !isViewCol;
-	}
-	if (ImGui::Button("Reset")) {
-		hp = maxHP;
-		isAlive = true;
-	}
-
-	ImGui::End();
-#pragma endregion
+//#pragma region ImGui
+//	ImGui::SetNextWindowSize({ 150, 100 });
+//
+//	ImGuiWindowFlags window_flags = 0;
+//	window_flags |= ImGuiWindowFlags_NoResize;
+//
+//	ImGui::Begin("Tower", NULL, window_flags);
+//	ImGui::Text("HP:%f", &hp);
+//	ImGui::SliderFloat("最大HP", &maxHP,0.f,100.f);
+//	ImGui::SliderFloat("揺れる力", &shakePower,0.f,5.f);
+//	if (ImGui::Button("HP減少")) {
+//		Damage(1.f,Vector3::ONE);
+//	}
+//
+//	if (ImGui::Button("当たり判定の描画")) {
+//		isViewCol = !isViewCol;
+//	}
+//	if (ImGui::Button("Reset")) {
+//		hp = maxHP;
+//		isAlive = true;
+//	}
+//
+//	ImGui::End();
+//#pragma endregion
 }
 
 void Tower::Draw()

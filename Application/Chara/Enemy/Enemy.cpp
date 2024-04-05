@@ -14,7 +14,9 @@ isAttack(false), atkPower(0.f), atkCoolTimer(1.f),
 gravity(0.2f), groundPos(0)
 {
 	state = std::make_unique<EnemyNormal>();
+	attackState = std::make_unique<EnemyNonAttackState>();
 	nextState = nullptr;
+	nextAttackState = nullptr;
 	obj = PaintableModelObj(Model::Load("./Resources/Model/firewisp/firewisp.obj", "firewisp", true));
 	obj.SetupPaint();
 	target = target_;
@@ -63,6 +65,15 @@ void Enemy::Update()
 		std::swap(state, nextState);
 		changingState = false;
 		nextState = nullptr;
+	}
+
+	attackState->Update(this);
+	//前のステートと異なれば
+	if (changingAttackState) {
+		//ステートを変化させる
+		std::swap(attackState, nextAttackState);
+		changingAttackState = false;
+		nextAttackState = nullptr;
 	}
 
 	hp = Util::Clamp(hp, 0.f, maxHP);

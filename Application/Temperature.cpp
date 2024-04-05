@@ -84,43 +84,43 @@ void TemperatureManager::Update()
 		}
 	}
 
-#pragma region ImGui
-	ImGui::SetNextWindowSize({ 350, 210 });
-
-	ImGuiWindowFlags window_flags = 0;
-	window_flags |= ImGuiWindowFlags_NoResize;
-
-	ImGui::Begin("TemperatureUI", NULL, window_flags);
-
-	ImGui::SliderFloat("温度", &temperature, MIN_TEMPERATURE, MAX_TEMPERATURE);
-	ImGui::Text("残りクリア時間:%f", clearTimer.maxTime_ - clearTimer.nowTime_);
-	ImGui::PushItemWidth(120);	//入力の枠小さくするやつ
-	ImGui::InputFloat("1秒ごとの低下量", &downSpeed,1.f);
-	ImGui::InputFloat("1秒ごとに上がる最大値",&maxPlusTemp, 1.f);
-	ImGui::InputFloat("クリアタイマーが減るボーダーライン", &boaderTemperature,1.f);
-	ImGui::InputFloat("クリアにかかる時間", &clearTimer.maxTime_,1.f);
-	ImGui::InputFloat("開始時の温度", &START_TEMPERATURE,1.f);
-	ImGui::PopItemWidth();		//入力の枠元に戻すやつ
-	if (ImGui::TreeNode("温度:詳細設定"))
-	{
-		ImGui::InputFloat("最低温度", &MIN_TEMPERATURE,1.f);
-		ImGui::InputFloat("最大温度", &MAX_TEMPERATURE,1.f);
-
-		ImGui::SliderFloat("冷えてる状態のボーダー", &coldBorder,
-			TemperatureManager::GetInstance()->MIN_TEMPERATURE,
-			TemperatureManager::GetInstance()->MAX_TEMPERATURE);
-		ImGui::SliderFloat("温かい状態のボーダー", &hotBorder,
-			TemperatureManager::GetInstance()->MIN_TEMPERATURE,
-			TemperatureManager::GetInstance()->MAX_TEMPERATURE);
-		ImGui::TreePop();
-	}
-
-	if (ImGui::Button("セーブ")) {
-		Save();
-	}
-
-	ImGui::End();
-#pragma endregion
+//#pragma region ImGui
+//	ImGui::SetNextWindowSize({ 350, 210 });
+//
+//	ImGuiWindowFlags window_flags = 0;
+//	window_flags |= ImGuiWindowFlags_NoResize;
+//
+//	ImGui::Begin("TemperatureUI", NULL, window_flags);
+//
+//	ImGui::SliderFloat("温度", &temperature, MIN_TEMPERATURE, MAX_TEMPERATURE);
+//	ImGui::Text("残りクリア時間:%f", clearTimer.maxTime_ - clearTimer.nowTime_);
+//	ImGui::PushItemWidth(120);	//入力の枠小さくするやつ
+//	ImGui::InputFloat("1秒ごとの低下量", &downSpeed,1.f);
+//	ImGui::InputFloat("1秒ごとに上がる最大値",&maxPlusTemp, 1.f);
+//	ImGui::InputFloat("クリアタイマーが減るボーダーライン", &boaderTemperature,1.f);
+//	ImGui::InputFloat("クリアにかかる時間", &clearTimer.maxTime_,1.f);
+//	ImGui::InputFloat("開始時の温度", &START_TEMPERATURE,1.f);
+//	ImGui::PopItemWidth();		//入力の枠元に戻すやつ
+//	if (ImGui::TreeNode("温度:詳細設定"))
+//	{
+//		ImGui::InputFloat("最低温度", &MIN_TEMPERATURE,1.f);
+//		ImGui::InputFloat("最大温度", &MAX_TEMPERATURE,1.f);
+//
+//		ImGui::SliderFloat("冷えてる状態のボーダー", &coldBorder,
+//			TemperatureManager::GetInstance()->MIN_TEMPERATURE,
+//			TemperatureManager::GetInstance()->MAX_TEMPERATURE);
+//		ImGui::SliderFloat("温かい状態のボーダー", &hotBorder,
+//			TemperatureManager::GetInstance()->MIN_TEMPERATURE,
+//			TemperatureManager::GetInstance()->MAX_TEMPERATURE);
+//		ImGui::TreePop();
+//	}
+//
+//	if (ImGui::Button("セーブ")) {
+//		Save();
+//	}
+//
+//	ImGui::End();
+//#pragma endregion
 }
 
 void TemperatureManager::Save()

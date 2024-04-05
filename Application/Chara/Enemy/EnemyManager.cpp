@@ -3,6 +3,12 @@
 #include "Colliders.h"
 #include "Parameter.h"
 
+void EnemyManager::LoadResource()
+{
+	EnemyUI::LoadResource();
+	EnemyAttackState::LoadResource();
+}
+
 EnemyManager* EnemyManager::GetInstance()
 {
 	static EnemyManager instance;
@@ -41,11 +47,6 @@ void EnemyManager::SetGround(ModelObj* ground_)
 	ground = ground_;
 }
 
-void EnemyManager::LoadResource()
-{
-	EnemyUI::LoadResource();
-}
-
 void EnemyManager::Init()
 {
 	enemys.clear();
@@ -82,6 +83,13 @@ void EnemyManager::Update()
 	window_flags |= ImGuiWindowFlags_NoResize;
 
 	ImGui::Begin("Enemy", NULL, window_flags);
+
+	if (ImGui::Button("敵を攻撃状態へ遷移")) {
+		for (auto& enemy : enemys)
+		{
+			enemy->ChangeAttackState<EnemyFindState>();
+		}
+	}
 
 	ImGui::DragFloat3("敵の大きさ", &enemySize.x, 0.1f);
 	ImGui::DragFloat("敵の当たり判定の大きさ", &collideSize, 0.1f);

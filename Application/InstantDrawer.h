@@ -60,7 +60,8 @@ public:
 	/// <param name="width"></param>
 	/// <param name="height"></param>
 	/// <param name="handle"></param>
-	static void DrawGraph3D(const Vector3& pos, float width, float height, const std::string& handle,const Color& color = {1,1,1,1});
+	static void DrawGraph3D(const Vector3& pos, float width, float height, 
+		const std::string& handle,const Color& color = {1,1,1,1});
 
 	/// <summary>
 	/// 全更新

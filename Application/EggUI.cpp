@@ -61,33 +61,33 @@ void EggUI::Update()
 		position += shake;
 	}
 
-	ImGui::SetNextWindowSize({ 300, 200 });
+	//ImGui::SetNextWindowSize({ 300, 200 });
 
-	ImGuiWindowFlags window_flags = 0;
-	window_flags |= ImGuiWindowFlags_NoResize;
+	//ImGuiWindowFlags window_flags = 0;
+	//window_flags |= ImGuiWindowFlags_NoResize;
 
-	ImGui::Begin("EggUI", NULL, window_flags);
-	if (tower) {
-		ImGui::Text("HP %f", tower->hp);
-	}
-	ImGui::SliderFloat("座標X", &position.x,0,Util::WIN_WIDTH);
-	ImGui::SliderFloat("座標Y", &position.y,0,Util::WIN_HEIGHT);
-	ImGui::SliderFloat2("サイズ", &size.x,0,1.f);
-	ImGui::InputFloat("揺れの強さ", &shakePower,1.0f);
-	ImGui::InputFloat("揺れる時間", &shakeTimer.maxTime_,1.0f);
+	//ImGui::Begin("EggUI", NULL, window_flags);
+	//if (tower) {
+	//	ImGui::Text("HP %f", tower->hp);
+	//}
+	//ImGui::SliderFloat("座標X", &position.x,0,Util::WIN_WIDTH);
+	//ImGui::SliderFloat("座標Y", &position.y,0,Util::WIN_HEIGHT);
+	//ImGui::SliderFloat2("サイズ", &size.x,0,1.f);
+	//ImGui::InputFloat("揺れの強さ", &shakePower,1.0f);
+	//ImGui::InputFloat("揺れる時間", &shakeTimer.maxTime_,1.0f);
 
-	if (ImGui::Button("セーブ")) {
-		Parameter::Begin("EggUI");
-		Parameter::Save("座標X", position.x);
-		Parameter::Save("座標Y", position.y);
-		Parameter::Save("サイズX", size.x);
-		Parameter::Save("サイズY", size.y);
-		Parameter::Save("揺れの強さ", shakePower);
-		Parameter::Save("揺れる時間", shakeTimer.maxTime_);
-		Parameter::End();
-	}
+	//if (ImGui::Button("セーブ")) {
+	//	Parameter::Begin("EggUI");
+	//	Parameter::Save("座標X", position.x);
+	//	Parameter::Save("座標Y", position.y);
+	//	Parameter::Save("サイズX", size.x);
+	//	Parameter::Save("サイズY", size.y);
+	//	Parameter::Save("揺れの強さ", shakePower);
+	//	Parameter::Save("揺れる時間", shakeTimer.maxTime_);
+	//	Parameter::End();
+	//}
 
-	ImGui::End();
+	//ImGui::End();
 }
 
 void EggUI::Draw()

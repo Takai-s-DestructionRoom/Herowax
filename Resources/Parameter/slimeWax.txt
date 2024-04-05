@@ -1,4 +1,1 @@
-sphereNum:0
-slimeValue:0.9
-rayMatchNum:32
-clipValue:1
+__TEST__GGEZ__:1

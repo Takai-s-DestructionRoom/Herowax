@@ -138,22 +138,22 @@ void FireUnit::Update()
 	obj.TransferBuffer(Camera::sNowCamera->mViewProjection);
 
 
-	ImGui::SetNextWindowSize({ 300, 150 });
+	//ImGui::SetNextWindowSize({ 300, 150 });
 
-	ImGuiWindowFlags window_flags = 0;
-	window_flags |= ImGuiWindowFlags_NoResize;
+	//ImGuiWindowFlags window_flags = 0;
+	//window_flags |= ImGuiWindowFlags_NoResize;
 
-	ImGui::Begin("FireUnit", NULL, window_flags);
+	//ImGui::Begin("FireUnit", NULL, window_flags);
 
-	ImGui::Text("加速度:%f",adulationAccel);
-	ImGui::Text("オフセット:%f,%f,%f",offset.x,offset.y,offset.z);
-	ImGui::Text("座標:%f,%f,%f",obj.mTransform.position.x, obj.mTransform.position.y, obj.mTransform.position.z);
+	//ImGui::Text("加速度:%f",adulationAccel);
+	//ImGui::Text("オフセット:%f,%f,%f",offset.x,offset.y,offset.z);
+	//ImGui::Text("座標:%f,%f,%f",obj.mTransform.position.x, obj.mTransform.position.y, obj.mTransform.position.z);
 
-	ImGui::SliderFloat("加速度", &accelAmount, 0.f, 0.1f);
-	ImGui::SliderFloat("プレイヤーとの距離X", &offsetOrigin.x, 0.f, 5.f);
-	ImGui::SliderFloat("プレイヤーとの距離Z", &offsetOrigin.z, -5.f, 0.f);
+	//ImGui::SliderFloat("加速度", &accelAmount, 0.f, 0.1f);
+	//ImGui::SliderFloat("プレイヤーとの距離X", &offsetOrigin.x, 0.f, 5.f);
+	//ImGui::SliderFloat("プレイヤーとの距離Z", &offsetOrigin.z, -5.f, 0.f);
 
-	ImGui::End();
+	//ImGui::End();
 }
 
 void FireUnit::Draw()

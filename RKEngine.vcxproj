@@ -142,6 +142,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Application\EnemyAttackState.cpp" />
     <ClCompile Include="Engine\Collision\AABBCollider.cpp" />
     <ClCompile Include="Application\Chara\Enemy\EnemySpawner.cpp" />
     <ClCompile Include="Application\InstantDrawer.cpp" />
@@ -658,6 +659,7 @@
     </FxCompile>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Application\EnemyAttackState.h" />
     <ClInclude Include="Engine\Collision\AABBCollider.h" />
     <ClInclude Include="Application\Chara\Enemy\EnemySpawner.h" />
     <ClInclude Include="Application\InstantDrawer.h" />

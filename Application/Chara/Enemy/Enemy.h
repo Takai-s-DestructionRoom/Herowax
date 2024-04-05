@@ -6,6 +6,7 @@
 #include "EnemyUI.h"
 #include "Quaternion.h"
 #include "Vector2.h"
+#include "EnemyAttackState.h"
 
 class Enemy : public GameObject
 {
@@ -54,6 +55,9 @@ private:
 	std::unique_ptr<EnemyState> nextState;		//次のステート
 	std::string stateStr;		//状態を文字列で保存
 
+	std::unique_ptr<EnemyAttackState> attackState;		//攻撃を管理するステート
+	std::unique_ptr<EnemyAttackState> nextAttackState;		//攻撃を管理するステートの次ステート
+
 	EnemyUI ui;
 
 public:
@@ -63,6 +67,7 @@ public:
 	Color changeColor = { 1,1,1,1 };
 
 	bool changingState = false;
+	bool changingAttackState = false;
 
 	bool isDrawCollider = false;
 
@@ -98,6 +103,14 @@ public:
 			changingState = true;
 			nextState = std::make_unique<ChangeEnemyState>();
 		}
+	};
+
+	template <typename ChangeEnemyAttackState>
+	void ChangeAttackState() {
+		std::unique_ptr<EnemyAttackState> change = std::make_unique<ChangeEnemyAttackState>();
+		//より優先度が高いステートであれば遷移準備
+		changingAttackState = true;
+		nextAttackState = std::make_unique<ChangeEnemyAttackState>();
 	};
 
 	// ゲッター //

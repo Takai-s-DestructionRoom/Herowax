@@ -648,6 +648,9 @@
     <ClCompile Include="Application\SlimeWax.cpp">
       <Filter>ソース ファイル\Application\Object\SlimeWax</Filter>
     </ClCompile>
+    <ClCompile Include="Application\EnemyAttackState.cpp">
+      <Filter>ソース ファイル\Application\Object\Chara\Enemy</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Shader\Basic\BasicPS.hlsl">
@@ -1188,6 +1191,9 @@
     </ClInclude>
     <ClInclude Include="Application\SlimeWax.h">
       <Filter>ヘッダー ファイル\Application\Object\SlimeWax</Filter>
+    </ClInclude>
+    <ClInclude Include="Application\EnemyAttackState.h">
+      <Filter>ヘッダー ファイル\Application\Object\Chara\Enemy</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

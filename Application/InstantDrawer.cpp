@@ -83,6 +83,7 @@ void InstantDrawer::DrawGraph3D(const Vector3& pos, float width, float height,
 			instant.mImage.SetSize({ width, height });
 			instant.mTransform.position = pos;
 			instant.mImage.mMaterial.mColor = color;
+			instant.mImage.mBlendMode = Image3D::BlendMode::TransparentAlpha;
 			break;
 		}
 	}

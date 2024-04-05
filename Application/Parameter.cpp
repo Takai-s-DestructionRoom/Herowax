@@ -61,8 +61,12 @@ std::map<std::string, std::string> Parameter::Extract(const std::string& filenam
 
 	std::ifstream file;
 	file.open(path.c_str());
+	
+	//ファイルが見つからないなら生成する
 	if (file.fail()) {
-		assert(0);
+		Begin(filename);
+		Save("__TEST__GGEZ__", 1.f);
+		End();
 	}
 
 	std::map<std::string, std::string> result;
