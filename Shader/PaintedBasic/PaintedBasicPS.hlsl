@@ -120,7 +120,7 @@ float4 main(VSOutputBasic input) : SV_TARGET
     float4 paintcolor = paintData.mColor;
     float paintRatio = 0;
     
-    float3 dist = normalNoise(input.uv + paintData.hoge * 0.05f, float2(16.f, 16.f)); // perlinノイズで算出した法線を得る
+    float3 dist = normalNoise(input.uv + paintData.hoge * 0.02f, float2(16.f, 16.f)); // perlinノイズで算出した法線を得る
     dist = dist * 2 - 1; // 範囲を0.0～1.0から-1.0～1.0へ変換
     dist *= 0.1f; // 歪み強度を乗算(歪み強度をシェーダーパラメータとして調整可能にする)
 

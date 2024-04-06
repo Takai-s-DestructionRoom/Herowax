@@ -30,13 +30,15 @@ void Image3D::UpdateVertex()
 GraphicsPipeline Image3D::GetPipeline()
 {
 	PipelineStateDesc desc = RDirectX::GetDefPipeline().mDesc;
+	desc.VS = Shader::GetOrCreate("BillboardVS", "Shader/Billboard/BillboardVS.hlsl", "main", "vs_5_0");
+	desc.PS = Shader::GetOrCreate("BillboardPS", "Shader/Billboard/BillboardPS.hlsl", "main", "ps_5_0");
 
 	desc.RasterizerState.CullMode = D3D12_CULL_MODE_NONE;
 	desc.RasterizerState.FillMode = D3D12_FILL_MODE_SOLID;
 	desc.BlendState.AlphaToCoverageEnable = false;
 
 	if (static_cast<int32_t>(mBlendMode) > 2) {
-		if(static_cast<int32_t>(mBlendMode) > 4) desc.DepthStencilState.DepthEnable = false;
+		if(static_cast<int32_t>(mBlendMode) > 5) desc.DepthStencilState.DepthEnable = false;
 		desc.DepthStencilState.DepthWriteMask = D3D12_DEPTH_WRITE_MASK_ZERO;
 	}
 
