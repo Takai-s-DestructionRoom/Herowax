@@ -286,6 +286,12 @@
     <Filter Include="シェーダー ファイル\Billboard">
       <UniqueIdentifier>{0037afb8-06a2-4627-8d13-00cb06da25bc}</UniqueIdentifier>
     </Filter>
+    <Filter Include="ヘッダー ファイル\Application\Object\Chara\Boss">
+      <UniqueIdentifier>{e64dd8d2-dd7a-4f74-83f9-89c39f3bf1ba}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\Application\Object\Chara\Boss">
+      <UniqueIdentifier>{005df920-9a2f-470c-b9ff-a950934d15d2}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Engine\2d\Sprite.cpp">
@@ -656,6 +662,12 @@
     </ClCompile>
     <ClCompile Include="Application\EnemyAttackState.cpp">
       <Filter>ソース ファイル\Application\Object\Chara\Enemy</Filter>
+    </ClCompile>
+    <ClCompile Include="Application\Chara\Boss\Boss.cpp">
+      <Filter>ソース ファイル\Application\Object\Chara\Boss</Filter>
+    </ClCompile>
+    <ClCompile Include="Application\Chara\Boss\BossState.cpp">
+      <Filter>ソース ファイル\Application\Object\Chara\Boss</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -1209,6 +1221,12 @@
     </ClInclude>
     <ClInclude Include="Application\EnemyAttackState.h">
       <Filter>ヘッダー ファイル\Application\Object\Chara\Enemy</Filter>
+    </ClInclude>
+    <ClInclude Include="Application\Chara\Boss\Boss.h">
+      <Filter>ヘッダー ファイル\Application\Object\Chara\Boss</Filter>
+    </ClInclude>
+    <ClInclude Include="Application\Chara\Boss\BossState.h">
+      <Filter>ヘッダー ファイル\Application\Object\Chara\Boss</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -342,8 +342,9 @@ void Player::MovePad()
 		WaxManager::GetInstance()->isCollected;				//移動速度をかけ合わせたら完成(回収中は動けない)
 	obj.mTransform.position += moveVec;						//完成したものを座標に足し合わせる
 
-	//接地時にAボタン押すと
-	if (isGround && RInput::GetInstance()->GetPadButtonDown(XINPUT_GAMEPAD_A))
+	//接地してて回収中じゃない時にAボタン押すと
+	if (isGround && RInput::GetInstance()->GetPadButtonDown(XINPUT_GAMEPAD_A)&&
+		WaxManager::GetInstance()->isCollected)
 	{
 		isJumping = true;
 		isGround = false;
@@ -421,8 +422,9 @@ void Player::MoveKey()
 		WaxManager::GetInstance()->isCollected;				//移動速度をかけ合わせたら完成(回収中は動けない)
 	obj.mTransform.position += moveVec;						//完成したものを座標に足し合わせる
 
-	//接地時にスペース押すと
-	if (isGround && RInput::GetInstance()->GetKeyDown(DIK_SPACE))
+	//接地時で回収中じゃない時にスペース押すと
+	if (isGround && RInput::GetInstance()->GetKeyDown(DIK_SPACE) &&
+		WaxManager::GetInstance()->isCollected)
 	{
 		isJumping = true;
 		isGround = false;
@@ -676,8 +678,8 @@ void Player::WaxCollect()
 		RInput::GetInstance()->GetLTriggerDown()||
 		RInput::GetInstance()->GetKeyDown(DIK_Q)))
 	{
-		//ロウがストック性かつ回収できる状態なら
-		if (isWaxStock && WaxManager::GetInstance()->isCollected)
+		//ロウがストック性かつ地面についてて回収できる状態なら
+		if (isWaxStock && isGround && WaxManager::GetInstance()->isCollected)
 		{
 			//ロウ回収
 			waxCollectAmount = WaxManager::GetInstance()->Collect(collectCol);

@@ -52,6 +52,7 @@ void ProtoScene::Init()
 	LightGroup::sNowLight = &light;
 
 	player.Init();
+	boss.Init();
 
 	ParticleManager::GetInstance()->Init();
 
@@ -235,6 +236,7 @@ void ProtoScene::Update()
 	}*/
 	
 	player.Update();
+	boss.Update();
 	Level::Get()->Update();
 
 	//敵がロウを壊してから連鎖で壊れるため、敵の処理をしてからこの処理を行う
@@ -447,6 +449,7 @@ void ProtoScene::Draw()
 	//nest.Draw();
 
 	Level::Get()->Draw();
+	boss.Draw();
 	player.Draw();
 
 	//更新
