@@ -14,6 +14,7 @@
 #include "EnemyManager.h"
 #include "EnemySpawner.h"
 #include "EggUI.h"
+#include "Boss.h"
 
 #include "Level.h"
 #include "Wave.h"
@@ -36,6 +37,7 @@ private:
 	Wave wave;
 	EggUI eggUI;
 	//BreakableObj nest;
+	Boss boss;
 
 	Camera minimapCamera = Camera();	//ミニマップ用の仮想カメラ
 	float mmCameraDist = -250.f;		//注視点からカメラの距離
