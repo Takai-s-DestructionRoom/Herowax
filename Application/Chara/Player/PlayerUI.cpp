@@ -24,7 +24,7 @@ PlayerUI::PlayerUI()
 		maxSize[i] = size[i] * 1.1f;
 	}
 
-	iconSize = { 0.3f,0.3f };
+	iconSize = { 0.25f,0.25f };
 	minimapIcon.SetTexture(TextureManager::Load("./Resources/minimap_icon.png", "minimapIcon"));
 	minimapIcon.mMaterial.mColor = Color::kWhite;
 
