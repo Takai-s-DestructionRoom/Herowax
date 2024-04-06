@@ -17,6 +17,7 @@ EnemyUI::EnemyUI() : position(1,1,1),size(4,1)
 	iconSize = { 0.2f,0.2f };
 	minimapIcon.SetTexture(TextureManager::Load("./Resources/minimap_icon.png", "minimapIcon"));
 	minimapIcon.mMaterial.mColor = Color::kRed;
+	minimapIcon.mMaterial.mColor.a = 0.5f;
 }
 
 void EnemyUI::Update(Enemy* enemy)

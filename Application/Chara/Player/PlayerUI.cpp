@@ -32,7 +32,7 @@ PlayerUI::PlayerUI()
 	minimapIconRange.SetTexture(TextureManager::Load("./Resources/white2x2.png", "white2x2"));
 	minimapIconRange.SetAnchor({0.5f,1.f});
 	minimapIconRange.mMaterial.mColor = Color::kWhite;
-	minimapIconRange.mMaterial.mColor.a = 0.5f;
+	minimapIconRange.mMaterial.mColor.a = 0.3f;
 }
 
 void PlayerUI::Update(Player* player)

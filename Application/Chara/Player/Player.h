@@ -51,7 +51,6 @@ public:
 	int32_t maxWaxStock;		//ロウストック最大値
 	bool isWaxStock;			//ストック性にするかフラグ
 
-	bool isCollect;						//回収できる状態か
 	float waxCollectRange;				//ロウ回収する範囲
 	ColPrimitive3D::Ray collectCol;		//ロウ回収する範囲当たり判定
 	ModelObj collectRangeModel;			//ロウ回収範囲描画用
@@ -118,7 +117,4 @@ public:
 	Vector3 GetFrontVec();
 	//足元の座標取得
 	Vector3 GetFootPos();
-
-	// セッター //
-	void SetIsCollect(bool frag) { isCollect = frag; }
 };

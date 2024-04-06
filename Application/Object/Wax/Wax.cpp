@@ -51,7 +51,7 @@ void Wax::Init(uint32_t power, Vector3 vec,float speed,
 	atkTimer = atkTime;
 	atkTimer.Start();
 
-	iconSize = { 1.f,1.f };
+	iconSize = { 0.7f,0.7f };
 	minimapIcon.SetTexture(TextureManager::Load("./Resources/circle.png", "circle"));
 	minimapIcon.mMaterial.mColor = waxOriginColor;
 }
