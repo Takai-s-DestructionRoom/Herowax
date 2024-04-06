@@ -9,7 +9,7 @@
 #include "ColPrimitive3D.h"
 #include "InstantDrawer.h"
 #include "Temperature.h"
-#include "FireManager.h"
+//#include "FireManager.h"
 #include "Parameter.h"
 #include "SpawnOrderData.h"
 #include "Minimap.h"
@@ -56,7 +56,7 @@ void ProtoScene::Init()
 	ParticleManager::GetInstance()->Init();
 
 	WaxManager::GetInstance()->Init();
-	FireManager::GetInstance()->Init();
+	//FireManager::GetInstance()->Init();
 	TemperatureManager::GetInstance()->Init();
 
 	//とりあえず最初のステージを設定しておく
@@ -175,10 +175,10 @@ void ProtoScene::Update()
 					}
 				}
 
-				//燃えてるロウと当たったら燃えてる状態に遷移
-				if (isCollision && wax->GetState() == "WaxBurning") {
-					enemy->ChangeState<EnemyBurning>();
-				}
+				////燃えてるロウと当たったら燃えてる状態に遷移
+				//if (isCollision && wax->GetState() == "WaxBurning") {
+				//	enemy->ChangeState<EnemyBurning>();
+				//}
 
 				//回収中ものと通常の状態なら
 				if (isCollision && wax->stateStr == "WaxCollect")
@@ -221,7 +221,7 @@ void ProtoScene::Update()
 		}
 	}
 
-	for (auto& fire : FireManager::GetInstance()->fires)
+	/*for (auto& fire : FireManager::GetInstance()->fires)
 	{
 		for (auto& group : WaxManager::GetInstance()->waxGroups)
 		{
@@ -232,7 +232,7 @@ void ProtoScene::Update()
 				}
 			}
 		}
-	}
+	}*/
 	
 	player.Update();
 	Level::Get()->Update();
@@ -257,12 +257,12 @@ void ProtoScene::Update()
 					//ぶつかっていて
 					if (isCollision)
 					{
-						//燃えているものと通常の状態なら
-						if (wax1->IsBurning() && wax2->IsNormal())
-						{
-							//燃えている状態へ遷移
-							wax2->ChangeState<WaxIgnite>();
-						}
+						////燃えているものと通常の状態なら
+						//if (wax1->IsBurning() && wax2->IsNormal())
+						//{
+						//	//燃えている状態へ遷移
+						//	wax2->ChangeState<WaxIgnite>();
+						//}
 
 						//回収中ものと通常の状態なら
 						if (wax1->stateStr == "WaxCollect" && wax2->IsNormal())
@@ -304,7 +304,7 @@ void ProtoScene::Update()
 
 #pragma endregion
 	WaxManager::GetInstance()->Update();
-	FireManager::GetInstance()->Update();
+	//FireManager::GetInstance()->Update();
 	TemperatureManager::GetInstance()->Update();
 	ParticleManager::GetInstance()->SetPlayerPos(player.GetCenterPos());
 	ParticleManager::GetInstance()->Update();
@@ -441,7 +441,7 @@ void ProtoScene::Draw()
 	ParticleManager::GetInstance()->Draw();
 	skydome.Draw();
 	WaxManager::GetInstance()->Draw();
-	FireManager::GetInstance()->Draw();
+	//FireManager::GetInstance()->Draw();
 	TemperatureManager::GetInstance()->Draw();
 	eggUI.Draw();
 	//nest.Draw();

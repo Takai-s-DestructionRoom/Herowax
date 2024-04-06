@@ -7,7 +7,6 @@
 #include "Util.h"
 #include "Quaternion.h"
 #include "RImGui.h"
-#include "FireManager.h"
 #include "Parameter.h"
 #include "InstantDrawer.h"
 
@@ -57,7 +56,7 @@ void Player::Init()
 	obj = PaintableModelObj(Model::Load("./Resources/Model/player/player_bird.obj", "player_bird", true));
 
 	hp = maxHP;
-	fireUnit.Init();
+	//fireUnit.Init();
 
 	waxStock = maxWaxStock;
 
@@ -157,9 +156,9 @@ void Player::Update()
 	//ストックがおかしな値にならないように
 	waxStock = Util::Clamp(waxStock, 0, maxWaxStock);
 
-	fireUnit.SetTransform(obj.mTransform);
+	/*fireUnit.SetTransform(obj.mTransform);
 	fireUnit.SetIsFireStock(isFireStock);
-	fireUnit.Update();
+	fireUnit.Update();*/
 
 #pragma region ImGui
 	ImGui::SetNextWindowSize({ 600, 250 });
@@ -218,7 +217,7 @@ void Player::Update()
 		ImGui::SliderFloat("固まるまでの時間", &solidTimer.maxTime_, 0.f, 10.f);
 		ImGui::InputInt("ロウの最大ストック数", &maxWaxStock, 1, 100);
 		ImGui::Text("ロウのストック数:%d", waxStock);
-		ImGui::Text("炎のストック数:%d", fireUnit.fireStock);
+		//ImGui::Text("炎のストック数:%d", fireUnit.fireStock);
 
 		ImGui::TreePop();
 	}
@@ -292,7 +291,7 @@ void Player::Draw()
 	{
 		obj.Draw();
 		collectRangeModel.Draw();
-		fireUnit.Draw();
+		//fireUnit.Draw();
 
 		ui.Draw();
 	}
@@ -545,7 +544,7 @@ void Player::Attack()
 				atkTimer.Start();
 
 				//ホントは塗った面積に応じて溜めたい
-				fireUnit.FireGaugeCharge(1.f);
+				//fireUnit.FireGaugeCharge(1.f);
 
 				//入力時の出現位置と方向を記録
 				atkVec = GetFrontVec();
@@ -579,7 +578,7 @@ void Player::PabloAttack()
 	pabloVec.y = atkHeight;
 
 	//ホントは塗った面積に応じて溜めたい
-	fireUnit.FireGaugeCharge(1.f);
+	//fireUnit.FireGaugeCharge(1.f);
 
 	atkVec = pabloVec;
 
