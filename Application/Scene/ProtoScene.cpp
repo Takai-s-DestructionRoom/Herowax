@@ -327,7 +327,7 @@ void ProtoScene::Update()
 	}
 
 #pragma region ImGui
-	ImGui::SetNextWindowSize({ 300, 200 });
+	ImGui::SetNextWindowSize({ 500, 200 });
 
 	ImGuiWindowFlags window_flags = 0;
 	window_flags |= ImGuiWindowFlags_NoResize;
@@ -343,9 +343,9 @@ void ProtoScene::Update()
 	ImGui::SliderFloat("カメラ距離:%f", &cameraDist, -500.f, 0.f);
 	ImGui::SliderAngle("カメラアングルX:%f", &cameraAngle.x);
 	ImGui::SliderAngle("カメラアングルY:%f", &cameraAngle.y);
-	ImGui::SliderFloat("カメラの移動速度X", &cameraSpeed.x,0.0f,0.5f);
-	ImGui::SliderFloat("カメラの移動速度Y", &cameraSpeed.y,0.0f,0.5f);
-	ImGui::SliderFloat("ミニマップ用カメラ距離:%f", &mmCameraDist, -1000.f, 0.f);
+	ImGui::SliderFloat("カメラ移動速度X", &cameraSpeed.x,0.0f,0.5f);
+	ImGui::SliderFloat("カメラ移動速度Y", &cameraSpeed.y,0.0f,0.5f);
+	ImGui::SliderFloat("ミニマップカメラ距離:%f", &mmCameraDist, -1000.f, 0.f);
 	
 	static bool changeCamera = false;
 	static float saveDist = cameraDist;
