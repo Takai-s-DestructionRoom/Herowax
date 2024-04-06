@@ -46,7 +46,8 @@ void ProtoScene::Init()
 	cameraDist = Parameter::GetParam(extract,"カメラ距離", -20.f);
 	cameraAngle.x = Parameter::GetParam(extract,"カメラアングルX", Util::AngleToRadian(20.f));
 	cameraAngle.y = Parameter::GetParam(extract,"カメラアングルY", 0.f);
-	cameraSpeed = Parameter::GetParam(extract,"カメラの移動速度", 0.01f);
+	cameraSpeed.x = Parameter::GetParam(extract,"カメラの移動速度X", 0.01f);
+	cameraSpeed.y = Parameter::GetParam(extract,"カメラの移動速度Y", 0.003f);
 	mmCameraDist = Parameter::GetParam(extract,"ミニマップ用カメラ距離", -250.f);
 
 	LightGroup::sNowLight = &light;
@@ -89,13 +90,11 @@ void ProtoScene::Update()
 	Vector2 stick = RInput::GetInstance()->GetRStick(false, true);
 
 	if (stick.LengthSq() > 0.0f) {
-		float moveSpeed = cameraSpeed;
-
 		if (abs(stick.x) > 0.3f) {
-			cameraAngle.y += moveSpeed * -stick.x;
+			cameraAngle.y += cameraSpeed.x * -stick.x;
 		}
 		if (abs(stick.y) > 0.3f) {
-			cameraAngle.x += moveSpeed * stick.y;
+			cameraAngle.x += cameraSpeed.y * stick.y;
 		}
 	}
 	cameraAngle.x = Util::Clamp(cameraAngle.x, 0.f,Util::AngleToRadian(89.f));
@@ -344,7 +343,8 @@ void ProtoScene::Update()
 	ImGui::SliderFloat("カメラ距離:%f", &cameraDist, -500.f, 0.f);
 	ImGui::SliderAngle("カメラアングルX:%f", &cameraAngle.x);
 	ImGui::SliderAngle("カメラアングルY:%f", &cameraAngle.y);
-	ImGui::SliderFloat("カメラの移動速度", &cameraSpeed,0.0f,0.5f);
+	ImGui::SliderFloat("カメラの移動速度X", &cameraSpeed.x,0.0f,0.5f);
+	ImGui::SliderFloat("カメラの移動速度Y", &cameraSpeed.y,0.0f,0.5f);
 	ImGui::SliderFloat("ミニマップ用カメラ距離:%f", &mmCameraDist, -1000.f, 0.f);
 	
 	static bool changeCamera = false;
@@ -390,7 +390,7 @@ void ProtoScene::Update()
 		cameraDist = 0.01f;
 
 		if (stick.LengthSq() > 0.0f) {
-			float moveSpeed = cameraSpeed;
+			float moveSpeed = cameraSpeed.x;
 
 			if (!std::signbit(stick.y)) {
 				moveSpeed *= -1;
@@ -405,7 +405,8 @@ void ProtoScene::Update()
 		Parameter::Save("カメラ距離", cameraDist);
 		Parameter::Save("カメラアングルX", cameraAngle.x);
 		Parameter::Save("カメラアングルY", cameraAngle.y);
-		Parameter::Save("カメラの移動速度", cameraSpeed);
+		Parameter::Save("カメラの移動速度X", cameraSpeed.x);
+		Parameter::Save("カメラの移動速度Y", cameraSpeed.y);
 		Parameter::Save("ミニマップ用カメラ距離", mmCameraDist);
 		Parameter::End();
 	}

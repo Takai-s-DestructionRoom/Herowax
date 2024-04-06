@@ -45,7 +45,7 @@ isFireStock(false), isWaxStock(true), maxWaxStock(20)
 	initRot.z = Parameter::GetParam(extract, "初期方向Z", 0.f);
 
 	collectRangeModel = ModelObj(Model::Load("./Resources/Model/Cube.obj", "Cube", true));
-	waxCollectRange = Parameter::GetParam(extract, "ロウ回収範囲X", 5.f);
+	waxCollectRange = Parameter::GetParam(extract, "ロウ回収範囲", 5.f);
 	collectRangeModel.mTuneMaterial.mColor.a = Parameter::GetParam(extract, "範囲objの透明度", 0.5f);
 
 	attackState = std::make_unique<PlayerNormal>();
@@ -241,7 +241,7 @@ void Player::Update()
 	}
 	if (ImGui::TreeNode("ロウ回収系"))
 	{
-		ImGui::SliderFloat("ロウ回収範囲X", &waxCollectRange, 0.f, 100.f);
+		ImGui::SliderFloat("ロウ回収範囲", &waxCollectRange, 0.f, 100.f);
 		ImGui::SliderFloat("範囲objの透明度", &collectRangeModel.mTuneMaterial.mColor.a, 0.f, 1.f);
 		ImGui::Text("回収できる状態か:%d", WaxManager::GetInstance()->isCollected);
 
@@ -683,8 +683,6 @@ void Player::WaxCollect()
 		{
 			//ロウ回収
 			waxCollectAmount = WaxManager::GetInstance()->Collect(collectCol);
-			//ストック最大に(敵の数とか回収したロウに応じて変化する形に変更)
-			//waxStock = maxWaxStock;
 		}
 	}
 }
