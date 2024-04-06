@@ -8,7 +8,7 @@
 #include <Quaternion.h>
 #include "ColPrimitive3D.h"
 #include "InstantDrawer.h"
-#include "Temperature.h"
+//#include "Temperature.h"
 //#include "FireManager.h"
 #include "Parameter.h"
 #include "SpawnOrderData.h"
@@ -26,7 +26,7 @@ ProtoScene::ProtoScene()
 	camera.mViewProjection.mTarget = { 0, 0, 0 };
 	camera.mViewProjection.UpdateMatrix();
 
-	TemperatureUI::LoadResource();
+	//TemperatureUI::LoadResource();
 	EnemyManager::LoadResource();
 	InstantDrawer::PreCreate();
 
@@ -34,7 +34,7 @@ ProtoScene::ProtoScene()
 	
 	wave.Load();
 
-	EggUI::LoadResource();
+	//EggUI::LoadResource();
 }
 
 void ProtoScene::Init()
@@ -57,15 +57,15 @@ void ProtoScene::Init()
 
 	WaxManager::GetInstance()->Init();
 	//FireManager::GetInstance()->Init();
-	TemperatureManager::GetInstance()->Init();
+	//TemperatureManager::GetInstance()->Init();
 
 	//とりあえず最初のステージを設定しておく
 	Level::Get()->Extract("test");
 
 	EnemyManager::GetInstance()->SetGround(&Level::Get()->ground);
 
-	eggUI.Init();
-	eggUI.SetTower(&Level::Get()->tower);
+	//eggUI.Init();
+	//eggUI.SetTower(&Level::Get()->tower);
 
 	//nest.Init();
 
@@ -305,11 +305,11 @@ void ProtoScene::Update()
 #pragma endregion
 	WaxManager::GetInstance()->Update();
 	//FireManager::GetInstance()->Update();
-	TemperatureManager::GetInstance()->Update();
+	//TemperatureManager::GetInstance()->Update();
 	ParticleManager::GetInstance()->SetPlayerPos(player.GetCenterPos());
 	ParticleManager::GetInstance()->Update();
 
-	eggUI.Update();
+	//eggUI.Update();
 	//nest.Update();
 
 	Minimap::GetInstance()->Update();
@@ -442,8 +442,8 @@ void ProtoScene::Draw()
 	skydome.Draw();
 	WaxManager::GetInstance()->Draw();
 	//FireManager::GetInstance()->Draw();
-	TemperatureManager::GetInstance()->Draw();
-	eggUI.Draw();
+	//TemperatureManager::GetInstance()->Draw();
+	//eggUI.Draw();
 	//nest.Draw();
 
 	Level::Get()->Draw();
