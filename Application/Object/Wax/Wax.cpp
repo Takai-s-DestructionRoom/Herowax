@@ -3,6 +3,7 @@
 #include "Renderer.h"
 #include "WaxManager.h"
 #include "ParticleManager.h"
+#include "Minimap.h"
 
 Color Wax::waxOriginColor = { 0.8f, 0.6f, 0.35f, 1.f };
 Color Wax::waxEndColor = { 0.8f, 0.0f, 0.f, 1.f };
@@ -49,6 +50,10 @@ void Wax::Init(uint32_t power, Vector3 vec,float speed,
 	atkSize = size;
 	atkTimer = atkTime;
 	atkTimer.Start();
+
+	iconSize = { 0.7f,0.7f };
+	minimapIcon.SetTexture(TextureManager::Load("./Resources/circle.png", "circle"));
+	minimapIcon.mMaterial.mColor = waxOriginColor;
 }
 
 void Wax::Update()
@@ -95,15 +100,28 @@ void Wax::Update()
 
 	mDisolveBuff->disolveValue = disolveValue;
 
+	//スクリーン座標を求める
+	screenPos = Minimap::GetInstance()->GetScreenPos(obj.mTransform.position);
+	minimapIcon.mTransform.position = { screenPos.x,screenPos.y,0.f };
+
+	//決めたサイズに
+	minimapIcon.mTransform.scale = { iconSize.x,iconSize.y,1.f };
+
+	//更新忘れずに
+	minimapIcon.mTransform.UpdateMatrix();
+	minimapIcon.TransferBuffer();
+
 	obj.mTransform.UpdateMatrix();
 	obj.TransferBuffer(Camera::sNowCamera->mViewProjection);
+
+	
 }
 
 void Wax::Draw()
 {
 	if (isAlive)
 	{
-		GraphicsPipeline pipe = WaxManager::GetInstance()->CreateDisolvePipeLine();
+		/*GraphicsPipeline pipe = WaxManager::GetInstance()->CreateDisolvePipeLine();
 
 		for (std::shared_ptr<ModelMesh> data : obj.mModel->mData) {
 			std::vector<RootData> rootData = {
@@ -125,7 +143,14 @@ void Wax::Draw()
 			order.indexCount = static_cast<uint32_t>(data->mIndices.size());
 
 			Renderer::DrawCall("Opaque", order);
-		}
+		}*/
+
+		//描画範囲制限
+		Renderer::SetScissorRects({ Minimap::GetInstance()->rect });
+		minimapIcon.Draw();
+
+		//元の範囲に戻してあげる
+		Renderer::SetScissorRects({ Minimap::GetInstance()->defaultRect });
 	}
 }
 

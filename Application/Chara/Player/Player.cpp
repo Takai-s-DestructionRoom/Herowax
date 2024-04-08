@@ -7,7 +7,6 @@
 #include "Util.h"
 #include "Quaternion.h"
 #include "RImGui.h"
-#include "FireManager.h"
 #include "Parameter.h"
 #include "InstantDrawer.h"
 #include "Renderer.h"
@@ -48,7 +47,7 @@ isFireStock(false), isWaxStock(true), maxWaxStock(20)
 	attackHitCollider.r = Parameter::GetParam(extract,"敵がこの範囲に入ると攻撃状態へ遷移する大きさ",1.0f);
 
 	collectRangeModel = ModelObj(Model::Load("./Resources/Model/Cube.obj", "Cube", true));
-	waxCollectRange = Parameter::GetParam(extract, "ロウ回収範囲X", 5.f);
+	waxCollectRange = Parameter::GetParam(extract, "ロウ回収範囲", 5.f);
 	collectRangeModel.mTuneMaterial.mColor.a = Parameter::GetParam(extract, "範囲objの透明度", 0.5f);
 
 	attackState = std::make_unique<PlayerNormal>();
@@ -61,7 +60,7 @@ void Player::Init()
 	obj = PaintableModelObj(Model::Load("./Resources/Model/player/player_bird.obj", "player_bird", true));
 
 	hp = maxHP;
-	fireUnit.Init();
+	//fireUnit.Init();
 
 	waxStock = maxWaxStock;
 
@@ -162,9 +161,9 @@ void Player::Update()
 	//ストックがおかしな値にならないように
 	waxStock = Util::Clamp(waxStock, 0, maxWaxStock);
 
-	fireUnit.SetTransform(obj.mTransform);
+	/*fireUnit.SetTransform(obj.mTransform);
 	fireUnit.SetIsFireStock(isFireStock);
-	fireUnit.Update();
+	fireUnit.Update();*/
 
 #pragma region ImGui
 	ImGui::SetNextWindowSize({ 600, 250 });
@@ -223,7 +222,7 @@ void Player::Update()
 		ImGui::SliderFloat("固まるまでの時間", &solidTimer.maxTime_, 0.f, 10.f);
 		ImGui::InputInt("ロウの最大ストック数", &maxWaxStock, 1, 100);
 		ImGui::Text("ロウのストック数:%d", waxStock);
-		ImGui::Text("炎のストック数:%d", fireUnit.fireStock);
+		//ImGui::Text("炎のストック数:%d", fireUnit.fireStock);
 
 		ImGui::TreePop();
 	}
@@ -247,7 +246,7 @@ void Player::Update()
 	}
 	if (ImGui::TreeNode("ロウ回収系"))
 	{
-		ImGui::SliderFloat("ロウ回収範囲X", &waxCollectRange, 0.f, 100.f);
+		ImGui::SliderFloat("ロウ回収範囲", &waxCollectRange, 0.f, 100.f);
 		ImGui::SliderFloat("範囲objの透明度", &collectRangeModel.mTuneMaterial.mColor.a, 0.f, 1.f);
 		ImGui::Text("回収できる状態か:%d", WaxManager::GetInstance()->isCollected);
 
@@ -304,7 +303,7 @@ void Player::Draw()
 	{
 		obj.Draw();
 		collectRangeModel.Draw();
-		fireUnit.Draw();
+		//fireUnit.Draw();
 
 		ui.Draw();
 		
@@ -357,8 +356,9 @@ void Player::MovePad()
 		WaxManager::GetInstance()->isCollected;				//移動速度をかけ合わせたら完成(回収中は動けない)
 	obj.mTransform.position += moveVec;						//完成したものを座標に足し合わせる
 
-	//接地時にAボタン押すと
-	if (isGround && RInput::GetInstance()->GetPadButtonDown(XINPUT_GAMEPAD_A))
+	//接地してて回収中じゃない時にAボタン押すと
+	if (isGround && RInput::GetInstance()->GetPadButtonDown(XINPUT_GAMEPAD_A)&&
+		WaxManager::GetInstance()->isCollected)
 	{
 		isJumping = true;
 		isGround = false;
@@ -436,8 +436,9 @@ void Player::MoveKey()
 		WaxManager::GetInstance()->isCollected;				//移動速度をかけ合わせたら完成(回収中は動けない)
 	obj.mTransform.position += moveVec;						//完成したものを座標に足し合わせる
 
-	//接地時にスペース押すと
-	if (isGround && RInput::GetInstance()->GetKeyDown(DIK_SPACE))
+	//接地時で回収中じゃない時にスペース押すと
+	if (isGround && RInput::GetInstance()->GetKeyDown(DIK_SPACE) &&
+		WaxManager::GetInstance()->isCollected)
 	{
 		isJumping = true;
 		isGround = false;
@@ -559,7 +560,7 @@ void Player::Attack()
 				atkTimer.Start();
 
 				//ホントは塗った面積に応じて溜めたい
-				fireUnit.FireGaugeCharge(1.f);
+				//fireUnit.FireGaugeCharge(1.f);
 
 				//入力時の出現位置と方向を記録
 				atkVec = GetFrontVec();
@@ -593,7 +594,7 @@ void Player::PabloAttack()
 	pabloVec.y = atkHeight;
 
 	//ホントは塗った面積に応じて溜めたい
-	fireUnit.FireGaugeCharge(1.f);
+	//fireUnit.FireGaugeCharge(1.f);
 
 	atkVec = pabloVec;
 
@@ -691,13 +692,11 @@ void Player::WaxCollect()
 		RInput::GetInstance()->GetLTriggerDown()||
 		RInput::GetInstance()->GetKeyDown(DIK_Q)))
 	{
-		//ロウがストック性かつ回収できる状態なら
-		if (isWaxStock && WaxManager::GetInstance()->isCollected)
+		//ロウがストック性かつ地面についてて回収できる状態なら
+		if (isWaxStock && isGround && WaxManager::GetInstance()->isCollected)
 		{
 			//ロウ回収
 			waxCollectAmount = WaxManager::GetInstance()->Collect(collectCol);
-			//ストック最大に(敵の数とか回収したロウに応じて変化する形に変更)
-			//waxStock = maxWaxStock;
 		}
 	}
 }

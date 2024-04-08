@@ -50,8 +50,8 @@ public:
 	int32_t waxStock;			//ロウストック
 	int32_t maxWaxStock;		//ロウストック最大値
 	bool isWaxStock;			//ストック性にするかフラグ
-
-	bool isCollect;						//回収できる状態か
+	
+	bool isCollect;
 	float waxCollectRange;				//ロウ回収する範囲
 	ColPrimitive3D::Ray collectCol;		//ロウ回収する範囲当たり判定
 	ModelObj collectRangeModel;			//ロウ回収範囲描画用

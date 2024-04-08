@@ -36,8 +36,7 @@ EnemyManager::EnemyManager()
 	enemySize.z = Parameter::GetParam(extract,"敵の大きさZ", enemySize.z);
 	collideSize = Parameter::GetParam(extract,"敵の当たり判定の大きさ", collideSize);
 	attackMove = Parameter::GetParam(extract,"突っ込んでくる距離", 100.f);
-	attackHitColliderSize = Parameter::GetParam(extract,
-		"敵がプレイヤーと当たる判定の大きさ", 3.0f);
+	attackHitColliderSize = Parameter::GetParam(extract,"敵がプレイヤーと当たる判定の大きさ", 3.0f);
 }
 
 void EnemyManager::SetTarget(ModelObj* target_)
@@ -169,6 +168,7 @@ void EnemyManager::Update()
 		Parameter::Save("敵の大きさZ", enemySize.z);
 		Parameter::Save("敵の当たり判定の大きさ", collideSize);
 		Parameter::Save("敵がプレイヤーと当たる判定の大きさ", attackHitColliderSize);
+		Parameter::Save("突っ込んでくる距離", attackMove);
 
 		Parameter::End();
 	}

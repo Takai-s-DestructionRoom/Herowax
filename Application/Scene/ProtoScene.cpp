@@ -8,8 +8,8 @@
 #include <Quaternion.h>
 #include "ColPrimitive3D.h"
 #include "InstantDrawer.h"
-#include "Temperature.h"
-#include "FireManager.h"
+//#include "Temperature.h"
+//#include "FireManager.h"
 #include "Parameter.h"
 #include "SpawnOrderData.h"
 #include "Minimap.h"
@@ -26,7 +26,7 @@ ProtoScene::ProtoScene()
 	camera.mViewProjection.mTarget = { 0, 0, 0 };
 	camera.mViewProjection.UpdateMatrix();
 
-	TemperatureUI::LoadResource();
+	//TemperatureUI::LoadResource();
 	EnemyManager::LoadResource();
 	InstantDrawer::PreCreate();
 
@@ -34,7 +34,7 @@ ProtoScene::ProtoScene()
 	
 	wave.Load();
 
-	EggUI::LoadResource();
+	//EggUI::LoadResource();
 }
 
 void ProtoScene::Init()
@@ -46,18 +46,20 @@ void ProtoScene::Init()
 	cameraDist = Parameter::GetParam(extract,"カメラ距離", -20.f);
 	cameraAngle.x = Parameter::GetParam(extract,"カメラアングルX", Util::AngleToRadian(20.f));
 	cameraAngle.y = Parameter::GetParam(extract,"カメラアングルY", 0.f);
-	cameraSpeed = Parameter::GetParam(extract,"カメラの移動速度", 0.01f);
+	cameraSpeed.x = Parameter::GetParam(extract,"カメラの移動速度X", 0.01f);
+	cameraSpeed.y = Parameter::GetParam(extract,"カメラの移動速度Y", 0.003f);
 	mmCameraDist = Parameter::GetParam(extract,"ミニマップ用カメラ距離", -250.f);
 
 	LightGroup::sNowLight = &light;
 
 	player.Init();
+	boss.Init();
 
 	ParticleManager::GetInstance()->Init();
 
 	WaxManager::GetInstance()->Init();
-	FireManager::GetInstance()->Init();
-	TemperatureManager::GetInstance()->Init();
+	//FireManager::GetInstance()->Init();
+	//TemperatureManager::GetInstance()->Init();
 
 	//とりあえず最初のステージを設定しておく
 	Level::Get()->Extract("test");
@@ -65,8 +67,8 @@ void ProtoScene::Init()
 	EnemyManager::GetInstance()->SetGround(&Level::Get()->ground);
 	EnemyManager::GetInstance()->SetTarget(&player.obj);
 
-	eggUI.Init();
-	eggUI.SetTower(&Level::Get()->tower);
+	//eggUI.Init();
+	//eggUI.SetTower(&Level::Get()->tower);
 
 
 	//nest.Init();
@@ -90,13 +92,11 @@ void ProtoScene::Update()
 	Vector2 stick = RInput::GetInstance()->GetRStick(false, true);
 
 	if (stick.LengthSq() > 0.0f) {
-		float moveSpeed = cameraSpeed;
-
 		if (abs(stick.x) > 0.3f) {
-			cameraAngle.y += moveSpeed * -stick.x;
+			cameraAngle.y += cameraSpeed.x * -stick.x;
 		}
 		if (abs(stick.y) > 0.3f) {
-			cameraAngle.x += moveSpeed * stick.y;
+			cameraAngle.x += cameraSpeed.y * stick.y;
 		}
 	}
 	cameraAngle.x = Util::Clamp(cameraAngle.x, 0.f,Util::AngleToRadian(89.f));
@@ -185,10 +185,10 @@ void ProtoScene::Update()
 					}
 				}
 
-				//燃えてるロウと当たったら燃えてる状態に遷移
-				if (isCollision && wax->GetState() == "WaxBurning") {
-					enemy->ChangeState<EnemyBurning>();
-				}
+				////燃えてるロウと当たったら燃えてる状態に遷移
+				//if (isCollision && wax->GetState() == "WaxBurning") {
+				//	enemy->ChangeState<EnemyBurning>();
+				//}
 
 				//回収中ものと通常の状態なら
 				if (isCollision && wax->stateStr == "WaxCollect")
@@ -231,7 +231,7 @@ void ProtoScene::Update()
 		}
 	}
 
-	for (auto& fire : FireManager::GetInstance()->fires)
+	/*for (auto& fire : FireManager::GetInstance()->fires)
 	{
 		for (auto& group : WaxManager::GetInstance()->waxGroups)
 		{
@@ -242,9 +242,10 @@ void ProtoScene::Update()
 				}
 			}
 		}
-	}
+	}*/
 	
 	player.Update();
+	boss.Update();
 	Level::Get()->Update();
 
 	//敵がロウを壊してから連鎖で壊れるため、敵の処理をしてからこの処理を行う
@@ -267,12 +268,12 @@ void ProtoScene::Update()
 					//ぶつかっていて
 					if (isCollision)
 					{
-						//燃えているものと通常の状態なら
-						if (wax1->IsBurning() && wax2->IsNormal())
-						{
-							//燃えている状態へ遷移
-							wax2->ChangeState<WaxIgnite>();
-						}
+						////燃えているものと通常の状態なら
+						//if (wax1->IsBurning() && wax2->IsNormal())
+						//{
+						//	//燃えている状態へ遷移
+						//	wax2->ChangeState<WaxIgnite>();
+						//}
 
 						//回収中ものと通常の状態なら
 						if (wax1->stateStr == "WaxCollect" && wax2->IsNormal())
@@ -314,8 +315,8 @@ void ProtoScene::Update()
 
 #pragma endregion
 	WaxManager::GetInstance()->Update();
-	FireManager::GetInstance()->Update();
-	TemperatureManager::GetInstance()->Update();
+	//FireManager::GetInstance()->Update();
+	//TemperatureManager::GetInstance()->Update();
 	ParticleManager::GetInstance()->SetPlayerPos(player.GetCenterPos());
 	ParticleManager::GetInstance()->Update();
 
@@ -336,7 +337,7 @@ void ProtoScene::Update()
 	}
 
 #pragma region ImGui
-	ImGui::SetNextWindowSize({ 300, 200 });
+	ImGui::SetNextWindowSize({ 500, 200 });
 
 	ImGuiWindowFlags window_flags = 0;
 	window_flags |= ImGuiWindowFlags_NoResize;
@@ -352,8 +353,9 @@ void ProtoScene::Update()
 	ImGui::SliderFloat("カメラ距離:%f", &cameraDist, -500.f, 0.f);
 	ImGui::SliderAngle("カメラアングルX:%f", &cameraAngle.x);
 	ImGui::SliderAngle("カメラアングルY:%f", &cameraAngle.y);
-	ImGui::SliderFloat("カメラの移動速度", &cameraSpeed,0.0f,0.5f);
-	ImGui::SliderFloat("ミニマップ用カメラ距離:%f", &mmCameraDist, -1000.f, 0.f);
+	ImGui::SliderFloat("カメラ移動速度X", &cameraSpeed.x,0.0f,0.5f);
+	ImGui::SliderFloat("カメラ移動速度Y", &cameraSpeed.y,0.0f,0.5f);
+	ImGui::SliderFloat("ミニマップカメラ距離:%f", &mmCameraDist, -1000.f, 0.f);
 	
 	static bool changeCamera = false;
 	static float saveDist = cameraDist;
@@ -398,7 +400,7 @@ void ProtoScene::Update()
 		cameraDist = 0.01f;
 
 		if (stick.LengthSq() > 0.0f) {
-			float moveSpeed = cameraSpeed;
+			float moveSpeed = cameraSpeed.x;
 
 			if (!std::signbit(stick.y)) {
 				moveSpeed *= -1;
@@ -413,7 +415,8 @@ void ProtoScene::Update()
 		Parameter::Save("カメラ距離", cameraDist);
 		Parameter::Save("カメラアングルX", cameraAngle.x);
 		Parameter::Save("カメラアングルY", cameraAngle.y);
-		Parameter::Save("カメラの移動速度", cameraSpeed);
+		Parameter::Save("カメラの移動速度X", cameraSpeed.x);
+		Parameter::Save("カメラの移動速度Y", cameraSpeed.y);
 		Parameter::Save("ミニマップ用カメラ距離", mmCameraDist);
 		Parameter::End();
 	}
@@ -451,12 +454,13 @@ void ProtoScene::Draw()
 	ParticleManager::GetInstance()->Draw();
 	skydome.Draw();
 	WaxManager::GetInstance()->Draw();
-	FireManager::GetInstance()->Draw();
-	TemperatureManager::GetInstance()->Draw();
+	//FireManager::GetInstance()->Draw();
+	//TemperatureManager::GetInstance()->Draw();
 	//eggUI.Draw();
 	//nest.Draw();
 
 	Level::Get()->Draw();
+	boss.Draw();
 	player.Draw();
 
 	//更新
@@ -473,9 +477,11 @@ void ProtoScene::MinimapCameraUpdate()
 	//カメラの距離適応
 	mmCameraVec *= mmCameraDist;
 
-	//プレイヤーと一定の距離を保って着いていく
+	//アスペクト比1:1に
+	minimapCamera.mViewProjection.mAspect = 1.f / 1.f;
+	
 	minimapCamera.mViewProjection.mEye = mmCameraVec;
-	//プレイヤーの方向いてくれる
+	
 	minimapCamera.mViewProjection.mTarget = Vector3::ZERO;
 	minimapCamera.mViewProjection.UpdateMatrix();
 }

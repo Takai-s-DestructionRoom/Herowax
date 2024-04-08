@@ -46,6 +46,10 @@ public:
 	float disolveValue;			//ディゾルブの強さ
 	Vector3 collectPos;			//回収される場所
 
+	Vector2 screenPos;
+	Vector2 iconSize;
+	Sprite minimapIcon;
+
 private:
 	SRConstBuffer<DisolveBuffer> mDisolveBuff;
 

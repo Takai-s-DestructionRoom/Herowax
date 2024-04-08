@@ -27,6 +27,10 @@ public:
 	Vector2 iconSize;
 	Sprite minimapIcon;
 
+	Vector2 screenPosRange;
+	Vector2 rangeSize;
+	Sprite minimapIconRange;	//ミニマップに表示する回収範囲
+
 public:
 	static void LoadResource();
 	PlayerUI();

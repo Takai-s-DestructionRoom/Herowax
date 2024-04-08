@@ -1,7 +1,7 @@
 #include "WaxManager.h"
 #include "ParticleManager.h"
 #include "ImGui.h"
-#include "Temperature.h"
+//#include "Temperature.h"
 #include "Parameter.h"
 #include "ColPrimitive3D.h"
 
@@ -178,11 +178,11 @@ void WaxManager::Update()
 
 	ImGui::Begin("Wax", NULL, window_flags);
 	ImGui::Text("存在しているロウの数:%d", (int)GetWaxNum());
-	ImGui::Text("燃えているロウの数:%d", isBurningNum);
-	ImGui::Text("現在の温度:%f", TemperatureManager::GetInstance()->GetTemperature());
+	//ImGui::Text("燃えているロウの数:%d", isBurningNum);
+	//ImGui::Text("現在の温度:%f", TemperatureManager::GetInstance()->GetTemperature());
 	ImGui::PushItemWidth(100);
-	ImGui::InputFloat("ロウが燃えたときの上昇温度", &heatUpTemperature, 1.0f);
-	ImGui::InputFloat("ボーナス上昇温度", &heatBonus, 1.0f);
+	//ImGui::InputFloat("ロウが燃えたときの上昇温度", &heatUpTemperature, 1.0f);
+	//ImGui::InputFloat("ボーナス上昇温度", &heatBonus, 1.0f);
 
 	ImGui::InputFloat("回収時の加速度", &accelAmount, 0.05f);
 
@@ -229,10 +229,9 @@ void WaxManager::Draw()
 {
 	for (auto& group : waxGroups)
 	{
-		//group->Draw();
+		group->Draw();
 		for (auto& wax : group->waxs)
 		{
-			//wax->Draw();
 			if (isViewCol) {
 				wax->DrawCollider();
 			}
