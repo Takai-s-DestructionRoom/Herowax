@@ -6,6 +6,7 @@
 #include "Quaternion.h"
 #include "RImGui.h"
 #include "Renderer.h"
+#include <TimeManager.h>
 
 Enemy::Enemy(ModelObj* target_) : GameObject(),
 moveSpeed(0.1f), slowMag(0.8f),
@@ -19,6 +20,7 @@ gravity(0.2f), groundPos(0)
 	nextState = nullptr;
 	nextAttackState = nullptr;
 	obj = PaintableModelObj(Model::Load("./Resources/Model/firewisp/firewisp.obj", "firewisp", true));
+	obj.mPaintDissolveMapTex = TextureManager::Load("./Resources/DissolveMap.png", "DissolveMapTex");
 	target = target_;
 
 	std::map<std::string, std::string> extract = Parameter::Extract("Enemy");
@@ -58,16 +60,31 @@ void Enemy::Update()
 	//シェイクを元に戻す
 	shack = { 0,0,0 };
 
-	//各ステート時の固有処理
-	state->Update(this);	//移動速度に関係するので移動の更新より前に置く
-
-	//前のステートと異なれば
-	if (changingState) {
-		//ステートを変化させる
-		std::swap(state, nextState);
-		changingState = false;
-		nextState = nullptr;
+	//かかっているロウを振り払う
+	if (waxSolidCount > 0 && waxSolidCount < requireWaxSolidCount) {
+		waxShakeOffTimer += TimeManager::deltaTime;
+		if (waxShakeOffTimer >= requireWaxShakeOffTime) {
+			waxShakeOffTimer -= requireWaxShakeOffTime;
+			waxSolidCount--;
+		}
 	}
+	else {
+		waxShakeOffTimer = 0;
+	}
+
+	//固まっていなければする処理
+	if (waxSolidCount < requireWaxSolidCount) {
+		//各ステート時の固有処理
+		state->Update(this);	//移動速度に関係するので移動の更新より前に置く
+
+
+		//前のステートと異なれば
+		if (changingState) {
+			//ステートを変化させる
+			std::swap(state, nextState);
+			changingState = false;
+			nextState = nullptr;
+		}
 
 	//ステートに入る前に、予測線は消しておきたいのでスケールを0に
 	predictionLine.mTransform.scale = { 0.f,0.f,0.f };
@@ -137,6 +154,9 @@ void Enemy::Update()
 
 	//更新してからバッファに送る
 	obj.mTransform.UpdateMatrix();
+	obj.mPaintDataBuff->dissolveVal = waxSolidCount >= requireWaxSolidCount ? 1.0f : 0.3f / (requireWaxSolidCount - 1) * waxSolidCount;
+	obj.mPaintDataBuff->color = Color(0.8f, 0.6f, 0.35f, 1.0f);
+	obj.mPaintDataBuff->slide += TimeManager::deltaTime;
 	obj.TransferBuffer(Camera::sNowCamera->mViewProjection);
 
 	ui.Update(this);
@@ -282,17 +302,9 @@ void Enemy::DealDamage(uint32_t damage, const Vector3& dir, ModelObj* target_)
 		0.f, 0.f, Vector3::ZERO, Vector3::ZERO,
 		0.f, Vector3::ONE * 0.1f, Vector3::ONE * 0.1f, 0.1f, 3.f, false, true);
 
-	//適当に自分を塗る
-	//for (auto& data : obj.mModel->mData)
-	//{
-	//	//白テクスチャを貼る
-	//	data->mMaterial.mTexture =
-	//		TextureManager::Load("./Resources/waxAttach.png", "waxAttach");
-	//}
-	/*for (int32_t i = 0; i < 3; i++)
-	{
-		RandomPaint({100.f,100.f}, Wax::waxOriginColor);
-	}*/
+	//かかりカウント加算
+	waxSolidCount++;
+	waxShakeOffTimer = 0;
 }
 
 void Enemy::SetDeath()

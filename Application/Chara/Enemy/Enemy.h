@@ -50,6 +50,10 @@ private:
 	float hp;				//現在のヒットポイント
 	float maxHP;			//最大HP
 	Easing::EaseTimer mutekiTimer;		//無敵時間さん
+	int32_t waxSolidCount = 0; //ロウのかかり具合カウント
+	int32_t requireWaxSolidCount = 10; //完全に固まるまでに必要なロウのかかり回数
+	float waxShakeOffTimer = 0; //ロウを振り払うタイマー
+	float requireWaxShakeOffTime = 5.0f; //ロウを振り払うまでにかかる時間(秒)
 
 	//------------ その他 ------------//
 	ModelObj* target = nullptr;
@@ -160,10 +164,6 @@ public:
 	void SetKnockTime(float knockTime) { knockbackTimer.maxTime_ = knockTime; };
 	//無敵時間さん!?を設定
 	void SetMutekiTime(float mutekiTime) { mutekiTimer.maxTime_ = mutekiTime; };
-	//ダメージを与える
-	void DealDamage(uint32_t damage);
-	//引数があればノックバックもする(その方向を向かせるために攻撃対象も入れる)
-	void DealDamage(uint32_t damage, const Vector3& dir, ModelObj* target_);
 	//強制的に死亡させる
 	void SetDeath();
 	//移動量に足す
