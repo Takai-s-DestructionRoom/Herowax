@@ -7,7 +7,8 @@
 #include "PlayerUI.h"
 #include "FireUnit.h"
 #include "ColPrimitive3D.h"
- 
+#include <stdint.h>
+
 class Player : public GameObject
 {
 public:
@@ -58,6 +59,7 @@ public:
 	float waxCollectRange;				//ロウ回収するレイの範囲(横幅)
 	ColPrimitive3D::Ray collectCol;		//ロウ回収する範囲当たり判定
 	ModelObj collectRangeModel;			//ロウ回収範囲描画用
+	float waxCollectVertical;			//ロウ回収するレイの範囲(縦幅)
 
 	float waxCollectDist;					//ロウ回収する扇の距離
 	float waxCollectAngle;					//ロウ回収する扇の角度(180°以内)
@@ -95,6 +97,10 @@ public:
 
 private:
 	ModelObj attackDrawerObj;			//上記の当たり判定描画オブジェクト
+
+	Easing::EaseTimer blinkTimer;
+
+	float blinkNum = 10;		//点滅回数
 
 public:
 	Player();
@@ -139,6 +145,8 @@ public:
 	void DealDamage(uint32_t damage);
 
 private:
+	void DamageBlink();	//被弾時の点滅(後々もっとリッチなのに置き換え予定)
+
 	void UpdateAttackCollider();
 	void DrawAttackCollider();
 };

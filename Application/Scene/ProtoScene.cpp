@@ -101,8 +101,7 @@ void ProtoScene::Update()
 		}
 	}
 	cameraAngle.x = Util::Clamp(cameraAngle.x, 0.f,Util::AngleToRadian(89.f));
-	//cameraAngle.x += moveSpeed;
-
+	
 	Vector3 cameraVec = { 0, 0, 1 };
 	//カメラアングル適応
 	cameraVec *= Quaternion::AngleAxis(Vector3(1, 0, 0).Cross(cameraVec), cameraAngle.y);
@@ -132,10 +131,20 @@ void ProtoScene::Update()
 		}
 		//プレイヤーとの当たり判定
 		//特定範囲内に入ったら敵を攻撃状態へ遷移
-		if (ColPrimitive3D::CheckSphereToSphere(enemy->attackHitCollider,
-			player.attackHitCollider)) {
-			if (enemy->GetAttackState() == "NonAttack") {
+		if (enemy->GetAttackState() == "NonAttack") 
+		{
+			if (ColPrimitive3D::CheckSphereToSphere(enemy->attackHitCollider,player.attackHitCollider)) 
+			{
 				enemy->ChangeAttackState<EnemyFindState>();
+			}
+		}
+		//攻撃中に本体同士がぶつかったらプレイヤーにダメージ
+		if (enemy->GetAttackState() == "NowAttack")
+		{
+			if (ColPrimitive3D::CheckSphereToSphere(enemy->collider, player.collider))
+			{
+				//1ダメージ(どっかに参照先作るべき)
+				player.DealDamage(1);
 			}
 		}
 	}
@@ -301,10 +310,10 @@ void ProtoScene::Update()
 						if (wax1->stateStr == "WaxCollect" && wax2->IsNormal())
 						{
 							//死ぬ
-							wax2->DeadParticle();
-							wax2->isAlive = false;
+							//wax2->DeadParticle();
+							//wax2->isAlive = false;
 
-							player.waxCollectAmount++;
+							//player.waxCollectAmount++;
 						}
 					}
 				}
