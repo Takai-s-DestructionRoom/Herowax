@@ -309,10 +309,10 @@ void ProtoScene::Update()
 						if (wax1->stateStr == "WaxCollect" && wax2->IsNormal())
 						{
 							//死ぬ
-							wax2->DeadParticle();
-							wax2->isAlive = false;
+							//wax2->DeadParticle();
+							//wax2->isAlive = false;
 
-							player.waxCollectAmount++;
+							//player.waxCollectAmount++;
 						}
 					}
 				}

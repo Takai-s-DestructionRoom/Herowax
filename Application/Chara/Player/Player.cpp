@@ -55,6 +55,7 @@ isFireStock(false), isWaxStock(true), isCollectFan(false), maxWaxStock(20)
 	collectRangeModelCircle = ModelObj(Model::Load("./Resources/Model/wax/wax.obj", "Wax", true));
 	waxCollectDist = Parameter::GetParam(extract, "ロウ回収半径", 5.f);
 	waxCollectAngle = Parameter::GetParam(extract, "ロウ回収角度", 90.f);
+	waxCollectVertical = Parameter::GetParam(extract, "ロウ回収縦幅", 1000.f);
 	collectRangeModelCircle.mTuneMaterial.mColor.a = Parameter::GetParam(extract, "範囲(扇)objの透明度", 0.5f);
 
 	collectRangeModelRayLeft = ModelObj(Model::Load("./Resources/Model/Cube.obj", "Cube", true));
@@ -237,7 +238,6 @@ void Player::Update()
 		ImGui::SliderFloat("固まるまでの時間", &solidTimer.maxTime_, 0.f, 10.f);
 		ImGui::InputInt("ロウの最大ストック数", &maxWaxStock, 1, 100);
 		ImGui::Text("ロウのストック数:%d", waxStock);
-		//ImGui::Text("炎のストック数:%d", fireUnit.fireStock);
 
 		ImGui::TreePop();
 	}
@@ -261,12 +261,17 @@ void Player::Update()
 	}
 	if (ImGui::TreeNode("ロウ回収系"))
 	{
-		ImGui::SliderFloat("ロウ回収範囲", &waxCollectRange, 0.f, 100.f);
+		ImGui::SliderFloat("ロウ回収範囲(横幅)", &waxCollectRange, 0.f, 100.f);
 		ImGui::SliderFloat("範囲objの透明度", &collectRangeModel.mTuneMaterial.mColor.a, 0.f, 1.f);
-		ImGui::SliderFloat("ロウ回収半径", &waxCollectDist, 0.f, 100.f);
-		ImGui::SliderFloat("ロウ回収角度", &waxCollectAngle, 1.f, 180.f);
-		ImGui::SliderFloat("範囲(扇)objの透明度", &collectRangeModelCircle.mTuneMaterial.mColor.a, 0.f, 1.f);
-		ImGui::Text("回収できる状態か:%d", WaxManager::GetInstance()->isCollected);
+		ImGui::InputFloat("ロウ回収範囲(縦幅)", &waxCollectVertical, 1.f);
+		if (ImGui::TreeNode("扇"))
+		{
+			ImGui::SliderFloat("ロウ回収半径", &waxCollectDist, 0.f, 100.f);
+			ImGui::SliderFloat("ロウ回収角度", &waxCollectAngle, 1.f, 180.f);
+			ImGui::SliderFloat("範囲(扇)objの透明度", &collectRangeModelCircle.mTuneMaterial.mColor.a, 0.f, 1.f);
+			ImGui::Text("回収できる状態か:%d", WaxManager::GetInstance()->isCollected);
+			ImGui::TreePop();
+		}
 
 		ImGui::TreePop();
 	}
@@ -307,6 +312,7 @@ void Player::Update()
 		Parameter::Save("ロウ回収範囲", waxCollectRange);
 		Parameter::Save("範囲objの透明度", collectRangeModel.mTuneMaterial.mColor.a);
 		Parameter::Save("敵がこの範囲に入ると攻撃状態へ遷移する大きさ", attackHitCollider.r);
+		Parameter::Save("ロウ回収縦幅", waxCollectVertical);
 		Parameter::End();
 	}
 
@@ -316,7 +322,7 @@ void Player::Update()
 
 void Player::Draw()
 {
-	if (isAlive)
+	if (isAlive || Util::debugBool)
 	{
 		obj.Draw();
 		if (isCollectFan)
@@ -700,13 +706,13 @@ void Player::WaxCollect()
 
 	//トランスフォームはプレイヤー基準に
 	collectRangeModel.mTransform = obj.mTransform;
-	collectRangeModel.mTransform.scale = { waxCollectRange,0.1f,1000.f };
+	collectRangeModel.mTransform.scale = { waxCollectRange,0.1f,waxCollectVertical };
 
 	collectRangeModelCircle.mTransform = obj.mTransform;
 	collectRangeModelCircle.mTransform.scale = { waxCollectDist,0.1f,waxCollectDist };
 
 	//大きさ分前に置く
-	collectRangeModel.mTransform.position += GetFrontVec() * 1000.f * 0.5f;
+	collectRangeModel.mTransform.position += GetFrontVec() * waxCollectVertical * 0.5f;
 
 	//更新
 	collectRangeModel.mTransform.UpdateMatrix();
@@ -763,7 +769,7 @@ void Player::WaxCollect()
 			else
 			{
 				//ロウ回収
-				waxCollectAmount = WaxManager::GetInstance()->Collect(collectCol);
+				waxCollectAmount += WaxManager::GetInstance()->Collect(collectCol,waxCollectVertical);
 			}
 		}
 	}

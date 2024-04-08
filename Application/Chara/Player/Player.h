@@ -59,6 +59,7 @@ public:
 	float waxCollectRange;				//ロウ回収するレイの範囲(横幅)
 	ColPrimitive3D::Ray collectCol;		//ロウ回収する範囲当たり判定
 	ModelObj collectRangeModel;			//ロウ回収範囲描画用
+	float waxCollectVertical;			//ロウ回収するレイの範囲(縦幅)
 
 	float waxCollectDist;					//ロウ回収する扇の距離
 	float waxCollectAngle;					//ロウ回収する扇の角度(180°以内)

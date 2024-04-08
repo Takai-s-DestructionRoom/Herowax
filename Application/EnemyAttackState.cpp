@@ -136,7 +136,9 @@ void EnemyNowAttackState::Update(Enemy* enemy)
 	//喰らい時のモーション遷移
 	float radZ = Easing::InQuad(radStartZ,0,postureTimer.GetTimeRate());
 
-	Quaternion knockQuaterZ = Quaternion::AngleAxis({ 1.0f,0,0}, radZ);
+	//正面の横ベクトルを軸に回転
+	aVec.Cross({ 1,0,1 });
+	Quaternion knockQuaterZ = Quaternion::AngleAxis(aVec, radZ);
 
 	//計算した向きをかける
 	aLookat = aLookat  * knockQuaterZ;

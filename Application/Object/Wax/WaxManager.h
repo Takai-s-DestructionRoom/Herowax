@@ -12,6 +12,10 @@ private:
 
 	bool isViewCol = false;
 
+	bool isViewSlimeWax = true;
+
+	float colliderSize = 0.0f;
+
 	float heatBonus;			//上記の同時燃焼数に応じたボーナス係数
 	//↑これは燃えた量が多ければ多いほど温度を保ちやすい、ってやつを
 	//タカイが適当に解釈して適当にそれっぽくしてあります。
@@ -55,6 +59,13 @@ public:
 
 	//回収される
 	bool Collect(ColPrimitive3D::Ray collider);
+	/// <summary>
+	/// 回収される(縦幅指定バージョン)
+	/// </summary>
+	/// <param name="collider"></param>
+	/// <param name="waxCollectVertical"></param>
+	/// <returns>回収した数</returns>
+	int32_t Collect(ColPrimitive3D::Ray collider,float waxCollectVertical);
 	void CollectFan(ColPrimitive3D::Sphere collider,Vector3 vec, float angle);
 	
 	uint32_t GetWaxNum();

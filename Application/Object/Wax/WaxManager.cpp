@@ -118,6 +118,7 @@ WaxManager::WaxManager() :
 	heatUpTemperature = Parameter::GetParam(extract, "ロウが燃えたときの上昇温度", 5.f);
 	heatBonus = Parameter::GetParam(extract, "ボーナス上昇温度", 2.f);
 	accelAmount = Parameter::GetParam(extract, "回収時の加速度", 0.1f);
+	colliderSize = Parameter::GetParam(extract, "当たり判定の大きさ", 2.5f);
 
 	for (int i = 0; i < 10; i++)
 	{
@@ -154,6 +155,10 @@ void WaxManager::Update()
 
 	for (auto& waxGroup : waxGroups)
 	{
+		for (auto& wax : waxGroup->waxs)
+		{
+			wax->colliderSize = colliderSize;
+		}
 		waxGroup->Update();
 	}
 
@@ -164,8 +169,9 @@ void WaxManager::Update()
 		for (auto& wax : group->waxs)
 		{
 			slimeWax.spheres.emplace_back();
-			slimeWax.spheres.back().collider.pos = wax->obj.mTransform.position;
-			slimeWax.spheres.back().collider.r = wax->obj.mTransform.scale.x;
+			//コライダー基準でデータを送るように
+			slimeWax.spheres.back().collider.pos = wax->collider.pos;
+			slimeWax.spheres.back().collider.r = wax->collider.r;
 		}
 	}
 
@@ -179,13 +185,13 @@ void WaxManager::Update()
 
 	ImGui::Begin("Wax", NULL, window_flags);
 	ImGui::Text("存在しているロウの数:%d", (int)GetWaxNum());
-	//ImGui::Text("燃えているロウの数:%d", isBurningNum);
-	//ImGui::Text("現在の温度:%f", TemperatureManager::GetInstance()->GetTemperature());
 	ImGui::PushItemWidth(100);
-	//ImGui::InputFloat("ロウが燃えたときの上昇温度", &heatUpTemperature, 1.0f);
-	//ImGui::InputFloat("ボーナス上昇温度", &heatBonus, 1.0f);
-
+	
 	ImGui::InputFloat("回収時の加速度", &accelAmount, 0.05f);
+	ImGui::InputFloat("当たり判定の大きさ", &colliderSize, 0.1f);
+
+	ImGui::Checkbox("当たり判定の描画", &isViewCol);
+	ImGui::Checkbox("ロウの見た目の描画", &isViewSlimeWax);
 
 	ImGui::Text("敵を捕まえたときの固まっている秒数");
 	for (int i = 0; i < 10; i++)
@@ -199,8 +205,6 @@ void WaxManager::Update()
 	ImGui::Text("ロウグループ数:%d", (int)waxGroups.size());
 	ImGui::PopItemWidth();
 
-	ImGui::Checkbox("当たり判定の描画", &isViewCol);
-
 	if (ImGui::Button("Reset")) {
 		Init();
 	}
@@ -209,6 +213,7 @@ void WaxManager::Update()
 		Parameter::Save("ロウが燃えたときの上昇温度", heatUpTemperature);
 		Parameter::Save("ボーナス上昇温度", heatBonus);
 		Parameter::Save("回収時の加速度", accelAmount);
+		Parameter::Save("当たり判定の大きさ", colliderSize);
 		for (int i = 0; i < 10; i++)
 		{
 			std::string waxnum = std::to_string(i + 1) + "体の時";
@@ -238,7 +243,9 @@ void WaxManager::Draw()
 		}
 	}
 
-	slimeWax.Draw();
+	if (isViewSlimeWax) {
+		slimeWax.Draw();
+	}
 }
 
 void WaxManager::Create(Transform transform, uint32_t power, Vector3 vec,
@@ -298,7 +305,6 @@ bool WaxManager::Collect(ColPrimitive3D::Ray collider)
 	{
 		for (auto& wax : group->waxs)
 		{
-			//回収範囲内にいるなら
 			if (RayToSphereCol(collider, wax->collider))
 			{
 				//今一番遠いロウがないなら入れておく
@@ -333,6 +339,36 @@ bool WaxManager::Collect(ColPrimitive3D::Ray collider)
 	}
 
 	return false;
+}
+
+int32_t WaxManager::Collect(ColPrimitive3D::Ray collider, float waxCollectVertical)
+{
+	int32_t getNum = 0;
+	for (auto& group : waxGroups)
+	{
+		for (auto& wax : group->waxs)
+		{
+			if (RayToSphereCol(collider, wax->collider))
+			{
+				//今のロウとの距離
+				float len = (collider.start - wax->GetPos()).Length();
+
+				//見たロウが範囲外ならスキップ
+				if (waxCollectVertical < len) {
+					continue;
+				}
+
+				//回収モードにする
+				wax.get()->collectPos = collider.start;
+				wax.get()->ChangeState<WaxCollect>();
+				getNum++;
+
+				isCollected = false;
+			}
+		}
+	}
+
+	return getNum;
 }
 
 void WaxManager::CollectFan(ColPrimitive3D::Sphere collider, Vector3 vec, float angle)
