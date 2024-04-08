@@ -88,6 +88,11 @@ void Player::Init()
 
 void Player::Update()
 {
+	//無敵時間更新
+	mutekiTimer.Update();
+	//ダメージ時点滅
+	DamageBlink();
+
 	//パッド接続してたら
 	if (RInput::GetInstance()->GetPadConnect())
 	{
@@ -327,8 +332,6 @@ void Player::Draw()
 		{
 			collectRangeModel.Draw();
 		}
-		//fireUnit.Draw();
-
 		ui.Draw();
 		
 		DrawAttackCollider();
@@ -784,8 +787,24 @@ void Player::DealDamage(uint32_t damage)
 	if (mutekiTimer.GetRun())return;
 	
 	mutekiTimer.Start();
+	blinkTimer.Start();
 
 	hp -= damage;
+}
+
+void Player::DamageBlink()
+{
+	blinkTimer.RoopReverse();
+
+	blinkTimer.maxTime_ = mutekiTimer.maxTime_ / (blinkNum * 2);
+
+	//ダメージ処理中なら
+	if (mutekiTimer.GetRun()) {
+		obj.mTuneMaterial.mColor.a = (1.0f - blinkTimer.GetTimeRate()) + 0.2f;
+	}
+	else {
+		obj.mTuneMaterial.mColor.a = 1.f;
+	}
 }
 
 void Player::UpdateAttackCollider()

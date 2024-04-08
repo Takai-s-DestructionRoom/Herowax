@@ -120,7 +120,6 @@ void Enemy::Update()
 	pVec.Normalize();
 	pVec.y = 0;
 
-
 	//ノックバックとかのけぞりとか
 	//攻撃中はそっちの回転を優先
 	if (GetAttackState() == "NowAttack") {
@@ -130,7 +129,7 @@ void Enemy::Update()
 		KnockBack();
 		KnockRota();
 
-		if (!GetIsSolid()) {
+		if (!GetIsSolid() && !knockbackTimer.GetRun()) {
 			//通常時の回転(固まってるときは回転しないように)
 			Rotation(pVec);
 		}
@@ -142,9 +141,18 @@ void Enemy::Update()
 		moveVec.y -= gravity;
 	}
 
+	//攻撃中と準備中はプレイヤーへ向けた移動をしない
+	//(ステート内に書いてもいいけどどこにあるかわからなくなりそうなのでここで)
+	if (GetAttackState() != "NowAttack" && 
+		GetAttackState() != "Pre")
+	{
+		//プレイヤーへ向けた移動
+		moveVec += pVec * moveSpeed;
+	}
+
+	//いろいろ足した後減速
 	//減速率は大きいほどスピード下がるから1.0から引くようにしてる
-	moveVec += pVec * moveSpeed *
-		(1.f - slowMag) * (1.f - slowCoatingMag);
+	moveVec *= (1.f - slowMag) * (1.f - slowCoatingMag);
 
 	//シェイクの値
 	moveVec += shack;

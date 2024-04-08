@@ -40,7 +40,7 @@ public:
 	void Update(Enemy* enemy);
 private:
 	Easing::EaseTimer lifeTimer;
-	Easing::EaseTimer brinkTimer;
+	Easing::EaseTimer blinkTimer;
 
 	bool isStart = false;
 	Vector3 start = { 0,0,0 };

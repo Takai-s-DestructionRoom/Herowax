@@ -84,6 +84,8 @@ void IEmitter3D::Update()
 		particle.pos.y -= particle.gravity * isGravity_ * elapseSpeed_;
 	}
 
+
+
 	//頂点バッファへデータ転送
 	//パーティクルの情報を1つずつ反映
 	for (size_t i = 0; i < vertices.size(); i++)
@@ -144,11 +146,9 @@ void IEmitter3D::Update()
 		billboardMat[3][3] = 1;
 	}
 
-
 	//バッファにデータ送信
 	TransferBuffer(Camera::sNowCamera->mViewProjection);
 	transform.UpdateMatrix();
-
 }
 
 void IEmitter3D::Draw()

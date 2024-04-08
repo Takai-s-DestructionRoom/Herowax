@@ -7,7 +7,8 @@
 #include "PlayerUI.h"
 #include "FireUnit.h"
 #include "ColPrimitive3D.h"
- 
+#include <stdint.h>
+
 class Player : public GameObject
 {
 public:
@@ -96,6 +97,10 @@ public:
 private:
 	ModelObj attackDrawerObj;			//上記の当たり判定描画オブジェクト
 
+	Easing::EaseTimer blinkTimer;
+
+	float blinkNum = 10;		//点滅回数
+
 public:
 	Player();
 
@@ -139,6 +144,8 @@ public:
 	void DealDamage(uint32_t damage);
 
 private:
+	void DamageBlink();	//被弾時の点滅(後々もっとリッチなのに置き換え予定)
+
 	void UpdateAttackCollider();
 	void DrawAttackCollider();
 };

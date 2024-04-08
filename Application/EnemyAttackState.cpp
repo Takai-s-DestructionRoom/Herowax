@@ -38,8 +38,8 @@ EnemyPreState::EnemyPreState()
 {
 	lifeTimer.Start();
 
-	brinkTimer.maxTime_ = lifeTimer.maxTime_ / 4;
-	brinkTimer.Start();
+	blinkTimer.maxTime_ = lifeTimer.maxTime_ / 4;
+	blinkTimer.Start();
 
 	isStart = true;
 }
@@ -53,36 +53,34 @@ void EnemyPreState::Update(Enemy* enemy)
 	if (isStart) {
 		isStart = false;
 		start = enemy->obj.mTransform.position;
-		end = enemy->obj.mTransform.position - pVec * 0.5f;
+		end = enemy->obj.mTransform.position - pVec * 10.f;
 	}
 	enemy->SetAttackStateStr("Pre");
 
+	float oldTime = lifeTimer.GetTimeRate();
 	lifeTimer.Update();
-	brinkTimer.RoopReverse();
+	blinkTimer.RoopReverse();
 	
 	//予測線描画コマンド送信
 	//トランスフォームはプレイヤー基準に
 	float baseAlpha = 0.5f;
 	enemy->predictionLine.mTuneMaterial.mColor = Color(1.f, 0.f, 0.f, baseAlpha);
-	enemy->predictionLine.mTuneMaterial.mColor.a = baseAlpha * brinkTimer.GetTimeRate() + 0.2f;
+	enemy->predictionLine.mTuneMaterial.mColor.a = baseAlpha * blinkTimer.GetTimeRate() + 0.2f;
 	enemy->predictionLine.mTransform = enemy->obj.mTransform;
 	float xSize = enemy->obj.mTransform.scale.x;
-	enemy->predictionLine.mTransform.scale = { xSize,0.1f,
-		//ここは後で、当たり判定をして遷移する時にもう一度調整する
-		enemy->attackMovePower };
+	enemy->predictionLine.mTransform.scale = { xSize,0.1f,enemy->attackMovePower };
 	//大きさ分前に置く
 	enemy->predictionLine.mTransform.position += enemy->GetFrontVec() *
 		enemy->attackMovePower * 0.5f;
 	
-	
 	//ちょっと下げる
-	float oldTime = 0.0f;
 	Vector3 nowMove = OutQuadVec3(start, end, lifeTimer.GetTimeRate());
 	nowMove.y = 0;
 	Vector3 oldMove = OutQuadVec3(start, end, oldTime);
 	oldMove.y = 0;
 
-	enemy->MoveVecPlus(nowMove - oldMove);
+	Vector3 plusVec = nowMove - oldMove;
+	enemy->MoveVecPlus(plusVec);
 
 	//時間たったら次へ
 	if (lifeTimer.GetEnd()) {
@@ -132,16 +130,16 @@ void EnemyNowAttackState::Update(Enemy* enemy)
 	//ターゲットの方向を向いてくれる
 	Quaternion aLookat = Quaternion::LookAt(aVec);
 
-	//前30度へ傾く
+	//前30度へ傾く(これだと特定方向に傾いてしまうから変更する)
 	float radStartZ = Util::AngleToRadian(-30.f);
 
 	//喰らい時のモーション遷移
-	float radZ = Easing::InQuad(0, radStartZ, 1.0f - postureTimer.GetTimeRate());
+	float radZ = Easing::InQuad(radStartZ,0,postureTimer.GetTimeRate());
 
-	Quaternion knockQuaterZ = Quaternion::AngleAxis({ 0,0,1 }, radZ);
+	Quaternion knockQuaterZ = Quaternion::AngleAxis({ 1.0f,0,0}, radZ);
 
 	//計算した向きをかける
-	aLookat = aLookat * knockQuaterZ;
+	aLookat = aLookat  * knockQuaterZ;
 
 	//euler軸へ変換
 	enemy->obj.mTransform.rotation = aLookat.ToEuler();
