@@ -140,3 +140,18 @@ void WaxCollect::Update(Wax* wax)
 		WaxManager::GetInstance()->isCollected = true;
 	}
 }
+
+void WaxCollectFan::Update(Wax* wax)
+{
+	wax->SetStateStr("WaxCollectFan");
+
+	accel += WaxManager::GetInstance()->accelAmount;
+
+	//このままだとスピード無限にあがるからすり抜ける危険性あり
+	Vector3 moveVec =
+		wax->collectPos - wax->obj.mTransform.position;
+	wax->obj.mTransform.position += moveVec.GetNormalize() * accel;
+
+	//色が変わる
+	wax->obj.mTuneMaterial.mColor = Color::kGreen;
+}

@@ -50,10 +50,19 @@ public:
 	int32_t waxStock;			//ロウストック
 	int32_t maxWaxStock;		//ロウストック最大値
 	bool isWaxStock;			//ストック性にするかフラグ
+	bool isCollectFan;			//回収範囲扇型にするかフラグ
+	bool isCollect;				//回収できるかフラグ
 
-	float waxCollectRange;				//ロウ回収する範囲
+	float waxCollectRange;				//ロウ回収するレイの範囲(横幅)
 	ColPrimitive3D::Ray collectCol;		//ロウ回収する範囲当たり判定
 	ModelObj collectRangeModel;			//ロウ回収範囲描画用
+
+	float waxCollectDist;					//ロウ回収する扇の距離
+	float waxCollectAngle;					//ロウ回収する扇の角度(180°以内)
+	ColPrimitive3D::Sphere collectColFan;	//ロウ回収する範囲当たり判定
+	ModelObj collectRangeModelCircle;		//ロウ回収範囲描画用
+	ModelObj collectRangeModelRayLeft;			//ロウ回収範囲描画用
+	ModelObj collectRangeModelRayRight;			//ロウ回収範囲描画用
 
 	int32_t waxCollectAmount;			//ロウ回収量
 	

@@ -55,6 +55,7 @@ public:
 
 	//回収される
 	bool Collect(ColPrimitive3D::Ray collider);
+	void CollectFan(ColPrimitive3D::Sphere collider,Vector3 vec, float angle);
 	
 	uint32_t GetWaxNum();
 

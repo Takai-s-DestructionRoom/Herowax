@@ -15,7 +15,7 @@ moveSpeed(1.f), moveAccelAmount(0.05f), isGround(true), hp(0), maxHP(10.f),
 isJumping(false), jumpTimer(0.2f), jumpHeight(0.f), maxJumpHeight(5.f), jumpPower(2.f), jumpSpeed(0.f),
 isAttack(false), atkSpeed(1.f), atkRange({ 3.f,5.f }), atkSize(0.f), atkPower(1),
 atkCoolTimer(0.3f), atkTimer(0.5f), atkHeight(1.f), solidTimer(5.f),
-isFireStock(false), isWaxStock(true), maxWaxStock(20)
+isFireStock(false), isWaxStock(true), isCollectFan(false), maxWaxStock(20)
 {
 	std::map<std::string, std::string> extract = Parameter::Extract("Player");
 	moveSpeed = Parameter::GetParam(extract, "移動速度", 1.f);
@@ -47,6 +47,17 @@ isFireStock(false), isWaxStock(true), maxWaxStock(20)
 	collectRangeModel = ModelObj(Model::Load("./Resources/Model/Cube.obj", "Cube", true));
 	waxCollectRange = Parameter::GetParam(extract, "ロウ回収範囲", 5.f);
 	collectRangeModel.mTuneMaterial.mColor.a = Parameter::GetParam(extract, "範囲objの透明度", 0.5f);
+	collectRangeModel.mTuneMaterial.mAmbient = Vector3::ONE * 100.f;
+	collectRangeModel.mTuneMaterial.mDiffuse = Vector3::ZERO;
+	collectRangeModel.mTuneMaterial.mSpecular = Vector3::ZERO;
+
+	collectRangeModelCircle = ModelObj(Model::Load("./Resources/Model/wax/wax.obj", "Wax", true));
+	waxCollectDist = Parameter::GetParam(extract, "ロウ回収半径", 5.f);
+	waxCollectAngle = Parameter::GetParam(extract, "ロウ回収角度", 90.f);
+	collectRangeModelCircle.mTuneMaterial.mColor.a = Parameter::GetParam(extract, "範囲(扇)objの透明度", 0.5f);
+
+	collectRangeModelRayLeft = ModelObj(Model::Load("./Resources/Model/Cube.obj", "Cube", true));
+	collectRangeModelRayRight = ModelObj(Model::Load("./Resources/Model/Cube.obj", "Cube", true));
 
 	attackState = std::make_unique<PlayerNormal>();
 }
@@ -205,6 +216,7 @@ void Player::Update()
 		ImGui::Text("攻撃中か:%d", isAttack);
 		ImGui::Checkbox("攻撃中でも次の攻撃を出せるか", &isMugenAttack);
 		ImGui::Checkbox("ロウをストック性にするか", &isWaxStock);
+		ImGui::Checkbox("回収範囲を扇型にするか", &isCollectFan);
 		ImGui::Checkbox("炎をストック性にするか", &isFireStock);
 
 		ImGui::InputInt("敵に与えるダメージ", &atkPower, 1);
@@ -243,6 +255,9 @@ void Player::Update()
 	{
 		ImGui::SliderFloat("ロウ回収範囲", &waxCollectRange, 0.f, 100.f);
 		ImGui::SliderFloat("範囲objの透明度", &collectRangeModel.mTuneMaterial.mColor.a, 0.f, 1.f);
+		ImGui::SliderFloat("ロウ回収半径", &waxCollectDist, 0.f, 100.f);
+		ImGui::SliderFloat("ロウ回収角度", &waxCollectAngle, 1.f, 180.f);
+		ImGui::SliderFloat("範囲(扇)objの透明度", &collectRangeModelCircle.mTuneMaterial.mColor.a, 0.f, 1.f);
 		ImGui::Text("回収できる状態か:%d", WaxManager::GetInstance()->isCollected);
 
 		ImGui::TreePop();
@@ -290,7 +305,16 @@ void Player::Draw()
 	if (isAlive)
 	{
 		obj.Draw();
-		collectRangeModel.Draw();
+		if (isCollectFan)
+		{
+			collectRangeModelCircle.Draw();
+			collectRangeModelRayLeft.Draw();
+			collectRangeModelRayRight.Draw();
+		}
+		else
+		{
+			collectRangeModel.Draw();
+		}
 		//fireUnit.Draw();
 
 		ui.Draw();
@@ -337,13 +361,13 @@ void Player::MovePad()
 	}
 
 	moveAccel = Util::Clamp(moveAccel, 0.f, 1.f);			//無限に増減しないよう抑える
-	moveVec *= 
-		moveSpeed * moveAccel * 
+	moveVec *=
+		moveSpeed * moveAccel *
 		WaxManager::GetInstance()->isCollected;				//移動速度をかけ合わせたら完成(回収中は動けない)
 	obj.mTransform.position += moveVec;						//完成したものを座標に足し合わせる
 
 	//接地してて回収中じゃない時にAボタン押すと
-	if (isGround && RInput::GetInstance()->GetPadButtonDown(XINPUT_GAMEPAD_A)&&
+	if (isGround && RInput::GetInstance()->GetPadButtonDown(XINPUT_GAMEPAD_A) &&
 		WaxManager::GetInstance()->isCollected)
 	{
 		isJumping = true;
@@ -644,45 +668,89 @@ void Player::PabloAttack()
 
 void Player::WaxCollect()
 {
+	//扇の範囲表す用レイ
+	collectRangeModelRayLeft.mTransform = obj.mTransform;
+	collectRangeModelRayRight.mTransform = obj.mTransform;
+	collectRangeModelRayLeft.mTransform.scale = { 0.1f,0.1f,waxCollectDist*2.f };
+	collectRangeModelRayRight.mTransform.scale = { 0.1f,0.1f,waxCollectDist*2.f };
+	collectRangeModelRayLeft.mTransform.rotation.y += Util::AngleToRadian(-waxCollectAngle * 0.5f);
+	collectRangeModelRayRight.mTransform.rotation.y += Util::AngleToRadian(waxCollectAngle * 0.5f);
+
+	/*collectRangeModelRayLeft.mTransform.position += GetFrontVec() * waxCollectDist * 0.5f;
+	collectRangeModelRayRight.mTransform.position += GetFrontVec() * waxCollectDist * 0.5f;*/
+
+	collectRangeModelRayLeft.mTransform.UpdateMatrix();
+	collectRangeModelRayLeft.TransferBuffer(Camera::sNowCamera->mViewProjection);
+	collectRangeModelRayRight.mTransform.UpdateMatrix();
+	collectRangeModelRayRight.TransferBuffer(Camera::sNowCamera->mViewProjection);
+
 	//トランスフォームはプレイヤー基準に
 	collectRangeModel.mTransform = obj.mTransform;
 	collectRangeModel.mTransform.scale = { waxCollectRange,0.1f,1000.f };
+
+	collectRangeModelCircle.mTransform = obj.mTransform;
+	collectRangeModelCircle.mTransform.scale = { waxCollectDist,0.1f,waxCollectDist };
+
 	//大きさ分前に置く
 	collectRangeModel.mTransform.position += GetFrontVec() * 1000.f * 0.5f;
+
+	//更新
 	collectRangeModel.mTransform.UpdateMatrix();
 	collectRangeModel.TransferBuffer(Camera::sNowCamera->mViewProjection);
+
+	collectRangeModelCircle.mTransform.UpdateMatrix();
+	collectRangeModelCircle.TransferBuffer(Camera::sNowCamera->mViewProjection);
 
 	//当たり判定で使うレイの設定
 	collectCol.dir = GetFrontVec();
 	collectCol.start = GetFootPos();
 	collectCol.radius = waxCollectRange * 0.5f;
 
-	//回収したロウに応じてストック増やす
-	if (isWaxStock && WaxManager::GetInstance()->isCollected)
-	{
-		if (waxCollectAmount > 0)
-		{
-			waxStock += waxCollectAmount;
-			waxCollectAmount = 0;
-		}
+	//当たり判定で使う球の設定
+	collectColFan.pos = GetFootPos();
+	collectColFan.r = waxCollectDist;
 
-		//最大量を超えて回収してたら最大量を増やす
-		if (waxStock > maxWaxStock)
+	//回収したロウに応じてストック増やす
+	if (isCollectFan)
+	{
+
+	}
+	else
+	{
+		if (isWaxStock && WaxManager::GetInstance()->isCollected)
 		{
-			maxWaxStock = waxStock;
+			if (waxCollectAmount > 0)
+			{
+				waxStock += waxCollectAmount;
+				waxCollectAmount = 0;
+			}
+
+			//最大量を超えて回収してたら最大量を増やす
+			if (waxStock > maxWaxStock)
+			{
+				maxWaxStock = waxStock;
+			}
 		}
 	}
 
 	//回収ボタンポチーw
 	if ((RInput::GetInstance()->GetPadButtonDown(XINPUT_GAMEPAD_LEFT_SHOULDER) ||
-		RInput::GetInstance()->GetLTriggerDown()||
+		RInput::GetInstance()->GetLTriggerDown() ||
 		RInput::GetInstance()->GetKeyDown(DIK_Q)))
 	{
 		//ロウがストック性かつ地面についてて回収できる状態なら
 		if (isWaxStock && isGround && WaxManager::GetInstance()->isCollected)
 		{
-			//ロウ回収
-			waxCollectAmount = WaxManager::GetInstance()->Collect(collectCol);
+			if (isCollectFan)
+			{
+				//ロウ回収
+				WaxManager::GetInstance()->CollectFan(collectColFan,GetFrontVec(), waxCollectAngle);
+			}
+			else
+			{
+				//ロウ回収
+				waxCollectAmount = WaxManager::GetInstance()->Collect(collectCol);
+			}
 		}
 	}
 }

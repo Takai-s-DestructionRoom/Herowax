@@ -4,6 +4,7 @@
 //#include "Temperature.h"
 #include "Parameter.h"
 #include "ColPrimitive3D.h"
+#include "Quaternion.h"
 
 WaxManager* WaxManager::GetInstance()
 {
@@ -333,6 +334,54 @@ bool WaxManager::Collect(ColPrimitive3D::Ray collider)
 	}
 
 	return false;
+}
+
+void WaxManager::CollectFan(ColPrimitive3D::Sphere collider, Vector3 vec, float angle)
+{
+	//指定された角度をもとに扇の辺決める
+	Vector3 lVec, rVec;
+	lVec = vec * Quaternion::AngleAxis(Vector3::UP, -angle * 0.5f);
+	rVec = vec * Quaternion::AngleAxis(Vector3::UP, angle * 0.5f);
+	//2次元ベクトルに直す
+	Vector2 leftVec, rightVec, colPos, waxPos;
+	leftVec = { lVec.x,lVec.z };
+	rightVec = { rVec.x,rVec.z };
+	colPos = { collider.pos.x,collider.pos.z };
+
+	for (auto& group : waxGroups)
+	{
+		for (auto& wax : group->waxs)
+		{
+			//球の回収範囲内にないならスルー
+			if (ColPrimitive3D::CheckSphereToSphere(wax->collider, collider) == false)
+			{
+				break;
+			}
+
+			Vector3 waxToSphere = wax->collider.pos - collider.pos;
+			//内積が0以下なら当たってない(後ろに球があるときスルー)
+			if (waxToSphere.Dot(vec) < 0)
+			{
+				break;
+			}
+
+			//指定された角度外なら当たってない
+			waxPos = { wax->collider.pos.x,wax->collider.pos.z };
+			Vector2 colToWaxVec = (colPos - waxPos).GetNormalize();
+			if (leftVec.Cross(colToWaxVec) < 0.f)
+			{
+				break;
+			}
+			if (rightVec.Cross(colToWaxVec) > 0.f)
+			{
+				break;
+			}
+
+			//当たってるなら扇用回収モードにする
+			wax->collectPos = collider.pos;
+			wax->ChangeState<WaxCollectFan>();
+		}
+	}
 }
 
 uint32_t WaxManager::GetWaxNum()

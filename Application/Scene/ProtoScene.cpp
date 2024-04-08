@@ -137,7 +137,7 @@ void ProtoScene::Update()
 		}
 	}
 
-	//蝋との当たり判定
+	//蝋と敵の当たり判定
 	for (auto& group : WaxManager::GetInstance()->waxGroups)
 	{
 		std::vector<Enemy*> trapEnemys;
@@ -218,6 +218,27 @@ void ProtoScene::Update()
 				tEnemy->ChangeState<EnemyAllStop>();
 			}
 			trapEnemys.clear();
+		}
+	}
+
+	//蝋とプレイヤーの当たり判定
+	player.isCollect = true;
+	for (auto& group : WaxManager::GetInstance()->waxGroups)
+	{
+		//蝋一つ一つとの判定
+		for (auto& wax : group->waxs)
+		{
+			if (wax->GetState() == "WaxCollectFan")
+			{
+				bool isCollision = ColPrimitive3D::CheckSphereToSphere(player.collider, wax->collider);
+				player.isCollect = false;	//一個でも回収中のロウあると回収できなくする
+
+				if (isCollision)
+				{
+					wax->isAlive = false;
+					player.waxCollectAmount++;
+				}
+			}
 		}
 	}
 
