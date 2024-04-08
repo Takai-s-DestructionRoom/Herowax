@@ -32,6 +32,8 @@ public:
 	float hp;				//現在のヒットポイント
 	float maxHP;			//最大HP
 
+	Easing::EaseTimer mutekiTimer;
+
 	//------------ 攻撃関連 ------------//
 	bool isAttack;					//攻撃中かフラグ
 	Vector3 atkVec;					//攻撃方向
@@ -132,6 +134,9 @@ public:
 
 	// セッター //
 	void SetIsCollect(bool frag) { isCollect = frag; }
+
+	//ダメージを与える
+	void DealDamage(uint32_t damage);
 
 private:
 	void UpdateAttackCollider();

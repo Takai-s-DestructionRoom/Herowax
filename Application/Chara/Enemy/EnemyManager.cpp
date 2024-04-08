@@ -37,6 +37,7 @@ EnemyManager::EnemyManager()
 	collideSize = Parameter::GetParam(extract,"敵の当たり判定の大きさ", collideSize);
 	attackMove = Parameter::GetParam(extract,"突っ込んでくる距離", 100.f);
 	attackHitColliderSize = Parameter::GetParam(extract,"敵がプレイヤーと当たる判定の大きさ", 3.0f);
+	moveSpeed = Parameter::GetParam(extract,"移動速度", 0.1f);
 }
 
 void EnemyManager::SetTarget(ModelObj* target_)
@@ -112,9 +113,10 @@ void EnemyManager::Update()
 		ImGui::PopItemWidth();
 		ImGui::TreePop();
 	}
-	if (ImGui::TreeNode("減速系"))
+	if (ImGui::TreeNode("速度系"))
 	{
 		ImGui::PushItemWidth(100);
+		ImGui::InputFloat("移動速度", &moveSpeed,0.1f);
 		ImGui::SliderFloat("減速率", &slowMag, 0.f, 1.f);
 		ImGui::SliderFloat("ろうまみれ減速率", &slowCoatingMag, 0.f, 1.f);
 		ImGui::PopItemWidth();
@@ -145,6 +147,7 @@ void EnemyManager::Update()
 		enemy->ChangeDrawCollider(hitChecker);
 		enemy->attackHitCollider.r = attackHitColliderSize;
 		enemy->attackMovePower = attackMove;
+		enemy->SetMoveSpeed(moveSpeed);
 	}
 
 	if (ImGui::Button("Reset")) {
@@ -169,6 +172,7 @@ void EnemyManager::Update()
 		Parameter::Save("敵の当たり判定の大きさ", collideSize);
 		Parameter::Save("敵がプレイヤーと当たる判定の大きさ", attackHitColliderSize);
 		Parameter::Save("突っ込んでくる距離", attackMove);
+		Parameter::Save("移動速度", moveSpeed);
 
 		Parameter::End();
 	}

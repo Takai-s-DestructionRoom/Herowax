@@ -173,6 +173,8 @@ public:
 	void SetKnockTime(float knockTime) { knockbackTimer.maxTime_ = knockTime; };
 	//無敵時間さん!?を設定
 	void SetMutekiTime(float mutekiTime) { mutekiTimer.maxTime_ = mutekiTime; };
+	//移動速度を設定
+	void SetMoveSpeed(float setSpeed) { moveSpeed = setSpeed; };
 	//強制的に死亡させる
 	void SetDeath();
 	//移動量に足す
