@@ -39,26 +39,32 @@ private:
 	float escapePower;					//蝋から脱出する力
 	Easing::EaseTimer escapeCoolTimer;	//脱出行動のクールタイム
 
+	std::string attackStateStr;		//状態を文字列で保存
+
+	std::unique_ptr<EnemyAttackState> attackState;			//攻撃を管理するステート
+	std::unique_ptr<EnemyAttackState> nextAttackState;		//攻撃を管理するステートの次ステート
+
+	ModelObj attackDrawerObj;			//上記の当たり判定描画オブジェクト
+
 	//------------ HP関連 ------------//
 	float hp;				//現在のヒットポイント
 	float maxHP;			//最大HP
 	Easing::EaseTimer mutekiTimer;		//無敵時間さん
+	int32_t waxSolidCount = 0; //ロウのかかり具合カウント
+	int32_t requireWaxSolidCount = 10; //完全に固まるまでに必要なロウのかかり回数
+	float waxShakeOffTimer = 0; //ロウを振り払うタイマー
+	float requireWaxShakeOffTime = 5.0f; //ロウを振り払うまでにかかる時間(秒)
 
 	//------------ その他 ------------//
 	ModelObj* target = nullptr;
 	//攻撃してきた対象
 	ModelObj* attackTarget = nullptr;
-	//固まってることを分かりやすくするオブジェクト
-	ModelObj attach;
 
 	std::unique_ptr<EnemyState> state;			//状態管理
 	std::unique_ptr<EnemyState> nextState;		//次のステート
-	std::string stateStr;		//状態を文字列で保存
-
-	std::unique_ptr<EnemyAttackState> attackState;		//攻撃を管理するステート
-	std::unique_ptr<EnemyAttackState> nextAttackState;		//攻撃を管理するステートの次ステート
-
-	EnemyUI ui;
+	std::string stateStr;			//状態を文字列で保存
+	
+	EnemyUI ui;	//HP表示
 
 public:
 	Easing::EaseTimer solidTimer;	//動けなくなっている時間
@@ -69,21 +75,40 @@ public:
 	bool changingState = false;
 	bool changingAttackState = false;
 
-	bool isDrawCollider = false;
+	//------attackState内で使用するやつ-----//
+	Vector3 attackStartPos;
+	Vector3 attackEndPos;
+
+	float attackMovePower = 100.0f;	//移動量
+	ModelObj predictionLine;	//予測線
+
+	ColPrimitive3D::Sphere attackHitCollider;	//攻撃状態へ遷移する当たり判定
+
+private:
+	//ノックバック処理をまとめた
+	void KnockBack();
+
+	//回転する処理
+	void KnockRota();
+	//通常時の回転
+	void Rotation(const Vector3& pVec);
 
 public:
-
 	Enemy(ModelObj* target_);
 	virtual ~Enemy();
 	void Init() override;
 	void Update() override;
 	void Draw() override;
 
-	//ノックバック処理をまとめた
-	void KnockBack(const Vector3& pVec);
+	//ダメージを与える
+	void DealDamage(uint32_t damage);
+	//引数があればノックバックもする(その方向を向かせるために攻撃対象も入れる)
+	void DealDamage(uint32_t damage, const Vector3& dir, ModelObj* target_);
 
 	//追いかける対象を変更
 	void SetTarget(ModelObj* target_);
+
+	ModelObj* GetTarget();
 
 	void SetGroundPos(float groundPos_) { groundPos = groundPos_; }
 
@@ -113,6 +138,7 @@ public:
 	// ゲッター //
 	//状態文字情報を取得
 	std::string GetState() { return stateStr; }
+	std::string GetAttackState() { return attackStateStr; }
 	//脱出行動フラグ取得
 	bool GetIsEscape() { return isEscape; }
 	//蝋から脱出する力取得
@@ -122,6 +148,8 @@ public:
 	//HPの取得
 	float GetHP() { return hp; };
 	float GetMaxHP() { return maxHP; };
+
+	bool GetIsSolid();	//固まってるかどうか
 
 	// セッター //
 	//減速率設定
@@ -138,17 +166,19 @@ public:
 	void SetEscapePower(float power) { escapePower = power; }
 	//状態文字情報を設定
 	void SetStateStr(std::string str) { stateStr = str; }
+	void SetAttackStateStr(std::string str) {attackStateStr = str; }
 	//ノックバック距離を設定
 	void SetKnockRange(float knockRange) { knockbackRange = knockRange; };
 	//ノックバック時間を設定
 	void SetKnockTime(float knockTime) { knockbackTimer.maxTime_ = knockTime; };
 	//無敵時間さん!?を設定
 	void SetMutekiTime(float mutekiTime) { mutekiTimer.maxTime_ = mutekiTime; };
-	//ダメージを与える
-	void DealDamage(uint32_t damage);
-	//引数があればノックバックもする(その方向を向かせるために攻撃対象も入れる)
-	void DealDamage(uint32_t damage, const Vector3& dir, ModelObj* target_);
 	//強制的に死亡させる
 	void SetDeath();
+	//移動量に足す
+	void MoveVecPlus(const Vector3& plusVec);
+private:
+	void UpdateAttackCollider();
+	void DrawAttackCollider();
 };
 

@@ -15,7 +15,7 @@ struct PaintData
     float3 mSpecular;
     float4 mColor;
     float dissolveVal;
-    float hoge;
+    float slide;
 };
 
 ConstantBuffer<PaintData> paintData : register(b10);
@@ -34,7 +34,7 @@ float3 magnitude(float3 v)
     return (v.x * v.x + v.y * v.y + v.z * v.z);
 }
 
-// シェーダー疑似乱数(fragmentシェーダーでUVを入力し0.0～1.0を返す/texture size周期でループする処理を追加)
+// シェーダー疑似乱数(UVを入力し0.0～1.0を返す/texture size周期でループする処理を追加)
 float rand(float2 uv, float2 size)
 {
     uv = frac(uv / size);
@@ -120,9 +120,9 @@ float4 main(VSOutputBasic input) : SV_TARGET
     float4 paintcolor = paintData.mColor;
     float paintRatio = 0;
     
-    float3 dist = normalNoise(input.uv + paintData.hoge * 0.02f, float2(16.f, 16.f)); // perlinノイズで算出した法線を得る
+    float3 dist = normalNoise(input.uv + paintData.slide * 0.02f, float2(16.f, 16.f)); // perlinノイズで算出した法線を得る
     dist = dist * 2 - 1; // 範囲を0.0～1.0から-1.0～1.0へ変換
-    dist *= 0.1f; // 歪み強度を乗算(歪み強度をシェーダーパラメータとして調整可能にする)
+    dist *= 0.1f;
 
     float dissolveTexVal = paintTex.Sample(smp, input.uv + dist.xy).r;
     if (dissolveTexVal <= paintData.dissolveVal)

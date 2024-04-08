@@ -1,5 +1,6 @@
 #pragma once
 #include "Easing.h"
+#include "ModelObj.h"
 
 class Enemy;
 
@@ -39,6 +40,12 @@ public:
 	void Update(Enemy* enemy);
 private:
 	Easing::EaseTimer lifeTimer;
+	Easing::EaseTimer brinkTimer;
+
+	bool isStart = false;
+	Vector3 start = { 0,0,0 };
+	Vector3 end = { 0,0,0 };
+
 };
 
 class EnemyNowAttackState : public EnemyAttackState
@@ -49,5 +56,6 @@ public:
 private:
 	bool isStart = false;
 	Easing::EaseTimer chargeTimer;	//突進タイマー
+	float oldChargeTime = 0.0f;		//1フレ前の突進タイマー
 	Easing::EaseTimer postureTimer;	//姿勢タイマー
 };

@@ -87,7 +87,12 @@ public:
 	std::unique_ptr<PlayerState> nextState;
 	bool changingState = false;
 
+	ColPrimitive3D::Sphere attackHitCollider;	//敵が攻撃状態へ遷移する当たり判定
+	
 	PlayerUI ui;
+
+private:
+	ModelObj attackDrawerObj;			//上記の当たり判定描画オブジェクト
 
 public:
 	Player();
@@ -122,8 +127,13 @@ public:
 	// ゲッター //
 	//お試し実装:殴った相手が自分を追っかけてくるモード
 	bool GetTauntMode() { return isTauntMode; };
-	//正面ベクトルを取得
-	Vector3 GetFrontVec();
 	//足元の座標取得
 	Vector3 GetFootPos();
+
+	// セッター //
+	void SetIsCollect(bool frag) { isCollect = frag; }
+
+private:
+	void UpdateAttackCollider();
+	void DrawAttackCollider();
 };

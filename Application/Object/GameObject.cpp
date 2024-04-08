@@ -1,6 +1,7 @@
 #include "GameObject.h"
 #include "Camera.h"
 #include <Renderer.h>
+#include "Quaternion.h"
 
 GameObject::GameObject() : isAlive(true), colliderSize(1.f)
 {
@@ -20,6 +21,20 @@ Vector3 GameObject::GetScale() const
 bool GameObject::GetIsAlive() const
 {
 	return isAlive;
+}
+
+Vector3 GameObject::GetFrontVec()
+{
+	//正面ベクトルを取得
+	Vector3 frontVec = { 0,0,1 };
+	frontVec.Normalize();
+
+	frontVec *= Quaternion::Euler(obj.mTransform.rotation);
+	return frontVec;
+}
+void GameObject::ChangeDrawCollider(bool isCollider)
+{
+	isDrawCollider = isCollider;
 }
 
 void GameObject::UpdateCollider()
@@ -46,6 +61,9 @@ void GameObject::UpdateCollider()
 
 void GameObject::DrawCollider()
 {
+	//描画しないならスキップ
+	if (!isDrawCollider)return;
+	
 	//パイプラインをワイヤーフレームに
 	PipelineStateDesc pipedesc = RDirectX::GetDefPipeline().mDesc;
 	pipedesc.RasterizerState.FillMode = D3D12_FILL_MODE_WIREFRAME;
