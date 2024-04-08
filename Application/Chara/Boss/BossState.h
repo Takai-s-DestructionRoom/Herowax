@@ -1,5 +1,6 @@
 #pragma once
 #include <stdint.h>
+#include "Easing.h"
 
 class Boss;
 
@@ -21,4 +22,17 @@ class BossNormal : public BossState
 public:
 	BossNormal();
 	void Update(Boss* boss)override;
+
+private:
+	Easing::EaseTimer floatingTimer;
+};
+
+class BossPunch : public BossState
+{
+public:
+	BossPunch();
+	void Update(Boss* boss)override;
+
+private:
+	Easing::EaseTimer floatingTimer;
 };

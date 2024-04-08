@@ -54,6 +54,7 @@ void ProtoScene::Init()
 
 	player.Init();
 	boss.Init();
+	boss.SetTarget(&player.obj);
 
 	ParticleManager::GetInstance()->Init();
 

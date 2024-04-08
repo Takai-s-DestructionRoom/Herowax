@@ -10,6 +10,21 @@ moveSpeed(0.1f), hp(0), maxHP(10.f)
 	obj = PaintableModelObj(Model::Load("./Resources/Model/firewisp/firewisp.obj", "firewisp", true));
 	obj.mTransform.scale = Vector3::ONE * 100.f;
 
+	for (size_t i = 0; i < (size_t)Parts::Max; i++)
+	{
+		parts[i] = PaintableModelObj(Model::Load("./Resources/Model/VicViper/VicViper.obj", "VicViper", true));
+		parts[i].mTransform.parent = &obj.mTransform;
+		parts[i].mTransform.scale = Vector3::ONE * 0.02f;
+	}
+
+	handOriPos[(size_t)Parts::LeftHand] = { -0.5f,0.2f,0.f };
+	handOriPos[(size_t)Parts::RightHand] = { 0.5f,0.2f,0.f };
+
+	parts[(size_t)Parts::LeftHand].mTransform.position =
+		handOriPos[(size_t)Parts::LeftHand];
+	parts[(size_t)Parts::RightHand].mTransform.position =
+		handOriPos[(size_t)Parts::RightHand];
+
 	BossUI::LoadResource();
 }
 
@@ -30,6 +45,9 @@ void Boss::Init()
 
 void Boss::Update()
 {
+	//各ステート時の固有処理
+	state->Update(this);
+
 	UpdateCollider();
 
 	ui.Update(this);
@@ -37,6 +55,12 @@ void Boss::Update()
 	//更新してからバッファに送る
 	obj.mTransform.UpdateMatrix();
 	obj.TransferBuffer(Camera::sNowCamera->mViewProjection);
+
+	for (size_t i = 0; i < (size_t)Parts::Max; i++)
+	{
+		parts[i].mTransform.UpdateMatrix();
+		parts[i].TransferBuffer(Camera::sNowCamera->mViewProjection);
+	}
 }
 
 void Boss::Draw()
@@ -44,6 +68,10 @@ void Boss::Draw()
 	if (isAlive)
 	{
 		obj.Draw();
+		for (size_t i = 0; i < (size_t)Parts::Max; i++)
+		{
+			parts[i].Draw();
+		}
 
 		if (isDrawCollider) {
 			DrawCollider();
