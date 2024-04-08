@@ -32,6 +32,11 @@ gravity(0.2f), groundPos(0)
 	obj.mTransform.scale = { 3,3,3 };
 
 	predictionLine = ModelObj(Model::Load("./Resources/Model/Cube.obj", "Cube"));
+	//影をなくす
+	predictionLine.mTuneMaterial.mAmbient = Vector3::ONE * 100.f;
+	predictionLine.mTuneMaterial.mDiffuse = Vector3::ZERO;
+	predictionLine.mTuneMaterial.mSpecular = Vector3::ZERO;
+	
 	attackDrawerObj = ModelObj(Model::Load("./Resources/Model/Sphere.obj", "Sphere", true));
 }
 

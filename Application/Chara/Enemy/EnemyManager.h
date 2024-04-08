@@ -43,6 +43,7 @@ private:
 	float collideSize = 3;
 	float attackHitColliderSize = 3.0f;
 	float attackMove = 10.0f;
+	float moveSpeed = 0.0f;
 
 public:
 	static EnemyManager* GetInstance();

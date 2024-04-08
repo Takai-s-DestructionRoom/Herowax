@@ -775,6 +775,16 @@ Vector3 Player::GetFootPos()
 	return result;
 }
 
+void Player::DealDamage(uint32_t damage)
+{
+	//無敵時間中ならダメージが与えられない
+	if (mutekiTimer.GetRun())return;
+	
+	mutekiTimer.Start();
+
+	hp -= damage;
+}
+
 void Player::UpdateAttackCollider()
 {
 	attackHitCollider.pos = GetPos();
