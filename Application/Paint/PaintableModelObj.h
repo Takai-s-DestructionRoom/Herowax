@@ -18,7 +18,7 @@ struct PaintData {
 	float pad3 = 0;
 	Color color = { 1, 1, 1, 1 };
 	float dissolveVal = 0; //ディゾルブのかけ具合
-	float hoge = 0;
+	float slide = 0; //歪みのずらしにかける値
 };
 
 class PaintableModelObj : public ModelObj
