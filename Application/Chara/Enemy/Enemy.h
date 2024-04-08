@@ -89,7 +89,9 @@ private:
 	void KnockBack();
 
 	//回転する処理
-	void KnockRota(const Vector3& pVec);
+	void KnockRota();
+	//通常時の回転
+	void Rotation(const Vector3& pVec);
 
 public:
 	Enemy(ModelObj* target_);
@@ -146,6 +148,8 @@ public:
 	//HPの取得
 	float GetHP() { return hp; };
 	float GetMaxHP() { return maxHP; };
+
+	bool GetIsSolid();	//固まってるかどうか
 
 	// セッター //
 	//減速率設定

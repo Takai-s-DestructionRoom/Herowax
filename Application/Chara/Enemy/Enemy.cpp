@@ -73,7 +73,7 @@ void Enemy::Update()
 	}
 
 	//固まっていなければする処理
-	if (waxSolidCount < requireWaxSolidCount) {
+	if (!GetIsSolid()) {
 		//各ステート時の固有処理
 		state->Update(this);	//移動速度に関係するので移動の更新より前に置く
 
@@ -97,73 +97,78 @@ void Enemy::Update()
 			changingAttackState = false;
 			nextAttackState = nullptr;
 		}
-
-		hp = Util::Clamp(hp, 0.f, maxHP);
-
-		if (hp <= 0) {
-			//hpが0になったら、自身の状態を固まり状態へ遷移
-			ChangeState<EnemyAllStop>();
-		}
-
-		//プレイヤーに向かって移動するAI
-		//普段はプレイヤーにではなく、ランダムだったり特定方向へ進み続けて、
-		//ぶつかって初めてターゲットに入れるようにしたい
-		Vector3 pVec = target->mTransform.position - obj.mTransform.position;
-		pVec.Normalize();
-		pVec.y = 0;
-
-		//無敵時間さん!?の更新
-		mutekiTimer.Update();
-
-		//ノックバックとかのけぞりとか
-		//攻撃中はそっちの回転を優先
-		if (GetAttackState() == "NowAttack") {
-			//汚いけど、ステート内で回転しちゃってるのでここでは何も書かない
-		}
-		else {
-			KnockBack();
-			KnockRota(pVec);
-		}
-
-		//ノックバック中でないなら重力をかける
-		if (!knockbackTimer.GetRun()) {
-			//重力をかける
-			moveVec.y -= gravity;
-		}
-
-		//減速率は大きいほどスピード下がるから1.0から引くようにしてる
-		moveVec += pVec * moveSpeed *
-			(1.f - slowMag) * (1.f - slowCoatingMag);
-
-		//シェイクの値
-		moveVec += shack;
-
-		//座標加算
-		obj.mTransform.position += moveVec;
-
-		//地面座標を下回るなら戻す
-		if (obj.mTransform.position.y <= groundPos) {
-			obj.mTransform.position.y = groundPos;
-			moveVec.y = 0;
-		}
-
-		obj.mTuneMaterial.mColor = changeColor;
-
-		UpdateCollider();
-		UpdateAttackCollider();
-
-		//更新してからバッファに送る
-		obj.mTransform.UpdateMatrix();
-		obj.mPaintDataBuff->dissolveVal = waxSolidCount >= requireWaxSolidCount ? 1.0f : 0.3f / (requireWaxSolidCount - 1) * waxSolidCount;
-		obj.mPaintDataBuff->color = Color(0.8f, 0.6f, 0.35f, 1.0f);
-		obj.mPaintDataBuff->slide += TimeManager::deltaTime;
-		obj.TransferBuffer(Camera::sNowCamera->mViewProjection);
-
-		ui.Update(this);
-
-		predictionLine.mTransform.UpdateMatrix();
-		predictionLine.TransferBuffer(Camera::sNowCamera->mViewProjection);
 	}
+	hp = Util::Clamp(hp, 0.f, maxHP);
+
+	if (hp <= 0) {
+		//hpが0になったら、自身の状態を固まり状態へ遷移
+		ChangeState<EnemyAllStop>();
+	}
+
+	//無敵時間さん!?の更新
+	mutekiTimer.Update();
+
+	//プレイヤーに向かって移動するAI
+	//普段はプレイヤーにではなく、ランダムだったり特定方向へ進み続けて、
+	//ぶつかって初めてターゲットに入れるようにしたい
+	Vector3 pVec = target->mTransform.position - obj.mTransform.position;
+	pVec.Normalize();
+	pVec.y = 0;
+
+
+	//ノックバックとかのけぞりとか
+	//攻撃中はそっちの回転を優先
+	if (GetAttackState() == "NowAttack") {
+		//汚いけど、ステート内で回転しちゃってるのでここでは何も書かない
+	}
+	else {
+		KnockBack();
+		KnockRota();
+
+		if (!GetIsSolid()) {
+			//通常時の回転(固まってるときは回転しないように)
+			Rotation(pVec);
+		}
+	}
+
+	//ノックバック中でないなら重力をかける
+	if (!knockbackTimer.GetRun()) {
+		//重力をかける
+		moveVec.y -= gravity;
+	}
+
+	//減速率は大きいほどスピード下がるから1.0から引くようにしてる
+	moveVec += pVec * moveSpeed *
+		(1.f - slowMag) * (1.f - slowCoatingMag);
+
+	//シェイクの値
+	moveVec += shack;
+
+	//座標加算
+	obj.mTransform.position += moveVec;
+
+	//地面座標を下回るなら戻す
+	if (obj.mTransform.position.y <= groundPos) {
+		obj.mTransform.position.y = groundPos;
+		moveVec.y = 0;
+	}
+
+	obj.mTuneMaterial.mColor = changeColor;
+
+	UpdateCollider();
+	UpdateAttackCollider();
+
+	//更新してからバッファに送る
+	obj.mTransform.UpdateMatrix();
+	obj.mPaintDataBuff->dissolveVal = waxSolidCount >= requireWaxSolidCount ? 1.0f : 0.3f / (requireWaxSolidCount - 1) * waxSolidCount;
+	obj.mPaintDataBuff->color = Color(0.8f, 0.6f, 0.35f, 1.0f);
+	obj.mPaintDataBuff->slide += TimeManager::deltaTime;
+	obj.TransferBuffer(Camera::sNowCamera->mViewProjection);
+
+	ui.Update(this);
+
+	predictionLine.mTransform.UpdateMatrix();
+	predictionLine.TransferBuffer(Camera::sNowCamera->mViewProjection);
 }
 
 void Enemy::Draw()
@@ -197,7 +202,7 @@ void Enemy::KnockBack()
 	}
 }
 
-void Enemy::KnockRota(const Vector3& pVec)
+void Enemy::KnockRota()
 {
 	//攻撃されたら
 	if (attackTarget) 
@@ -223,7 +228,10 @@ void Enemy::KnockRota(const Vector3& pVec)
 		//euler軸へ変換
 		obj.mTransform.rotation = aLookat.ToEuler();
 	}
-	
+}
+
+void Enemy::Rotation(const Vector3& pVec)
+{
 	//普段はターゲットの方向を向く
 	Quaternion pLookat = Quaternion::LookAt(pVec);
 	//euler軸へ変換
@@ -238,6 +246,11 @@ void Enemy::SetTarget(ModelObj* target_)
 ModelObj* Enemy::GetTarget()
 {
 	return target;
+}
+
+bool Enemy::GetIsSolid()
+{
+	return waxSolidCount >= requireWaxSolidCount;
 }
 
 void Enemy::SetIsEscape(bool flag)
