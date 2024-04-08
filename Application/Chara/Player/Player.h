@@ -40,7 +40,7 @@ public:
 	Vector3 atkVec;					//攻撃方向
 	float atkHeight;				//攻撃する高さ
 	float atkSpeed;					//攻撃の射出速度
-	Vector2 atkRange{};				//攻撃範囲
+	float atkRange;					//攻撃範囲
 	float atkSize;					//攻撃範囲の大きさ
 	int32_t atkPower;				//攻撃力
 	Easing::EaseTimer atkCoolTimer;	//攻撃のクールタイム
