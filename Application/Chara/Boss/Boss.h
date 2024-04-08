@@ -4,6 +4,7 @@
 #include "Quaternion.h"
 #include "Vector2.h"
 #include "BossState.h"
+#include "BossUI.h"
 
 class Boss : public GameObject
 {
@@ -21,6 +22,8 @@ private:
 	std::unique_ptr<BossState> state;			//状態管理
 	std::unique_ptr<BossState> nextState;		//次のステート
 	std::string stateStr;		//状態を文字列で保存
+
+	BossUI ui;
 
 	bool changingState = false;
 	bool isDrawCollider = false;

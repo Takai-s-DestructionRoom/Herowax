@@ -7,7 +7,10 @@ moveSpeed(0.1f), hp(0), maxHP(10.f)
 {
 	state = std::make_unique<BossNormal>();
 	nextState = nullptr;
-	obj = PaintableModelObj(Model::Load("./Resources/Model/VicViper/VicViper.obj", "VicViper", true));
+	obj = PaintableModelObj(Model::Load("./Resources/Model/firewisp/firewisp.obj", "firewisp", true));
+	obj.mTransform.scale = Vector3::ONE * 100.f;
+
+	BossUI::LoadResource();
 }
 
 Boss::~Boss()
@@ -29,6 +32,8 @@ void Boss::Update()
 {
 	UpdateCollider();
 
+	ui.Update(this);
+
 	//更新してからバッファに送る
 	obj.mTransform.UpdateMatrix();
 	obj.TransferBuffer(Camera::sNowCamera->mViewProjection);
@@ -43,5 +48,7 @@ void Boss::Draw()
 		if (isDrawCollider) {
 			DrawCollider();
 		}
+
+		ui.Draw();
 	}
 }

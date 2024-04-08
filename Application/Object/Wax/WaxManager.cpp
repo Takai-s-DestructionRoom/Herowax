@@ -199,9 +199,7 @@ void WaxManager::Update()
 	ImGui::Text("ロウグループ数:%d", (int)waxGroups.size());
 	ImGui::PopItemWidth();
 
-	if (ImGui::Button("当たり判定の描画")) {
-		isViewCol = !isViewCol;
-	}
+	ImGui::Checkbox("当たり判定の描画", &isViewCol);
 
 	if (ImGui::Button("Reset")) {
 		Init();
@@ -234,6 +232,7 @@ void WaxManager::Draw()
 		for (auto& wax : group->waxs)
 		{
 			if (isViewCol) {
+				wax->ChangeDrawCollider(true);
 				wax->DrawCollider();
 			}
 		}
@@ -243,7 +242,7 @@ void WaxManager::Draw()
 }
 
 void WaxManager::Create(Transform transform, uint32_t power, Vector3 vec,
-	float speed, Vector2 range, float size, float atkTime, float solidTime)
+	float speed, float range, float size, float atkTime, float solidTime)
 {
 	//生成時にグループ作成
 	waxGroups.emplace_back();

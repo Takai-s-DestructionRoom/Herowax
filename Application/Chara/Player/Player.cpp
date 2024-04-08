@@ -14,7 +14,7 @@
 Player::Player() :GameObject(),
 moveSpeed(1.f), moveAccelAmount(0.05f), isGround(true), hp(0), maxHP(10.f),
 isJumping(false), jumpTimer(0.2f), jumpHeight(0.f), maxJumpHeight(5.f), jumpPower(2.f), jumpSpeed(0.f),
-isAttack(false), atkSpeed(1.f), atkRange({ 3.f,5.f }), atkSize(0.f), atkPower(1),
+isAttack(false), atkSpeed(1.f), atkRange(3.f), atkSize(0.f), atkPower(1),
 atkCoolTimer(0.3f), atkTimer(0.5f), atkHeight(1.f), solidTimer(5.f),
 isFireStock(false), isWaxStock(true), isCollectFan(false), maxWaxStock(20)
 {
@@ -26,8 +26,7 @@ isFireStock(false), isWaxStock(true), isCollectFan(false), maxWaxStock(20)
 	atkTimer.maxTime_ = Parameter::GetParam(extract, "攻撃時間", 0.5f);
 	atkSpeed = Parameter::GetParam(extract, "射出速度", 1.f);
 	atkHeight = Parameter::GetParam(extract, "射出高度", 1.f);
-	atkRange.x = Parameter::GetParam(extract, "攻撃範囲X", 3.f);
-	atkRange.y = Parameter::GetParam(extract, "攻撃範囲Y", 5.f);
+	atkRange = Parameter::GetParam(extract, "攻撃範囲", 3.f);
 	atkCoolTimer.maxTime_ = Parameter::GetParam(extract, "クールタイム", 0.3f);
 	solidTimer.maxTime_ = Parameter::GetParam(extract, "固まるまでの時間", 5.f);
 	atkPower = (int32_t)Parameter::GetParam(extract, "敵に与えるダメージ", 10.0f);
@@ -228,8 +227,7 @@ void Player::Update()
 		ImGui::SliderFloat("攻撃時間", &atkTimer.maxTime_, 0.f, 2.f);
 		ImGui::SliderFloat("射出速度", &atkSpeed, 0.f, 2.f);
 		ImGui::SliderFloat("射出高度", &atkHeight, 0.f, 3.f);
-		ImGui::SliderFloat("攻撃範囲X", &atkRange.x, 0.f, 10.f);
-		ImGui::SliderFloat("攻撃範囲Y", &atkRange.y, 0.f, 10.f);
+		ImGui::SliderFloat("攻撃範囲", &atkRange, 0.f, 10.f);
 		ImGui::SliderFloat("クールタイム", &atkCoolTimer.maxTime_, 0.f, 2.f);
 		ImGui::SliderFloat("固まるまでの時間", &solidTimer.maxTime_, 0.f, 10.f);
 		ImGui::InputInt("ロウの最大ストック数", &maxWaxStock, 1, 100);
@@ -287,8 +285,7 @@ void Player::Update()
 		Parameter::Save("攻撃時間", atkTimer.maxTime_);
 		Parameter::Save("射出速度", atkSpeed);
 		Parameter::Save("射出高度", atkHeight);
-		Parameter::Save("攻撃範囲X", atkRange.x);
-		Parameter::Save("攻撃範囲Y", atkRange.y);
+		Parameter::Save("攻撃範囲", atkRange);
 		Parameter::Save("クールタイム", atkCoolTimer.maxTime_);
 		Parameter::Save("固まるまでの時間", solidTimer.maxTime_);
 		Parameter::Save("パブロ攻撃の広がり", pabloRange);

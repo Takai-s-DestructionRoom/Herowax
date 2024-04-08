@@ -41,7 +41,7 @@ bool Wax::GetIsSolidNow()
 }
 
 void Wax::Init(uint32_t power, Vector3 vec,float speed,
-	Vector2 range, float size, float atkTime)
+	float range, float size, float atkTime)
 {
 	//hp = maxHP;
 	atkPower = power;
@@ -64,7 +64,7 @@ void Wax::Update()
 
 	//段々大きくなる
 	atkSize = Easing::OutBack(atkTimer.GetTimeRate());
-	Vector3 waxScale = { atkRange.x,1.f,atkRange.y };	//蝋の大きさ
+	Vector3 waxScale = { atkRange,1.f,atkRange };	//蝋の大きさ
 	waxScale *= atkSize;
 	SetScale(waxScale);									//大きさを反映
 
@@ -121,7 +121,7 @@ void Wax::Draw()
 {
 	if (isAlive)
 	{
-		/*GraphicsPipeline pipe = WaxManager::GetInstance()->CreateDisolvePipeLine();
+		GraphicsPipeline pipe = WaxManager::GetInstance()->CreateDisolvePipeLine();
 
 		for (std::shared_ptr<ModelMesh> data : obj.mModel->mData) {
 			std::vector<RootData> rootData = {
@@ -143,7 +143,7 @@ void Wax::Draw()
 			order.indexCount = static_cast<uint32_t>(data->mIndices.size());
 
 			Renderer::DrawCall("Opaque", order);
-		}*/
+		}
 
 		//描画範囲制限
 		Renderer::SetScissorRects({ Minimap::GetInstance()->rect });
