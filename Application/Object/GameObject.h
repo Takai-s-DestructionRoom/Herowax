@@ -15,6 +15,8 @@ public:
 	
 	ColPrimitive3D::Sphere collider;	//Sphereの当たり判定
 	float colliderSize;					//当たり判定のサイズ
+protected:
+	bool isDrawCollider = false;	//当たり判定描画の切り替え
 
 public:
 	GameObject();
@@ -40,6 +42,9 @@ public:
 			obj.mTransform.position.y + obj.mTransform.scale.y,
 			obj.mTransform.position.z);
 	}
+	Vector3 GetFrontVec();
+
+	void ChangeDrawCollider(bool isCollider);
 
 	// セッター //
 	//座標設定

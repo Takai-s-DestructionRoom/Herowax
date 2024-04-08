@@ -63,9 +63,11 @@ void ProtoScene::Init()
 	Level::Get()->Extract("test");
 
 	EnemyManager::GetInstance()->SetGround(&Level::Get()->ground);
+	EnemyManager::GetInstance()->SetTarget(&player.obj);
 
 	eggUI.Init();
 	eggUI.SetTower(&Level::Get()->tower);
+
 
 	//nest.Init();
 
@@ -126,6 +128,14 @@ void ProtoScene::Update()
 			enemy->SetDeath();
 			Vector3 vec = Level::Get()->tower.GetPos() - enemy->GetPos();
 			Level::Get()->tower.Damage(1.f,vec);
+		}
+		//プレイヤーとの当たり判定
+		//特定範囲内に入ったら敵を攻撃状態へ遷移
+		if (ColPrimitive3D::CheckSphereToSphere(enemy->attackHitCollider,
+			player.attackHitCollider)) {
+			if (enemy->GetAttackState() == "NonAttack") {
+				enemy->ChangeAttackState<EnemyFindState>();
+			}
 		}
 	}
 
@@ -309,7 +319,7 @@ void ProtoScene::Update()
 	ParticleManager::GetInstance()->SetPlayerPos(player.GetCenterPos());
 	ParticleManager::GetInstance()->Update();
 
-	eggUI.Update();
+	//eggUI.Update();
 	//nest.Update();
 
 	Minimap::GetInstance()->Update();
@@ -443,7 +453,7 @@ void ProtoScene::Draw()
 	WaxManager::GetInstance()->Draw();
 	FireManager::GetInstance()->Draw();
 	TemperatureManager::GetInstance()->Draw();
-	eggUI.Draw();
+	//eggUI.Draw();
 	//nest.Draw();
 
 	Level::Get()->Draw();

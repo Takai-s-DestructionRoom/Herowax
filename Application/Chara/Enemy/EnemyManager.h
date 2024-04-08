@@ -38,7 +38,11 @@ private:
 	float mutekiTime;
 
 	Vector3 enemySize = { 3,3,3 };
+	
+	//調整項目
 	float collideSize = 3;
+	float attackHitColliderSize = 3.0f;
+	float attackMove = 10.0f;
 
 public:
 	static EnemyManager* GetInstance();

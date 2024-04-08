@@ -10,6 +10,7 @@
 #include "FireManager.h"
 #include "Parameter.h"
 #include "InstantDrawer.h"
+#include "Renderer.h"
 
 Player::Player() :GameObject(),
 moveSpeed(1.f), moveAccelAmount(0.05f), isGround(true), hp(0), maxHP(10.f),
@@ -44,12 +45,15 @@ isFireStock(false), isWaxStock(true), maxWaxStock(20)
 	initRot.x = Parameter::GetParam(extract, "初期方向X", 0.f);
 	initRot.y = Parameter::GetParam(extract, "初期方向Y", 0.f);
 	initRot.z = Parameter::GetParam(extract, "初期方向Z", 0.f);
+	attackHitCollider.r = Parameter::GetParam(extract,"敵がこの範囲に入ると攻撃状態へ遷移する大きさ",1.0f);
 
 	collectRangeModel = ModelObj(Model::Load("./Resources/Model/Cube.obj", "Cube", true));
 	waxCollectRange = Parameter::GetParam(extract, "ロウ回収範囲X", 5.f);
 	collectRangeModel.mTuneMaterial.mColor.a = Parameter::GetParam(extract, "範囲objの透明度", 0.5f);
 
 	attackState = std::make_unique<PlayerNormal>();
+
+	attackDrawerObj = ModelObj(Model::Load("./Resources/Model/Sphere.obj", "Sphere", true));
 }
 
 void Player::Init()
@@ -141,7 +145,8 @@ void Player::Update()
 	}
 
 	UpdateCollider();
-
+	UpdateAttackCollider();
+	
 	//更新してからバッファに送る
 	obj.mTransform.UpdateMatrix();
 	obj.TransferBuffer(Camera::sNowCamera->mViewProjection);
@@ -222,13 +227,13 @@ void Player::Update()
 
 		ImGui::TreePop();
 	}
-	if (ImGui::TreeNode("お試し実装:自分の方に来る"))
+	if (ImGui::TreeNode("お自分の方に来る"))
 	{
 		ImGui::Checkbox("攻撃した相手が自分を攻撃するか", &isTauntMode);
 
 		ImGui::TreePop();
 	}
-	if (ImGui::TreeNode("お試し実装:パブロアタック"))
+	if (ImGui::TreeNode("パブロアタック"))
 	{
 		ImGui::Text("スティックの入力:%f", abs(RInput::GetInstance()->GetPadLStick().LengthSq()));
 		ImGui::SliderFloat("ショットが出る基準", &shotDeadZone, 0.0f, 2.0f);
@@ -246,6 +251,12 @@ void Player::Update()
 		ImGui::SliderFloat("範囲objの透明度", &collectRangeModel.mTuneMaterial.mColor.a, 0.f, 1.f);
 		ImGui::Text("回収できる状態か:%d", WaxManager::GetInstance()->isCollected);
 
+		ImGui::TreePop();
+	}
+	if (ImGui::TreeNode("当たり判定"))
+	{
+		ImGui::Checkbox("当たり判定描画切り替え", &isDrawCollider);
+		ImGui::InputFloat("敵がこの範囲に入ると攻撃状態へ遷移する大きさ", &attackHitCollider.r, 1.0f);
 		ImGui::TreePop();
 	}
 
@@ -279,6 +290,7 @@ void Player::Update()
 		Parameter::Save("初期方向Z", initRot.z);
 		Parameter::Save("ロウ回収範囲", waxCollectRange);
 		Parameter::Save("範囲objの透明度", collectRangeModel.mTuneMaterial.mColor.a);
+		Parameter::Save("敵がこの範囲に入ると攻撃状態へ遷移する大きさ", attackHitCollider.r);
 		Parameter::End();
 	}
 
@@ -295,6 +307,8 @@ void Player::Draw()
 		fireUnit.Draw();
 
 		ui.Draw();
+		
+		DrawAttackCollider();
 	}
 }
 
@@ -688,16 +702,6 @@ void Player::WaxCollect()
 	}
 }
 
-Vector3 Player::GetFrontVec()
-{
-	//正面ベクトルを取得
-	Vector3 frontVec = { 0,0,1 };
-	frontVec.Normalize();
-
-	frontVec *= Quaternion::Euler(obj.mTransform.rotation);
-	return frontVec;
-}
-
 Vector3 Player::GetFootPos()
 {
 	Vector3 result;
@@ -705,4 +709,33 @@ Vector3 Player::GetFootPos()
 	result = obj.mTransform.position;
 	result.y += obj.mTransform.scale.y;
 	return result;
+}
+
+void Player::UpdateAttackCollider()
+{
+	attackHitCollider.pos = GetPos();
+
+	attackDrawerObj.mTuneMaterial.mColor = { 1,1,0,1 };
+	attackDrawerObj.mTransform.position = attackHitCollider.pos;
+	float r = attackHitCollider.r;
+	attackDrawerObj.mTransform.scale = { r,r,r };
+
+	attackDrawerObj.mTransform.UpdateMatrix();
+	attackDrawerObj.TransferBuffer(Camera::sNowCamera->mViewProjection);
+}
+
+void Player::DrawAttackCollider()
+{
+	//描画しないならスキップ
+	if (!isDrawCollider)return;
+
+	//パイプラインをワイヤーフレームに
+	PipelineStateDesc pipedesc = RDirectX::GetDefPipeline().mDesc;
+	pipedesc.RasterizerState.FillMode = D3D12_FILL_MODE_WIREFRAME;
+
+	GraphicsPipeline pipe = GraphicsPipeline::GetOrCreate("WireObject", pipedesc);
+	for (RenderOrder& order : attackDrawerObj.GetRenderOrder()) {
+		order.pipelineState = pipe.mPtr.Get();
+		Renderer::DrawCall("Opaque", order);
+	}
 }

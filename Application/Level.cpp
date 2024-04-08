@@ -21,7 +21,7 @@ void Level::Reset()
 	spawnerManager->Init();
 	tower.Init();
 	EnemyManager::GetInstance()->Init();
-	EnemyManager::GetInstance()->SetTarget(&tower.obj);
+	//EnemyManager::GetInstance()->SetTarget(&tower.obj);
 	objects.clear();
 }
 
