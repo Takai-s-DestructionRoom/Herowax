@@ -86,83 +86,84 @@ void Enemy::Update()
 			nextState = nullptr;
 		}
 
-	//ステートに入る前に、予測線は消しておきたいのでスケールを0に
-	predictionLine.mTransform.scale = { 0.f,0.f,0.f };
-	//予測線を使う場合はこの中で値を変える
-	attackState->Update(this);
-	//前のステートと異なれば
-	if (changingAttackState) {
-		//ステートを変化させる
-		std::swap(attackState, nextAttackState);
-		changingAttackState = false;
-		nextAttackState = nullptr;
+		//ステートに入る前に、予測線は消しておきたいのでスケールを0に
+		predictionLine.mTransform.scale = { 0.f,0.f,0.f };
+		//予測線を使う場合はこの中で値を変える
+		attackState->Update(this);
+		//前のステートと異なれば
+		if (changingAttackState) {
+			//ステートを変化させる
+			std::swap(attackState, nextAttackState);
+			changingAttackState = false;
+			nextAttackState = nullptr;
+		}
+
+		hp = Util::Clamp(hp, 0.f, maxHP);
+
+		if (hp <= 0) {
+			//hpが0になったら、自身の状態を固まり状態へ遷移
+			ChangeState<EnemyAllStop>();
+		}
+
+		//プレイヤーに向かって移動するAI
+		//普段はプレイヤーにではなく、ランダムだったり特定方向へ進み続けて、
+		//ぶつかって初めてターゲットに入れるようにしたい
+		Vector3 pVec = target->mTransform.position - obj.mTransform.position;
+		pVec.Normalize();
+		pVec.y = 0;
+
+		//無敵時間さん!?の更新
+		mutekiTimer.Update();
+
+		//ノックバックとかのけぞりとか
+		//攻撃中はそっちの回転を優先
+		if (GetAttackState() == "NowAttack") {
+			//汚いけど、ステート内で回転しちゃってるのでここでは何も書かない
+		}
+		else {
+			KnockBack();
+			KnockRota(pVec);
+		}
+
+		//ノックバック中でないなら重力をかける
+		if (!knockbackTimer.GetRun()) {
+			//重力をかける
+			moveVec.y -= gravity;
+		}
+
+		//減速率は大きいほどスピード下がるから1.0から引くようにしてる
+		moveVec += pVec * moveSpeed *
+			(1.f - slowMag) * (1.f - slowCoatingMag);
+
+		//シェイクの値
+		moveVec += shack;
+
+		//座標加算
+		obj.mTransform.position += moveVec;
+
+		//地面座標を下回るなら戻す
+		if (obj.mTransform.position.y <= groundPos) {
+			obj.mTransform.position.y = groundPos;
+			moveVec.y = 0;
+		}
+
+		obj.mTuneMaterial.mColor = changeColor;
+
+		UpdateCollider();
+		UpdateAttackCollider();
+
+		//更新してからバッファに送る
+		obj.mTransform.UpdateMatrix();
+		obj.mPaintDataBuff->dissolveVal = waxSolidCount >= requireWaxSolidCount ? 1.0f : 0.3f / (requireWaxSolidCount - 1) * waxSolidCount;
+		obj.mPaintDataBuff->color = Color(0.8f, 0.6f, 0.35f, 1.0f);
+		obj.mPaintDataBuff->slide += TimeManager::deltaTime;
+		obj.TransferBuffer(Camera::sNowCamera->mViewProjection);
+
+		ui.Update(this);
+
+		predictionLine.mTransform.UpdateMatrix();
+		predictionLine.TransferBuffer(Camera::sNowCamera->mViewProjection);
 	}
-
-	hp = Util::Clamp(hp, 0.f, maxHP);
-
-	if (hp <= 0) {
-		//hpが0になったら、自身の状態を固まり状態へ遷移
-		ChangeState<EnemyAllStop>();
-	}
-
-	//プレイヤーに向かって移動するAI
-	//普段はプレイヤーにではなく、ランダムだったり特定方向へ進み続けて、
-	//ぶつかって初めてターゲットに入れるようにしたい
-	Vector3 pVec = target->mTransform.position - obj.mTransform.position;
-	pVec.Normalize();
-	pVec.y = 0;
-
-	//無敵時間さん!?の更新
-	mutekiTimer.Update();
-
-	//ノックバックとかのけぞりとか
-	//攻撃中はそっちの回転を優先
-	if (GetAttackState() == "NowAttack") {
-		//汚いけど、ステート内で回転しちゃってるのでここでは何も書かない
-	}
-	else {
-		KnockBack();
-		KnockRota(pVec);
-	}
-
-	//ノックバック中でないなら重力をかける
-	if (!knockbackTimer.GetRun()) {
-		//重力をかける
-		moveVec.y -= gravity;
-	}
-
-	//減速率は大きいほどスピード下がるから1.0から引くようにしてる
-	moveVec += pVec * moveSpeed *
-		(1.f - slowMag) * (1.f - slowCoatingMag);
-
-	//シェイクの値
-	moveVec += shack;
-
-	//座標加算
-	obj.mTransform.position += moveVec;
-
-	//地面座標を下回るなら戻す
-	if (obj.mTransform.position.y <= groundPos) {
-		obj.mTransform.position.y = groundPos;
-		moveVec.y = 0;
-	}
-
-	obj.mTuneMaterial.mColor = changeColor;
-
-	UpdateCollider();
-	UpdateAttackCollider();
-
-	//更新してからバッファに送る
-	obj.mTransform.UpdateMatrix();
-	obj.mPaintDataBuff->dissolveVal = waxSolidCount >= requireWaxSolidCount ? 1.0f : 0.3f / (requireWaxSolidCount - 1) * waxSolidCount;
-	obj.mPaintDataBuff->color = Color(0.8f, 0.6f, 0.35f, 1.0f);
-	obj.mPaintDataBuff->slide += TimeManager::deltaTime;
-	obj.TransferBuffer(Camera::sNowCamera->mViewProjection);
-
-	ui.Update(this);
-
-	predictionLine.mTransform.UpdateMatrix();
-	predictionLine.TransferBuffer(Camera::sNowCamera->mViewProjection);
 }
 
 void Enemy::Draw()
