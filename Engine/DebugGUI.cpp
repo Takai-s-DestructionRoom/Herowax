@@ -11,6 +11,7 @@
 #include <SpriteScene.h>
 #include <RAudio.h>
 #include <PaintScene.h>
+#include <ParticleEditorScene.h>
 
 void DebugGUI::Show()
 {
@@ -22,7 +23,7 @@ void DebugGUI::Show()
 
 	ImGui::Text("SceneManager");
 	static int32_t sceneNum = 0;
-	const char* scenes[] = { "MainTest", "ControllerTest", "Sprite", "SoundTest", "PaintTest"};
+	const char* scenes[] = { "MainTest", "ControllerTest", "Sprite", "SoundTest", "PaintTest","ParticleEditorScene"};
 	ImGui::Combo("##SceneNumCombo", &sceneNum, scenes, IM_ARRAYSIZE(scenes));
 	ImGui::SameLine();
 	if (ImGui::Button("Go!!!")) {
@@ -42,6 +43,9 @@ void DebugGUI::Show()
 				break;
 			case 4:
 				SceneManager::Change<PaintScene, SimpleSceneTransition>();
+				break;
+			case 5:
+				SceneManager::Change<ParticleEditorScene, SimpleSceneTransition>();
 				break;
 			}
 		}

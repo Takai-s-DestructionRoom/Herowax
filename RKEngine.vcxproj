@@ -271,6 +271,8 @@
     <ClCompile Include="Application\SlimeWax.cpp" />
     <ClCompile Include="Engine\Collision\PlaneCollider.cpp" />
     <ClCompile Include="Application\Minimap.cpp" />
+    <ClCompile Include="Application\ParticleEditor.cpp" />
+    <ClCompile Include="Application\ParticleEditorScene.cpp" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Shader\Billboard\BillboardPS.hlsl">
@@ -813,6 +815,8 @@
     <ClInclude Include="Application\SlimeWax.h" />
     <ClInclude Include="Engine\Collision\PlaneCollider.h" />
     <ClInclude Include="Application\Minimap.h" />
+    <ClInclude Include="Application\ParticleEditor.h" />
+    <ClInclude Include="Application\ParticleEditorScene.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Shader\Billboard\Billboard.hlsli" />

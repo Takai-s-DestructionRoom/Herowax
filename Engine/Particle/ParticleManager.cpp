@@ -101,6 +101,18 @@ void ParticleManager::AddSimple(
 		growingTimer, endScale, isGravity, isBillboard);
 }
 
+void ParticleManager::AddSimple(Vector3 emitPos, SimplePData pdata)
+{
+	emitters_.emplace_back();
+	emitters_.back() = std::make_unique<SimpleParticle>();
+	emitters_.back()->SetPos(emitPos);
+	emitters_.back()->SetScale(pdata.emitScale);
+	emitters_.back()->Add(
+		pdata.addNum, pdata.life, pdata.color, pdata.tex, pdata.minScale, pdata.maxScale,
+		pdata.minVelo, pdata.maxVelo, pdata.accelPower, pdata.minRot, pdata.maxRot,
+		pdata.growingTimer, pdata.endScale, pdata.isGravity, pdata.isBillboard);
+}
+
 void ParticleManager::AddHoming(Vector3 emitPos, Vector3 emitScale, uint32_t addNum, float life, Color color, TextureHandle tex, float minScale, float maxScale, Vector3 minVelo, Vector3 maxVelo, float accelPower, Vector3 minRot, Vector3 maxRot, float growingTimer, float endScale, bool isGravity, bool isBillboard)
 {
 	emitters_.emplace_back();
