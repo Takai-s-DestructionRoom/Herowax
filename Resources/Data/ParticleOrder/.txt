@@ -1,0 +1,17 @@
+addNum:0
+life:0
+minscale:0
+maxscale:0
+accelpower:0
+growingTimer:0
+endscale:0
+isgravity:false
+isbillboard:false
+emitscale:0.000000_0.000000_0.000000
+minvelo:0.000000_0.000000_0.000000
+maxvelo:0.000000_0.000000_0.000000
+maxvelo:0.000000_0.000000_0.000000
+minrot:0.000000_0.000000_0.000000
+maxrot:0.000000_0.000000_0.000000
+color:1.000000_1.000000_1.000000_1.000000
+tex:

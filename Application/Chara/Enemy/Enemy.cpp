@@ -176,6 +176,14 @@ void Enemy::Update()
 
 	obj.mTuneMaterial.mColor = changeColor;
 
+	//色の加算
+	whiteTimer.Update();
+	blightColor.r = Easing::OutQuad(1, 0, whiteTimer.GetTimeRate());
+	blightColor.g = Easing::OutQuad(1, 0, whiteTimer.GetTimeRate());
+	blightColor.b = Easing::OutQuad(1, 0, whiteTimer.GetTimeRate());
+	blightColor.a = Easing::OutQuad(1, 0, whiteTimer.GetTimeRate());
+	if (!whiteTimer.GetStarted())blightColor = { 0,0,0,0 };
+
 	UpdateCollider();
 	UpdateAttackCollider();
 
@@ -184,7 +192,7 @@ void Enemy::Update()
 	obj.mPaintDataBuff->dissolveVal = waxSolidCount >= requireWaxSolidCount ? 1.0f : 0.3f / (requireWaxSolidCount - 1) * waxSolidCount;
 	obj.mPaintDataBuff->color = Color(0.8f, 0.6f, 0.35f, 1.0f);
 	obj.mPaintDataBuff->slide += TimeManager::deltaTime;
-	obj.TransferBuffer(Camera::sNowCamera->mViewProjection);
+	GameObjectTransferBuffer(Camera::sNowCamera->mViewProjection);
 
 	ui.Update(this);
 
@@ -196,7 +204,7 @@ void Enemy::Draw()
 {
 	if (isAlive)
 	{
-		obj.Draw();
+		ObjDraw();
 		
 		ui.Draw();
 		
@@ -308,6 +316,9 @@ void Enemy::DealDamage(uint32_t damage, const Vector3& dir, ModelObj* target_)
 	attackTarget = target_;
 
 	knockbackVec = dir;
+
+	//whiteTimer.maxTime_ = mutekiTimer.maxTime_ / 4;
+	whiteTimer.Start();
 
 	//ノックバックのスピード加算
 	knockbackSpeed = knockbackRange;

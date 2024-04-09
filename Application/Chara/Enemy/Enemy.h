@@ -58,6 +58,8 @@ private:
 	float waxShakeOffTimer = 0; //ロウを振り払うタイマー
 	float requireWaxShakeOffTime = 5.0f; //ロウを振り払うまでにかかる時間(秒)
 
+	Easing::EaseTimer whiteTimer = 0.5f;
+
 	//------------ その他 ------------//
 	ModelObj* target = nullptr;
 	//攻撃してきた対象

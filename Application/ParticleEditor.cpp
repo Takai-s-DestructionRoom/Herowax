@@ -98,7 +98,7 @@ void ParticleEditor::OrderCreateGUI()
 SimplePData ParticleEditor::LoadSimple(const std::string& filename)
 {
 	std::string outputName = "";
-	outputName = "./Data/ParticleOrder/" + filename + ".txt";
+	outputName = "./Resources/Data/ParticleOrder/" + filename + ".txt";
 
 	std::filesystem::path path = PathUtil::ConvertAbsolute(
 		Util::ConvertStringToWString(outputName));
@@ -206,7 +206,7 @@ SimplePData ParticleEditor::LoadSimple(const std::string& filename)
 void ParticleEditor::SaveSimple(const SimplePData& saveData, const std::string& saveFileName_)
 {
 	std::string outputName = "";
-	outputName = "./Data/ParticleOrder/" + saveFileName_ + ".txt";
+	outputName = "./Resources/Data/ParticleOrder/" + saveFileName_ + ".txt";
 
 	std::filesystem::path path = PathUtil::ConvertAbsolute(Util::ConvertStringToWString(outputName));
 

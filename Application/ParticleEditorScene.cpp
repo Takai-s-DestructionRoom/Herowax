@@ -60,6 +60,11 @@ void ParticleEditorScene::Update()
 	ImGui::Begin("パーティクル生成GUI", NULL, window_flags);
 	ImGui::InputText("読み込むパーティクル名", &loadPartName);
 	ImGui::DragFloat3("生成位置", &emitPos.x);
+	if (ImGui::Button("一回生成")) {
+		if (loadPartName != "") {
+			ParticleManager::GetInstance()->AddSimple(emitPos, loadPartName);
+		}
+	}
 	ImGui::Checkbox("無限に生成するか", &isAutoCreate);
 	ImGui::InputFloat("無限生成の間隔", &roopTimer.maxTime_,0.1f);
 	ImGui::Text("カメラ固定はF3でも切り替えられます");

@@ -119,6 +119,7 @@ WaxManager::WaxManager() :
 	heatBonus = Parameter::GetParam(extract, "ボーナス上昇温度", 2.f);
 	accelAmount = Parameter::GetParam(extract, "回収時の加速度", 0.1f);
 	colliderSize = Parameter::GetParam(extract, "当たり判定の大きさ", 2.5f);
+	slimeWaxSizeMag = Parameter::GetParam(extract,"ロウの見た目の大きさの係数", 1.0f);
 
 	for (int i = 0; i < 10; i++)
 	{
@@ -171,7 +172,7 @@ void WaxManager::Update()
 			slimeWax.spheres.emplace_back();
 			//コライダー基準でデータを送るように
 			slimeWax.spheres.back().collider.pos = wax->collider.pos;
-			slimeWax.spheres.back().collider.r = wax->collider.r;
+			slimeWax.spheres.back().collider.r = wax->collider.r * slimeWaxSizeMag;
 		}
 	}
 
@@ -189,9 +190,11 @@ void WaxManager::Update()
 	
 	ImGui::InputFloat("回収時の加速度", &accelAmount, 0.05f);
 	ImGui::InputFloat("当たり判定の大きさ", &colliderSize, 0.1f);
+	ImGui::InputFloat("ロウの見た目の大きさの係数", &slimeWaxSizeMag, 0.1f);
 
 	ImGui::Checkbox("当たり判定の描画", &isViewCol);
 	ImGui::Checkbox("ロウの見た目の描画", &isViewSlimeWax);
+	ImGui::Checkbox("オブジェクトロウの描画", &isViewObjectWax);
 
 	ImGui::Text("敵を捕まえたときの固まっている秒数");
 	for (int i = 0; i < 10; i++)
@@ -214,6 +217,8 @@ void WaxManager::Update()
 		Parameter::Save("ボーナス上昇温度", heatBonus);
 		Parameter::Save("回収時の加速度", accelAmount);
 		Parameter::Save("当たり判定の大きさ", colliderSize);
+		Parameter::Save("ロウの見た目の大きさの係数", slimeWaxSizeMag);
+
 		for (int i = 0; i < 10; i++)
 		{
 			std::string waxnum = std::to_string(i + 1) + "体の時";
@@ -233,7 +238,9 @@ void WaxManager::Draw()
 {
 	for (auto& group : waxGroups)
 	{
-		group->Draw();
+		if (isViewObjectWax) {
+			group->Draw();
+		}
 		for (auto& wax : group->waxs)
 		{
 			if (isViewCol) {
