@@ -36,8 +36,7 @@ void ParticleEditorScene::Update()
 			roopTimer.Start();
 
 			if (loadPartName != "") {
-				SimplePData pData = ParticleEditor::LoadSimple(loadPartName);
-				ParticleManager::GetInstance()->AddSimple(emitPos, pData);
+				ParticleManager::GetInstance()->AddSimple(emitPos, loadPartName);
 			}
 		}
 	}

@@ -101,11 +101,12 @@ void ParticleManager::AddSimple(
 		growingTimer, endScale, isGravity, isBillboard);
 }
 
-void ParticleManager::AddSimple(Vector3 emitPos, SimplePData pdata)
+void ParticleManager::AddSimple(Vector3 emitPos, std::string pDataHandle)
 {
 	emitters_.emplace_back();
 	emitters_.back() = std::make_unique<SimpleParticle>();
 	emitters_.back()->SetPos(emitPos);
+	SimplePData pdata = ParticleEditor::LoadSimple(pDataHandle);
 	emitters_.back()->SetScale(pdata.emitScale);
 	emitters_.back()->Add(
 		pdata.addNum, pdata.life, pdata.color, pdata.tex, pdata.minScale, pdata.maxScale,

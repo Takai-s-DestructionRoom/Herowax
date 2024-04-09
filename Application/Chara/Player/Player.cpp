@@ -795,25 +795,8 @@ void Player::DealDamage(uint32_t damage)
 	hp -= damage;
 
 	//パーティクル生成
-	int32_t createNum = 15;
-	ParticleManager::GetInstance()->AddSimple(
-		obj.mTransform.position,
-		obj.mTransform.scale * 0.8f,
-		createNum,
-		0.4f,
-		Color::kYellow,
-		TextureManager::Load("./Resources/starParticle.png"),
-		1.0f,
-		5.f,
-		{ -0.1f,0.1f,-0.1f },
-		{ 0.1f,0.5f,0.1f },
-		0.05f,
-		-Vector3::ONE * 0.1f,
-		Vector3::ONE * 0.1f,
-		0.05f,
-		0.f,
-		true,
-		true);
+
+	ParticleManager::GetInstance()->AddSimple(obj.mTransform.position,"star");
 }
 
 void Player::DamageBlink()

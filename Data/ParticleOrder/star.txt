@@ -1,4 +1,4 @@
-addNum:15
+addNum:30
 life:0.4
 minscale:0.1
 maxscale:1

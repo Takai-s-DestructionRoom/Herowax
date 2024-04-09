@@ -39,7 +39,7 @@ public:
 		float growingTimer = 0.f, float endScale = 0.f, bool isGravity = false, bool isBillboard = false);
 
 	//パーティクルの追加(外部データを使用)
-	void AddSimple(Vector3 emitPos,SimplePData pdata);
+	void AddSimple(Vector3 emitPos,std::string pDataHandle);
 
 	//パーティクルの追加
 	void AddHoming(Vector3 emitPos, Vector3 emitScale, uint32_t addNum, float life,
