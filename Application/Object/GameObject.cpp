@@ -3,6 +3,66 @@
 #include <Renderer.h>
 #include "Quaternion.h"
 
+RootSignature GameObject::GameObjectRootSignature()
+{
+	DescriptorRange descriptorRange{};
+	descriptorRange.NumDescriptors = 1; //一度の描画に使うテクスチャが1枚なので1
+	descriptorRange.RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_SRV;
+	descriptorRange.BaseShaderRegister = 0; //テクスチャレジスタ0番
+	descriptorRange.OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND;
+
+	RootParamaters rootParams(6);
+	//マテリアル
+	rootParams[0].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV; //定数バッファビュー
+	rootParams[0].Descriptor.ShaderRegister = 0; //定数バッファ番号
+	rootParams[0].Descriptor.RegisterSpace = 0; //デフォルト値
+	rootParams[0].ShaderVisibility = D3D12_SHADER_VISIBILITY_ALL; //全シェーダから見える
+	//定数バッファ1番(Transform)
+	rootParams[1].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV; //定数バッファビュー
+	rootParams[1].Descriptor.ShaderRegister = 1; //定数バッファ番号
+	rootParams[1].Descriptor.RegisterSpace = 0; //デフォルト値
+	rootParams[1].ShaderVisibility = D3D12_SHADER_VISIBILITY_ALL; //全シェーダから見える
+	//定数バッファ2番(ViewProjection)
+	rootParams[2].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV; //定数バッファビュー
+	rootParams[2].Descriptor.ShaderRegister = 2; //定数バッファ番号
+	rootParams[2].Descriptor.RegisterSpace = 0; //デフォルト値
+	rootParams[2].ShaderVisibility = D3D12_SHADER_VISIBILITY_ALL; //全シェーダから見える
+	//定数バッファ3番(Light)
+	rootParams[3].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV; //定数バッファビュー
+	rootParams[3].Descriptor.ShaderRegister = 3; //定数バッファ番号
+	rootParams[3].Descriptor.RegisterSpace = 0; //デフォルト値
+	rootParams[3].ShaderVisibility = D3D12_SHADER_VISIBILITY_ALL; //全シェーダから見える
+	//テクスチャ(本体テクスチャ)
+	descriptorRange.BaseShaderRegister = 0;	//テクスチャレジスタ1番
+	rootParams[4].ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;
+	rootParams[4].DescriptorTable = DescriptorRanges{ descriptorRange };
+	rootParams[4].ShaderVisibility = D3D12_SHADER_VISIBILITY_ALL;
+	//定数バッファ4番(disolve)
+	rootParams[5].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV; //定数バッファビュー
+	rootParams[5].Descriptor.ShaderRegister = 4; //定数バッファ番号
+	rootParams[5].Descriptor.RegisterSpace = 0; //デフォルト値
+	rootParams[5].ShaderVisibility = D3D12_SHADER_VISIBILITY_ALL; //全シェーダから見える
+
+	RootSignatureDesc rootDesc = RDirectX::GetDefRootSignature().mDesc;
+	rootDesc.RootParamaters = rootParams;
+	RootSignature mRootSig = RootSignature::GetOrCreate("gameObjectSignature", rootDesc);
+	
+	return mRootSig;
+}
+
+GraphicsPipeline GameObject::GameObjectPipeLine()
+{
+	PipelineStateDesc pipedesc = RDirectX::GetDefPipeline().mDesc;
+	pipedesc.VS = Shader::GetOrCreate("GameObjectVS", "Shader/GameObject/GameObjectVS.hlsl", "main", "vs_5_0");
+	pipedesc.PS = Shader::GetOrCreate("GameObjectPS", "Shader/GameObject/GameObjectPS.hlsl", "main", "ps_5_0");
+
+	pipedesc.pRootSignature = GameObjectRootSignature().mPtr.Get();
+
+	GraphicsPipeline pipe = GraphicsPipeline::GetOrCreate("GameObject", pipedesc);
+
+	return pipe;
+}
+
 GameObject::GameObject() : isAlive(true), colliderSize(1.f)
 {
 	drawerObj = ModelObj(Model::Load("./Resources/Model/Sphere.obj", "Sphere", true));
@@ -57,6 +117,41 @@ void GameObject::UpdateCollider()
 
 	drawerObj.mTransform.UpdateMatrix();
 	drawerObj.TransferBuffer(Camera::sNowCamera->mViewProjection);
+}
+
+void GameObject::GameObjectTransferBuffer(const ViewProjection& view)
+{
+	obj.TransferBuffer(view);
+	AddColor->addColor.x = blightColor.r;
+	AddColor->addColor.y = blightColor.g;
+	AddColor->addColor.z = blightColor.b;
+	AddColor->addColor.w = blightColor.a;
+}
+
+void GameObject::ObjDraw()
+{
+	GraphicsPipeline pipe = GameObjectPipeLine();
+
+	for (std::shared_ptr<ModelMesh> data : obj.mModel->mData) {
+		std::vector<RootData> rootData = {
+			{ RootDataType::SRBUFFER_CBV, obj.mMaterialBuffMap[data->mMaterial.mName].mBuff },
+			{ RootDataType::SRBUFFER_CBV, obj.mTransformBuff.mBuff },
+			{ RootDataType::SRBUFFER_CBV, obj.mViewProjectionBuff.mBuff },
+			{ RootDataType::LIGHT },
+			{ TextureManager::Get(data->mMaterial.mTexture).mGpuHandle },
+			{ RootDataType::SRBUFFER_CBV ,AddColor.mBuff}
+		};
+
+		RenderOrder order;
+		order.mRootSignature = GameObjectRootSignature().mPtr.Get();
+		order.pipelineState = pipe.mPtr.Get();
+		order.rootData = rootData;
+		order.vertView = &data->mVertBuff.mView;
+		order.indexView = &data->mIndexBuff.mView;
+		order.indexCount = static_cast<uint32_t>(data->mIndices.size());
+
+		Renderer::DrawCall("Opaque", order);
+	}
 }
 
 void GameObject::DrawCollider()

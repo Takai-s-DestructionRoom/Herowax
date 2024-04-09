@@ -1,0 +1,17 @@
+addNum:50
+life:1
+minscale:1
+maxscale:1
+accelpower:0.001
+growingTimer:0
+endscale:3
+isgravity:false
+isbillboard:true
+emitscale:2.000000_2.000000_2.000000
+minvelo:-0.100000_-0.100000_-0.100000
+maxvelo:0.100000_0.100000_0.100000
+maxvelo:0.100000_0.100000_0.100000
+minrot:0.000000_0.000000_0.000000
+maxrot:0.000000_0.000000_0.050000
+color:0.258666_0.704641_0.563510_1.000000
+tex:particle_snow

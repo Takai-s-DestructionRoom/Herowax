@@ -273,8 +273,26 @@
     <ClCompile Include="Application\SlimeWax.cpp" />
     <ClCompile Include="Engine\Collision\PlaneCollider.cpp" />
     <ClCompile Include="Application\Minimap.cpp" />
+    <ClCompile Include="Application\ParticleEditor.cpp" />
+    <ClCompile Include="Application\ParticleEditorScene.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <FxCompile Include="Shader\GameObject\GameObjectPS.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='DebugIT|x64'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='DebugIT|x64'">5.0</ShaderModel>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
+    </FxCompile>
+    <FxCompile Include="Shader\GameObject\GameObjectVS.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='DebugIT|x64'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='DebugIT|x64'">5.0</ShaderModel>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
+    </FxCompile>
     <FxCompile Include="Shader\Billboard\BillboardPS.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='DebugIT|x64'">Pixel</ShaderType>
@@ -817,8 +835,11 @@
     <ClInclude Include="Application\SlimeWax.h" />
     <ClInclude Include="Engine\Collision\PlaneCollider.h" />
     <ClInclude Include="Application\Minimap.h" />
+    <ClInclude Include="Application\ParticleEditor.h" />
+    <ClInclude Include="Application\ParticleEditorScene.h" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Shader\GameObject\GameObject.hlsli" />
     <None Include="Shader\Billboard\Billboard.hlsli" />
     <None Include="Shader\Bloom\Bloom.hlsli" />
     <None Include="Shader\BrightCut\BrightCut.hlsli" />

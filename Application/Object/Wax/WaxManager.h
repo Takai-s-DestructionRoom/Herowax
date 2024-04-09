@@ -10,9 +10,11 @@ class WaxManager final
 private:
 	bool isWaxDead = false;
 
-	bool isViewCol = false;
+	bool isViewCol = false;			//当たり判定の表示フラグ
 
-	bool isViewSlimeWax = true;
+	bool isViewSlimeWax = true;		//スライムロウ(レイマーチ描画)の表示フラグ
+
+	bool isViewObjectWax = false;	//オブジェクトロウ(モデル描画)の表示フラグ
 
 	float colliderSize = 0.0f;
 
@@ -22,6 +24,8 @@ private:
 	//後でよりそれっぽいシステムにしてくださいプランナーさん
 
 	std::string fileName = "Wax";
+
+	float slimeWaxSizeMag = 1.0f;	//ロウのサイズを全部統一で小さくする
 
 public:
 	std::vector<float> waxTime;

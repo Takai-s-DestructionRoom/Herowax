@@ -292,6 +292,9 @@
     <Filter Include="ソース ファイル\Application\Object\Chara\Boss">
       <UniqueIdentifier>{005df920-9a2f-470c-b9ff-a950934d15d2}</UniqueIdentifier>
     </Filter>
+    <Filter Include="シェーダー ファイル\GameObject">
+      <UniqueIdentifier>{ce86bff6-1b57-4af4-b255-e4251f7b8ee8}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Engine\2d\Sprite.cpp">
@@ -672,6 +675,12 @@
     <ClCompile Include="Application\Chara\Boss\BossUI.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
+    <ClCompile Include="Application\ParticleEditor.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Application\ParticleEditorScene.cpp">
+      <Filter>ソース ファイル\Application\Scene</Filter>
+    </ClCompile>
     <ClCompile Include="Application\Chara\Boss\BossPunch.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
@@ -835,6 +844,12 @@
     </FxCompile>
     <FxCompile Include="Shader\Billboard\BillboardVS.hlsl">
       <Filter>シェーダー ファイル\Billboard</Filter>
+    </FxCompile>
+    <FxCompile Include="Shader\GameObject\GameObjectPS.hlsl">
+      <Filter>シェーダー ファイル\GameObject</Filter>
+    </FxCompile>
+    <FxCompile Include="Shader\GameObject\GameObjectVS.hlsl">
+      <Filter>シェーダー ファイル\GameObject</Filter>
     </FxCompile>
   </ItemGroup>
   <ItemGroup>
@@ -1240,6 +1255,12 @@
     <ClInclude Include="Application\Chara\Boss\BossUI.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
+    <ClInclude Include="Application\ParticleEditorScene.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Application\ParticleEditor.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
     <ClInclude Include="Application\Chara\Boss\BossPunch.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
@@ -1322,6 +1343,9 @@
     </None>
     <None Include="Shader\Billboard\Billboard.hlsli">
       <Filter>シェーダー ファイル\Billboard</Filter>
+    </None>
+    <None Include="Shader\GameObject\GameObject.hlsli">
+      <Filter>シェーダー ファイル\GameObject</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>

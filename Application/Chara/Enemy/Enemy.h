@@ -20,6 +20,9 @@ private:
 	float gravity;				//重力
 	float groundPos;			//地面座標
 
+	//------------ 回転関連 ------------//
+	Vector3 rotVec;				//回転ベクトル
+
 	//---- ノックバック関連 ----//
 	Vector3 knockbackVec;		//ノックバックする方向
 	float knockbackSpeed;		//ノックバックさせる変数(速度に加算、タイマーに合わせて減少)
@@ -54,6 +57,8 @@ private:
 	int32_t requireWaxSolidCount = 10; //完全に固まるまでに必要なロウのかかり回数
 	float waxShakeOffTimer = 0; //ロウを振り払うタイマー
 	float requireWaxShakeOffTime = 5.0f; //ロウを振り払うまでにかかる時間(秒)
+
+	Easing::EaseTimer whiteTimer = 0.5f;
 
 	//------------ その他 ------------//
 	ModelObj* target = nullptr;
@@ -179,6 +184,8 @@ public:
 	void SetDeath();
 	//移動量に足す
 	void MoveVecPlus(const Vector3& plusVec);
+	//回転量に足す
+	void RotVecPlus(const Vector3& plusVec);
 private:
 	void UpdateAttackCollider();
 	void DrawAttackCollider();

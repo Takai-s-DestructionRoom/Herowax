@@ -60,6 +60,8 @@ void Enemy::Update()
 	moveVec.x = 0;
 	moveVec.z = 0;
 
+	rotVec = { 0,0,0 };
+
 	//ステートに入る前に、前フレームに足したシェイクを引いて元に戻す
 	obj.mTransform.position -= shack;
 	//シェイクを元に戻す
@@ -113,6 +115,8 @@ void Enemy::Update()
 	//無敵時間さん!?の更新
 	mutekiTimer.Update();
 
+	///-------------移動、回転の加算--------------///
+
 	//プレイヤーに向かって移動するAI
 	//普段はプレイヤーにではなく、ランダムだったり特定方向へ進み続けて、
 	//ぶつかって初めてターゲットに入れるようにしたい
@@ -120,34 +124,28 @@ void Enemy::Update()
 	pVec.Normalize();
 	pVec.y = 0;
 
-	//ノックバックとかのけぞりとか
-	//攻撃中はそっちの回転を優先
-	if (GetAttackState() == "NowAttack") {
-		//汚いけど、ステート内で回転しちゃってるのでここでは何も書かない
-	}
-	else {
-		KnockBack();
-		KnockRota();
-
-		if (!GetIsSolid() && !knockbackTimer.GetRun()) {
-			//通常時の回転(固まってるときは回転しないように)
-			Rotation(pVec);
-		}
-	}
-
 	//ノックバック中でないなら重力をかける
 	if (!knockbackTimer.GetRun()) {
 		//重力をかける
 		moveVec.y -= gravity;
 	}
 
-	//攻撃中と準備中はプレイヤーへ向けた移動をしない
+	//攻撃準備に入ったらプレイヤーへ向けた移動をしない
 	//(ステート内に書いてもいいけどどこにあるかわからなくなりそうなのでここで)
 	if (GetAttackState() != "NowAttack" && 
-		GetAttackState() != "Pre")
+		GetAttackState() != "PreAttack")
 	{
-		//プレイヤーへ向けた移動
+		//プレイヤーへ向けた移動をする
 		moveVec += pVec * moveSpeed;
+	}
+
+	//ノックバックも攻撃準備に入ったら無効化する
+	//(条件式一緒だけど処理違うので段落分けてます)
+	if (GetAttackState() != "NowAttack" &&
+		GetAttackState() != "PreAttack")
+	{
+		KnockBack();
+		KnockRota();
 	}
 
 	//いろいろ足した後減速
@@ -166,7 +164,25 @@ void Enemy::Update()
 		moveVec.y = 0;
 	}
 
+	//もし何も回転の加算がない場合、
+	if (rotVec.LengthSq() == 0) {
+		//固まっていなければ通常時の回転をする
+		if (!GetIsSolid() && !knockbackTimer.GetRun()) {
+			Rotation(pVec);
+		}
+	}
+	//回転の加算
+	obj.mTransform.rotation = rotVec;
+
 	obj.mTuneMaterial.mColor = changeColor;
+
+	//色の加算
+	whiteTimer.Update();
+	blightColor.r = Easing::OutQuad(1, 0, whiteTimer.GetTimeRate());
+	blightColor.g = Easing::OutQuad(1, 0, whiteTimer.GetTimeRate());
+	blightColor.b = Easing::OutQuad(1, 0, whiteTimer.GetTimeRate());
+	blightColor.a = Easing::OutQuad(1, 0, whiteTimer.GetTimeRate());
+	if (!whiteTimer.GetStarted())blightColor = { 0,0,0,0 };
 
 	UpdateCollider();
 	UpdateAttackCollider();
@@ -176,7 +192,7 @@ void Enemy::Update()
 	obj.mPaintDataBuff->dissolveVal = waxSolidCount >= requireWaxSolidCount ? 1.0f : 0.3f / (requireWaxSolidCount - 1) * waxSolidCount;
 	obj.mPaintDataBuff->color = Color(0.8f, 0.6f, 0.35f, 1.0f);
 	obj.mPaintDataBuff->slide += TimeManager::deltaTime;
-	obj.TransferBuffer(Camera::sNowCamera->mViewProjection);
+	GameObjectTransferBuffer(Camera::sNowCamera->mViewProjection);
 
 	ui.Update(this);
 
@@ -188,8 +204,10 @@ void Enemy::Draw()
 {
 	if (isAlive)
 	{
-		obj.Draw();
+		ObjDraw();
+		
 		ui.Draw();
+		
 		predictionLine.Draw();
 
 		DrawCollider();
@@ -239,7 +257,7 @@ void Enemy::KnockRota()
 		aLookat = aLookat * knockQuaterX * knockQuaterZ;
 
 		//euler軸へ変換
-		obj.mTransform.rotation = aLookat.ToEuler();
+		RotVecPlus(aLookat.ToEuler());
 	}
 }
 
@@ -248,7 +266,7 @@ void Enemy::Rotation(const Vector3& pVec)
 	//普段はターゲットの方向を向く
 	Quaternion pLookat = Quaternion::LookAt(pVec);
 	//euler軸へ変換
-	obj.mTransform.rotation = pLookat.ToEuler();
+	RotVecPlus(pLookat.ToEuler());
 }
 
 void Enemy::SetTarget(ModelObj* target_)
@@ -299,6 +317,9 @@ void Enemy::DealDamage(uint32_t damage, const Vector3& dir, ModelObj* target_)
 
 	knockbackVec = dir;
 
+	//whiteTimer.maxTime_ = mutekiTimer.maxTime_ / 4;
+	whiteTimer.Start();
+
 	//ノックバックのスピード加算
 	knockbackSpeed = knockbackRange;
 
@@ -342,6 +363,11 @@ void Enemy::SetDeath()
 void Enemy::MoveVecPlus(const Vector3& plusVec)
 {
 	moveVec += plusVec;
+}
+
+void Enemy::RotVecPlus(const Vector3& plusVec)
+{
+	rotVec += plusVec;
 }
 
 void Enemy::UpdateAttackCollider()

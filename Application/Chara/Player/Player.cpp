@@ -45,6 +45,10 @@ isFireStock(false), isWaxStock(true), isCollectFan(false), maxWaxStock(20)
 	initRot.z = Parameter::GetParam(extract, "初期方向Z", 0.f);
 	attackHitCollider.r = Parameter::GetParam(extract,"敵がこの範囲に入ると攻撃状態へ遷移する大きさ",1.0f);
 
+	obj.mTuneMaterial.mColor.r = Parameter::GetParam(extract,"プレイヤーの色R",1);
+	obj.mTuneMaterial.mColor.g = Parameter::GetParam(extract,"プレイヤーの色G",1);
+	obj.mTuneMaterial.mColor.b = Parameter::GetParam(extract,"プレイヤーの色B",1);
+
 	collectRangeModel = ModelObj(Model::Load("./Resources/Model/Cube.obj", "Cube", true));
 	waxCollectRange = Parameter::GetParam(extract, "ロウ回収範囲", 5.f);
 	collectRangeModel.mTuneMaterial.mColor.a = Parameter::GetParam(extract, "範囲objの透明度", 0.5f);
@@ -91,7 +95,7 @@ void Player::Update()
 	//無敵時間更新
 	mutekiTimer.Update();
 	//ダメージ時点滅
-	DamageBlink();
+	//DamageBlink();
 
 	//パッド接続してたら
 	if (RInput::GetInstance()->GetPadConnect())
@@ -159,12 +163,14 @@ void Player::Update()
 		isAlive = false;
 	}
 
+	blightColor.r = Easing::OutQuad(1.0f,0.0f,mutekiTimer.GetTimeRate());
+
 	UpdateCollider();
 	UpdateAttackCollider();
 	
 	//更新してからバッファに送る
 	obj.mTransform.UpdateMatrix();
-	obj.TransferBuffer(Camera::sNowCamera->mViewProjection);
+	GameObjectTransferBuffer(Camera::sNowCamera->mViewProjection);
 
 	ui.Update(this);
 
@@ -313,6 +319,9 @@ void Player::Update()
 		Parameter::Save("範囲objの透明度", collectRangeModel.mTuneMaterial.mColor.a);
 		Parameter::Save("敵がこの範囲に入ると攻撃状態へ遷移する大きさ", attackHitCollider.r);
 		Parameter::Save("ロウ回収縦幅", waxCollectVertical);
+		Parameter::Save("プレイヤーの色R", obj.mTuneMaterial.mColor.r);
+		Parameter::Save("プレイヤーの色G", obj.mTuneMaterial.mColor.g);
+		Parameter::Save("プレイヤーの色B", obj.mTuneMaterial.mColor.b);
 		Parameter::End();
 	}
 
@@ -324,7 +333,7 @@ void Player::Draw()
 {
 	if (isAlive || Util::debugBool)
 	{
-		obj.Draw();
+		ObjDraw();
 		if (isCollectFan)
 		{
 			collectRangeModelCircle.Draw();
@@ -793,6 +802,10 @@ void Player::DealDamage(uint32_t damage)
 	blinkTimer.Start();
 
 	hp -= damage;
+
+	//パーティクル生成
+
+	ParticleManager::GetInstance()->AddSimple(obj.mTransform.position,"star");
 }
 
 void Player::DamageBlink()

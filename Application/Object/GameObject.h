@@ -2,6 +2,14 @@
 #include "ModelObj.h"
 #include "ColPrimitive3D.h"
 #include "PaintableModelObj.h"
+#include "SRConstBuffer.h"
+#include "Float4.h"
+#include "Camera.h"
+
+struct BlightBuffer
+{
+	Float4 addColor;
+};
 
 //モデルを持ち、画面に描画されるオブジェクトの基底クラス
 class GameObject
@@ -15,8 +23,17 @@ public:
 	
 	ColPrimitive3D::Sphere collider;	//Sphereの当たり判定
 	float colliderSize;					//当たり判定のサイズ
+
+	Color blightColor = {0,0,0,0};
+
+	static RootSignature GameObjectRootSignature();
+	static GraphicsPipeline GameObjectPipeLine();
+
 protected:
 	bool isDrawCollider = false;	//当たり判定描画の切り替え
+
+private:
+	SRConstBuffer<BlightBuffer> AddColor;	//加算する色
 
 public:
 	GameObject();
@@ -24,6 +41,9 @@ public:
 	virtual void Init() = 0;
 	virtual void Update() = 0;
 	virtual void Draw() = 0;
+
+	void GameObjectTransferBuffer(const ViewProjection& view);
+	void ObjDraw();	//自身が持っているobjのDrawを専用のシェーダーで描画するもの
 
 	//当たり判定の描画
 	void DrawCollider();
