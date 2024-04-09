@@ -197,7 +197,9 @@ void Enemy::Draw()
 	if (isAlive)
 	{
 		obj.Draw();
+		
 		ui.Draw();
+		
 		predictionLine.Draw();
 
 		DrawCollider();
