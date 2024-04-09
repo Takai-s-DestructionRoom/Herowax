@@ -672,11 +672,11 @@
     <ClCompile Include="Application\Chara\Boss\BossUI.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Application\ParticleEditorScene.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
     <ClCompile Include="Application\ParticleEditor.cpp">
       <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Application\ParticleEditorScene.cpp">
+      <Filter>ソース ファイル\Application\Scene</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

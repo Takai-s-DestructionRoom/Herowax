@@ -21,8 +21,9 @@ private:
 	ModelObj drawEmitter;
 	Vector3 emitPos = { 0,0,0 };
 	std::string loadPartName = "";
-	bool isAutoCreate = true;
 	Easing::EaseTimer roopTimer = 0.3f;
+	bool isAutoCreate = true;
+	bool camForce = true;
 
 	DebugCamera camera = DebugCamera({ 0, 0, -5 });
 	LightGroup light;
