@@ -37,4 +37,5 @@ BossPunch::BossPunch()
 
 void BossPunch::Update(Boss* boss)
 {
+	boss;
 }

@@ -57,5 +57,13 @@ private:
 	bool isStart = false;
 	Easing::EaseTimer chargeTimer;	//突進タイマー
 	float oldChargeTime = 0.0f;		//1フレ前の突進タイマー
+};
+
+class EnemyEndAttackState : public EnemyAttackState
+{
+public:
+	EnemyEndAttackState();
+	void Update(Enemy* enemy);
+private:
 	Easing::EaseTimer postureTimer;	//姿勢タイマー
 };
