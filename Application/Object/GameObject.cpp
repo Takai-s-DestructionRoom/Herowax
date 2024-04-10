@@ -97,6 +97,16 @@ void GameObject::SetDrawCollider(bool isCollider)
 	isDrawCollider = isCollider;
 }
 
+void GameObject::InitCollider()
+{
+	collider.pos = GetPos();
+	//もっともデカいスケールを半径とする
+	float maxR = GetScale().x;
+	if (maxR < GetScale().y)maxR = GetScale().y;
+	if (maxR < GetScale().z)maxR = GetScale().z;
+	collider.r = maxR;
+}
+
 void GameObject::UpdateCollider()
 {
 	collider.pos = GetPos();

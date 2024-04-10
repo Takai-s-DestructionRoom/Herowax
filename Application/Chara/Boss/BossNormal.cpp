@@ -28,11 +28,11 @@ void BossNormal::Update(Boss* boss)
 	for (size_t i = 0; i < boss->parts.size(); i++)
 	{
 		//基準座標に回転をかけて親子っぽくしてる
-		boss->parts[i].mTransform.position = boss->handOriPos[i] * Matrix4::RotationY(aLookat.ToEuler().y);
-		boss->parts[i].mTransform.rotation = aLookat.ToEuler();
+		boss->parts[i].obj.mTransform.position = boss->parts[i].oriPos * Matrix4::RotationY(aLookat.ToEuler().y);
+		boss->parts[i].obj.mTransform.rotation = aLookat.ToEuler();
 
 		//ふよふよ
-		boss->parts[i].mTransform.position.y =
-			boss->handOriPos[i].y + Easing::InQuad(floatingTimer.GetTimeRate()) * 3.f;
+		boss->parts[i].obj.mTransform.position.y =
+			boss->parts[i].oriPos.y + Easing::InQuad(floatingTimer.GetTimeRate()) * 3.f;
 	}
 }

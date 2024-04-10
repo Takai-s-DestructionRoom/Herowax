@@ -63,6 +63,7 @@ public:
 			obj.mTransform.position.z);
 	}
 	Vector3 GetFrontVec();
+	bool GetIsDrawCollider() { return isDrawCollider; }
 
 	void SetDrawCollider(bool isCollider);
 
@@ -79,6 +80,7 @@ public:
 	void SetColSize(float size) { colliderSize = size; }
 
 protected:
+	void InitCollider();
 	//当たり判定の更新
 	void UpdateCollider();
 

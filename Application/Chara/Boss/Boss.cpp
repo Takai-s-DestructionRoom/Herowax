@@ -14,22 +14,15 @@ moveSpeed(0.1f), hp(0), maxHP(10.f)
 	obj = PaintableModelObj(Model::Load("./Resources/Model/bossBody/bossBody.obj", "bossBody", true));
 	obj.mTransform.scale = Vector3::ONE * 8.f;
 
-	for (size_t i = 0; i < (size_t)Parts::Max; i++)
+	for (size_t i = 0; i < parts.size(); i++)
 	{
-		parts[i] = PaintableModelObj(Model::Load("./Resources/Model/VicViper/VicViper.obj", "VicViper", true));
+		parts[i].obj = PaintableModelObj(Model::Load("./Resources/Model/VicViper/VicViper.obj", "VicViper", true));
 		//parts[i].mTransform.parent = &obj.mTransform;
-		parts[i].mTransform.scale = Vector3::ONE * 2.f;
-
-		drawerObj[i] = PaintableModelObj(Model::Load("./Resources/Model/Sphere.obj", "Sphere", true));
+		parts[i].obj.mTransform.scale = Vector3::ONE * 2.f;
 	}
 
-	handOriPos[(size_t)Parts::LeftHand] = { -50.f,20.f,0.f };
-	handOriPos[(size_t)Parts::RightHand] = { 50.f,20.f,0.f };
-
-	parts[(size_t)Parts::LeftHand].mTransform.position =
-		handOriPos[(size_t)Parts::LeftHand];
-	parts[(size_t)Parts::RightHand].mTransform.position =
-		handOriPos[(size_t)Parts::RightHand];
+	parts[(size_t)PartsNum::LeftHand].oriPos = { -50.f,20.f,0.f };
+	parts[(size_t)PartsNum::RightHand].oriPos = { 50.f,20.f,0.f };
 
 	BossUI::LoadResource();
 }
@@ -76,20 +69,10 @@ void Boss::Update()
 	obj.mTransform.UpdateMatrix();
 	obj.TransferBuffer(Camera::sNowCamera->mViewProjection);
 
-	for (size_t i = 0; i < (size_t)Parts::Max; i++)
+	for (size_t i = 0; i < parts.size(); i++)
 	{
-		parts[i].mTransform.UpdateMatrix();
-		parts[i].TransferBuffer(Camera::sNowCamera->mViewProjection);
-
-		collider[i].pos = parts[i].mTransform.position;
-		collider[i].r = parts[i].mTransform.scale.x;
-		
-		drawerObj[i].mTransform.position = collider[i].pos;
-		drawerObj[i].mTransform.scale = Vector3::ONE * collider[i].r * obj.mTransform.scale.x;
-		drawerObj[i].mTuneMaterial.mColor.a = 0.5f;
-
-		drawerObj[i].mTransform.UpdateMatrix();
-		drawerObj[i].TransferBuffer(Camera::sNowCamera->mViewProjection);
+		parts[i].SetDrawCollider(isDrawCollider);
+		parts[i].Update();
 	}
 
 #pragma region ImGui
@@ -102,6 +85,14 @@ void Boss::Update()
 
 	ImGui::Text("1:待機\n2:左パンチ\n3:右パンチ");
 	ImGui::DragFloat3("ボス本体のスケール", &obj.mTransform.scale.x,0.1f);
+	ImGui::Checkbox("オブジェクト描画", &isDrawObj);
+	ImGui::Checkbox("当たり判定描画", &isDrawCollider);
+
+	ImGui::Text("手のコライダー座標\nx:%f\ny:%f\nz:%f",
+		parts[0].collider.pos.x, parts[0].collider.pos.y, parts[0].collider.pos.z);
+	ImGui::Text("手のコライダーサイズ:%f", parts[0].collider.r);
+	ImGui::Text("手のコライダー描画フラグ:%d", parts[0].GetIsDrawCollider());
+
 	ImGui::End();
 }
 
@@ -109,20 +100,39 @@ void Boss::Draw()
 {
 	if (isAlive)
 	{
-		obj.Draw();
-		for (size_t i = 0; i < (size_t)Parts::Max; i++)
-		{
-			parts[i].Draw();
+		if (isDrawObj) {
+			obj.Draw();
+			for (size_t i = 0; i < parts.size(); i++)
+			{
+				parts[i].Draw();
+			}
 		}
 
-		if (isDrawCollider) {
-			DrawCollider();
-			for (size_t i = 0; i < drawerObj.size(); i++)
-			{
-				drawerObj[i].Draw();
-			}
+		DrawCollider();
+		for (size_t i = 0; i < parts.size(); i++)
+		{
+			parts[i].DrawCollider();
 		}
 
 		ui.Draw();
 	}
+}
+
+void Parts::Init()
+{
+}
+
+void Parts::Update()
+{
+	colliderSize = 20.f;
+
+	UpdateCollider();
+
+	obj.mTransform.UpdateMatrix();
+	obj.TransferBuffer(Camera::sNowCamera->mViewProjection);
+}
+
+void Parts::Draw()
+{
+	obj.Draw();
 }

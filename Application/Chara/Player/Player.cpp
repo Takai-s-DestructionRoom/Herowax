@@ -93,7 +93,6 @@ void Player::Init()
 
 void Player::Reset()
 {
-	oldRot = rotVec;
 	//回転初期化
 	rotVec = { 0,0,0 };
 }
@@ -104,6 +103,7 @@ void Player::Update()
 
 	//無敵時間更新
 	mutekiTimer.Update();
+	backwardTimer.Update();
 	//ダメージ時点滅
 	//DamageBlink();
 
@@ -553,8 +553,6 @@ void Player::Rotation()
 {
 	Vector2 RStick = RInput::GetInstance()->GetRStick(false, true);
 
-	bool change = false;
-
 	//Rスティック入力があったら
 	if (RStick.LengthSq() > 0.0f) {
 		//カメラから注視点へのベクトル
@@ -568,7 +566,6 @@ void Player::Rotation()
 
 		//euler軸へ変換
 		rotVec = aLookat.ToEuler();
-		change = true;
 	}
 
 	Vector2 LStick = RInput::GetInstance()->GetLStick(true, false);
@@ -594,10 +591,6 @@ void Player::Rotation()
 
 		//euler軸へ変換
 		rotVec = aLookat.ToEuler();
-		change = true;
-	}
-	if (!change) {
-		rotVec = oldRot;
 	}
 }
 
