@@ -45,10 +45,6 @@ isFireStock(false), isWaxStock(true), isCollectFan(false), maxWaxStock(20)
 	initRot.z = Parameter::GetParam(extract, "初期方向Z", 0.f);
 	attackHitCollider.r = Parameter::GetParam(extract,"敵がこの範囲に入ると攻撃状態へ遷移する大きさ",1.0f);
 
-	obj.mTuneMaterial.mColor.r = Parameter::GetParam(extract,"プレイヤーの色R",1);
-	obj.mTuneMaterial.mColor.g = Parameter::GetParam(extract,"プレイヤーの色G",1);
-	obj.mTuneMaterial.mColor.b = Parameter::GetParam(extract,"プレイヤーの色B",1);
-
 	collectRangeModel = ModelObj(Model::Load("./Resources/Model/Cube.obj", "Cube", true));
 	waxCollectRange = Parameter::GetParam(extract, "ロウ回収範囲", 5.f);
 	collectRangeModel.mTuneMaterial.mColor.a = Parameter::GetParam(extract, "範囲objの透明度", 0.5f);
@@ -73,6 +69,11 @@ isFireStock(false), isWaxStock(true), isCollectFan(false), maxWaxStock(20)
 void Player::Init()
 {
 	obj = PaintableModelObj(Model::Load("./Resources/Model/player/player_bird.obj", "player_bird", true));
+	
+	std::map<std::string, std::string> extract = Parameter::Extract("Player");
+	obj.mTuneMaterial.mColor.r = Parameter::GetParam(extract, "プレイヤーの色R", 1);
+	obj.mTuneMaterial.mColor.g = Parameter::GetParam(extract, "プレイヤーの色G", 1);
+	obj.mTuneMaterial.mColor.b = Parameter::GetParam(extract, "プレイヤーの色B", 1);
 
 	hp = maxHP;
 	//fireUnit.Init();
@@ -163,7 +164,10 @@ void Player::Update()
 		isAlive = false;
 	}
 
-	blightColor.r = Easing::OutQuad(1.0f,0.0f,mutekiTimer.GetTimeRate());
+	//無敵時間中なら色を変える
+	if (mutekiTimer.GetStarted()) {
+		blightColor.r = Easing::OutQuad(1.0f,0.0f,mutekiTimer.GetTimeRate());
+	}
 
 	UpdateCollider();
 	UpdateAttackCollider();
