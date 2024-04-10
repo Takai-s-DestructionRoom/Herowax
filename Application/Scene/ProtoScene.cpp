@@ -49,6 +49,7 @@ void ProtoScene::Init()
 	cameraSpeed.x = Parameter::GetParam(extract,"カメラの移動速度X", 0.01f);
 	cameraSpeed.y = Parameter::GetParam(extract,"カメラの移動速度Y", 0.003f);
 	mmCameraDist = Parameter::GetParam(extract,"ミニマップ用カメラ距離", -250.f);
+	cameraUpOffset = Parameter::GetParam(extract,"プレイヤーからのYのオフセット", cameraUpOffset);
 
 	LightGroup::sNowLight = &light;
 
@@ -110,6 +111,7 @@ void ProtoScene::Update()
 	camera.mViewProjection.mEye = player.GetPos() + cameraVec;
 	//プレイヤーの方向いてくれる
 	camera.mViewProjection.mTarget = player.GetPos();
+	camera.mViewProjection.mTarget.y += cameraUpOffset;
 	camera.mViewProjection.UpdateMatrix();
 
 	MinimapCameraUpdate();
@@ -365,6 +367,7 @@ void ProtoScene::Update()
 		camera.mViewProjection.mEye.y, 
 		camera.mViewProjection.mEye.z);
 	ImGui::SliderFloat("カメラ距離:%f", &cameraDist, -500.f, 0.f);
+	ImGui::DragFloat("プレイヤーからのYのオフセット:%f", &cameraUpOffset,0.1f);
 	ImGui::SliderAngle("カメラアングルX:%f", &cameraAngle.x);
 	ImGui::SliderAngle("カメラアングルY:%f", &cameraAngle.y);
 	ImGui::SliderFloat("カメラ移動速度X", &cameraSpeed.x,0.0f,0.5f);
@@ -434,6 +437,7 @@ void ProtoScene::Update()
 	if (ImGui::Button("セーブ")) {
 		Parameter::Begin("Camera");
 		Parameter::Save("カメラ距離", cameraDist);
+		Parameter::Save("プレイヤーからのYのオフセット", cameraUpOffset);
 		Parameter::Save("カメラアングルX", cameraAngle.x);
 		Parameter::Save("カメラアングルY", cameraAngle.y);
 		Parameter::Save("カメラの移動速度X", cameraSpeed.x);

@@ -55,4 +55,6 @@ private:
 	bool changeFPS = false;
 
 	bool changeCamera = false;
+
+	float cameraUpOffset = 6.5f;
 };
