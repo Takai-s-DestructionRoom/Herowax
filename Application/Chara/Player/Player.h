@@ -31,13 +31,15 @@ public:
 
 	//------------ 回転関連 ------------//
 	Vector3 rotVec;				//回転ベクトル
+	Vector3 oldRot;				//回転ベクトル
+
+	Easing::EaseTimer backwardTimer;	//のけぞり管理
 
 	//------------ HP関連 ------------//
 	float hp;				//現在のヒットポイント
 	float maxHP;			//最大HP
 
 	Easing::EaseTimer mutekiTimer;		//無敵時間さん
-	Easing::EaseTimer backwardTimer;	//のけぞり管理
 
 	//------------ 攻撃関連 ------------//
 	bool isAttack;					//攻撃中かフラグ

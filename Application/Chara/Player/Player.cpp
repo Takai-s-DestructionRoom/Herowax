@@ -93,6 +93,7 @@ void Player::Init()
 
 void Player::Reset()
 {
+	oldRot = rotVec;
 	//回転初期化
 	rotVec = { 0,0,0 };
 }
@@ -178,11 +179,10 @@ void Player::Update()
 	}
 
 	//のけぞり中ならのけぞらせる
+	backwardTimer.Update();
 	if (backwardTimer.GetStarted()) {
-		backwardTimer.Update();
-		float radStartX = { -30.0f };
-		float radX = Easing::InQuad(radStartX, 0, backwardTimer.GetTimeRate());
-		rotVec.x += Util::AngleToRadian(radX);
+		float radStartX = Util::AngleToRadian(-30.0f);
+		rotVec.x = Easing::InQuad(radStartX, 0, backwardTimer.GetTimeRate());
 	}
 
 	//回転を適用
@@ -553,6 +553,8 @@ void Player::Rotation()
 {
 	Vector2 RStick = RInput::GetInstance()->GetRStick(false, true);
 
+	bool change = false;
+
 	//Rスティック入力があったら
 	if (RStick.LengthSq() > 0.0f) {
 		//カメラから注視点へのベクトル
@@ -566,6 +568,7 @@ void Player::Rotation()
 
 		//euler軸へ変換
 		rotVec = aLookat.ToEuler();
+		change = true;
 	}
 
 	Vector2 LStick = RInput::GetInstance()->GetLStick(true, false);
@@ -591,6 +594,10 @@ void Player::Rotation()
 
 		//euler軸へ変換
 		rotVec = aLookat.ToEuler();
+		change = true;
+	}
+	if (!change) {
+		rotVec = oldRot;
 	}
 }
 

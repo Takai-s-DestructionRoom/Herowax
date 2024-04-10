@@ -12,7 +12,7 @@ moveSpeed(0.1f), hp(0), maxHP(10.f)
 	state = std::make_unique<BossNormal>();
 	nextState = nullptr;
 	obj = PaintableModelObj(Model::Load("./Resources/Model/bossBody/bossBody.obj", "bossBody", true));
-	obj.mTransform.scale = Vector3::ONE * 100.f;
+	obj.mTransform.scale = Vector3::ONE * 8.f;
 
 	for (size_t i = 0; i < (size_t)Parts::Max; i++)
 	{
