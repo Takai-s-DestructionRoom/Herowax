@@ -199,7 +199,7 @@ RootSignature* GameObject::GetRootSig()
 GraphicsPipeline* GameObject::GetPipeline()
 {
 	PipelineStateDesc pDesc = RDirectX::GetDefPipeline().mDesc;
-	pDesc.PS = Shader::GetOrCreate("PaintedBasicPS", "Shader/PaintedBright/PaintedBrightPS.hlsl", 
+	pDesc.PS = Shader::GetOrCreate("PaintedBrightPS", "Shader/PaintedBright/PaintedBrightPS.hlsl", 
 		"main", "ps_5_1");
 	pDesc.pRootSignature = GetRootSig()->mPtr.Get();
 

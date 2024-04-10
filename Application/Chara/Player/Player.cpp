@@ -43,7 +43,7 @@ isFireStock(false), isWaxStock(true), isCollectFan(false), maxWaxStock(20)
 	initRot.x = Parameter::GetParam(extract, "初期方向X", 0.f);
 	initRot.y = Parameter::GetParam(extract, "初期方向Y", 0.f);
 	initRot.z = Parameter::GetParam(extract, "初期方向Z", 0.f);
-	attackHitCollider.r = Parameter::GetParam(extract,"敵がこの範囲に入ると攻撃状態へ遷移する大きさ",1.0f);
+	attackHitCollider.r = Parameter::GetParam(extract, "敵がこの範囲に入ると攻撃状態へ遷移する大きさ", 1.0f);
 
 	collectRangeModel = ModelObj(Model::Load("./Resources/Model/Cube.obj", "Cube", true));
 	waxCollectRange = Parameter::GetParam(extract, "ロウ回収範囲", 5.f);
@@ -69,7 +69,7 @@ isFireStock(false), isWaxStock(true), isCollectFan(false), maxWaxStock(20)
 void Player::Init()
 {
 	obj = PaintableModelObj(Model::Load("./Resources/Model/player/player_bird.obj", "player_bird", true));
-	
+
 	std::map<std::string, std::string> extract = Parameter::Extract("Player");
 	obj.mTuneMaterial.mColor.r = Parameter::GetParam(extract, "プレイヤーの色R", 1);
 	obj.mTuneMaterial.mColor.g = Parameter::GetParam(extract, "プレイヤーの色G", 1);
@@ -93,6 +93,7 @@ void Player::Init()
 
 void Player::Reset()
 {
+	oldRot = rotVec;
 	//回転初期化
 	rotVec = { 0,0,0 };
 }
@@ -103,7 +104,6 @@ void Player::Update()
 
 	//無敵時間更新
 	mutekiTimer.Update();
-	backwardTimer.Update();
 	//ダメージ時点滅
 	//DamageBlink();
 
@@ -175,7 +175,7 @@ void Player::Update()
 
 	//無敵時間中なら色を変える
 	if (mutekiTimer.GetStarted()) {
-		blightColor.r = Easing::OutQuad(1.0f,0.0f,mutekiTimer.GetTimeRate());
+		blightColor.r = Easing::OutQuad(1.0f, 0.0f, mutekiTimer.GetTimeRate());
 	}
 
 	//のけぞり中ならのけぞらせる
@@ -190,7 +190,7 @@ void Player::Update()
 
 	UpdateCollider();
 	UpdateAttackCollider();
-	
+
 	//更新してからバッファに送る
 	obj.mTransform.UpdateMatrix();
 	GameObjectTransferBuffer(Camera::sNowCamera->mViewProjection);
@@ -368,7 +368,7 @@ void Player::Draw()
 			collectRangeModel.Draw();
 		}
 		ui.Draw();
-		
+
 		DrawAttackCollider();
 	}
 }
@@ -553,6 +553,8 @@ void Player::Rotation()
 {
 	Vector2 RStick = RInput::GetInstance()->GetRStick(false, true);
 
+	bool change = false;
+
 	//Rスティック入力があったら
 	if (RStick.LengthSq() > 0.0f) {
 		//カメラから注視点へのベクトル
@@ -566,6 +568,7 @@ void Player::Rotation()
 
 		//euler軸へ変換
 		rotVec = aLookat.ToEuler();
+		change = true;
 	}
 
 	Vector2 LStick = RInput::GetInstance()->GetLStick(true, false);
@@ -591,6 +594,10 @@ void Player::Rotation()
 
 		//euler軸へ変換
 		rotVec = aLookat.ToEuler();
+		change = true;
+	}
+	if (!change) {
+		rotVec = oldRot;
 	}
 }
 
@@ -712,8 +719,8 @@ void Player::WaxCollect()
 	//扇の範囲表す用レイ
 	collectRangeModelRayLeft.mTransform = obj.mTransform;
 	collectRangeModelRayRight.mTransform = obj.mTransform;
-	collectRangeModelRayLeft.mTransform.scale = { 0.1f,0.1f,waxCollectDist*2.f };
-	collectRangeModelRayRight.mTransform.scale = { 0.1f,0.1f,waxCollectDist*2.f };
+	collectRangeModelRayLeft.mTransform.scale = { 0.1f,0.1f,waxCollectDist * 2.f };
+	collectRangeModelRayRight.mTransform.scale = { 0.1f,0.1f,waxCollectDist * 2.f };
 	collectRangeModelRayLeft.mTransform.rotation.y += Util::AngleToRadian(-waxCollectAngle * 0.5f);
 	collectRangeModelRayRight.mTransform.rotation.y += Util::AngleToRadian(waxCollectAngle * 0.5f);
 	/*collectRangeModelRayLeft.mTransform.position += GetFrontVec() * waxCollectDist * 0.5f;
@@ -790,12 +797,12 @@ void Player::WaxCollect()
 			if (isCollectFan)
 			{
 				//ロウ回収
-				WaxManager::GetInstance()->CollectFan(collectColFan,GetFrontVec(), waxCollectAngle);
+				WaxManager::GetInstance()->CollectFan(collectColFan, GetFrontVec(), waxCollectAngle);
 			}
 			else
 			{
 				//ロウ回収
-				waxCollectAmount += WaxManager::GetInstance()->Collect(collectCol,waxCollectVertical);
+				waxCollectAmount += WaxManager::GetInstance()->Collect(collectCol, waxCollectVertical);
 			}
 		}
 	}
@@ -814,14 +821,14 @@ void Player::DealDamage(uint32_t damage)
 {
 	//無敵時間中ならダメージが与えられない
 	if (mutekiTimer.GetRun())return;
-	
+
 	mutekiTimer.Start();
 	blinkTimer.Start();
 
 	hp -= damage;
 
 	//パーティクル生成
-	ParticleManager::GetInstance()->AddSimple(obj.mTransform.position,"star");
+	ParticleManager::GetInstance()->AddSimple(obj.mTransform.position, "star");
 
 	//ちょっとのけぞる
 	//モーション遷移

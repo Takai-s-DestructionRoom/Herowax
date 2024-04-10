@@ -31,6 +31,7 @@ public:
 
 	//------------ 回転関連 ------------//
 	Vector3 rotVec;				//回転ベクトル
+	Vector3 oldRot;				//回転ベクトル
 
 	Easing::EaseTimer backwardTimer;	//のけぞり管理
 
