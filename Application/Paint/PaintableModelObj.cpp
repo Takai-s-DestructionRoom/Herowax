@@ -88,6 +88,13 @@ RootSignature* PaintableModelObj::GetRootSig()
 	paintDataRP.ShaderVisibility = D3D12_SHADER_VISIBILITY_ALL;
 	rDesc.RootParamaters.push_back(paintDataRP);
 
+	RootParamater paintDataRP2{};
+	paintDataRP2.ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;
+	paintDataRP2.Descriptor.ShaderRegister = 11;
+	paintDataRP2.Descriptor.RegisterSpace = 0;
+	paintDataRP2.ShaderVisibility = D3D12_SHADER_VISIBILITY_ALL;
+	rDesc.RootParamaters.push_back(paintDataRP2);
+
 	return &RootSignature::GetOrCreate("PaintableModelObj", rDesc);
 }
 

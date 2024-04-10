@@ -20,6 +20,11 @@ struct PaintData
 
 ConstantBuffer<PaintData> paintData : register(b10);
 
+cbuffer ConstBufferAddColor : register(b11)
+{
+    float4 addColor;
+};
+
 //ディザ抜きの目の細かさ(本来は外部テクスチャから読み込んだ方がいい)
 static const int pattern[16] =
 {
@@ -219,5 +224,5 @@ float4 main(VSOutputBasic input) : SV_TARGET
         }
     }
     
-    return texcolor * shadecolor;
+    return texcolor * shadecolor + addColor;
 }
