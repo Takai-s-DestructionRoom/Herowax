@@ -52,11 +52,12 @@ private:
 	Easing::EaseTimer waxShakeOffTimer = 5.0f; //ロウを振り払うタイマー
 
 public:
-	std::unique_ptr<BossState> state;		//状態管理
+	std::unique_ptr<BossState> state;	//状態管理
 
-	std::array<Parts, 2> parts;		//体のパーツ
+	std::array<Parts, 2> parts;			//体のパーツ
 
-	//------------ 攻撃関連 ------------//
+	//------------ 行動関連 ------------//
+	Easing::EaseTimer standTimer;		//待機時間
 	Easing::EaseTimer punchTimer;		//パンチにかかる時間
 	Easing::EaseTimer punchStayTimer;	//パンチ終わってからモーション終了までの時間
 

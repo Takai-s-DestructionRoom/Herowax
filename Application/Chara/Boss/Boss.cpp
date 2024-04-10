@@ -48,6 +48,7 @@ moveSpeed(0.1f), hp(0), maxHP(10.f)
 	 parts[(int32_t)PartsNum::RightHand].obj.mTransform.scale.x = Parameter::GetParam(extract,"右手スケールX", parts[(int32_t)PartsNum::RightHand].obj.mTransform.scale.x);
 	 parts[(int32_t)PartsNum::RightHand].obj.mTransform.scale.y = Parameter::GetParam(extract,"右手スケールY", parts[(int32_t)PartsNum::RightHand].obj.mTransform.scale.y);
 	 parts[(int32_t)PartsNum::RightHand].obj.mTransform.scale.z = Parameter::GetParam(extract,"右手スケールZ", parts[(int32_t)PartsNum::RightHand].obj.mTransform.scale.z);
+	standTimer = Parameter::GetParam(extract,"モーション待機時間", 3.f);
 	punchTimer = Parameter::GetParam(extract,"パンチにかかる時間", 0.7f);
 	punchStayTimer = Parameter::GetParam(extract,"パンチ後留まる時間", 1.5f);
 }
@@ -164,6 +165,7 @@ void Boss::Update()
 		ImGui::DragFloat3("スケール", &obj.mTransform.scale.x, 0.1f);
 		ImGui::DragFloat("当たり判定", &colliderSize, 0.1f);
 		ImGui::InputFloat("無敵時間", &mutekiTimer.maxTime_, 0.1f);
+		ImGui::InputFloat("モーション待機時間", &standTimer.maxTime_, 0.1f);
 		ImGui::InputFloat("パンチにかかる時間", &punchTimer.maxTime_, 0.1f);
 		ImGui::InputFloat("パンチ後留まる時間", &punchStayTimer.maxTime_, 0.1f);
 		ImGui::TreePop();
@@ -194,6 +196,7 @@ void Boss::Update()
 		Parameter::Save("右手スケールX", parts[(int32_t)PartsNum::RightHand].obj.mTransform.scale.x);
 		Parameter::Save("右手スケールY", parts[(int32_t)PartsNum::RightHand].obj.mTransform.scale.y);
 		Parameter::Save("右手スケールZ", parts[(int32_t)PartsNum::RightHand].obj.mTransform.scale.z);
+		Parameter::Save("モーション待機時間", standTimer.maxTime_);
 		Parameter::Save("パンチにかかる時間", punchTimer.maxTime_);
 		Parameter::Save("パンチ後留まる時間", punchStayTimer.maxTime_);
 		Parameter::End();

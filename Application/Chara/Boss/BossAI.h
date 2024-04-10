@@ -5,7 +5,7 @@ class Boss;
 class BossAI
 {
 private:
-	float actTimer = 0;
+	bool isStart;
 
 public:
 	void Init();

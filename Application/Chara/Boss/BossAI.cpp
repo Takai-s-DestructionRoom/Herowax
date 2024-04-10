@@ -7,7 +7,7 @@
 
 void BossAI::Init()
 {
-	actTimer = 0;
+	isStart = true;
 }
 
 void BossAI::Update(Boss* boss)
@@ -15,13 +15,22 @@ void BossAI::Update(Boss* boss)
 	bool changeAct = false;
 	bool isStand = false;
 
+	if (isStart)
+	{
+		boss->standTimer.Reset();
+		isStart = false;
+	}
+
 	//ボスが待機モーション中なら
 	if (boss->GetStateStr() == "Normal") {
-		actTimer += TimeManager::deltaTime;
+		boss->standTimer.Update();
 
-		//4秒経過で次の行動へ
-		if (actTimer >= 3.0f) {
-			actTimer = 0;
+		if (boss->standTimer.GetStarted() == false) {
+			boss->standTimer.Start();
+		}
+
+		//待機時間過ぎたら次の行動へ
+		if (boss->standTimer.GetEnd()) {
 			changeAct = true;
 			isStand = true;
 		}
@@ -34,7 +43,7 @@ void BossAI::Update(Boss* boss)
 	}
 
 	if (changeAct) {
-		actTimer = 0;
+		boss->standTimer.Reset();
 
 		//待機モーションから遷移した場合
 		if (isStand)
