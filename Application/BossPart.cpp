@@ -1,9 +1,19 @@
 #include "BossPart.h"
 #include "TimeManager.h"
+#include "WaxManager.h"
+#include "Parameter.h"
 
 Parts::Parts() : GameObject()
 {
 	colliderSize = 20.f;
+
+	std::map<std::string, std::string> extract = Parameter::Extract("Player");
+	solidTime = Parameter::GetParam(extract, "固まるまでの時間", 5.f);
+	atkPower = (int32_t)Parameter::GetParam(extract, "敵に与えるダメージ", 10.0f);
+	atkRange = Parameter::GetParam(extract, "攻撃範囲", 3.f);
+	atkSize = 0.f;
+	atkSpeed = Parameter::GetParam(extract, "射出速度", 1.f);
+	atkTime = Parameter::GetParam(extract, "攻撃時間", 0.5f);
 }
 
 void Parts::Init()
@@ -16,6 +26,12 @@ void Parts::Update()
 	mutekiTimer.Update();
 	whiteTimer.Update();
 	waxShakeOffTimer.Update();
+	shakeTimer.Update();
+	waxScatterTimer.Update();
+
+	//シェイクを初期化
+	obj.mTransform.position -= shake;
+	shake = { 0,0,0 };
 
 	//かかっているロウを振り払う
 	//10段階かかったら固まる
@@ -23,10 +39,12 @@ void Parts::Update()
 		//振り払うタイマーが終わったら
 		if (waxShakeOffTimer.GetEnd())
 		{
+			waxShakeOffTimer.Start();
 			//振り払う
-			waxShakeOffTimer.Reset();
 			//減るのは一段階
 			waxSolidCount--;
+			//シェイク入れる
+			shakeTimer.Start();
 		}
 	}
 
@@ -37,7 +55,32 @@ void Parts::Update()
 		brightColor.b = Easing::OutQuad(1.f, 0.f, whiteTimer.GetTimeRate());
 	}
 
+	//シェイク中なら適当な値を入れる
+	if (shakeTimer.GetRun()) {
+		shake.x = Util::GetRand(-1.0f,1.0f);
+		shake.y = Util::GetRand(-1.0f,1.0f);
+		shake.z = Util::GetRand(-1.0f,1.0f);
+
+		Vector3 atkVec = Util::GetRandVector3({ 0,0,0 }, -0.1f, 0.1f, {1,0,1});
+
+		//ついでにその場にロウをばらまく(勝手実装)
+		//生成
+		if (!waxScatterTimer.GetRun()) {
+			waxScatterTimer.Start();
+			Transform spawnTrans = obj.mTransform;
+			spawnTrans.position.y -= spawnTrans.scale.y * 2;
+			WaxManager::GetInstance()->Create(
+				spawnTrans, atkPower, atkVec, atkSpeed,
+				atkRange, atkSize, atkTime, solidTime);
+			//シェイク中に自分が出したロウに当たらないように無敵にする
+			mutekiTimer.Start();
+		}
+	}
+
 	UpdateCollider();
+
+	//座標加算
+	obj.mTransform.position += shake;
 
 	obj.mTransform.UpdateMatrix();
 	BrightTransferBuffer(Camera::sNowCamera->mViewProjection);
@@ -68,6 +111,8 @@ void Parts::DealDamage(int32_t damage)
 	//振り払いタイマー開始
 	//(初期化も行うため、攻撃を受ける度にタイマーが継続する形に)
 	waxShakeOffTimer.Start();
+
+	waxScatterTimer.Reset();
 
 	//一応HPにダメージ(使うか不明)
 	hp -= damage;
