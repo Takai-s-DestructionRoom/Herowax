@@ -27,9 +27,6 @@ moveSpeed(0.1f), hp(0), maxHP(10.f)
 	parts[(size_t)PartsNum::LeftHand].oriPos = { -50.f,20.f,0.f };
 	parts[(size_t)PartsNum::RightHand].oriPos = { 50.f,20.f,0.f };
 
-	punchTimer = 0.7f;
-	stayTimer = 0.2f;
-
 	BossUI::LoadResource();
 
 	std::map<std::string, std::string> extract = Parameter::Extract("Boss");
@@ -38,6 +35,8 @@ moveSpeed(0.1f), hp(0), maxHP(10.f)
 	obj.mTransform.scale.z = Parameter::GetParam(extract,"ボス本体のスケールZ", obj.mTransform.scale.z);
 	colliderSize = Parameter::GetParam(extract,"ボス本体の当たり判定", colliderSize);
 	mutekiTimer.maxTime_ = Parameter::GetParam(extract,"無敵時間", mutekiTimer.maxTime_);
+	punchTimer = Parameter::GetParam(extract,"パンチにかかる時間", 0.7f);
+	punchStayTimer = Parameter::GetParam(extract,"パンチ後留まる時間", 1.5f);
 }
 
 Boss::~Boss()
@@ -146,6 +145,8 @@ void Boss::Update()
 		ImGui::DragFloat3("ボス本体のスケール", &obj.mTransform.scale.x, 0.1f);
 		ImGui::DragFloat("ボス本体の当たり判定", &colliderSize, 0.1f);
 		ImGui::InputFloat("無敵時間", &mutekiTimer.maxTime_, 0.1f);
+		ImGui::InputFloat("パンチにかかる時間", &punchTimer.maxTime_, 0.1f);
+		ImGui::InputFloat("パンチ後留まる時間", &punchStayTimer.maxTime_, 0.1f);
 		ImGui::TreePop();
 	}
 
@@ -161,6 +162,8 @@ void Boss::Update()
 		Parameter::Save("ボス本体のスケールZ", obj.mTransform.scale.z);
 		Parameter::Save("ボス本体の当たり判定", colliderSize);
 		Parameter::Save("無敵時間", mutekiTimer.maxTime_);
+		Parameter::Save("パンチにかかる時間", punchTimer.maxTime_);
+		Parameter::Save("パンチ後留まる時間", punchStayTimer.maxTime_);
 		Parameter::End();
 	}
 

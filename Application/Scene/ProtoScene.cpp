@@ -31,7 +31,7 @@ ProtoScene::ProtoScene()
 	InstantDrawer::PreCreate();
 
 	Level::Get()->Load();
-	
+
 	wave.Load();
 
 	//EggUI::LoadResource();
@@ -43,13 +43,13 @@ void ProtoScene::Init()
 	Camera::sMinimapCamera = &minimapCamera;
 
 	std::map<std::string, std::string> extract = Parameter::Extract("Camera");
-	cameraDist = Parameter::GetParam(extract,"カメラ距離", -20.f);
-	cameraAngle.x = Parameter::GetParam(extract,"カメラアングルX", Util::AngleToRadian(20.f));
-	cameraAngle.y = Parameter::GetParam(extract,"カメラアングルY", 0.f);
-	cameraSpeed.x = Parameter::GetParam(extract,"カメラの移動速度X", 0.01f);
-	cameraSpeed.y = Parameter::GetParam(extract,"カメラの移動速度Y", 0.003f);
-	mmCameraDist = Parameter::GetParam(extract,"ミニマップ用カメラ距離", -250.f);
-	cameraUpOffset = Parameter::GetParam(extract,"プレイヤーからのYのオフセット", cameraUpOffset);
+	cameraDist = Parameter::GetParam(extract, "カメラ距離", -20.f);
+	cameraAngle.x = Parameter::GetParam(extract, "カメラアングルX", Util::AngleToRadian(20.f));
+	cameraAngle.y = Parameter::GetParam(extract, "カメラアングルY", 0.f);
+	cameraSpeed.x = Parameter::GetParam(extract, "カメラの移動速度X", 0.01f);
+	cameraSpeed.y = Parameter::GetParam(extract, "カメラの移動速度Y", 0.003f);
+	mmCameraDist = Parameter::GetParam(extract, "ミニマップ用カメラ距離", -250.f);
+	cameraUpOffset = Parameter::GetParam(extract, "プレイヤーからのYのオフセット", cameraUpOffset);
 
 	LightGroup::sNowLight = &light;
 
@@ -98,8 +98,8 @@ void ProtoScene::Update()
 			cameraAngle.x += cameraSpeed.y * stick.y;
 		}
 	}
-	cameraAngle.x = Util::Clamp(cameraAngle.x, 0.f,Util::AngleToRadian(89.f));
-	
+	cameraAngle.x = Util::Clamp(cameraAngle.x, 0.f, Util::AngleToRadian(89.f));
+
 	Vector3 cameraVec = { 0, 0, 1 };
 	//カメラアングル適応
 	cameraVec *= Quaternion::AngleAxis(Vector3(1, 0, 0).Cross(cameraVec), cameraAngle.y);
@@ -123,25 +123,29 @@ void ProtoScene::Update()
 		if (ColPrimitive3D::CheckSphereToSphere(boss.parts[i].collider,
 			player.collider))
 		{
-			//1ダメージ(どっかに参照先作るべき)
-			player.DealDamage(1);
+			//パンチタイマー進行中のみダメージ
+			if (boss.punchTimer.GetRun())
+			{
+				//1ダメージ(どっかに参照先作るべき)
+				player.DealDamage(1);
+			}
 		}
 	}
-	
+
 	for (auto& enemy : EnemyManager::GetInstance()->enemys)
 	{
 		//タワーとの当たり判定
-		if (ColPrimitive3D::CheckSphereToSphere(enemy->collider, 
+		if (ColPrimitive3D::CheckSphereToSphere(enemy->collider,
 			Level::Get()->tower.collider)) {
 			enemy->SetDeath();
 			Vector3 vec = Level::Get()->tower.GetPos() - enemy->GetPos();
-			Level::Get()->tower.Damage(1.f,vec);
+			Level::Get()->tower.Damage(1.f, vec);
 		}
 		//プレイヤーとの当たり判定
 		//特定範囲内に入ったら敵を攻撃状態へ遷移
-		if (enemy->GetAttackState() == "NonAttack") 
+		if (enemy->GetAttackState() == "NonAttack")
 		{
-			if (ColPrimitive3D::CheckSphereToSphere(enemy->attackHitCollider,player.attackHitCollider)) 
+			if (ColPrimitive3D::CheckSphereToSphere(enemy->attackHitCollider, player.attackHitCollider))
 			{
 				enemy->ChangeAttackState<EnemyFindState>();
 			}
@@ -160,13 +164,13 @@ void ProtoScene::Update()
 	//蝋とボスの当たり判定
 	for (auto& group : WaxManager::GetInstance()->waxGroups)
 	{
-		for (auto& wax : group->waxs) 
+		for (auto& wax : group->waxs)
 		{
 			bool isCollision = ColPrimitive3D::CheckSphereToSphere(boss.collider, wax->collider);
 
 			//投げられてる蝋に当たった時はダメージと蝋蓄積
-			if (isCollision && 
-				wax->isSolid == false && 
+			if (isCollision &&
+				wax->isSolid == false &&
 				wax->isGround == false)
 			{
 				//一応1ダメージ
@@ -242,7 +246,7 @@ void ProtoScene::Update()
 		{
 			//1~9までの場合を入れる
 			float time = 0.0f;
-			
+
 			for (int i = 0; i < 10; i++)
 			{
 				if (trapEnemys.size() - 1 == i) {
@@ -300,7 +304,7 @@ void ProtoScene::Update()
 			}
 		}
 	}*/
-	
+
 	player.Update();
 	boss.Update();
 	Level::Get()->Update();
@@ -336,10 +340,10 @@ void ProtoScene::Update()
 			}
 		}
 	}
-	
+
 
 	//別グループ内のロウが当たった時の処理
-	for (auto itr = wGroups->begin(); itr != wGroups->end();itr++)
+	for (auto itr = wGroups->begin(); itr != wGroups->end(); itr++)
 	{
 		for (auto itr2 = itr; itr2 != wGroups->end();)
 		{
@@ -391,22 +395,22 @@ void ProtoScene::Update()
 
 	ImGui::Text("スティック x: % f y : % f", stick.x, stick.y);
 	ImGui::Text("座標:%f,%f,%f",
-		camera.mViewProjection.mEye.x, 
-		camera.mViewProjection.mEye.y, 
+		camera.mViewProjection.mEye.x,
+		camera.mViewProjection.mEye.y,
 		camera.mViewProjection.mEye.z);
 	ImGui::SliderFloat("カメラ距離:%f", &cameraDist, -500.f, 0.f);
-	ImGui::DragFloat("プレイヤーからのYのオフセット:%f", &cameraUpOffset,0.1f);
+	ImGui::DragFloat("プレイヤーからのYのオフセット:%f", &cameraUpOffset, 0.1f);
 	ImGui::SliderAngle("カメラアングルX:%f", &cameraAngle.x);
 	ImGui::SliderAngle("カメラアングルY:%f", &cameraAngle.y);
-	ImGui::SliderFloat("カメラ移動速度X", &cameraSpeed.x,0.0f,0.5f);
-	ImGui::SliderFloat("カメラ移動速度Y", &cameraSpeed.y,0.0f,0.5f);
+	ImGui::SliderFloat("カメラ移動速度X", &cameraSpeed.x, 0.0f, 0.5f);
+	ImGui::SliderFloat("カメラ移動速度Y", &cameraSpeed.y, 0.0f, 0.5f);
 	ImGui::SliderFloat("ミニマップカメラ距離:%f", &mmCameraDist, -1000.f, 0.f);
-	
+
 	static float saveDist = cameraDist;
 	static Vector2 saveAngle = cameraAngle;
-	
+
 	if (ImGui::Checkbox("上から視点に切り替え", &changeCamera) ||
-		RInput::GetPadButtonDown(XINPUT_GAMEPAD_BACK)) 
+		RInput::GetPadButtonDown(XINPUT_GAMEPAD_BACK))
 	{
 		//パッド入力の場合はフラグ切り替え1
 		if (RInput::GetPadButtonDown(XINPUT_GAMEPAD_BACK)) {
@@ -457,7 +461,7 @@ void ProtoScene::Update()
 			if (!std::signbit(stick.y)) {
 				moveSpeed *= -1;
 			}
-			
+
 			cameraAngle.x -= moveSpeed;
 		}
 	}
@@ -532,9 +536,9 @@ void ProtoScene::MinimapCameraUpdate()
 
 	//アスペクト比1:1に
 	minimapCamera.mViewProjection.mAspect = 1.f / 1.f;
-	
+
 	minimapCamera.mViewProjection.mEye = mmCameraVec;
-	
+
 	minimapCamera.mViewProjection.mTarget = Vector3::ZERO;
 	minimapCamera.mViewProjection.UpdateMatrix();
 }

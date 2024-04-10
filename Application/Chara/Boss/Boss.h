@@ -39,10 +39,6 @@ private:
 	float maxHP;			//最大HP
 	Easing::EaseTimer mutekiTimer;			//無敵時間さん
 
-	//------------ 攻撃関連 ------------//
-	Easing::EaseTimer punchTimer;		//パンチにかかる時間
-	Easing::EaseTimer stayTimer;		//パンチ終わってからモーション終了までの時間
-
 	//------------ その他 ------------//
 	std::unique_ptr<BossState> nextState;	//次のステート
 	std::string stateStr;					//状態を文字列で保存
@@ -69,6 +65,10 @@ public:
 	std::unique_ptr<BossState> state;		//状態管理
 
 	std::array<Parts, 2> parts;		//体のパーツ
+
+	//------------ 攻撃関連 ------------//
+	Easing::EaseTimer punchTimer;		//パンチにかかる時間
+	Easing::EaseTimer punchStayTimer;	//パンチ終わってからモーション終了までの時間
 
 private:
 	//すべてのステートでの共通処理
