@@ -148,6 +148,7 @@
     <ClCompile Include="Application\Chara\Boss\BossUI.cpp" />
     <ClCompile Include="Application\Chara\Boss\BossPunch.cpp" />
     <ClCompile Include="Application\Chara\Boss\BossNormal.cpp" />
+    <ClCompile Include="Application\Chara\Boss\BossAI.cpp" />
     <ClCompile Include="Engine\Collision\AABBCollider.cpp" />
     <ClCompile Include="Application\Chara\Enemy\EnemySpawner.cpp" />
     <ClCompile Include="Application\InstantDrawer.cpp" />
@@ -705,6 +706,7 @@
     <ClInclude Include="Application\Chara\Boss\BossUI.h" />
     <ClInclude Include="Application\Chara\Boss\BossPunch.h" />
     <ClInclude Include="Application\Chara\Boss\BossNormal.h" />
+    <ClInclude Include="Application\Chara\Boss\BossAI.h" />
     <ClInclude Include="Engine\Collision\AABBCollider.h" />
     <ClInclude Include="Application\Chara\Enemy\EnemySpawner.h" />
     <ClInclude Include="Application\InstantDrawer.h" />

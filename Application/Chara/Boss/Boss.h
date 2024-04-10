@@ -5,6 +5,7 @@
 #include "Vector2.h"
 #include "BossState.h"
 #include "BossUI.h"
+#include "BossAI.h"
 #include <array>
 
 enum class PartsNum
@@ -38,14 +39,18 @@ private:
 	float maxHP;			//最大HP
 	Easing::EaseTimer mutekiTimer;		//無敵時間さん
 
+	//------------ 攻撃関連 ------------//
+	Easing::EaseTimer punchTimer;		//パンチにかかる時間
+	Easing::EaseTimer stayTimer;		//パンチ終わってからモーション終了までの時間
+
 	//------------ その他 ------------//
-	std::unique_ptr<BossState> state;		//状態管理
 	std::unique_ptr<BossState> nextState;	//次のステート
 	std::string stateStr;					//状態を文字列で保存
 
 	ModelObj* target = nullptr;				//攻撃対象
 
 	BossUI ui;
+	BossAI ai;
 
 	bool changingState = false;		//ステート変更中かフラグ
 	bool isDrawObj = true;			//オブジェクト描画するかフラグ
@@ -53,6 +58,8 @@ private:
 	float phaseTimer;	//フェーズ移行に使うタイマー
 
 public:
+	std::unique_ptr<BossState> state;		//状態管理
+
 	std::array<Parts, 2> parts;		//体のパーツ
 
 public:
@@ -64,7 +71,7 @@ public:
 
 	// ゲッター //
 	//状態文字情報を取得
-	std::string GetState() { return stateStr; }
+	std::string GetStateStr() { return stateStr; }
 	//攻撃対象を取得
 	ModelObj* GetTarget() { return target; }
 

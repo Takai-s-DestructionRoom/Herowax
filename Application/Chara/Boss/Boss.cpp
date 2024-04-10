@@ -24,6 +24,9 @@ moveSpeed(0.1f), hp(0), maxHP(10.f)
 	parts[(size_t)PartsNum::LeftHand].oriPos = { -50.f,20.f,0.f };
 	parts[(size_t)PartsNum::RightHand].oriPos = { 50.f,20.f,0.f };
 
+	punchTimer = 0.7f;
+	stayTimer = 0.2f;
+
 	BossUI::LoadResource();
 }
 
@@ -40,10 +43,14 @@ Boss::~Boss()
 void Boss::Init()
 {
 	hp = maxHP;
+
+	ai.Init();
 }
 
 void Boss::Update()
 {
+	ai.Update(this);
+
 	//各ステート時の固有処理
 	state->Update(this);
 
