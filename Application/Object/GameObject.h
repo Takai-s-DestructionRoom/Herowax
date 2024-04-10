@@ -63,8 +63,9 @@ public:
 			obj.mTransform.position.z);
 	}
 	Vector3 GetFrontVec();
+	bool GetIsDrawCollider() { return isDrawCollider; }
 
-	void ChangeDrawCollider(bool isCollider);
+	void SetDrawCollider(bool isCollider);
 
 	// セッター //
 	//座標設定
@@ -79,8 +80,16 @@ public:
 	void SetColSize(float size) { colliderSize = size; }
 
 protected:
+	void InitCollider();
 	//当たり判定の更新
 	void UpdateCollider();
+
+private:
+	RootSignature* GetRootSig();
+
+	GraphicsPipeline* GetPipeline();
+
+	std::vector<RenderOrder> GameObject::GetRenderOrder();
 
 private:
 	//コピー禁止

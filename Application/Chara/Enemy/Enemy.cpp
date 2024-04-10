@@ -55,7 +55,7 @@ void Enemy::Init()
 	hp = maxHP;
 }
 
-void Enemy::Update()
+void Enemy::Reset()
 {
 	moveVec.x = 0;
 	moveVec.z = 0;
@@ -66,6 +66,11 @@ void Enemy::Update()
 	obj.mTransform.position -= shack;
 	//シェイクを元に戻す
 	shack = { 0,0,0 };
+}
+
+void Enemy::Update()
+{
+	Reset();
 
 	//かかっているロウを振り払う
 	if (waxSolidCount > 0 && waxSolidCount < requireWaxSolidCount) {
@@ -171,7 +176,7 @@ void Enemy::Update()
 			Rotation(pVec);
 		}
 	}
-	//回転の加算
+	//回転の適用
 	obj.mTransform.rotation = rotVec;
 
 	obj.mTuneMaterial.mColor = changeColor;

@@ -295,6 +295,9 @@
     <Filter Include="シェーダー ファイル\GameObject">
       <UniqueIdentifier>{ce86bff6-1b57-4af4-b255-e4251f7b8ee8}</UniqueIdentifier>
     </Filter>
+    <Filter Include="シェーダー ファイル\PaintedBright">
+      <UniqueIdentifier>{9b06b06f-2b00-44f1-bc7f-09e42d8e3f5d}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Engine\2d\Sprite.cpp">
@@ -850,6 +853,9 @@
     </FxCompile>
     <FxCompile Include="Shader\GameObject\GameObjectVS.hlsl">
       <Filter>シェーダー ファイル\GameObject</Filter>
+    </FxCompile>
+    <FxCompile Include="Shader\PaintedBright\PaintedBrightPS.hlsl">
+      <Filter>シェーダー ファイル\PaintedBright</Filter>
     </FxCompile>
   </ItemGroup>
   <ItemGroup>

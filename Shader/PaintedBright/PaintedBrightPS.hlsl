@@ -20,6 +20,11 @@ struct PaintData
 
 ConstantBuffer<PaintData> paintData : register(b10);
 
+cbuffer ConstBufferAddColor : register(b11)
+{
+    float4 addColor;
+};
+
 //ディザ抜きの目の細かさ(本来は外部テクスチャから読み込んだ方がいい)
 static const int pattern[16] =
 {
@@ -110,8 +115,8 @@ float4 main(VSOutputBasic input) : SV_TARGET
     
     //----------ディザ抜きの諸々の処理終わり----------//
     
-	float4 texcolor = float4(tex.Sample(smp, input.uv));
-	texcolor = texcolor * m_color;
+    float4 texcolor = float4(tex.Sample(smp, input.uv));
+    texcolor = texcolor * m_color;
     
     //ペイント部分のマテリアル扱い
     float3 m_pAmbient = paintData.mAmbient;
@@ -189,7 +194,7 @@ float4 main(VSOutputBasic input) : SV_TARGET
     //スポットライト
     for (i = 0; i < SPOT_LIGHT_NUM; i++)
     {
-        if(spotLights[i].active)
+        if (spotLights[i].active)
         {
             float3 lightVec = spotLights[i].pos - input.wpos;
             float d = length(lightVec);
@@ -219,5 +224,5 @@ float4 main(VSOutputBasic input) : SV_TARGET
         }
     }
     
-    return texcolor * shadecolor;
+    return texcolor * shadecolor + addColor;
 }
