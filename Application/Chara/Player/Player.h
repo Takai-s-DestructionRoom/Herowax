@@ -29,11 +29,15 @@ public:
 	Vector3 initPos = { 0,0,0 };	//初期位置
 	Vector3 initRot = { 0,0,0 };	//初期向き
 
+	//------------ 回転関連 ------------//
+	Vector3 rotVec;				//回転ベクトル
+
 	//------------ HP関連 ------------//
 	float hp;				//現在のヒットポイント
 	float maxHP;			//最大HP
 
-	Easing::EaseTimer mutekiTimer;
+	Easing::EaseTimer mutekiTimer;		//無敵時間さん
+	Easing::EaseTimer backwardTimer;	//のけぞり管理
 
 	//------------ 攻撃関連 ------------//
 	bool isAttack;					//攻撃中かフラグ
@@ -146,6 +150,8 @@ public:
 
 private:
 	void DamageBlink();	//被弾時の点滅(後々もっとリッチなのに置き換え予定)
+
+	void Reset();	//Updateの最初で初期化するもの
 
 	void UpdateAttackCollider();
 	void DrawAttackCollider();

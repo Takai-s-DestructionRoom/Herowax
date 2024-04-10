@@ -45,10 +45,6 @@ isFireStock(false), isWaxStock(true), isCollectFan(false), maxWaxStock(20)
 	initRot.z = Parameter::GetParam(extract, "初期方向Z", 0.f);
 	attackHitCollider.r = Parameter::GetParam(extract,"敵がこの範囲に入ると攻撃状態へ遷移する大きさ",1.0f);
 
-	obj.mTuneMaterial.mColor.r = Parameter::GetParam(extract,"プレイヤーの色R",1);
-	obj.mTuneMaterial.mColor.g = Parameter::GetParam(extract,"プレイヤーの色G",1);
-	obj.mTuneMaterial.mColor.b = Parameter::GetParam(extract,"プレイヤーの色B",1);
-
 	collectRangeModel = ModelObj(Model::Load("./Resources/Model/Cube.obj", "Cube", true));
 	waxCollectRange = Parameter::GetParam(extract, "ロウ回収範囲", 5.f);
 	collectRangeModel.mTuneMaterial.mColor.a = Parameter::GetParam(extract, "範囲objの透明度", 0.5f);
@@ -73,6 +69,11 @@ isFireStock(false), isWaxStock(true), isCollectFan(false), maxWaxStock(20)
 void Player::Init()
 {
 	obj = PaintableModelObj(Model::Load("./Resources/Model/player/player_bird.obj", "player_bird", true));
+	
+	std::map<std::string, std::string> extract = Parameter::Extract("Player");
+	obj.mTuneMaterial.mColor.r = Parameter::GetParam(extract, "プレイヤーの色R", 1);
+	obj.mTuneMaterial.mColor.g = Parameter::GetParam(extract, "プレイヤーの色G", 1);
+	obj.mTuneMaterial.mColor.b = Parameter::GetParam(extract, "プレイヤーの色B", 1);
 
 	hp = maxHP;
 	//fireUnit.Init();
@@ -90,8 +91,17 @@ void Player::Init()
 	obj.mTransform.UpdateMatrix();
 }
 
+void Player::Reset()
+{
+	//回転初期化
+	obj.mTransform.rotation = { 0,0,0 };
+	rotVec = { 0,0,0 };
+}
+
 void Player::Update()
 {
+	Reset();
+
 	//無敵時間更新
 	mutekiTimer.Update();
 	//ダメージ時点滅
@@ -163,7 +173,21 @@ void Player::Update()
 		isAlive = false;
 	}
 
-	blightColor.r = Easing::OutQuad(1.0f,0.0f,mutekiTimer.GetTimeRate());
+	//無敵時間中なら色を変える
+	if (mutekiTimer.GetStarted()) {
+		blightColor.r = Easing::OutQuad(1.0f,0.0f,mutekiTimer.GetTimeRate());
+	}
+
+	//のけぞり中ならのけぞらせる
+	if (backwardTimer.GetStarted()) {
+		backwardTimer.Update();
+		float radStartX = { -30.0f };
+		float radX = Easing::InQuad(radStartX, 0, backwardTimer.GetTimeRate());
+		rotVec.x += Util::AngleToRadian(radX);
+	}
+
+	//回転を適用
+	obj.mTransform.rotation += rotVec;
 
 	UpdateCollider();
 	UpdateAttackCollider();
@@ -500,17 +524,6 @@ void Player::MoveKey()
 		jumpSpeed -= gravity;
 		//高さに対して速度を足し続ける
 		jumpHeight += jumpSpeed;
-
-		//途中でAボタン離されたら
-		//if ((!RInput::GetInstance()->GetPadButton(XINPUT_GAMEPAD_A)))
-		//{
-		//	//ジャンプ系統で使ってたものリセット
-		//	jumpTimer.Reset();
-		//	if (jumpSpeed > 0.f)
-		//	{
-		//		jumpSpeed = 0.f;
-		//	}
-		//}
 	}
 	else
 	{
@@ -553,7 +566,7 @@ void Player::Rotation()
 		Quaternion aLookat = Quaternion::LookAt(cameraVec);
 
 		//euler軸へ変換
-		obj.mTransform.rotation = aLookat.ToEuler();
+		rotVec = aLookat.ToEuler();
 	}
 
 	Vector2 LStick = RInput::GetInstance()->GetLStick(true, false);
@@ -578,7 +591,7 @@ void Player::Rotation()
 		Quaternion aLookat = Quaternion::LookAt(shotVec);
 
 		//euler軸へ変換
-		obj.mTransform.rotation = aLookat.ToEuler();
+		rotVec = aLookat.ToEuler();
 	}
 }
 
@@ -704,7 +717,9 @@ void Player::WaxCollect()
 	collectRangeModelRayRight.mTransform.scale = { 0.1f,0.1f,waxCollectDist*2.f };
 	collectRangeModelRayLeft.mTransform.rotation.y += Util::AngleToRadian(-waxCollectAngle * 0.5f);
 	collectRangeModelRayRight.mTransform.rotation.y += Util::AngleToRadian(waxCollectAngle * 0.5f);
-
+	//z軸は回転してほしくないので無理やり0に
+	collectRangeModelRayLeft.mTransform.rotation.x = 0;
+	collectRangeModelRayRight.mTransform.rotation.x = 0;
 	/*collectRangeModelRayLeft.mTransform.position += GetFrontVec() * waxCollectDist * 0.5f;
 	collectRangeModelRayRight.mTransform.position += GetFrontVec() * waxCollectDist * 0.5f;*/
 
@@ -804,8 +819,12 @@ void Player::DealDamage(uint32_t damage)
 	hp -= damage;
 
 	//パーティクル生成
-
 	ParticleManager::GetInstance()->AddSimple(obj.mTransform.position,"star");
+
+	//ちょっとのけぞる
+	//モーション遷移
+	backwardTimer.maxTime_ = mutekiTimer.maxTime_ / 2;
+	backwardTimer.Start();
 }
 
 void Player::DamageBlink()

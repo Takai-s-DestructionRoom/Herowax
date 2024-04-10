@@ -29,7 +29,8 @@ void PlayerNormal::Update(Player* player)
 		player->PabloAttack();
 	}
 
-	player->Attack();
+	//一個だけ出る攻撃
+	//player->Attack();
 }
 
 void PlayerPablo::Update(Player* player)

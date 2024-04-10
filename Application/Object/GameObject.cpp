@@ -92,7 +92,7 @@ Vector3 GameObject::GetFrontVec()
 	frontVec *= Quaternion::Euler(obj.mTransform.rotation);
 	return frontVec;
 }
-void GameObject::ChangeDrawCollider(bool isCollider)
+void GameObject::SetDrawCollider(bool isCollider)
 {
 	isDrawCollider = isCollider;
 }

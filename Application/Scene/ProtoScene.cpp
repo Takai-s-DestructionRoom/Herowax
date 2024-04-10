@@ -49,6 +49,7 @@ void ProtoScene::Init()
 	cameraSpeed.x = Parameter::GetParam(extract,"カメラの移動速度X", 0.01f);
 	cameraSpeed.y = Parameter::GetParam(extract,"カメラの移動速度Y", 0.003f);
 	mmCameraDist = Parameter::GetParam(extract,"ミニマップ用カメラ距離", -250.f);
+	cameraUpOffset = Parameter::GetParam(extract,"プレイヤーからのYのオフセット", cameraUpOffset);
 
 	LightGroup::sNowLight = &light;
 
@@ -87,9 +88,6 @@ void ProtoScene::Update()
 	//初期化周り
 	InstantDrawer::DrawInit();
 
-	//EnemyManager::GetInstance()->Delete();
-	//WaxManager::GetInstance()->Delete();
-
 	Vector2 stick = RInput::GetInstance()->GetRStick(false, true);
 
 	if (stick.LengthSq() > 0.0f) {
@@ -113,6 +111,7 @@ void ProtoScene::Update()
 	camera.mViewProjection.mEye = player.GetPos() + cameraVec;
 	//プレイヤーの方向いてくれる
 	camera.mViewProjection.mTarget = player.GetPos();
+	camera.mViewProjection.mTarget.y += cameraUpOffset;
 	camera.mViewProjection.UpdateMatrix();
 
 	MinimapCameraUpdate();
@@ -314,16 +313,6 @@ void ProtoScene::Update()
 						//	//燃えている状態へ遷移
 						//	wax2->ChangeState<WaxIgnite>();
 						//}
-
-						//回収中ものと通常の状態なら
-						if (wax1->stateStr == "WaxCollect" && wax2->IsNormal())
-						{
-							//死ぬ
-							//wax2->DeadParticle();
-							//wax2->isAlive = false;
-
-							//player.waxCollectAmount++;
-						}
 					}
 				}
 			}
@@ -360,9 +349,6 @@ void ProtoScene::Update()
 	ParticleManager::GetInstance()->SetPlayerPos(player.GetCenterPos());
 	ParticleManager::GetInstance()->Update();
 
-	//eggUI.Update();
-	//nest.Update();
-
 	Minimap::GetInstance()->Update();
 
 	light.Update();
@@ -391,18 +377,26 @@ void ProtoScene::Update()
 		camera.mViewProjection.mEye.y, 
 		camera.mViewProjection.mEye.z);
 	ImGui::SliderFloat("カメラ距離:%f", &cameraDist, -500.f, 0.f);
+	ImGui::DragFloat("プレイヤーからのYのオフセット:%f", &cameraUpOffset,0.1f);
 	ImGui::SliderAngle("カメラアングルX:%f", &cameraAngle.x);
 	ImGui::SliderAngle("カメラアングルY:%f", &cameraAngle.y);
 	ImGui::SliderFloat("カメラ移動速度X", &cameraSpeed.x,0.0f,0.5f);
 	ImGui::SliderFloat("カメラ移動速度Y", &cameraSpeed.y,0.0f,0.5f);
 	ImGui::SliderFloat("ミニマップカメラ距離:%f", &mmCameraDist, -1000.f, 0.f);
 	
-	static bool changeCamera = false;
 	static float saveDist = cameraDist;
 	static Vector2 saveAngle = cameraAngle;
 	
-	if (ImGui::Checkbox("上から視点に切り替え", &changeCamera)) {
-		if (changeCamera) {
+	if (ImGui::Checkbox("上から視点に切り替え", &changeCamera) ||
+		RInput::GetPadButtonDown(XINPUT_GAMEPAD_BACK)) 
+	{
+		//パッド入力の場合はフラグ切り替え1
+		if (RInput::GetPadButtonDown(XINPUT_GAMEPAD_BACK)) {
+			changeCamera = !changeCamera;
+		}
+
+		if (changeCamera)
+		{
 			saveDist = cameraDist;
 			saveAngle = cameraAngle;
 		}
@@ -453,6 +447,7 @@ void ProtoScene::Update()
 	if (ImGui::Button("セーブ")) {
 		Parameter::Begin("Camera");
 		Parameter::Save("カメラ距離", cameraDist);
+		Parameter::Save("プレイヤーからのYのオフセット", cameraUpOffset);
 		Parameter::Save("カメラアングルX", cameraAngle.x);
 		Parameter::Save("カメラアングルY", cameraAngle.y);
 		Parameter::Save("カメラの移動速度X", cameraSpeed.x);
