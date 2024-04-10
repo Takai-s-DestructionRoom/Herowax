@@ -69,14 +69,6 @@ void ProtoScene::Init()
 	EnemyManager::GetInstance()->SetGround(&Level::Get()->ground);
 	EnemyManager::GetInstance()->SetTarget(&player.obj);
 
-	//eggUI.Init();
-	//eggUI.SetTower(&Level::Get()->tower);
-
-
-	//nest.Init();
-
-	//nest.SetGround(Level::Get()->ground);
-
 	Minimap::GetInstance()->Init();
 
 	extract = Parameter::Extract("DebugBool");
@@ -162,6 +154,7 @@ void ProtoScene::Update()
 	{
 		for (auto& wax : group->waxs) 
 		{
+			//ボス本体との判定
 			bool isCollision = ColPrimitive3D::CheckSphereToSphere(boss.collider, wax->collider);
 
 			//投げられてる蝋に当たった時はダメージと蝋蓄積
@@ -171,6 +164,20 @@ void ProtoScene::Update()
 			{
 				//一応1ダメージ
 				boss.DealDamage(1);
+			}
+
+			for (size_t i = 0; i < boss.parts.size(); i++)
+			{
+				//腕との判定
+				isCollision = ColPrimitive3D::CheckSphereToSphere(boss.parts[i].collider,
+					wax->collider);
+				if (isCollision &&
+					wax->isSolid == false &&
+					wax->isGround == false)
+				{
+					//一応1ダメージ
+					boss.parts[i].DealDamage(1);
+				}
 			}
 		}
 	}

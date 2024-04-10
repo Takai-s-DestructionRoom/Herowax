@@ -23,6 +23,10 @@ moveSpeed(0.1f), hp(0), maxHP(10.f)
 
 	for (size_t i = 0; i < parts.size(); i++)
 	{
+		//テスト用
+		parts[i].obj.mTuneMaterial.mColor = { 0,0,0,1 };
+
+		parts[i].obj.mPaintDissolveMapTex = TextureManager::Load("./Resources/DissolveMap.png", "DissolveMapTex");
 		parts[i].obj.mTransform.scale = Vector3::ONE * 2.f;
 	}
 
@@ -51,12 +55,12 @@ moveSpeed(0.1f), hp(0), maxHP(10.f)
 
 Boss::~Boss()
 {
-	////死んだときパーティクル出す
-	//ParticleManager::GetInstance()->AddSimple(
-	//	obj.mTransform.position, obj.mTransform.scale * 0.5f, 20, 0.3f,
-	//	Color::kWhite, "", 0.5f, 0.8f,
-	//	{ -0.3f,-0.3f,-0.3f }, { 0.3f,0.3f,0.3f },
-	//	0.05f, -Vector3::ONE * 0.1f, Vector3::ONE * 0.1f, 0.05f);
+	//死んだときパーティクル出す
+	ParticleManager::GetInstance()->AddSimple(
+		obj.mTransform.position, obj.mTransform.scale * 0.5f, 20, 0.3f,
+		Color::kWhite, "", 0.5f, 0.8f,
+		{ -0.3f,-0.3f,-0.3f }, { 0.3f,0.3f,0.3f },
+		0.05f, -Vector3::ONE * 0.1f, Vector3::ONE * 0.1f, 0.05f);
 }
 
 void Boss::Init()
@@ -64,6 +68,11 @@ void Boss::Init()
 	hp = maxHP;
 
 	ai.Init();
+
+	for (size_t i = 0; i < parts.size(); i++)
+	{
+		parts[i].Init();
+	}
 }
 
 void Boss::AllStateUpdate()
@@ -232,23 +241,4 @@ void Boss::DealDamage(int32_t damage)
 
 	//一応HPにダメージ(使うか不明)
 	hp -= damage;
-}
-
-void Parts::Init()
-{
-}
-
-void Parts::Update()
-{
-	colliderSize = 20.f;
-
-	UpdateCollider();
-
-	obj.mTransform.UpdateMatrix();
-	obj.TransferBuffer(Camera::sNowCamera->mViewProjection);
-}
-
-void Parts::Draw()
-{
-	obj.Draw();
 }
