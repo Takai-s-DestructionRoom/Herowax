@@ -51,6 +51,10 @@ void Minimap::Update()
 	rect = { (long)(pos.x - size * 0.5f), (long)(pos.x + size * 0.5f),
 		(long)(pos.y - size * 0.5f), (long)(pos.y + size * 0.5f) };
 
+	//カメラの距離とミニマップのサイズを基準にアイコン倍率設定
+	float cameraDist = Camera::sMinimapCamera->mViewProjection.mEye.y;
+	iconSize = 1.f / (cameraDist / 250.f) * (Minimap::GetInstance()->size / 180.f);
+
 	ImGui::SetNextWindowSize({ 300, 200 });
 
 	ImGuiWindowFlags window_flags = 0;

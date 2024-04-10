@@ -19,7 +19,7 @@ public:
 
 	//------------ その他 ------------//
 	PaintableModelObj obj;				//オブジェクト
-	ModelObj drawerObj;			//当たり判定描画オブジェクト
+	ModelObj drawerObj;					//当たり判定描画オブジェクト
 	
 	ColPrimitive3D::Sphere collider;	//Sphereの当たり判定
 	float colliderSize;					//当たり判定のサイズ

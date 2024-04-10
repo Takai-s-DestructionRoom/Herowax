@@ -17,6 +17,8 @@ public:
 	RRect rect;			//描画範囲
 	RRect defaultRect;	//もともとの描画範囲
 
+	float iconSize;		//ミニマップアイコン倍率
+
 	bool isPlayerDraw;
 	bool isEnemyDraw;
 	bool isBossDraw;

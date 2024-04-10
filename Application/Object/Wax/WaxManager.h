@@ -76,6 +76,7 @@ public:
 
 	//満杯かどうか返す
 	bool GetIsFull() { return GetWaxNum() >= kMaxWax; }
+	float GetSlimeWaxSizeMag() { return slimeWaxSizeMag; }
 
 	bool CheckHitWaxGroups(std::unique_ptr<WaxGroup>& group1,
 		std::unique_ptr<WaxGroup>& group2);
