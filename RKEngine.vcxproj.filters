@@ -166,9 +166,6 @@
     <Filter Include="ソース ファイル\Application\Object\Chara\Player">
       <UniqueIdentifier>{df234f43-8a3b-44a0-8b5c-d42cad307db5}</UniqueIdentifier>
     </Filter>
-    <Filter Include="ソース ファイル\Application\Object\Chara\Enemy">
-      <UniqueIdentifier>{8f748a72-7aec-4fea-ae88-467f01173e80}</UniqueIdentifier>
-    </Filter>
     <Filter Include="ヘッダー ファイル\Application\Object\Fire">
       <UniqueIdentifier>{753f6898-ab12-42e9-8e79-5cbc81b2dae1}</UniqueIdentifier>
     </Filter>
@@ -297,6 +294,9 @@
     </Filter>
     <Filter Include="シェーダー ファイル\PaintedBright">
       <UniqueIdentifier>{9b06b06f-2b00-44f1-bc7f-09e42d8e3f5d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\Application\Object\Chara\Enemy">
+      <UniqueIdentifier>{8f748a72-7aec-4fea-ae88-467f01173e80}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

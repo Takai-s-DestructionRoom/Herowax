@@ -16,7 +16,7 @@ PaintScene::PaintScene()
 	
 	sprite = Sprite(TextureManager::Load("./Resources/Brush.png", "brush"), { 0.5f, 0.5f });
 	
-	objA = PaintableModelObj(Model::Load("./Resources/Model/firewisp/firewisp.obj", "hoge", true));
+	objA = PaintableModelObj(Model::Load("./Resources/Model/bossBody/bossBody.obj", "hoge", true));
 	objA.mTuneMaterial.mDiffuse = { 0, 1, 0 };
 	objA.mTransform.position = { -3, 1, 2 };
 	objA.mTransform.UpdateMatrix();

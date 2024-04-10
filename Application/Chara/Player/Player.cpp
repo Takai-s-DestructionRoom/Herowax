@@ -175,7 +175,7 @@ void Player::Update()
 
 	//無敵時間中なら色を変える
 	if (mutekiTimer.GetStarted()) {
-		blightColor.r = Easing::OutQuad(1.0f, 0.0f, mutekiTimer.GetTimeRate());
+		brightColor.r = Easing::OutQuad(1.0f, 0.0f, mutekiTimer.GetTimeRate());
 	}
 
 	//のけぞり中ならのけぞらせる
@@ -193,7 +193,7 @@ void Player::Update()
 
 	//更新してからバッファに送る
 	obj.mTransform.UpdateMatrix();
-	GameObjectTransferBuffer(Camera::sNowCamera->mViewProjection);
+	BrightTransferBuffer(Camera::sNowCamera->mViewProjection);
 
 	ui.Update(this);
 
@@ -356,7 +356,7 @@ void Player::Draw()
 {
 	if (isAlive || Util::debugBool)
 	{
-		ObjDraw();
+		BrightDraw();
 		if (isCollectFan)
 		{
 			collectRangeModelCircle.Draw();
