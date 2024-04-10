@@ -5,6 +5,7 @@
 #include "ImGui.h"
 #include "Renderer.h"
 #include "Minimap.h"
+#include "Camera.h"
 
 void PlayerUI::LoadResource()
 {
@@ -30,7 +31,7 @@ PlayerUI::PlayerUI()
 
 	rangeSize = { 5.f,200.f };
 	minimapIconRange.SetTexture(TextureManager::Load("./Resources/white2x2.png", "white2x2"));
-	minimapIconRange.SetAnchor({0.5f,1.f});
+	minimapIconRange.SetAnchor({ 0.5f,1.f });
 	minimapIconRange.mMaterial.mColor = Color::kWhite;
 	minimapIconRange.mMaterial.mColor.a = 0.3f;
 }
@@ -58,7 +59,8 @@ void PlayerUI::Update(Player* player)
 	minimapIcon.mTransform.rotation.z =
 		player->obj.mTransform.rotation.y;
 	//決めたサイズに
-	minimapIcon.mTransform.scale = { iconSize.x,iconSize.y,1.f };
+	iconSize = { player->obj.mTransform.scale.x * 0.2f,player->obj.mTransform.scale.z * 0.2f };
+	minimapIcon.mTransform.scale = Vector3(iconSize.x,iconSize.y,1.f) * Minimap::GetInstance()->iconSize;
 
 	//更新忘れずに
 	minimapIcon.mTransform.UpdateMatrix();
@@ -72,7 +74,8 @@ void PlayerUI::Update(Player* player)
 	minimapIconRange.mTransform.rotation.z =
 		player->obj.mTransform.rotation.y;
 	//決めたサイズに
-	minimapIconRange.mTransform.scale = { rangeSize.x,rangeSize.y,1.f };
+	minimapIconRange.mTransform.scale =
+		Vector3(player->waxCollectRange * 0.5f, player->waxCollectVertical * 0.5f, 1.f) * Minimap::GetInstance()->iconSize;
 
 	//更新忘れずに
 	minimapIconRange.mTransform.UpdateMatrix();

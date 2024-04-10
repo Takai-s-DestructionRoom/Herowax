@@ -64,6 +64,7 @@ public:
 	
 	void Update()override;
 	void Draw()override;
+	void DrawUI();
 
 	Color SolidBling(const Easing::EaseTimer& timer);
 

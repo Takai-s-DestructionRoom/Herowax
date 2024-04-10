@@ -19,6 +19,8 @@ moveSpeed(0.1f), hp(0), maxHP(10.f)
 		parts[i] = PaintableModelObj(Model::Load("./Resources/Model/VicViper/VicViper.obj", "VicViper", true));
 		//parts[i].mTransform.parent = &obj.mTransform;
 		parts[i].mTransform.scale = Vector3::ONE * 2.f;
+
+		drawerObj[i] = PaintableModelObj(Model::Load("./Resources/Model/Sphere.obj", "Sphere", true));
 	}
 
 	handOriPos[(size_t)Parts::LeftHand] = { -50.f,20.f,0.f };
@@ -78,6 +80,16 @@ void Boss::Update()
 	{
 		parts[i].mTransform.UpdateMatrix();
 		parts[i].TransferBuffer(Camera::sNowCamera->mViewProjection);
+
+		collider[i].pos = parts[i].mTransform.position;
+		collider[i].r = parts[i].mTransform.scale.x;
+		
+		drawerObj[i].mTransform.position = collider[i].pos;
+		drawerObj[i].mTransform.scale = Vector3::ONE * collider[i].r * obj.mTransform.scale.x;
+		drawerObj[i].mTuneMaterial.mColor.a = 0.5f;
+
+		drawerObj[i].mTransform.UpdateMatrix();
+		drawerObj[i].TransferBuffer(Camera::sNowCamera->mViewProjection);
 	}
 
 #pragma region ImGui
@@ -105,6 +117,10 @@ void Boss::Draw()
 
 		if (isDrawCollider) {
 			DrawCollider();
+			for (size_t i = 0; i < drawerObj.size(); i++)
+			{
+				drawerObj[i].Draw();
+			}
 		}
 
 		ui.Draw();

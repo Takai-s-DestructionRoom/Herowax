@@ -41,8 +41,10 @@ private:
 	float phaseTimer;	//フェーズ移行に使うタイマー
 
 public:
-	std::array<ModelObj, 2> parts;			//体のパーツ
-	std::array <Vector3, 2> handOriPos;		//手の基準座標
+	std::array<ModelObj, 2> parts;					//体のパーツ
+	std::array<ColPrimitive3D::Sphere, 2> collider;	//パーツの当たり判定
+	std::array<ModelObj,2> drawerObj;				//当たり判定描画オブジェクト
+	std::array <Vector3, 2> handOriPos;				//手の基準座標
 
 public:
 	Boss();

@@ -27,7 +27,8 @@ void BossUI::Update(Boss* boss)
 	minimapIcon.mTransform.rotation.z =
 		boss->obj.mTransform.rotation.y;
 	//決めたサイズに
-	minimapIcon.mTransform.scale = { iconSize.x,iconSize.y,1.f };
+	iconSize = { boss->obj.mTransform.scale.x * 0.3f,boss->obj.mTransform.scale.z * 0.3f };
+	minimapIcon.mTransform.scale = Vector3(iconSize.x,iconSize.y,1.f) * Minimap::GetInstance()->iconSize;
 
 	//更新忘れずに
 	minimapIcon.mTransform.UpdateMatrix();

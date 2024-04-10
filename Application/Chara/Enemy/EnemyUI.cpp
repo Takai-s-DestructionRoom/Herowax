@@ -14,7 +14,6 @@ void EnemyUI::LoadResource()
 
 EnemyUI::EnemyUI() //: position(1, 1, 1), size(4, 1);
 {
-	iconSize = { 0.15f,0.15f };
 	minimapIcon.SetTexture(TextureManager::Load("./Resources/minimap_icon.png", "minimapIcon"));
 	minimapIcon.mMaterial.mColor = Color::kRed;
 	minimapIcon.mMaterial.mColor.a = 0.5f;
@@ -35,7 +34,9 @@ void EnemyUI::Update(Enemy* enemy)
 	minimapIcon.mTransform.rotation.z =
 		enemy->obj.mTransform.rotation.y;
 	//決めたサイズに
-	minimapIcon.mTransform.scale = { iconSize.x,iconSize.y,1.f };
+	iconSize = { enemy->obj.mTransform.scale.x * 0.03f,enemy->obj.mTransform.scale.z * 0.03f };
+	minimapIcon.mTransform.scale =
+		Vector3(iconSize.x, iconSize.y, 1.f) * Minimap::GetInstance()->iconSize;
 
 	//更新忘れずに
 	minimapIcon.mTransform.UpdateMatrix();

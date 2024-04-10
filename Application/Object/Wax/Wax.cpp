@@ -51,7 +51,7 @@ void Wax::Init(uint32_t power, Vector3 vec,float speed,
 	atkTimer = atkTime;
 	atkTimer.Start();
 
-	iconSize = { 0.7f,0.7f };
+	iconSize = { 0.5f,0.5f };
 	minimapIcon.SetTexture(TextureManager::Load("./Resources/circle.png", "circle"));
 	minimapIcon.mMaterial.mColor = waxOriginColor;
 }
@@ -105,7 +105,10 @@ void Wax::Update()
 	minimapIcon.mTransform.position = { screenPos.x,screenPos.y,0.f };
 
 	//決めたサイズに
-	minimapIcon.mTransform.scale = { iconSize.x,iconSize.y,1.f };
+	iconSize = 
+	{ obj.mTransform.scale.x * 0.5f * WaxManager::GetInstance()->GetSlimeWaxSizeMag(),
+		obj.mTransform.scale.z * 0.5f * WaxManager::GetInstance()->GetSlimeWaxSizeMag() };
+	minimapIcon.mTransform.scale = Vector3(iconSize.x,iconSize.y,1.f) * Minimap::GetInstance()->iconSize;
 
 	//更新忘れずに
 	minimapIcon.mTransform.UpdateMatrix();
@@ -144,14 +147,17 @@ void Wax::Draw()
 
 			Renderer::DrawCall("Opaque", order);
 		}
-
-		//描画範囲制限
-		Renderer::SetScissorRects({ Minimap::GetInstance()->rect });
-		minimapIcon.Draw();
-
-		//元の範囲に戻してあげる
-		Renderer::SetScissorRects({ Minimap::GetInstance()->defaultRect });
 	}
+}
+
+void Wax::DrawUI()
+{
+	//描画範囲制限
+	Renderer::SetScissorRects({ Minimap::GetInstance()->rect });
+	minimapIcon.Draw();
+
+	//元の範囲に戻してあげる
+	Renderer::SetScissorRects({ Minimap::GetInstance()->defaultRect });
 }
 
 bool Wax::IsBurning()

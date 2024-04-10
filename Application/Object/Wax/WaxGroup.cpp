@@ -63,6 +63,16 @@ void WaxGroup::Draw()
 	}
 }
 
+void WaxGroup::DrawUI()
+{
+	for (auto& wax : waxs)
+	{
+		if (wax->isAlive) {
+			wax->DrawUI();
+		}
+	}
+}
+
 void WaxGroup::DrawCollider()
 {
 	for (auto& wax : waxs)

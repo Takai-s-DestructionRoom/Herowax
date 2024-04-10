@@ -119,7 +119,7 @@ WaxManager::WaxManager() :
 	heatBonus = Parameter::GetParam(extract, "ボーナス上昇温度", 2.f);
 	accelAmount = Parameter::GetParam(extract, "回収時の加速度", 0.1f);
 	colliderSize = Parameter::GetParam(extract, "当たり判定の大きさ", 2.5f);
-	slimeWaxSizeMag = Parameter::GetParam(extract,"ロウの見た目の大きさの係数", 1.0f);
+	slimeWaxSizeMag = Parameter::GetParam(extract, "ロウの見た目の大きさの係数", 1.0f);
 
 	for (int i = 0; i < 10; i++)
 	{
@@ -187,7 +187,7 @@ void WaxManager::Update()
 	ImGui::Begin("Wax", NULL, window_flags);
 	ImGui::Text("存在しているロウの数:%d", (int)GetWaxNum());
 	ImGui::PushItemWidth(100);
-	
+
 	ImGui::InputFloat("回収時の加速度", &accelAmount, 0.05f);
 	ImGui::InputFloat("当たり判定の大きさ", &colliderSize, 0.1f);
 	ImGui::InputFloat("ロウの見た目の大きさの係数", &slimeWaxSizeMag, 0.1f);
@@ -238,6 +238,7 @@ void WaxManager::Draw()
 {
 	for (auto& group : waxGroups)
 	{
+		group->DrawUI();
 		if (isViewObjectWax) {
 			group->Draw();
 		}
