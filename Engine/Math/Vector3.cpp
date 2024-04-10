@@ -80,6 +80,15 @@ Vector3& Vector3::operator*=(const Vector3& a)
 	return *this;
 }
 
+Vector3& Vector3::operator*(const Vector3& a)
+{
+	x *= a.x;
+	y *= a.y;
+	z *= a.z;
+
+	return *this;
+}
+
 Vector3& Vector3::operator*=(const float a) {
 	x *= a;
 	y *= a;

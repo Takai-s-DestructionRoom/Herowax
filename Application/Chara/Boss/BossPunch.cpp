@@ -31,6 +31,7 @@ void BossPunch::Update(Boss* boss)
 		splinePoints = {
 			boss->parts[(size_t)isLeft_].obj.mTransform.position,					//元の座標から
 			boss->parts[(size_t)isLeft_].obj.mTransform.position - handToTarget * 15.f,	//後ろに引いて
+			//boss->GetFrontVec() * Vector3((float)isLeft_,0,0) * 30.f,	//横に膨らませる
 			boss->GetTarget()->mTransform.position				//目標地点まで
 		};
 

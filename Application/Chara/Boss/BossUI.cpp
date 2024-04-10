@@ -13,7 +13,6 @@ void BossUI::LoadResource()
 
 BossUI::BossUI()
 {
-	iconSize = { 10.f,10.f };
 	minimapIcon.SetTexture(TextureManager::Load("./Resources/white2x2.png", "white2x2"));
 	minimapIcon.mMaterial.mColor = Color::kGreen;
 }
@@ -27,7 +26,7 @@ void BossUI::Update(Boss* boss)
 	minimapIcon.mTransform.rotation.z =
 		boss->obj.mTransform.rotation.y;
 	//決めたサイズに
-	iconSize = { boss->obj.mTransform.scale.x * 0.3f,boss->obj.mTransform.scale.z * 0.3f };
+	iconSize = { boss->obj.mTransform.scale.x * 2.5f,boss->obj.mTransform.scale.z * 2.5f };
 	minimapIcon.mTransform.scale = Vector3(iconSize.x,iconSize.y,1.f) * Minimap::GetInstance()->iconSize;
 
 	//更新忘れずに
