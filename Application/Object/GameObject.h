@@ -63,6 +63,7 @@ public:
 			obj.mTransform.position.z);
 	}
 	Vector3 GetFrontVec();
+	bool GetIsDrawCollider() { return isDrawCollider; }
 
 	void ChangeDrawCollider(bool isCollider);
 

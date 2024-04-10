@@ -21,17 +21,17 @@ void BossPunch::Update(Boss* boss)
 		//こぶしから目標までのベクトル
 		handToTarget =
 			(boss->GetTarget()->mTransform.position -
-				boss->parts[(size_t)isLeft_].mTransform.position).Normalize();
+				boss->parts[(size_t)isLeft_].obj.mTransform.position).Normalize();
 
 		splinePoints = {
-			boss->parts[(size_t)isLeft_].mTransform.position,					//元の座標から
-			boss->parts[(size_t)isLeft_].mTransform.position - handToTarget * 15.f,	//後ろに引いて
+			boss->parts[(size_t)isLeft_].obj.mTransform.position,					//元の座標から
+			boss->parts[(size_t)isLeft_].obj.mTransform.position - handToTarget * 15.f,	//後ろに引いて
 			boss->GetTarget()->mTransform.position				//目標地点まで
 		};
 	}
 
 	//スプライン使って飛ばす
-	boss->parts[(size_t)isLeft_].mTransform.position =
+	boss->parts[(size_t)isLeft_].obj.mTransform.position =
 		Util::Spline(splinePoints, Easing::InQuad(punchTimer.GetTimeRate()));
 
 	handToTarget.Normalize();
@@ -56,6 +56,6 @@ void BossPunch::Update(Boss* boss)
 	aLookat = aLookat * punchQuaterX * punchQuaterY;
 
 	//euler軸へ変換
-	boss->parts[(size_t)isLeft_].mTransform.rotation = aLookat.ToEuler();
+	boss->parts[(size_t)isLeft_].obj.mTransform.rotation = aLookat.ToEuler();
 	boss->obj.mTransform.rotation = aLookat.ToEuler();
 }
