@@ -64,7 +64,7 @@ public:
 	}
 	Vector3 GetFrontVec();
 
-	void ChangeDrawCollider(bool isCollider);
+	void SetDrawCollider(bool isCollider);
 
 	// セッター //
 	//座標設定

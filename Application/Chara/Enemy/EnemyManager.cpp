@@ -144,7 +144,7 @@ void EnemyManager::Update()
 		enemy->changeColor = changeColor;
 		enemy->colliderSize = collideSize;
 		enemy->obj.mTransform.scale = enemySize;
-		enemy->ChangeDrawCollider(hitChecker);
+		enemy->SetDrawCollider(hitChecker);
 		enemy->attackHitCollider.r = attackHitColliderSize;
 		enemy->attackMovePower = attackMove;
 		enemy->SetMoveSpeed(moveSpeed);

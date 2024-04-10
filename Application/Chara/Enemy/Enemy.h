@@ -97,6 +97,8 @@ private:
 	void KnockRota();
 	//通常時の回転
 	void Rotation(const Vector3& pVec);
+	//Updateの最初で初期化するもの
+	void Reset();
 
 public:
 	Enemy(ModelObj* target_);
