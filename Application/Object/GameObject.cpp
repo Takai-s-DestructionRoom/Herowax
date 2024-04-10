@@ -97,6 +97,16 @@ void GameObject::SetDrawCollider(bool isCollider)
 	isDrawCollider = isCollider;
 }
 
+void GameObject::InitCollider()
+{
+	collider.pos = GetPos();
+	//もっともデカいスケールを半径とする
+	float maxR = GetScale().x;
+	if (maxR < GetScale().y)maxR = GetScale().y;
+	if (maxR < GetScale().z)maxR = GetScale().z;
+	collider.r = maxR;
+}
+
 void GameObject::UpdateCollider()
 {
 	collider.pos = GetPos();
@@ -119,21 +129,20 @@ void GameObject::UpdateCollider()
 	drawerObj.TransferBuffer(Camera::sNowCamera->mViewProjection);
 }
 
-void GameObject::GameObjectTransferBuffer(const ViewProjection& view)
+void GameObject::BrightTransferBuffer(const ViewProjection& view)
 {
 	obj.TransferBuffer(view);
-	AddColor->addColor.x = blightColor.r;
-	AddColor->addColor.y = blightColor.g;
-	AddColor->addColor.z = blightColor.b;
-	AddColor->addColor.w = blightColor.a;
+	AddColor->addColor.x = brightColor.r;
+	AddColor->addColor.y = brightColor.g;
+	AddColor->addColor.z = brightColor.b;
+	AddColor->addColor.w = brightColor.a;
 }
 
-void GameObject::ObjDraw()
+void GameObject::BrightDraw()
 {
-	GraphicsPipeline pipe = GameObjectPipeLine();
+	GraphicsPipeline pipe = *GetPipeline();
 
-	for (RenderOrder order : obj.GetRenderOrder()) {
-		order.rootData.push_back({ RootDataType::SRBUFFER_CBV ,AddColor.mBuff });
+	for (RenderOrder order : GetRenderOrder()) {
 		Renderer::DrawCall("Opaque", order);
 	}
 }
@@ -152,4 +161,78 @@ void GameObject::DrawCollider()
 		order.pipelineState = pipe.mPtr.Get();
 		Renderer::DrawCall("Opaque", order);
 	}
+}
+
+RootSignature* GameObject::GetRootSig()
+{
+	RootSignatureDesc rDesc = RDirectX::GetDefRootSignature().mDesc;
+
+	DescriptorRange descriptorRange{};
+	descriptorRange.NumDescriptors = 1;
+	descriptorRange.RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_SRV;
+	descriptorRange.BaseShaderRegister = 1; //テクスチャレジスタ1番
+	descriptorRange.OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND;
+
+	RootParamater paintTexRP{};
+	paintTexRP.ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;
+	paintTexRP.DescriptorTable = { descriptorRange };
+	paintTexRP.ShaderVisibility = D3D12_SHADER_VISIBILITY_ALL;
+	rDesc.RootParamaters.push_back(paintTexRP);
+
+	RootParamater paintDataRP{};
+	paintDataRP.ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;
+	paintDataRP.Descriptor.ShaderRegister = 10;
+	paintDataRP.Descriptor.RegisterSpace = 0;
+	paintDataRP.ShaderVisibility = D3D12_SHADER_VISIBILITY_ALL;
+	rDesc.RootParamaters.push_back(paintDataRP);
+
+	RootParamater paintDataRP2{};
+	paintDataRP2.ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;
+	paintDataRP2.Descriptor.ShaderRegister = 11;
+	paintDataRP2.Descriptor.RegisterSpace = 0;
+	paintDataRP2.ShaderVisibility = D3D12_SHADER_VISIBILITY_ALL;
+	rDesc.RootParamaters.push_back(paintDataRP2);
+
+	return &RootSignature::GetOrCreate("PaintedBright", rDesc);
+}
+
+GraphicsPipeline* GameObject::GetPipeline()
+{
+	PipelineStateDesc pDesc = RDirectX::GetDefPipeline().mDesc;
+	pDesc.PS = Shader::GetOrCreate("PaintedBrightPS", "Shader/PaintedBright/PaintedBrightPS.hlsl", 
+		"main", "ps_5_1");
+	pDesc.pRootSignature = GetRootSig()->mPtr.Get();
+
+	return &GraphicsPipeline::GetOrCreate("PaintedBright", pDesc);
+}
+
+std::vector<RenderOrder> GameObject::GetRenderOrder()
+{
+	std::vector<RenderOrder> result;
+
+	for (int32_t i = 0; i < obj.mModel->mData.size(); i++) {
+		ModelMesh* data = obj.mModel->mData[i].get();
+		std::vector<RootData> rootData = {
+			{ TextureManager::Get(data->mMaterial.mTexture).mGpuHandle },
+			{ RootDataType::SRBUFFER_CBV, obj.mMaterialBuffMap[data->mMaterial.mName].mBuff },
+			{ RootDataType::SRBUFFER_CBV, obj.mTransformBuff.mBuff },
+			{ RootDataType::SRBUFFER_CBV, obj.mViewProjectionBuff.mBuff },
+			{ RootDataType::LIGHT },
+			{ TextureManager::Get(obj.mPaintDissolveMapTex).mGpuHandle },
+			{ RootDataType::SRBUFFER_CBV, obj.mPaintDataBuff.mBuff },
+			{ RootDataType::SRBUFFER_CBV, AddColor.mBuff }
+		};
+
+		RenderOrder order;
+		order.mRootSignature = GetRootSig()->mPtr.Get();
+		order.pipelineState = GetPipeline()->mPtr.Get();
+		order.vertView = &data->mVertBuff.mView;
+		order.indexView = &data->mIndexBuff.mView;
+		order.indexCount = static_cast<uint32_t>(data->mIndices.size());
+		order.rootData = rootData;
+
+		result.push_back(order);
+	}
+
+	return result;
 }

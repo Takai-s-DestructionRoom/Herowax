@@ -37,7 +37,7 @@ private:
 	//------------ HP関連 ------------//
 	float hp;				//現在のヒットポイント
 	float maxHP;			//最大HP
-	Easing::EaseTimer mutekiTimer;		//無敵時間さん
+	Easing::EaseTimer mutekiTimer;			//無敵時間さん
 
 	//------------ 攻撃関連 ------------//
 	Easing::EaseTimer punchTimer;		//パンチにかかる時間
@@ -57,10 +57,22 @@ private:
 
 	float phaseTimer;	//フェーズ移行に使うタイマー
 
+	//---------被弾時表現関連------------//
+	Easing::EaseTimer whiteTimer;	//被弾時に白く光るのを管理する
+
+	//---------固まり表現関連---------//
+	int32_t waxSolidCount = 0; //ロウのかかり具合カウント
+	int32_t requireWaxSolidCount = 10; //完全に固まるまでに必要なロウのかかり回数
+	Easing::EaseTimer waxShakeOffTimer = 5.0f; //ロウを振り払うタイマー
+
 public:
 	std::unique_ptr<BossState> state;		//状態管理
 
 	std::array<Parts, 2> parts;		//体のパーツ
+
+private:
+	//すべてのステートでの共通処理
+	void AllStateUpdate();
 
 public:
 	Boss();
@@ -80,4 +92,7 @@ public:
 	void SetStateStr(std::string str) { stateStr = str; }
 	//攻撃対象を設定
 	void SetTarget(ModelObj* target_) { target = target_; }
+
+	//ダメージを与える
+	void DealDamage(int32_t damage);
 };

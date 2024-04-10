@@ -183,11 +183,11 @@ void Enemy::Update()
 
 	//色の加算
 	whiteTimer.Update();
-	blightColor.r = Easing::OutQuad(1, 0, whiteTimer.GetTimeRate());
-	blightColor.g = Easing::OutQuad(1, 0, whiteTimer.GetTimeRate());
-	blightColor.b = Easing::OutQuad(1, 0, whiteTimer.GetTimeRate());
-	blightColor.a = Easing::OutQuad(1, 0, whiteTimer.GetTimeRate());
-	if (!whiteTimer.GetStarted())blightColor = { 0,0,0,0 };
+	brightColor.r = Easing::OutQuad(1, 0, whiteTimer.GetTimeRate());
+	brightColor.g = Easing::OutQuad(1, 0, whiteTimer.GetTimeRate());
+	brightColor.b = Easing::OutQuad(1, 0, whiteTimer.GetTimeRate());
+	brightColor.a = Easing::OutQuad(1, 0, whiteTimer.GetTimeRate());
+	if (!whiteTimer.GetStarted())brightColor = { 0,0,0,0 };
 
 	UpdateCollider();
 	UpdateAttackCollider();
@@ -197,7 +197,7 @@ void Enemy::Update()
 	obj.mPaintDataBuff->dissolveVal = waxSolidCount >= requireWaxSolidCount ? 1.0f : 0.3f / (requireWaxSolidCount - 1) * waxSolidCount;
 	obj.mPaintDataBuff->color = Color(0.8f, 0.6f, 0.35f, 1.0f);
 	obj.mPaintDataBuff->slide += TimeManager::deltaTime;
-	GameObjectTransferBuffer(Camera::sNowCamera->mViewProjection);
+	BrightTransferBuffer(Camera::sNowCamera->mViewProjection);
 
 	ui.Update(this);
 
@@ -209,7 +209,7 @@ void Enemy::Draw()
 {
 	if (isAlive)
 	{
-		ObjDraw();
+		BrightDraw();
 		//obj.Draw();
 		
 		ui.Draw();

@@ -157,6 +157,24 @@ void ProtoScene::Update()
 		}
 	}
 
+	//蝋とボスの当たり判定
+	for (auto& group : WaxManager::GetInstance()->waxGroups)
+	{
+		for (auto& wax : group->waxs) 
+		{
+			bool isCollision = ColPrimitive3D::CheckSphereToSphere(boss.collider, wax->collider);
+
+			//投げられてる蝋に当たった時はダメージと蝋蓄積
+			if (isCollision && 
+				wax->isSolid == false && 
+				wax->isGround == false)
+			{
+				//一応1ダメージ
+				boss.DealDamage(1);
+			}
+		}
+	}
+
 	for (auto& enemy : EnemyManager::GetInstance()->enemys)
 	{
 		//蝋と当たり判定をする前に、足盗られは毎フレーム解除判定を行う

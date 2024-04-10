@@ -5,6 +5,11 @@ using namespace ColPrimitive3D;
 
 bool ColPrimitive3D::CheckSphereToSphere(Sphere a, Sphere b)
 {
+    //両者の当たり判定がどちらも0ならあたらない
+    if (a.r == 0 && b.r == 0) {
+        return false;
+    }
+
     Vector3 dis = b.pos - a.pos;
     float lf = dis.LengthSq();
     float rf = (a.r + b.r) * (a.r + b.r);
