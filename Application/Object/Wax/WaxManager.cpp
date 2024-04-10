@@ -245,7 +245,7 @@ void WaxManager::Draw()
 		for (auto& wax : group->waxs)
 		{
 			if (isViewCol) {
-				wax->ChangeDrawCollider(true);
+				wax->SetDrawCollider(true);
 				wax->DrawCollider();
 			}
 		}

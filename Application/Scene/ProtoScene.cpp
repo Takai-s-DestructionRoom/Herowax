@@ -118,6 +118,16 @@ void ProtoScene::Update()
 
 	//ここに無限に当たり判定増やしていくの嫌なのであとで何か作ります
 	//クソ手抜き当たり判定
+	for (size_t i = 0; i < boss.parts.size(); i++)
+	{
+		if (ColPrimitive3D::CheckSphereToSphere(boss.parts[i].collider,
+			player.collider))
+		{
+			//1ダメージ(どっかに参照先作るべき)
+			player.DealDamage(1);
+		}
+	}
+	
 	for (auto& enemy : EnemyManager::GetInstance()->enemys)
 	{
 		//タワーとの当たり判定

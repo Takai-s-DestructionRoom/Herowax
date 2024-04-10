@@ -5,13 +5,25 @@
 #include "Vector2.h"
 #include "BossState.h"
 #include "BossUI.h"
+#include <array>
 
-enum class Parts
+enum class PartsNum
 {
 	LeftHand,	//0
 	RightHand,	//1
 
 	Max			//2
+};
+
+class Parts : public GameObject
+{
+public:
+	Vector3 oriPos;	//パーツごとの基準座標
+
+public:
+	void Init();
+	void Update();
+	void Draw();
 };
 
 class Boss : public GameObject
@@ -36,15 +48,12 @@ private:
 	BossUI ui;
 
 	bool changingState = false;		//ステート変更中かフラグ
-	bool isDrawCollider = false;	//当たり判定描画するかフラグ
+	bool isDrawObj = true;			//オブジェクト描画するかフラグ
 
 	float phaseTimer;	//フェーズ移行に使うタイマー
 
 public:
-	std::array<ModelObj, 2> parts;					//体のパーツ
-	std::array<ColPrimitive3D::Sphere, 2> collider;	//パーツの当たり判定
-	std::array<ModelObj,2> drawerObj;				//当たり判定描画オブジェクト
-	std::array <Vector3, 2> handOriPos;				//手の基準座標
+	std::array<Parts, 2> parts;		//体のパーツ
 
 public:
 	Boss();
