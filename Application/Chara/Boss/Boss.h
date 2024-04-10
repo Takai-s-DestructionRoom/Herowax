@@ -11,8 +11,8 @@
 
 enum class PartsNum
 {
-	LeftHand,	//0
 	RightHand,	//1
+	LeftHand,	//0
 
 	Max			//2
 };

@@ -49,11 +49,11 @@ void BossPunch::Update(Boss* boss)
 	punchRadianX = Easing::InQuad(Util::AngleToRadian(-60.f), 0, boss->punchTimer.GetTimeRate());
 	if (isLeft_)
 	{
-		punchRadianY = Easing::InQuad(Util::AngleToRadian(90.f), 0, boss->punchTimer.GetTimeRate());
+		punchRadianY = Easing::InQuad(Util::AngleToRadian(-90.f), 0, boss->punchTimer.GetTimeRate());
 	}
 	else
 	{
-		punchRadianY = Easing::InQuad(Util::AngleToRadian(-90.f), 0, boss->punchTimer.GetTimeRate());
+		punchRadianY = Easing::InQuad(Util::AngleToRadian(90.f), 0, boss->punchTimer.GetTimeRate());
 	}
 
 	Quaternion punchQuaterX = Quaternion::AngleAxis({ 1,0,0 }, punchRadianX);
