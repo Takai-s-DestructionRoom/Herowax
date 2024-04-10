@@ -24,7 +24,7 @@ public:
 	ColPrimitive3D::Sphere collider;	//Sphereの当たり判定
 	float colliderSize;					//当たり判定のサイズ
 
-	Color blightColor = {0,0,0,0};
+	Color brightColor = {0,0,0,0};
 
 	static RootSignature GameObjectRootSignature();
 	static GraphicsPipeline GameObjectPipeLine();
@@ -42,8 +42,11 @@ public:
 	virtual void Update() = 0;
 	virtual void Draw() = 0;
 
-	void GameObjectTransferBuffer(const ViewProjection& view);
-	void ObjDraw();	//自身が持っているobjのDrawを専用のシェーダーで描画するもの
+	//光る値をシェーダーへ送信する専用バッファー
+	void BrightTransferBuffer(const ViewProjection& view);
+	
+	//自身が持っているobjのDrawを専用のシェーダーで描画するもの
+	void BrightDraw();
 
 	//当たり判定の描画
 	void DrawCollider();

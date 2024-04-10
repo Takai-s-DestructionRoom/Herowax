@@ -129,16 +129,16 @@ void GameObject::UpdateCollider()
 	drawerObj.TransferBuffer(Camera::sNowCamera->mViewProjection);
 }
 
-void GameObject::GameObjectTransferBuffer(const ViewProjection& view)
+void GameObject::BrightTransferBuffer(const ViewProjection& view)
 {
 	obj.TransferBuffer(view);
-	AddColor->addColor.x = blightColor.r;
-	AddColor->addColor.y = blightColor.g;
-	AddColor->addColor.z = blightColor.b;
-	AddColor->addColor.w = blightColor.a;
+	AddColor->addColor.x = brightColor.r;
+	AddColor->addColor.y = brightColor.g;
+	AddColor->addColor.z = brightColor.b;
+	AddColor->addColor.w = brightColor.a;
 }
 
-void GameObject::ObjDraw()
+void GameObject::BrightDraw()
 {
 	GraphicsPipeline pipe = *GetPipeline();
 

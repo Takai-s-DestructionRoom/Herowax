@@ -1,10 +1,16 @@
 #include "BossPunch.h"
 #include "Boss.h"
 
+BossPunch::BossPunch()
+{
+}
+
 BossPunch::BossPunch(bool isLeft)
 {
-	punchTimer = 0.7f;
+	isFinished = false;
+
 	punchTimer.Reset();
+	stayTimer.Reset();
 
 	isLeft_ = isLeft;
 }
@@ -13,6 +19,7 @@ void BossPunch::Update(Boss* boss)
 {
 	boss->SetStateStr("Punch");	//ステートがわかるように設定しとく
 	punchTimer.Update();
+	stayTimer.Update();
 
 	if (punchTimer.GetStarted() == false)
 	{
@@ -58,4 +65,14 @@ void BossPunch::Update(Boss* boss)
 	//euler軸へ変換
 	boss->parts[(size_t)isLeft_].obj.mTransform.rotation = aLookat.ToEuler();
 	boss->obj.mTransform.rotation = aLookat.ToEuler();
+
+	if (punchTimer.GetEnd() && stayTimer.GetStarted() == false)
+	{
+		stayTimer.Start();
+	}
+
+	if (stayTimer.GetEnd())
+	{
+		isFinished = true;
+	}
 }

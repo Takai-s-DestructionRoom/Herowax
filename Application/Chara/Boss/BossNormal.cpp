@@ -22,7 +22,6 @@ void BossNormal::Update(Boss* boss)
 	//ターゲットの方向を向いてくれる
 	Quaternion aLookat = Quaternion::LookAt(aVec);
 
-
 	// 補間の処理 //
 	interpolationTimer.Update();
 
