@@ -91,7 +91,7 @@ void Boss::AllStateUpdate()
 		if (waxShakeOffTimer.GetEnd())
 		{
 			//振り払う
-			waxShakeOffTimer.Reset();
+			waxShakeOffTimer.Start();
 			//減るのは一段階
 			waxSolidCount--;
 		}
@@ -177,6 +177,8 @@ void Boss::Update()
 		parts[0].collider.pos.x, parts[0].collider.pos.y, parts[0].collider.pos.z);
 	ImGui::Text("手のコライダーサイズ:%f", parts[0].collider.r);
 	ImGui::Text("手のコライダー描画フラグ:%d", parts[0].GetIsDrawCollider());
+	ImGui::Text("lefthandWaxSolid:%d", parts[(int32_t)PartsNum::LeftHand].waxSolidCount);
+	ImGui::Text("righthandWaxSolid:%d", parts[(int32_t)PartsNum::RightHand].waxSolidCount);
 	if (ImGui::TreeNode("調整項目_手")) {
 		ImGui::DragFloat3("右手スケール", &parts[(int32_t)PartsNum::LeftHand].obj.mTransform.scale.x, 0.1f);
 		ImGui::DragFloat3("左手スケール", &parts[(int32_t)PartsNum::RightHand].obj.mTransform.scale.x, 0.1f);

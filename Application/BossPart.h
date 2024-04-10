@@ -7,6 +7,7 @@ class Parts : public GameObject
 public:
 	Vector3 oriPos;	//パーツごとの基準座標
 
+	int32_t waxSolidCount = 0; //ロウのかかり具合カウント
 private:
 	//------------ HP関連 ------------//
 	float hp = 0.0f;				//現在のヒットポイント
@@ -17,9 +18,20 @@ private:
 	Easing::EaseTimer whiteTimer;	//被弾時に白く光るのを管理する
 
 	//---------固まり表現関連---------//
-	int32_t waxSolidCount = 0; //ロウのかかり具合カウント
 	int32_t requireWaxSolidCount = 10; //完全に固まるまでに必要なロウのかかり回数
 	Easing::EaseTimer waxShakeOffTimer = 5.0f; //ロウを振り払うタイマー
+	
+	Vector3 shake = {};
+	Easing::EaseTimer shakeTimer = 0.5f;		//振り払うときにするシェイクを管理するタイマー
+	Easing::EaseTimer waxScatterTimer = 0.1f;	//振り払うときにするシェイクを管理するタイマー
+
+	//ロウを出すためのパラメータ(適当でもいい)
+	float solidTime= 0;
+	int32_t atkPower = 0;
+	float atkRange = 0;
+	float atkSize = 0;
+	float atkSpeed = 0;
+	float atkTime = 0;
 
 public:
 	Parts();
