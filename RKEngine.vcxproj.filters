@@ -690,6 +690,9 @@
     <ClCompile Include="Application\Chara\Boss\BossNormal.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
+      <ClCompile Include="Application\Chara\Boss\BossAI.cpp" />
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Shader\Basic\BasicPS.hlsl">
@@ -1259,6 +1262,9 @@
       <Filter>ヘッダー ファイル\Application\Object\Chara\Boss</Filter>
     </ClInclude>
     <ClInclude Include="Application\Chara\Boss\BossUI.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Application\Chara\Boss\BossAI.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
     <ClInclude Include="Application\ParticleEditorScene.h">

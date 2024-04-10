@@ -7,7 +7,7 @@ class Boss;
 class BossState
 {
 protected:
-	bool finished = false;	//行動終了したかフラグ
+	bool isFinished = false;	//行動終了したかフラグ
 
 public:
 	virtual void Update(Boss* boss) = 0;
@@ -15,7 +15,7 @@ public:
 
 	// ゲッター //
 	//行動終了したかフラグ取得
-	bool GetIsFinished() { return finished; }
+	bool GetIsFinished() { return isFinished; }
 	//優先度取得
 	int32_t GetPriority() { return priority; }
 
