@@ -85,6 +85,13 @@ protected:
 	void UpdateCollider();
 
 private:
+	RootSignature* GetRootSig();
+
+	GraphicsPipeline* GetPipeline();
+
+	std::vector<RenderOrder> GameObject::GetRenderOrder();
+
+private:
 	//コピー禁止
 	GameObject(const GameObject& a) = delete;
 	GameObject& operator=(const GameObject&) = delete;
