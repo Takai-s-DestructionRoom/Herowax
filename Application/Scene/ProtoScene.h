@@ -53,4 +53,6 @@ private:
 	float scale[3] = { 1, 1, 1 };
 
 	bool changeFPS = false;
+
+	bool changeCamera = false;
 };

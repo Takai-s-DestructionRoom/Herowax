@@ -87,9 +87,6 @@ void ProtoScene::Update()
 	//初期化周り
 	InstantDrawer::DrawInit();
 
-	//EnemyManager::GetInstance()->Delete();
-	//WaxManager::GetInstance()->Delete();
-
 	Vector2 stick = RInput::GetInstance()->GetRStick(false, true);
 
 	if (stick.LengthSq() > 0.0f) {
@@ -119,7 +116,6 @@ void ProtoScene::Update()
 
 	//ここに無限に当たり判定増やしていくの嫌なのであとで何か作ります
 	//クソ手抜き当たり判定
-	
 	for (auto& enemy : EnemyManager::GetInstance()->enemys)
 	{
 		//タワーとの当たり判定
@@ -305,16 +301,6 @@ void ProtoScene::Update()
 						//	//燃えている状態へ遷移
 						//	wax2->ChangeState<WaxIgnite>();
 						//}
-
-						//回収中ものと通常の状態なら
-						if (wax1->stateStr == "WaxCollect" && wax2->IsNormal())
-						{
-							//死ぬ
-							//wax2->DeadParticle();
-							//wax2->isAlive = false;
-
-							//player.waxCollectAmount++;
-						}
 					}
 				}
 			}
@@ -351,9 +337,6 @@ void ProtoScene::Update()
 	ParticleManager::GetInstance()->SetPlayerPos(player.GetCenterPos());
 	ParticleManager::GetInstance()->Update();
 
-	//eggUI.Update();
-	//nest.Update();
-
 	Minimap::GetInstance()->Update();
 
 	light.Update();
@@ -388,12 +371,19 @@ void ProtoScene::Update()
 	ImGui::SliderFloat("カメラ移動速度Y", &cameraSpeed.y,0.0f,0.5f);
 	ImGui::SliderFloat("ミニマップカメラ距離:%f", &mmCameraDist, -1000.f, 0.f);
 	
-	static bool changeCamera = false;
 	static float saveDist = cameraDist;
 	static Vector2 saveAngle = cameraAngle;
 	
-	if (ImGui::Checkbox("上から視点に切り替え", &changeCamera)) {
-		if (changeCamera) {
+	if (ImGui::Checkbox("上から視点に切り替え", &changeCamera) ||
+		RInput::GetPadButtonDown(XINPUT_GAMEPAD_BACK)) 
+	{
+		//パッド入力の場合はフラグ切り替え1
+		if (RInput::GetPadButtonDown(XINPUT_GAMEPAD_BACK)) {
+			changeCamera = !changeCamera;
+		}
+
+		if (changeCamera)
+		{
 			saveDist = cameraDist;
 			saveAngle = cameraAngle;
 		}
