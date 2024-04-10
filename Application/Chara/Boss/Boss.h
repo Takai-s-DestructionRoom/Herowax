@@ -11,8 +11,8 @@
 
 enum class PartsNum
 {
-	LeftHand,	//0
 	RightHand,	//1
+	LeftHand,	//0
 
 	Max			//2
 };
@@ -28,10 +28,6 @@ private:
 	float hp;				//現在のヒットポイント
 	float maxHP;			//最大HP
 	Easing::EaseTimer mutekiTimer;			//無敵時間さん
-
-	//------------ 攻撃関連 ------------//
-	Easing::EaseTimer punchTimer;		//パンチにかかる時間
-	Easing::EaseTimer stayTimer;		//パンチ終わってからモーション終了までの時間
 
 	//------------ その他 ------------//
 	std::unique_ptr<BossState> nextState;	//次のステート
@@ -56,9 +52,14 @@ private:
 	Easing::EaseTimer waxShakeOffTimer = 5.0f; //ロウを振り払うタイマー
 
 public:
-	std::unique_ptr<BossState> state;		//状態管理
+	std::unique_ptr<BossState> state;	//状態管理
 
-	std::array<Parts, 2> parts;		//体のパーツ
+	std::array<Parts, 2> parts;			//体のパーツ
+
+	//------------ 行動関連 ------------//
+	Easing::EaseTimer standTimer;		//待機時間
+	Easing::EaseTimer punchTimer;		//パンチにかかる時間
+	Easing::EaseTimer punchStayTimer;	//パンチ終わってからモーション終了までの時間
 
 private:
 	//すべてのステートでの共通処理

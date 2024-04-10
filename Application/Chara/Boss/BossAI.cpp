@@ -7,7 +7,7 @@
 
 void BossAI::Init()
 {
-	actTimer = 0;
+	isStart = true;
 }
 
 void BossAI::Update(Boss* boss)
@@ -15,13 +15,22 @@ void BossAI::Update(Boss* boss)
 	bool changeAct = false;
 	bool isStand = false;
 
-	//ボスが待機モーション中なら
-	if (boss->GetStateStr() == "BossNormal") {
-		actTimer += TimeManager::deltaTime;
+	if (isStart)
+	{
+		boss->standTimer.Reset();
+		isStart = false;
+	}
 
-		//4秒経過で次の行動へ
-		if (actTimer >= 3.0f) {
-			actTimer = 0;
+	//ボスが待機モーション中なら
+	if (boss->GetStateStr() == "Normal") {
+		boss->standTimer.Update();
+
+		if (boss->standTimer.GetStarted() == false) {
+			boss->standTimer.Start();
+		}
+
+		//待機時間過ぎたら次の行動へ
+		if (boss->standTimer.GetEnd()) {
 			changeAct = true;
 			isStand = true;
 		}
@@ -34,13 +43,23 @@ void BossAI::Update(Boss* boss)
 	}
 
 	if (changeAct) {
-		actTimer = 0;
+		boss->standTimer.Reset();
 
 		//待機モーションから遷移した場合
 		if (isStand)
 		{
+			int32_t num = Util::GetRand(1, 100);	//確率用
+
 			//パンチに移行
-			boss->state = std::make_unique<BossPunch>();
+			//50%で右パンチ50%で左パンチ
+			if (num > 50)
+			{
+				boss->state = std::make_unique<BossPunch>(true);
+			}
+			else
+			{
+				boss->state = std::make_unique<BossPunch>(false);
+			}
 			return;
 		}
 		//何かしらの行動後

@@ -9,21 +9,19 @@ BossPunch::BossPunch(bool isLeft)
 {
 	isFinished = false;
 
-	punchTimer.Reset();
-	stayTimer.Reset();
-
 	isLeft_ = isLeft;
+	isStart = true;
 }
 
 void BossPunch::Update(Boss* boss)
 {
 	boss->SetStateStr("Punch");	//ステートがわかるように設定しとく
-	punchTimer.Update();
-	stayTimer.Update();
+	boss->punchTimer.Update();
+	boss->punchStayTimer.Update();
 
-	if (punchTimer.GetStarted() == false)
+	if (isStart)
 	{
-		punchTimer.Start();
+		boss->punchTimer.Start();
 
 		//こぶしから目標までのベクトル
 		handToTarget =
@@ -35,25 +33,27 @@ void BossPunch::Update(Boss* boss)
 			boss->parts[(size_t)isLeft_].obj.mTransform.position - handToTarget * 15.f,	//後ろに引いて
 			boss->GetTarget()->mTransform.position				//目標地点まで
 		};
+
+		isStart = false;
 	}
 
 	//スプライン使って飛ばす
 	boss->parts[(size_t)isLeft_].obj.mTransform.position =
-		Util::Spline(splinePoints, Easing::InQuad(punchTimer.GetTimeRate()));
+		Util::Spline(splinePoints, Easing::InQuad(boss->punchTimer.GetTimeRate()));
 
 	handToTarget.Normalize();
 	//ターゲットの方向を向いてくれる
 	Quaternion aLookat = Quaternion::LookAt(handToTarget);
 
 	//殴り時のモーション遷移
-	punchRadianX = Easing::InQuad(Util::AngleToRadian(-60.f), 0, punchTimer.GetTimeRate());
+	punchRadianX = Easing::InQuad(Util::AngleToRadian(-60.f), 0, boss->punchTimer.GetTimeRate());
 	if (isLeft_)
 	{
-		punchRadianY = Easing::InQuad(Util::AngleToRadian(90.f), 0, punchTimer.GetTimeRate());
+		punchRadianY = Easing::InQuad(Util::AngleToRadian(-90.f), 0, boss->punchTimer.GetTimeRate());
 	}
 	else
 	{
-		punchRadianY = Easing::InQuad(Util::AngleToRadian(-90.f), 0, punchTimer.GetTimeRate());
+		punchRadianY = Easing::InQuad(Util::AngleToRadian(90.f), 0, boss->punchTimer.GetTimeRate());
 	}
 
 	Quaternion punchQuaterX = Quaternion::AngleAxis({ 1,0,0 }, punchRadianX);
@@ -66,13 +66,15 @@ void BossPunch::Update(Boss* boss)
 	boss->parts[(size_t)isLeft_].obj.mTransform.rotation = aLookat.ToEuler();
 	boss->obj.mTransform.rotation = aLookat.ToEuler();
 
-	if (punchTimer.GetEnd() && stayTimer.GetStarted() == false)
+	if (boss->punchTimer.GetEnd() && boss->punchStayTimer.GetStarted() == false)
 	{
-		stayTimer.Start();
+		boss->punchStayTimer.Start();
 	}
 
-	if (stayTimer.GetEnd())
+	if (boss->punchStayTimer.GetEnd())
 	{
 		isFinished = true;
+		boss->punchTimer.Reset();
+		boss->punchStayTimer.Reset();
 	}
 }
