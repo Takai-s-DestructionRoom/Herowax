@@ -205,6 +205,7 @@ void Enemy::Draw()
 	if (isAlive)
 	{
 		ObjDraw();
+		//obj.Draw();
 		
 		ui.Draw();
 		

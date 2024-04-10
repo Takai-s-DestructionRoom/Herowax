@@ -132,24 +132,8 @@ void GameObject::ObjDraw()
 {
 	GraphicsPipeline pipe = GameObjectPipeLine();
 
-	for (std::shared_ptr<ModelMesh> data : obj.mModel->mData) {
-		std::vector<RootData> rootData = {
-			{ RootDataType::SRBUFFER_CBV, obj.mMaterialBuffMap[data->mMaterial.mName].mBuff },
-			{ RootDataType::SRBUFFER_CBV, obj.mTransformBuff.mBuff },
-			{ RootDataType::SRBUFFER_CBV, obj.mViewProjectionBuff.mBuff },
-			{ RootDataType::LIGHT },
-			{ TextureManager::Get(data->mMaterial.mTexture).mGpuHandle },
-			{ RootDataType::SRBUFFER_CBV ,AddColor.mBuff}
-		};
-
-		RenderOrder order;
-		order.mRootSignature = GameObjectRootSignature().mPtr.Get();
-		order.pipelineState = pipe.mPtr.Get();
-		order.rootData = rootData;
-		order.vertView = &data->mVertBuff.mView;
-		order.indexView = &data->mIndexBuff.mView;
-		order.indexCount = static_cast<uint32_t>(data->mIndices.size());
-
+	for (RenderOrder order : obj.GetRenderOrder()) {
+		order.rootData.push_back({ RootDataType::SRBUFFER_CBV ,AddColor.mBuff });
 		Renderer::DrawCall("Opaque", order);
 	}
 }
