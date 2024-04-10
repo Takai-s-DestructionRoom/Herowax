@@ -71,7 +71,7 @@ void Boss::Update()
 
 	for (size_t i = 0; i < parts.size(); i++)
 	{
-		parts[i].ChangeDrawCollider(isDrawCollider);
+		parts[i].SetDrawCollider(isDrawCollider);
 		parts[i].Update();
 	}
 
