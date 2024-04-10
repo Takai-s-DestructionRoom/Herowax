@@ -69,6 +69,7 @@ public:
 
 	//平行移動行列らくらく生成
 	static Matrix4 Translation(float x, float y, float z);
+	static Matrix4 Translation(Vector3 pos);
 
 	//スケーリング行列らくらく生成
 	static Matrix4 Scaling(float x, float y, float z);
@@ -82,6 +83,7 @@ public:
 
 	//ZXY(Roll,Pitch,Yaw)回転行列らくらく生成
 	static Matrix4 RotationZXY(float radianX, float radianY, float radianZ);
+	static Matrix4 RotationZXY(Vector3 rot);
 
 	//ビュー変換行列楽々生成
 	static Matrix4 View(Vector3 eye, Vector3 target, Vector3 up);

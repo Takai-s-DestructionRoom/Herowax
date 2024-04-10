@@ -6,17 +6,16 @@
 #include "BossState.h"
 #include "BossUI.h"
 
+enum class Parts
+{
+	LeftHand,	//0
+	RightHand,	//1
+
+	Max			//2
+};
+
 class Boss : public GameObject
 {
-public:
-	enum class Parts
-	{
-		LeftHand,	//0
-		RightHand,	//1
-
-		Max			//2
-	};
-
 private:
 	//------------ 移動関連 ------------//
 	Vector3 moveVec;			//移動ベクトル
@@ -36,8 +35,10 @@ private:
 
 	BossUI ui;
 
-	bool changingState = false;
-	bool isDrawCollider = false;
+	bool changingState = false;		//ステート変更中かフラグ
+	bool isDrawCollider = false;	//当たり判定描画するかフラグ
+
+	float phaseTimer;	//フェーズ移行に使うタイマー
 
 public:
 	std::array<ModelObj, 2> parts;			//体のパーツ

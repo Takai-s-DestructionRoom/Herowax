@@ -1,6 +1,10 @@
 #include "Boss.h"
+#include "BossNormal.h"
+#include "BossPunch.h"
 #include "Camera.h"
 #include "ParticleManager.h"
+#include "RInput.h"
+#include "ImGui.h"
 
 Boss::Boss() : GameObject(),
 moveSpeed(0.1f), hp(0), maxHP(10.f)
@@ -13,12 +17,12 @@ moveSpeed(0.1f), hp(0), maxHP(10.f)
 	for (size_t i = 0; i < (size_t)Parts::Max; i++)
 	{
 		parts[i] = PaintableModelObj(Model::Load("./Resources/Model/VicViper/VicViper.obj", "VicViper", true));
-		parts[i].mTransform.parent = &obj.mTransform;
-		parts[i].mTransform.scale = Vector3::ONE * 0.02f;
+		//parts[i].mTransform.parent = &obj.mTransform;
+		parts[i].mTransform.scale = Vector3::ONE * 2.f;
 	}
 
-	handOriPos[(size_t)Parts::LeftHand] = { -0.5f,0.2f,0.f };
-	handOriPos[(size_t)Parts::RightHand] = { 0.5f,0.2f,0.f };
+	handOriPos[(size_t)Parts::LeftHand] = { -50.f,20.f,0.f };
+	handOriPos[(size_t)Parts::RightHand] = { 50.f,20.f,0.f };
 
 	parts[(size_t)Parts::LeftHand].mTransform.position =
 		handOriPos[(size_t)Parts::LeftHand];
@@ -48,6 +52,20 @@ void Boss::Update()
 	//各ステート時の固有処理
 	state->Update(this);
 
+	// モーションの変更(デバッグ用)
+	if (RInput::GetInstance()->GetKeyDown(DIK_1))
+	{
+		state = std::make_unique<BossNormal>();
+	}
+	else if (RInput::GetInstance()->GetKeyDown(DIK_2))
+	{
+		state = std::make_unique<BossPunch>(true);
+	}
+	else if (RInput::GetInstance()->GetKeyDown(DIK_3))
+	{
+		state = std::make_unique<BossPunch>(false);
+	}
+
 	UpdateCollider();
 
 	ui.Update(this);
@@ -61,6 +79,18 @@ void Boss::Update()
 		parts[i].mTransform.UpdateMatrix();
 		parts[i].TransferBuffer(Camera::sNowCamera->mViewProjection);
 	}
+
+#pragma region ImGui
+	ImGui::SetNextWindowSize({ 300, 250 });
+
+	ImGuiWindowFlags window_flags = 0;
+	window_flags |= ImGuiWindowFlags_NoResize;
+
+	ImGui::Begin("Boss", NULL, window_flags);
+
+	ImGui::Text("1:待機\n2:左パンチ\n3:右パンチ");
+
+	ImGui::End();
 }
 
 void Boss::Draw()
