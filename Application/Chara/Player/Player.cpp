@@ -94,7 +94,6 @@ void Player::Init()
 void Player::Reset()
 {
 	//回転初期化
-	obj.mTransform.rotation = { 0,0,0 };
 	rotVec = { 0,0,0 };
 }
 
@@ -187,7 +186,7 @@ void Player::Update()
 	}
 
 	//回転を適用
-	obj.mTransform.rotation += rotVec;
+	obj.mTransform.rotation = rotVec;
 
 	UpdateCollider();
 	UpdateAttackCollider();
@@ -717,9 +716,6 @@ void Player::WaxCollect()
 	collectRangeModelRayRight.mTransform.scale = { 0.1f,0.1f,waxCollectDist*2.f };
 	collectRangeModelRayLeft.mTransform.rotation.y += Util::AngleToRadian(-waxCollectAngle * 0.5f);
 	collectRangeModelRayRight.mTransform.rotation.y += Util::AngleToRadian(waxCollectAngle * 0.5f);
-	//z軸は回転してほしくないので無理やり0に
-	collectRangeModelRayLeft.mTransform.rotation.x = 0;
-	collectRangeModelRayRight.mTransform.rotation.x = 0;
 	/*collectRangeModelRayLeft.mTransform.position += GetFrontVec() * waxCollectDist * 0.5f;
 	collectRangeModelRayRight.mTransform.position += GetFrontVec() * waxCollectDist * 0.5f;*/
 
@@ -736,7 +732,13 @@ void Player::WaxCollect()
 	collectRangeModelCircle.mTransform.scale = { waxCollectDist,0.1f,waxCollectDist };
 
 	//大きさ分前に置く
-	collectRangeModel.mTransform.position += GetFrontVec() * waxCollectVertical * 0.5f;
+	Vector3 frontVec = GetFrontVec();
+	frontVec.y = 0;
+	collectRangeModel.mTransform.position += frontVec * waxCollectVertical * 0.5f;
+
+	//xとz軸は回転してほしくないので無理やり0に
+	collectRangeModel.mTransform.rotation.x = 0;
+	collectRangeModel.mTransform.rotation.z = 0;
 
 	//更新
 	collectRangeModel.mTransform.UpdateMatrix();
