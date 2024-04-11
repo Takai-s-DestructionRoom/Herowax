@@ -11,9 +11,6 @@ public:
 	//敵リスト
 	std::list<std::unique_ptr<Enemy>> enemys;
 
-	//地面座標(平面想定のみ、ちゃんと地形を入れるならまた変えないといけない)
-	ModelObj* ground = nullptr;
-
 	float knockRandXS;
 	float knockRandXE;
 
@@ -56,13 +53,10 @@ public:
 		enemys.back() = std::make_unique<TEnemy>(target);
 		enemys.back()->SetPos(position);
 		enemys.back()->Init();
-		enemys.back()->SetGroundPos(ground->mTransform.position.y);
 	}
 
 	//敵の追跡対象を変更(プレイヤーを入れるのを想定)
 	void SetTarget(ModelObj* target_);
-	//地面座標を入れる
-	void SetGround(ModelObj* ground_);
 	
 	static void LoadResource();
 

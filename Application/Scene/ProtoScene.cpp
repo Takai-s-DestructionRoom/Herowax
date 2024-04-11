@@ -59,7 +59,6 @@ void ProtoScene::Init()
 	//とりあえず最初のステージを設定しておく
 	Level::Get()->Extract("test");
 
-	EnemyManager::GetInstance()->SetGround(&Level::Get()->ground);
 	EnemyManager::GetInstance()->SetTarget(&player.obj);
 
 	Minimap::GetInstance()->Init();

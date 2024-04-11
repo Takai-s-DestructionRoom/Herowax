@@ -12,6 +12,7 @@
 #include "Renderer.h"
 #include "boss.h"
 #include "BossPart.h"
+#include "Level.h"
 
 Player::Player() :GameObject(),
 moveSpeed(1.f), moveAccelAmount(0.05f), isGround(true), hp(0), maxHP(10.f),
@@ -149,10 +150,10 @@ void Player::Update()
 	}
 
 	//地面に埋ってたら
-	if (obj.mTransform.position.y - obj.mTransform.scale.y < 0.f)
+	if (obj.mTransform.position.y - obj.mTransform.scale.y < Level::Get()->ground.mTransform.position.y)
 	{
 		//地面に触れるとこまで移動
-		obj.mTransform.position.y = 0.f + obj.mTransform.scale.y;
+		obj.mTransform.position.y = Level::Get()->ground.mTransform.position.y + obj.mTransform.scale.y;
 
 		if (isGround == false)
 		{
