@@ -7,6 +7,9 @@
 #include "ImGui.h"
 #include "TimeManager.h"
 #include "Parameter.h"
+#include "SceneManager.h"
+#include "SimpleSceneTransition.h"
+#include "ResultScene.h"
 
 Boss::Boss() : GameObject(),
 moveSpeed(0.1f), hp(0), maxHP(10.f)
@@ -23,9 +26,6 @@ moveSpeed(0.1f), hp(0), maxHP(10.f)
 
 	for (size_t i = 0; i < parts.size(); i++)
 	{
-		//テスト用
-		parts[i].obj.mTuneMaterial.mColor = { 0,0,0,1 };
-
 		parts[i].obj.mPaintDissolveMapTex = TextureManager::Load("./Resources/DissolveMap.png", "DissolveMapTex");
 		parts[i].obj.mTransform.scale = Vector3::ONE * 2.f;
 	}
@@ -73,6 +73,8 @@ void Boss::Init()
 	{
 		parts[i].Init();
 	}
+
+	deadTimer.Reset();
 }
 
 void Boss::AllStateUpdate()
@@ -83,6 +85,7 @@ void Boss::AllStateUpdate()
 	mutekiTimer.Update();
 	whiteTimer.Update();
 	waxShakeOffTimer.Update();
+	deadTimer.Update();
 
 	//かかっているロウを振り払う
 	//10段階かかったら固まる
@@ -120,6 +123,22 @@ void Boss::AllStateUpdate()
 	if (GetIsSolid(PartsNum::LeftHand) && GetIsSolid(PartsNum::RightHand))
 	{
 		ai.SetSituation(BossSituation::NoArms);
+	}
+
+	//本体が固まってるならシーン遷移
+	if (GetIsSolid(PartsNum::Max))
+	{
+		//演出の猶予作りたいので、ちょっとタイマーでディレイを入れる
+		if(!deadTimer.GetStarted())deadTimer.Start();
+
+		//今は適当に固定カメラの位置に移動させて、ボスが完全に固まったことを見せてから遷移
+		if (deadTimer.GetRun()) {
+			//cameraDist;
+		}
+
+		if (deadTimer.GetEnd()) {
+			SceneManager::Change<ResultScene, SimpleSceneTransition>();
+		}
 	}
 
 	//白を加算

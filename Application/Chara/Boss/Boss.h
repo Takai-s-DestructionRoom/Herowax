@@ -43,6 +43,9 @@ private:
 
 	float phaseTimer;	//フェーズ移行に使うタイマー
 
+	//---------死亡表現関連------------//
+	Easing::EaseTimer deadTimer;
+
 	//---------被弾時表現関連------------//
 	Easing::EaseTimer whiteTimer;	//被弾時に白く光るのを管理する
 
