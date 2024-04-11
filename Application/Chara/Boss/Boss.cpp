@@ -10,6 +10,7 @@
 #include "SceneManager.h"
 #include "SimpleSceneTransition.h"
 #include "ResultScene.h"
+#include "GameCamera.h"
 
 Boss::Boss() : GameObject(),
 moveSpeed(0.1f), hp(0), maxHP(10.f)
@@ -21,8 +22,8 @@ moveSpeed(0.1f), hp(0), maxHP(10.f)
 	obj.mTransform.scale = Vector3::ONE * 8.f;
 
 	//モデル設定
-	parts[(int32_t)PartsNum::LeftHand].obj = PaintableModelObj(Model::Load("./Resources/Model/leftArm/leftArm.obj", "leftArm", true));
-	parts[(int32_t)PartsNum::RightHand].obj = PaintableModelObj(Model::Load("./Resources/Model/rightArm/rightArm.obj", "rightArm", true));
+	parts[(int32_t)PartsNum::RightHand].obj = PaintableModelObj(Model::Load("./Resources/Model/leftArm/leftArm.obj", "leftArm", true));
+	parts[(int32_t)PartsNum::LeftHand].obj = PaintableModelObj(Model::Load("./Resources/Model/rightArm/rightArm.obj", "rightArm", true));
 
 	for (size_t i = 0; i < parts.size(); i++)
 	{
@@ -129,14 +130,14 @@ void Boss::AllStateUpdate()
 	if (GetIsSolid(PartsNum::Max))
 	{
 		//演出の猶予作りたいので、ちょっとタイマーでディレイを入れる
-		if(!deadTimer.GetStarted())deadTimer.Start();
-
 		//今は適当に固定カメラの位置に移動させて、ボスが完全に固まったことを見せてから遷移
-		if (deadTimer.GetRun()) {
-			//cameraDist;
+		if (!deadTimer.GetStarted()) {
+			deadTimer.Start();
+			GameCamera::GetInstance()->cameraDist -= 100.f;
 		}
 
-		if (deadTimer.GetEnd()) {
+
+		if (deadTimer.GetNowEnd()) {
 			SceneManager::Change<ResultScene, SimpleSceneTransition>();
 		}
 	}

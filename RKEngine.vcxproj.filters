@@ -693,6 +693,9 @@
     <ClCompile Include="Application\Chara\Boss\BossAI.cpp">
       <Filter>ソース ファイル\Application\Object\Chara\Boss</Filter>
     </ClCompile>
+    <ClCompile Include="Application\GameCamera.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Shader\Basic\BasicPS.hlsl">
@@ -1279,6 +1282,9 @@
     </ClInclude>
     <ClInclude Include="Application\Chara\Boss\BossAI.h">
       <Filter>ヘッダー ファイル\Application\Object\Chara\Boss</Filter>
+    </ClInclude>
+    <ClInclude Include="Application\GameCamera.h">
+      <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
