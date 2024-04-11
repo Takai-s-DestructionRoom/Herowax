@@ -7,7 +7,11 @@ class Parts : public GameObject
 public:
 	Vector3 oriPos;	//パーツごとの基準座標
 
-	int32_t waxSolidCount = 0; //ロウのかかり具合カウント
+	//---------固まり表現関連---------//
+	const int32_t requireWaxSolidCount = 10; //完全に固まるまでに必要なロウのかかり回数
+
+	bool isCollected = false;
+
 private:
 	//------------ HP関連 ------------//
 	float hp = 0.0f;				//現在のヒットポイント
@@ -18,12 +22,13 @@ private:
 	Easing::EaseTimer whiteTimer;	//被弾時に白く光るのを管理する
 
 	//---------固まり表現関連---------//
-	int32_t requireWaxSolidCount = 10; //完全に固まるまでに必要なロウのかかり回数
 	Easing::EaseTimer waxShakeOffTimer = 5.0f; //ロウを振り払うタイマー
 	
 	Vector3 shake = {};
 	Easing::EaseTimer shakeTimer = 0.5f;		//振り払うときにするシェイクを管理するタイマー
 	Easing::EaseTimer waxScatterTimer = 0.1f;	//振り払うときにするシェイクを管理するタイマー
+
+	int32_t waxSolidCount = 0; //ロウのかかり具合カウント
 
 	//ロウを出すためのパラメータ(適当でもいい)
 	float solidTime= 0;
@@ -35,11 +40,18 @@ private:
 
 public:
 	Parts();
+	~Parts();
 	void Init();
 	void Update();
 	void Draw();
 
+	//---ゲッター系---//
+	int32_t GetWaxSolidCount() {return waxSolidCount;}
+
 	//---セッター系---//
+	//無敵時間設定
+	void SetMutekiMaxTime(float time) { mutekiTimer.maxTime_ = time; };
+
 	void DealDamage(int32_t damage);
 };
 

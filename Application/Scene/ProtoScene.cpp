@@ -56,6 +56,7 @@ void ProtoScene::Init()
 	player.Init();
 	boss.Init();
 	boss.SetTarget(&player.obj);
+	player.SetBoss(&boss);
 
 	ParticleManager::GetInstance()->Init();
 
@@ -347,7 +348,6 @@ void ProtoScene::Update()
 			}
 		}
 	}
-
 
 	//別グループ内のロウが当たった時の処理
 	for (auto itr = wGroups->begin(); itr != wGroups->end(); itr++)

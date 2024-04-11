@@ -10,6 +10,8 @@
 #include "Parameter.h"
 #include "InstantDrawer.h"
 #include "Renderer.h"
+#include "boss.h"
+#include "BossPart.h"
 
 Player::Player() :GameObject(),
 moveSpeed(1.f), moveAccelAmount(0.05f), isGround(true), hp(0), maxHP(10.f),
@@ -804,6 +806,19 @@ void Player::WaxCollect()
 				//ロウ回収
 				waxCollectAmount += WaxManager::GetInstance()->Collect(collectCol, waxCollectVertical);
 			}
+		}
+		//腕吸収
+		if (boss->parts[(int32_t)PartsNum::LeftHand].isCollected) {
+			//とりあえず壊しちゃう
+			boss->parts[(int32_t)PartsNum::LeftHand].isAlive = false;
+			//腕の吸収値も変数化したい
+			waxCollectAmount += 1;
+		}
+		if (boss->parts[(int32_t)PartsNum::RightHand].isCollected) {
+			//とりあえず壊しちゃう
+			boss->parts[(int32_t)PartsNum::RightHand].isAlive = false;
+			//腕の吸収値も変数化したい
+			waxCollectAmount += 1;
 		}
 	}
 }

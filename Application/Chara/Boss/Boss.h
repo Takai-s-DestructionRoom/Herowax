@@ -77,6 +77,12 @@ public:
 	std::string GetStateStr() { return stateStr; }
 	//攻撃対象を取得
 	ModelObj* GetTarget() { return target; }
+	/// <summary>
+	/// 固まっているかどうかを取得
+	/// </summary>
+	/// <param name="num">どの部位の状態を取得するか maxを指定するとボスの体を取得</param>
+	/// <returns>true or false</returns>
+	bool GetIsSolid(PartsNum num);
 
 	// セッター //
 	//状態文字情報を設定

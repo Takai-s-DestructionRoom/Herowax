@@ -9,6 +9,9 @@ public:
 	BossPunch(bool isLeft);
 	void Update(Boss* boss)override;
 
+public:
+	bool isActive = false;
+
 private:
 	std::vector<Vector3> splinePoints;	//殴り始めてから地面に落ちるまでの挙動
 	bool isLeft_;						//左で攻撃するかフラグ

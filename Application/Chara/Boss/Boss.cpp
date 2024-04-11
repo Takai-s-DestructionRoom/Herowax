@@ -86,7 +86,7 @@ void Boss::AllStateUpdate()
 
 	//かかっているロウを振り払う
 	//10段階かかったら固まる
-	if (waxSolidCount > 0 && waxSolidCount < requireWaxSolidCount) {
+	if (waxSolidCount > 0 && !GetIsSolid(PartsNum::Max)) {
 		//振り払うタイマーが終わったら
 		if (waxShakeOffTimer.GetEnd())
 		{
@@ -95,6 +95,31 @@ void Boss::AllStateUpdate()
 			//減るのは一段階
 			waxSolidCount--;
 		}
+	}
+
+	//固まったなら
+	if (GetIsSolid(PartsNum::LeftHand)) 
+	{
+		//状態を右手オンリーに
+		ai.SetSituation(BossSituation::OnlyRight);
+
+		//吸収可能に
+		parts[(int32_t)PartsNum::LeftHand].isCollected = true;
+		
+	}
+	if (GetIsSolid(PartsNum::RightHand)) 
+	{
+		//状態を左手オンリーに
+		ai.SetSituation(BossSituation::OnlyLeft);
+
+		//吸収可能に
+		parts[(int32_t)PartsNum::RightHand].isCollected = true;
+
+	}
+	//両方固まってるなら
+	if (GetIsSolid(PartsNum::LeftHand) && GetIsSolid(PartsNum::RightHand))
+	{
+		ai.SetSituation(BossSituation::NoArms);
 	}
 
 	//白を加算
@@ -119,7 +144,11 @@ void Boss::AllStateUpdate()
 
 	for (size_t i = 0; i < parts.size(); i++)
 	{
+		//無敵時間をボス本体と合わせる
+		parts[i].SetMutekiMaxTime(mutekiTimer.maxTime_);
+		//描画フラグをボスと合わせて切り替える
 		parts[i].SetDrawCollider(isDrawCollider);
+		//更新
 		parts[i].Update();
 	}
 }
@@ -177,8 +206,8 @@ void Boss::Update()
 		parts[0].collider.pos.x, parts[0].collider.pos.y, parts[0].collider.pos.z);
 	ImGui::Text("手のコライダーサイズ:%f", parts[0].collider.r);
 	ImGui::Text("手のコライダー描画フラグ:%d", parts[0].GetIsDrawCollider());
-	ImGui::Text("lefthandWaxSolid:%d", parts[(int32_t)PartsNum::LeftHand].waxSolidCount);
-	ImGui::Text("righthandWaxSolid:%d", parts[(int32_t)PartsNum::RightHand].waxSolidCount);
+	ImGui::Text("lefthandWaxSolid:%d", parts[(int32_t)PartsNum::LeftHand].GetWaxSolidCount());
+	ImGui::Text("righthandWaxSolid:%d", parts[(int32_t)PartsNum::RightHand].GetWaxSolidCount());
 	if (ImGui::TreeNode("調整項目_手")) {
 		ImGui::DragFloat3("右手スケール", &parts[(int32_t)PartsNum::LeftHand].obj.mTransform.scale.x, 0.1f);
 		ImGui::DragFloat3("左手スケール", &parts[(int32_t)PartsNum::RightHand].obj.mTransform.scale.x, 0.1f);
@@ -226,6 +255,24 @@ void Boss::Draw()
 		}
 
 		ui.Draw();
+	}
+}
+
+bool Boss::GetIsSolid(PartsNum num)
+{
+	switch (num)
+	{
+	case PartsNum::RightHand:
+		return parts[(int32_t)PartsNum::RightHand].GetWaxSolidCount() >= 
+			parts[(int32_t)PartsNum::RightHand].requireWaxSolidCount;
+		break;
+	case PartsNum::LeftHand:
+		return  parts[(int32_t)PartsNum::LeftHand].GetWaxSolidCount() >=
+			parts[(int32_t)PartsNum::LeftHand].requireWaxSolidCount;
+		break;
+	default:
+		return waxSolidCount >= requireWaxSolidCount;
+		break;
 	}
 }
 

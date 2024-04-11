@@ -687,10 +687,10 @@
     <ClCompile Include="Application\Chara\Boss\BossNormal.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Application\Chara\Boss\BossAI.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
     <ClCompile Include="Application\BossPart.cpp">
+      <Filter>ソース ファイル\Application\Object\Chara\Boss</Filter>
+    </ClCompile>
+    <ClCompile Include="Application\Chara\Boss\BossAI.cpp">
       <Filter>ソース ファイル\Application\Object\Chara\Boss</Filter>
     </ClCompile>
   </ItemGroup>
@@ -1274,10 +1274,10 @@
     <ClInclude Include="Application\Chara\Boss\BossNormal.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Application\Chara\Boss\BossAI.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
     <ClInclude Include="Application\BossPart.h">
+      <Filter>ヘッダー ファイル\Application\Object\Chara\Boss</Filter>
+    </ClInclude>
+    <ClInclude Include="Application\Chara\Boss\BossAI.h">
       <Filter>ヘッダー ファイル\Application\Object\Chara\Boss</Filter>
     </ClInclude>
   </ItemGroup>

@@ -9,6 +9,8 @@
 #include "ColPrimitive3D.h"
 #include <stdint.h>
 
+class Boss;
+
 class Player : public GameObject
 {
 public:
@@ -108,6 +110,8 @@ private:
 
 	float blinkNum = 10;		//点滅回数
 
+	Boss* boss = nullptr;
+
 public:
 	Player();
 
@@ -137,6 +141,9 @@ public:
 		nextState = std::make_unique<ChangePlayerState>();
 		changingState = true;
 	};
+
+	//ボスを参照するために入れる
+	void SetBoss(Boss* boss_) {boss = boss_;};
 
 	// ゲッター //
 	//お試し実装:殴った相手が自分を追っかけてくるモード
