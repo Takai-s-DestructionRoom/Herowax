@@ -188,15 +188,24 @@ void Boss::Update()
 	// モーションの変更(デバッグ用)
 	if (RInput::GetInstance()->GetKeyDown(DIK_1))
 	{
-		state = std::make_unique<BossNormal>();
+		ChangeState<BossNormal>();
 	}
 	else if (RInput::GetInstance()->GetKeyDown(DIK_2))
 	{
-		state = std::make_unique<BossPunch>(true);
+		nextState = std::make_unique<BossPunch>(true);
+		changingState = true;
 	}
 	else if (RInput::GetInstance()->GetKeyDown(DIK_3))
 	{
-		state = std::make_unique<BossPunch>(false);
+		nextState = std::make_unique<BossPunch>(false);
+		changingState = true;
+	}
+
+	if (changingState) {
+		//ステートを変化させる
+		std::swap(state, nextState);
+		changingState = false;
+		nextState = nullptr;
 	}
 
 	targetCircle.mTransform.UpdateMatrix();

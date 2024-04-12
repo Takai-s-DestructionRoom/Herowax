@@ -69,6 +69,13 @@ private:
 	//すべてのステートでの共通処理
 	void AllStateUpdate();
 
+	//状態変更
+	template <typename ChangePlayerState>
+	void ChangeState() {
+		nextState = std::make_unique<ChangePlayerState>();
+		changingState = true;
+	};
+
 public:
 	Boss();
 	virtual ~Boss();
