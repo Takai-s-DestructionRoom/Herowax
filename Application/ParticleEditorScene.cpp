@@ -3,6 +3,7 @@
 #include "RImGui.h"
 #include "ParticleManager.h"
 #include "RInput.h"
+#include "Renderer.h"
 
 void ParticleEditorScene::Init()
 {
@@ -51,6 +52,7 @@ void ParticleEditorScene::Update()
 			//それ以外はシンプルパーティクルとみなす
 			else if (loadPartName != "") {
 				ParticleManager::GetInstance()->AddSimple(emitPos, loadPartName);
+				drawEmitter.mTransform.scale = ParticleEditor::LoadSimple(loadPartName).emitScale * 2.f;
 			}
 		}
 	}
@@ -70,6 +72,7 @@ void ParticleEditorScene::Update()
 		//それ以外はシンプルパーティクルとみなす
 		else if (loadPartName != "") {
 			ParticleManager::GetInstance()->AddSimple(emitPos, loadPartName);
+			drawEmitter.mTransform.scale = ParticleEditor::LoadSimple(loadPartName).emitScale * 2.f;
 		}
 	}
 	ImGui::Checkbox("無限に生成するか", &isAutoCreate);
@@ -81,7 +84,16 @@ void ParticleEditorScene::Update()
 
 void ParticleEditorScene::Draw()
 {
-	drawEmitter.Draw();
+	//パイプラインをワイヤーフレームに
+	PipelineStateDesc pipedesc = RDirectX::GetDefPipeline().mDesc;
+	pipedesc.RasterizerState.FillMode = D3D12_FILL_MODE_WIREFRAME;
+
+	GraphicsPipeline pipe = GraphicsPipeline::GetOrCreate("WireObject", pipedesc);
+	for (RenderOrder& order : drawEmitter.GetRenderOrder()) {
+		order.pipelineState = pipe.mPtr.Get();
+		Renderer::DrawCall("Opaque", order);
+	}
+	//drawEmitter.Draw();
 	ParticleManager::GetInstance()->Draw();
 }
 
