@@ -1,0 +1,16 @@
+addNum:20
+life:0.5
+startradius:1
+endradius:2.5
+minscale:1.5
+maxscale:2.5
+minveloY:0.05
+maxveloY:0.05
+growingTimer:0.05
+endscale:0
+isgravity:false
+isbillboard:true
+minrot:-0.010000_-0.010000_-0.010000
+maxrot:0.010000_0.010000_0.010000
+color:1.000000_1.000000_1.000000_1.000000
+tex:particle_simple

@@ -62,7 +62,7 @@ public:
 	Vector3 GetCenterPos(){
 		return Vector3(
 			obj.mTransform.position.x,
-			obj.mTransform.position.y + obj.mTransform.scale.y,
+			obj.mTransform.position.y - obj.mTransform.scale.y,
 			obj.mTransform.position.z);
 	}
 	Vector3 GetFrontVec();

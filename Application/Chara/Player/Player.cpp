@@ -163,9 +163,7 @@ void Player::Update()
 			Vector3 emitterPos = GetCenterPos();
 
 			ParticleManager::GetInstance()->AddRing(
-				emitterPos, 16, 0.3f, obj.mTuneMaterial.mColor, "",
-				0.7f, 1.2f, 0.3f, 0.6f, 0.01f, 0.05f,
-				-Vector3::ONE * 0.1f, Vector3::ONE * 0.1f, 0.05f);
+				emitterPos, "player_landing_ring");
 		}
 		isJumping = false;
 	}
@@ -428,10 +426,7 @@ void Player::MovePad()
 		emitterPos.z += mVelo.y * obj.mTransform.scale.z;
 
 		ParticleManager::GetInstance()->AddSimple(
-			emitterPos, obj.mTransform.scale * 0.5f,
-			2, 0.5f, obj.mTuneMaterial.mColor, "", 0.3f, 0.7f,
-			{ -0.001f,0.01f,-0.001f }, { 0.001f,0.03f,0.001f },
-			0.01f, -Vector3::ONE * 0.1f, Vector3::ONE * 0.1f, 0.1f, 0.f, false, false);
+			emitterPos, "player_move");
 	}
 	else
 	{
@@ -457,9 +452,7 @@ void Player::MovePad()
 		Vector3 emitterPos = GetCenterPos();
 
 		ParticleManager::GetInstance()->AddRing(
-			emitterPos, 20, 0.5f, obj.mTuneMaterial.mColor, "",
-			1.f, 2.5f, 0.5f, 0.8f, 0.01f, 0.05f,
-			-Vector3::ONE * 0.1f, Vector3::ONE * 0.1f, 0.05f);
+			emitterPos,"player_jump_ring");
 	}
 
 	//ジャンプ中は
@@ -537,9 +530,7 @@ void Player::MoveKey()
 		Vector3 emitterPos = GetCenterPos();
 
 		ParticleManager::GetInstance()->AddRing(
-			emitterPos, 16, 0.5f, obj.mTuneMaterial.mColor, "",
-			1.f, 2.5f, 0.5f, 0.8f, 0.01f, 0.03f,
-			-Vector3::ONE * 0.1f, Vector3::ONE * 0.1f, 0.05f);
+			emitterPos, "player_jump_ring");
 	}
 
 	//ジャンプ中は
@@ -565,10 +556,7 @@ void Player::MoveKey()
 		emitterPos.z += mVelo.y * obj.mTransform.scale.z;
 
 		ParticleManager::GetInstance()->AddSimple(
-			emitterPos, obj.mTransform.scale * 0.5f,
-			2, 0.5f, obj.mTuneMaterial.mColor, TextureManager::Load("./Resources/white2x2.png"), 0.3f, 0.7f,
-			{ -0.001f,0.01f,-0.001f }, { 0.001f,0.03f,0.001f },
-			0.01f, -Vector3::ONE * 0.1f, Vector3::ONE * 0.1f, 0.05f, 0.f, false, false);
+			emitterPos, "player_move");
 	}
 
 	//「ジャンプの高さ」+「プレイヤーの大きさ」を反映
