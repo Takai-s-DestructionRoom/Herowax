@@ -19,6 +19,8 @@ void ParticleEditorScene::Init()
 
 	drawEmitter = ModelObj(Model::Load("./Resources/Model/Cube.obj","Cube"));
 	drawEmitter.mTransform.scale = { 1,1,1 };
+
+	ParticleEditor::Init();	//初期化
 }
 
 void ParticleEditorScene::Update()
@@ -62,7 +64,22 @@ void ParticleEditorScene::Update()
 	ImGui::SetNextWindowSize({ 400, 200 }, ImGuiCond_FirstUseEver);
 
 	ImGui::Begin("パーティクル生成GUI");
-	ImGui::InputText("読み込むパーティクル名", &loadPartName);
+
+	fileNames = ParticleEditor::LoadFileNames();
+
+	//ImGui::InputText("読み込むパーティクル名", &loadPartName);
+	if (!fileNames.empty())
+	{
+		//ハンドルの一覧をプルダウンで表示
+		std::vector<const char*> temp;
+		for (size_t i = 0; i < fileNames.size(); i++)
+		{
+			temp.push_back(fileNames[i].c_str());
+		}
+		static int32_t select = 0;
+		ImGui::Combo("読み込むパーティクル名", &select, &temp[0], (int32_t)fileNames.size());
+		loadPartName = fileNames[select];
+	}
 	ImGui::DragFloat3("生成位置", &emitPos.x);
 	if (ImGui::Button("一回生成")) {
 		//ファイル名に"_ring"が含まれてるなら円形パーティクルを出す

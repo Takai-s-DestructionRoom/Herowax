@@ -27,5 +27,7 @@ private:
 
 	DebugCamera camera = DebugCamera({ 0, 0, -5 });
 	LightGroup light;
+	std::vector<std::string> fileNames;
+	//std::string fileNames;
 };
 

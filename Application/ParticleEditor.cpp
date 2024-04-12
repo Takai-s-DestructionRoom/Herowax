@@ -4,12 +4,15 @@
 #include <cassert>
 #include "RImGui.h"
 
+using namespace std::filesystem;
+
 std::ofstream ParticleEditor::writing_file;
 std::string ParticleEditor::saveFileName = "";
 std::string ParticleEditor::loadFileName = "";
 SimplePData ParticleEditor::saveSimplePData;
 RingPData ParticleEditor::saveRingPData;
 bool ParticleEditor::isAlwaysUpdate = false;
+std::vector<std::string> ParticleEditor::file_names;
 
 Vector3 GetVector3Data(const std::string& str)
 {
@@ -51,10 +54,23 @@ void ParticleEditor::OrderCreateGUI()
 	ImGui::SetNextWindowSize({ 500, 400 }, ImGuiCond_FirstUseEver);
 
 	ImGui::Begin("ParticleCreateGUI");
-	
+
 	ImGui::PushItemWidth(200);
 	ImGui::Checkbox("常に更新する", &isAlwaysUpdate);
-	ImGui::InputText("読み込むファイル名", &loadFileName);
+	
+	if (!file_names.empty())
+	{
+		//ハンドルの一覧をプルダウンで表示
+		std::vector<const char*> temp;
+		for (size_t i = 0; i < file_names.size(); i++)
+		{
+			temp.push_back(file_names[i].c_str());
+		}
+		static int32_t select = 0;
+		ImGui::Combo("読み込むファイル名", &select, &temp[0], (int32_t)file_names.size());
+		loadFileName = file_names[select];
+	}
+
 	if (ImGui::Button("ロード")) {
 		if (Util::ContainString(loadFileName, "_ring"))
 		{
@@ -96,8 +112,7 @@ void ParticleEditor::OrderCreateGUI()
 		ImGui::Checkbox("Y軸ビルボード化するか", &saveSimplePData.isBillboard);
 		ImGui::Text("------------------------------------------");
 		ImGui::InputText("セーブするファイル名", &saveFileName);
-		ImGui::PopItemWidth();
-
+		
 		if (ImGui::Button("セーブ") || isAlwaysUpdate) {
 			SaveSimple(saveSimplePData, saveFileName);
 		}
@@ -129,8 +144,7 @@ void ParticleEditor::OrderCreateGUI()
 		ImGui::Checkbox("Y軸ビルボード化するか", &saveRingPData.isBillboard);
 		ImGui::Text("------------------------------------------");
 		ImGui::InputText("セーブするファイル名", &saveFileName);
-		ImGui::PopItemWidth();
-
+		
 		if (ImGui::Button("セーブ") || isAlwaysUpdate) {
 			if (Util::ContainString(saveFileName, "_ring"))
 			{
@@ -140,11 +154,39 @@ void ParticleEditor::OrderCreateGUI()
 			{
 				SaveRing(saveRingPData, saveFileName + "_ring");
 			}
+
+			//セーブを押したらディレクトリ内を参照して文字列更新
+			file_names = LoadFileNames();
 		}
 
 		ImGui::TreePop();
 	}
+	ImGui::PopItemWidth();
 	ImGui::End();
+}
+
+void ParticleEditor::Init()
+{
+	file_names = LoadFileNames();
+}
+
+std::vector<std::string> ParticleEditor::LoadFileNames()
+{
+	std::filesystem::path path = PathUtil::ConvertAbsolute(Util::ConvertStringToWString("./Resources/Data/ParticleOrder/"));
+	directory_iterator iter(path), end;
+	std::error_code err;
+
+	std::vector<std::string> temp_file_names;
+	
+	for (; iter != end && !err; iter.increment(err)) {
+		const directory_entry entry = *iter;
+
+		temp_file_names.push_back(entry.path().filename().string());
+		std::vector<std::string> temp2 = Util::StringSplit(temp_file_names.back(), ".");
+		temp_file_names.back() = temp2[0];
+	}
+
+	return temp_file_names;
 }
 
 SimplePData ParticleEditor::LoadSimple(const std::string& filename)
