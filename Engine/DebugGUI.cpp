@@ -19,8 +19,7 @@ void DebugGUI::Show()
 	ImGui::ShowDemoWindow();
 	ImGui::SetNextWindowSize({ 400, 380 }, ImGuiCond_FirstUseEver);
 
-	ImGuiWindowFlags window_flags = 0;
-	ImGui::Begin("Debug", NULL, window_flags);
+	ImGui::Begin("Debug");
 
 	ImGui::Text("SceneManager");
 	static int32_t sceneNum = 0;

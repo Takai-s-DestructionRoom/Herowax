@@ -4,7 +4,7 @@
 #include "Camera.h"
 #include "ParticleManager.h"
 #include "RInput.h"
-#include "ImGui.h"
+#include "RImGui.h"
 #include "TimeManager.h"
 #include "Parameter.h"
 #include "SceneManager.h"
@@ -212,12 +212,9 @@ void Boss::Update()
 	targetCircle.TransferBuffer(Camera::sNowCamera->mViewProjection);
 
 #pragma region ImGui
-	ImGui::SetNextWindowSize({ 300, 250 });
+	ImGui::SetNextWindowSize({ 300, 250 }, ImGuiCond_FirstUseEver);
 
-	ImGuiWindowFlags window_flags = 0;
-	window_flags |= ImGuiWindowFlags_NoResize;
-
-	ImGui::Begin("Boss", NULL, window_flags);
+	ImGui::Begin("Boss");
 
 	ImGui::Text("ボス本体");
 	ImGui::Text("1:待機\n2:左パンチ\n3:右パンチ");

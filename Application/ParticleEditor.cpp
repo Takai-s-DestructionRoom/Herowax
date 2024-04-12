@@ -47,12 +47,9 @@ std::string SaveColor(const Color& data)
 
 void ParticleEditor::OrderCreateGUI()
 {
-	ImGui::SetNextWindowSize({ 500, 400 });
+	ImGui::SetNextWindowSize({ 500, 400 }, ImGuiCond_FirstUseEver);
 
-	ImGuiWindowFlags window_flags = 0;
-	window_flags |= ImGuiWindowFlags_NoResize;
-
-	ImGui::Begin("ParticleCreateGUI", NULL, window_flags);
+	ImGui::Begin("ParticleCreateGUI");
 	
 	ImGui::PushItemWidth(200);
 	ImGui::Checkbox("常に更新する", &isAlwaysUpdate);

@@ -179,12 +179,9 @@ void WaxManager::Update()
 	slimeWax.Update();
 
 #pragma region ImGui
-	ImGui::SetNextWindowSize({ 350, 180 });
+	ImGui::SetNextWindowSize({ 350, 180 }, ImGuiCond_FirstUseEver);
 
-	ImGuiWindowFlags window_flags = 0;
-	window_flags |= ImGuiWindowFlags_NoResize;
-
-	ImGui::Begin("Wax", NULL, window_flags);
+	ImGui::Begin("Wax");
 	ImGui::Text("存在しているロウの数:%d", (int)GetWaxNum());
 	ImGui::PushItemWidth(100);
 

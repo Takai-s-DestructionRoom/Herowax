@@ -42,13 +42,10 @@ void ParticleManager::Update()
 	}
 
 #pragma region ImGui
-	ImGui::SetNextWindowSize({ 150, 70 });
-
-	ImGuiWindowFlags window_flags = 0;
-	window_flags |= ImGuiWindowFlags_NoResize;
+	ImGui::SetNextWindowSize({ 150, 70 }, ImGuiCond_FirstUseEver);
 
 	// パーティクル //
-	ImGui::Begin("Particle", NULL, window_flags);
+	ImGui::Begin("Particle");
 
 	size_t particleSize = 0;
 	for (auto& emitter : emitters_)

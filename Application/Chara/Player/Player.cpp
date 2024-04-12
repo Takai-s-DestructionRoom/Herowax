@@ -240,12 +240,9 @@ void Player::Update()
 	fireUnit.Update();*/
 
 #pragma region ImGui
-	ImGui::SetNextWindowSize({ 600, 250 });
+	ImGui::SetNextWindowSize({ 600, 250 }, ImGuiCond_FirstUseEver);
 
-	ImGuiWindowFlags window_flags = 0;
-	window_flags |= ImGuiWindowFlags_NoResize;
-
-	ImGui::Begin("Player", NULL, window_flags);
+	ImGui::Begin("Player");
 
 	ImGui::Text("Lスティック移動、Aボタンジャンプ、Rで攻撃,Lでロウ回収");
 	ImGui::Text("WASD移動、スペースジャンプ、右クリで攻撃,Pでパブロ攻撃,Qでロウ回収");
