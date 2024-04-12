@@ -57,12 +57,9 @@ void ParticleEditorScene::Update()
 
 	ParticleManager::GetInstance()->Update();
 
-	ImGui::SetNextWindowSize({ 400, 200 });
+	ImGui::SetNextWindowSize({ 400, 200 }, ImGuiCond_FirstUseEver);
 
-	ImGuiWindowFlags window_flags = 0;
-	window_flags |= ImGuiWindowFlags_NoResize;
-
-	ImGui::Begin("パーティクル生成GUI", NULL, window_flags);
+	ImGui::Begin("パーティクル生成GUI");
 	ImGui::InputText("読み込むパーティクル名", &loadPartName);
 	ImGui::DragFloat3("生成位置", &emitPos.x);
 	if (ImGui::Button("一回生成")) {

@@ -53,13 +53,10 @@ void GameCamera::Update()
 	camera.mViewProjection.mTarget.y += cameraUpOffset;
 	camera.mViewProjection.UpdateMatrix();
 
-	ImGui::SetNextWindowSize({ 500, 200 });
-
-	ImGuiWindowFlags window_flags = 0;
-	window_flags |= ImGuiWindowFlags_NoResize;
+	ImGui::SetNextWindowSize({ 500, 200 }, ImGuiCond_FirstUseEver);
 
 	// カメラ //
-	ImGui::Begin("Camera", NULL, window_flags);
+	ImGui::Begin("Camera");
 
 	ImGui::Text("スティック x: % f y : % f", stick.x, stick.y);
 	ImGui::Text("座標:%f,%f,%f",

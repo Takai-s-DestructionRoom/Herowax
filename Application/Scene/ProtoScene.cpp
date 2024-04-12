@@ -359,13 +359,10 @@ void ProtoScene::Update()
 	}
 
 #pragma region ImGui
-	ImGui::SetNextWindowSize({ 400, 200 });
-
-	ImGuiWindowFlags window_flags = 0;
-	window_flags |= ImGuiWindowFlags_NoResize;
+	ImGui::SetNextWindowSize({ 400, 200 }, ImGuiCond_FirstUseEver);
 
 	// デバッグモード //
-	ImGui::Begin("デバッグ", NULL, window_flags);
+	ImGui::Begin("デバッグ");
 	ImGui::Text("デバッグモード中はシーン切り替えが発生しません");
 	ImGui::Text("デバッグモードはF5で切り替えもできます");
 	if (ImGui::Checkbox("デバッグモード切り替え", &Util::debugBool)) {

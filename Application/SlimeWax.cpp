@@ -170,11 +170,9 @@ void SlimeWax::TransferBuffer()
 
 void SlimeWax::ImGui()
 {
-	ImGui::SetNextWindowSize({ 300, 200 });
+	ImGui::SetNextWindowSize({ 300, 200 }, ImGuiCond_FirstUseEver);
 
-	ImGuiWindowFlags window_flags = 0;
-	window_flags |= ImGuiWindowFlags_NoResize;
-	ImGui::Begin("RayMarchTest", NULL);
+	ImGui::Begin("RayMarchTest");
 	if (ImGui::Button("カメラ位置に配置")) {
 		//cube.mTransform.position = GetNearSpherePosition();
 		screen.mTransform.position = GetNearSpherePosition();

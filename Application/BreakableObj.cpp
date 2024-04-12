@@ -41,12 +41,9 @@ void BreakableObj::Update()
 {
 	//-----------imgui------------//
 
-	ImGui::SetNextWindowSize({ 300, 200 });
+	ImGui::SetNextWindowSize({ 300, 200 }, ImGuiCond_FirstUseEver);
 
-	ImGuiWindowFlags window_flags = 0;
-	window_flags |= ImGuiWindowFlags_NoResize;
-
-	ImGui::Begin("BreakableObj", NULL, window_flags);
+	ImGui::Begin("BreakableObj");
 	
 	//破壊
 	if (ImGui::Button("破壊")) {

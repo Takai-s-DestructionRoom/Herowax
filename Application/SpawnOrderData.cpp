@@ -82,13 +82,9 @@ void SpawnDataLoader::Save(const SpawnOrderData& saveOrder, const std::string& s
 
 void SpawnDataLoader::OrderCreateGUI()
 {
-	ImGui::SetNextWindowSize({ 400, 400 });
+	ImGui::SetNextWindowSize({ 400, 400 }, ImGuiCond_FirstUseEver);
 
-	ImGuiWindowFlags window_flags = 0;
-	window_flags |= ImGuiWindowFlags_NoResize;
-
-
-	ImGui::Begin("OrderCreateGUI", NULL, window_flags);
+	ImGui::Begin("OrderCreateGUI");
 
 	//------------ファイル読み込み-----------------//
 	static std::string loadfilename;

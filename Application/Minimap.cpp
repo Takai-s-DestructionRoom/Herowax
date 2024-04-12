@@ -55,13 +55,10 @@ void Minimap::Update()
 	float cameraDist = Camera::sMinimapCamera->mViewProjection.mEye.y;
 	iconSize = 1.f / (cameraDist / 250.f) * (Minimap::GetInstance()->size / 180.f);
 
-	ImGui::SetNextWindowSize({ 300, 200 });
-
-	ImGuiWindowFlags window_flags = 0;
-	window_flags |= ImGuiWindowFlags_NoResize;
+	ImGui::SetNextWindowSize({ 300, 200 }, ImGuiCond_FirstUseEver);
 
 	// カメラ //
-	ImGui::Begin("Minimap", NULL, window_flags);
+	ImGui::Begin("Minimap");
 
 	ImGui::InputFloat("ミニマップ座標X", &pos.x, 1.0f);
 	ImGui::InputFloat("ミニマップ座標Y", &pos.y, 1.0f);
