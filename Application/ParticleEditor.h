@@ -29,6 +29,29 @@ struct SimplePData
 	std::string error = "";
 };
 
+struct RingPData
+{
+	//Vector3 emitPos; //posは使うときに指定したいので省略
+	int32_t addNum = 0;
+	float life = 0;
+	Color color = { 1,1,1,1 };
+	TextureHandle tex = "";
+	float startRadius;
+	float endRadius;
+	float minScale = 0;
+	float maxScale = 0;
+	float minVeloY = 0;
+	float maxVeloY = 0;
+	Vector3 minRot = {};
+	Vector3 maxRot = {};
+	float growingTimer = 0.f;
+	float endScale = 0.f;
+	bool isGravity = false;
+	bool isBillboard = false;
+
+	std::string error = "";
+};
+
 class ParticleEditor
 {
 public:
@@ -37,16 +60,19 @@ public:
 	
 	//読み込み
 	static SimplePData LoadSimple(const std::string& filename);
+	static RingPData LoadRing(const std::string& filename);
 
 	//書き出し
 	static void SaveSimple(const SimplePData& saveData, const std::string& saveFileName_);
+	static void SaveRing(const RingPData& saveData, const std::string& saveFileName_);
 
 private:
 	//読み込みで使うデータたち
 	static std::ofstream writing_file;
 	static std::string saveFileName;
 	static std::string loadFileName;
-	static SimplePData savePData;
+	static SimplePData saveSimplePData;
+	static RingPData saveRingPData;
 
 	static bool isAlwaysUpdate;
 };

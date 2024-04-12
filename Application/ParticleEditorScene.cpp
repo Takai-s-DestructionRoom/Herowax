@@ -44,7 +44,12 @@ void ParticleEditorScene::Update()
 		if (!roopTimer.GetRun()) {
 			roopTimer.Start();
 
-			if (loadPartName != "") {
+			//ファイル名に"_ring"が含まれてるなら円形パーティクルを出す
+			if (Util::ContainString(loadPartName, "_ring")) {
+				ParticleManager::GetInstance()->AddRing(emitPos, loadPartName);
+			}
+			//それ以外はシンプルパーティクルとみなす
+			else if (loadPartName != "") {
 				ParticleManager::GetInstance()->AddSimple(emitPos, loadPartName);
 			}
 		}
@@ -58,7 +63,12 @@ void ParticleEditorScene::Update()
 	ImGui::InputText("読み込むパーティクル名", &loadPartName);
 	ImGui::DragFloat3("生成位置", &emitPos.x);
 	if (ImGui::Button("一回生成")) {
-		if (loadPartName != "") {
+		//ファイル名に"_ring"が含まれてるなら円形パーティクルを出す
+		if (Util::ContainString(loadPartName,"_ring")) {
+			ParticleManager::GetInstance()->AddRing(emitPos, loadPartName);
+		}
+		//それ以外はシンプルパーティクルとみなす
+		else if (loadPartName != "") {
 			ParticleManager::GetInstance()->AddSimple(emitPos, loadPartName);
 		}
 	}

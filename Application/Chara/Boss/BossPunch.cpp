@@ -22,6 +22,9 @@ void BossPunch::Update(Boss* boss)
 
 	if (isStart)
 	{
+		boss->punchTimer.Reset();
+		boss->punchStayTimer.Reset();
+
 		boss->punchTimer.Start();
 
 		//こぶしから目標までのベクトル
@@ -87,12 +90,8 @@ void BossPunch::Update(Boss* boss)
 		Vector3 emitterPos = boss->parts[(size_t)isLeft_].obj.mTransform.position;
 		emitterPos.y = 0.f;
 
-		ParticleManager::GetInstance()->AddRing(
-			emitterPos, 32, 0.3f, Color::kWhite, "",
-			boss->parts[(size_t)isLeft_].collider.r * 0.5f,
-			boss->parts[(size_t)isLeft_].collider.r * 1.0f,
-			7.f, 10.f, 0.01f, 0.05f,
-			-Vector3::ONE * 0.1f, Vector3::ONE * 0.1f, 0.05f,0.f);
+		//パーティクル生成
+		ParticleManager::GetInstance()->AddRing(emitterPos, "punch_impact");
 	}
 
 	if (boss->punchStayTimer.GetEnd())
