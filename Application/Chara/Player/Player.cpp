@@ -12,6 +12,7 @@
 #include "Renderer.h"
 #include "boss.h"
 #include "BossPart.h"
+#include "Level.h"
 
 Player::Player() :GameObject(),
 moveSpeed(1.f), moveAccelAmount(0.05f), isGround(true), hp(0), maxHP(10.f),
@@ -149,10 +150,10 @@ void Player::Update()
 	}
 
 	//地面に埋ってたら
-	if (obj.mTransform.position.y - obj.mTransform.scale.y < 0.f)
+	if (obj.mTransform.position.y - obj.mTransform.scale.y < Level::Get()->ground.mTransform.position.y)
 	{
 		//地面に触れるとこまで移動
-		obj.mTransform.position.y = 0.f + obj.mTransform.scale.y;
+		obj.mTransform.position.y = Level::Get()->ground.mTransform.position.y + obj.mTransform.scale.y;
 
 		if (isGround == false)
 		{
@@ -189,6 +190,16 @@ void Player::Update()
 
 	//回転を適用
 	obj.mTransform.rotation = rotVec;
+
+	////移動制限
+	//obj.mTransform.position.x = 
+	//	Util::Clamp(obj.mTransform.position.x,
+	//		Level::Get()->moveLimit[0] - obj.mTransform.scale.x,
+	//		Level::Get()->moveLimit[2] + obj.mTransform.scale.x);
+	//obj.mTransform.position.z = 
+	//	Util::Clamp(obj.mTransform.position.y,
+	//		Level::Get()->moveLimit[1] - obj.mTransform.scale.z,
+	//		Level::Get()->moveLimit[3] + obj.mTransform.scale.z);
 
 	UpdateCollider();
 	UpdateAttackCollider();

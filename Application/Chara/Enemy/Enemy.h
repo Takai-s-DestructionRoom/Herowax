@@ -18,7 +18,6 @@ private:
 	float slowCoatingMag;		//蝋かけられたときの減速率
 	bool isGraund;				//接地しているかフラグ
 	float gravity;				//重力
-	float groundPos;			//地面座標
 
 	//------------ 回転関連 ------------//
 	Vector3 rotVec;				//回転ベクトル
@@ -116,8 +115,6 @@ public:
 	void SetTarget(ModelObj* target_);
 
 	ModelObj* GetTarget();
-
-	void SetGroundPos(float groundPos_) { groundPos = groundPos_; }
 
 	/// <summary>
 	/// 状態変更

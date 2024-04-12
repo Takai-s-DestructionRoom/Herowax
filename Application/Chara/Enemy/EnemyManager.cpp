@@ -45,11 +45,6 @@ void EnemyManager::SetTarget(ModelObj* target_)
 	target = target_;
 }
 
-void EnemyManager::SetGround(ModelObj* ground_)
-{
-	ground = ground_;
-}
-
 void EnemyManager::Init()
 {
 	enemys.clear();

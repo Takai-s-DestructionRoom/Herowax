@@ -3,6 +3,7 @@
 #include "EnemyManager.h"
 #include "ParticleManager.h"
 #include "Parameter.h"
+#include "Level.h"
 #include "Quaternion.h"
 #include "RImGui.h"
 #include "Renderer.h"
@@ -13,7 +14,7 @@ moveSpeed(0.1f), slowMag(0.8f),
 isGraund(true), hp(0), maxHP(10.f),
 isEscape(false), escapePower(0.f), escapeCoolTimer(1.f),
 isAttack(false), atkPower(0.f), atkCoolTimer(1.f),
-gravity(0.2f), groundPos(0)
+gravity(0.2f)
 {
 	state = std::make_unique<EnemyNormal>();
 	attackState = std::make_unique<EnemyNonAttackState>();
@@ -164,8 +165,8 @@ void Enemy::Update()
 	obj.mTransform.position += moveVec;
 
 	//地面座標を下回るなら戻す
-	if (obj.mTransform.position.y <= groundPos) {
-		obj.mTransform.position.y = groundPos;
+	if (obj.mTransform.position.y <= Level::Get()->ground.mTransform.position.y) {
+		obj.mTransform.position.y = Level::Get()->ground.mTransform.position.y;
 		moveVec.y = 0;
 	}
 
