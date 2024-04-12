@@ -191,16 +191,32 @@ void Player::Update()
 	//回転を適用
 	obj.mTransform.rotation = rotVec;
 
-	////移動制限
-	//obj.mTransform.position.x = 
-	//	Util::Clamp(obj.mTransform.position.x,
-	//		Level::Get()->moveLimit[0] - obj.mTransform.scale.x,
-	//		Level::Get()->moveLimit[2] + obj.mTransform.scale.x);
-	//obj.mTransform.position.z = 
-	//	Util::Clamp(obj.mTransform.position.y,
-	//		Level::Get()->moveLimit[1] - obj.mTransform.scale.z,
-	//		Level::Get()->moveLimit[3] + obj.mTransform.scale.z);
+	//移動制限
+	for (auto& wall : Level::Get()->wall)
+	{
+		if (Level::Get()->moveLimitMax.x < wall.mTransform.position.x) {
+			Level::Get()->moveLimitMax.x = wall.mTransform.position.x;
+		}
+		if (Level::Get()->moveLimitMax.y < wall.mTransform.position.z) {
+			Level::Get()->moveLimitMax.y = wall.mTransform.position.z;
+		}
+		if (Level::Get()->moveLimitMin.x > wall.mTransform.position.x) {
+			Level::Get()->moveLimitMin.x = wall.mTransform.position.x;
+		}
+		if (Level::Get()->moveLimitMin.y > wall.mTransform.position.z) {
+			Level::Get()->moveLimitMin.y = wall.mTransform.position.z;
+		}
+	}
 
+	obj.mTransform.position.x =
+		Util::Clamp(obj.mTransform.position.x,
+			Level::Get()->moveLimitMin.x - obj.mTransform.scale.x,
+			Level::Get()->moveLimitMax.x + obj.mTransform.scale.x);
+	obj.mTransform.position.z =
+		Util::Clamp(obj.mTransform.position.z,
+			Level::Get()->moveLimitMin.y - obj.mTransform.scale.z,
+			Level::Get()->moveLimitMax.y + obj.mTransform.scale.z);
+	
 	UpdateCollider();
 	UpdateAttackCollider();
 
