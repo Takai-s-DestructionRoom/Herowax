@@ -1,5 +1,6 @@
 #include "BossPunch.h"
 #include "Boss.h"
+#include "ParticleManager.h"
 
 BossPunch::BossPunch()
 {
@@ -40,6 +41,7 @@ void BossPunch::Update(Boss* boss)
 		//ちょい浮かせる
 		boss->targetCircle.mTransform.rotation.y = 0.02f;
 
+		//当たり判定に合わせる
 		boss->targetCircle.mTransform.scale =
 		{ boss->parts[(size_t)isLeft_].collider.r,
 			1.f,
@@ -80,6 +82,17 @@ void BossPunch::Update(Boss* boss)
 	if (boss->punchTimer.GetEnd() && boss->punchStayTimer.GetStarted() == false)
 	{
 		boss->punchStayTimer.Start();
+
+		//エミッターの座標はプレイヤーの座標からY座標だけにスケール分ずらしたもの
+		Vector3 emitterPos = boss->parts[(size_t)isLeft_].obj.mTransform.position;
+		emitterPos.y = 0.f;
+
+		ParticleManager::GetInstance()->AddRing(
+			emitterPos, 32, 0.3f, Color::kWhite, "",
+			boss->parts[(size_t)isLeft_].collider.r * 0.5f,
+			boss->parts[(size_t)isLeft_].collider.r * 1.0f,
+			7.f, 10.f, 0.01f, 0.05f,
+			-Vector3::ONE * 0.1f, Vector3::ONE * 0.1f, 0.05f,0.f);
 	}
 
 	if (boss->punchStayTimer.GetEnd())
