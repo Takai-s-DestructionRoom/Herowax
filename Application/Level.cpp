@@ -23,6 +23,7 @@ void Level::Reset()
 	EnemyManager::GetInstance()->Init();
 	//EnemyManager::GetInstance()->SetTarget(&tower.obj);
 	objects.clear();
+	wall.clear();
 }
 
 void Level::Reload()
@@ -60,10 +61,10 @@ void Level::Update()
 
 	tower.Update();
 
-	for (size_t i = 0; i < wall.size(); i++)
+	for (auto& tempWall : Level::Get()->wall)
 	{
-		wall[i].mTransform.UpdateMatrix();
-		wall[i].TransferBuffer(Camera::sNowCamera->mViewProjection);
+		tempWall.mTransform.UpdateMatrix();
+		tempWall.TransferBuffer(Camera::sNowCamera->mViewProjection);
 	}
 }
 
@@ -74,9 +75,9 @@ void Level::Draw()
 	ground.Draw();
 	tower.Draw();
 
-	for (size_t i = 0; i < wall.size(); i++)
+	for (auto& tempWall : Level::Get()->wall)
 	{
-		wall[i].Draw();
+		tempWall.Draw();
 	}
 
 	for (auto& obj : objects)
@@ -125,25 +126,12 @@ void Level::Extract(const std::string& handle)
 		}
 		if (objectData->setObjectName == "Wall")
 		{
-			static size_t num = 0;
-
-			wall[num] = ModelObj(Model::Load("./Resources/Model/Amitaitsu/Amitaitsu.obj", "Wall"));
+			wall.emplace_back();
+			wall.back() = ModelObj(Model::Load("./Resources/Model/Ami/Ami.obj", "Wall"));
 			//座標を設定
-			wall[num].mTransform.position = objectData->translation;
-			wall[num].mTransform.scale = objectData->scaling;
-			wall[num].mTransform.rotation = objectData->rotation;
-
-			////移動制限設定(壁とちゃんと当たり判定取るならいらない)
-			//if (num % 2 == 0)
-			//{
-			//	moveLimit[num] = objectData->translation.x;
-			//}
-			//else
-			//{
-			//	moveLimit[num] = objectData->translation.z;
-			//}
-
-			num++;
+			wall.back().mTransform.position = objectData->translation;
+			wall.back().mTransform.scale = objectData->scaling;
+			wall.back().mTransform.rotation = objectData->rotation;
 		}
 		//後ろに_Objがついているものであれば適用
 		//書式として[ハンドル名]+[_Obj]になっていないとエラーとなる
