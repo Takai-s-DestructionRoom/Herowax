@@ -36,6 +36,7 @@ public:
 	Tower tower;					//タワー
 	SpawnerManager* spawnerManager = SpawnerManager::GetInstance();	//スポナー
 
-	std::array<float,4> moveLimit;	//移動制限(左,上,右,下)
+	Vector2 moveLimitMax = {0,0};	//移動制限
+	Vector2 moveLimitMin = {0,0};	//移動制限
 };
 
