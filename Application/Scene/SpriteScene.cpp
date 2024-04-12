@@ -17,11 +17,9 @@ void SpriteScene::Update()
 	//テストGUI
 	{
 		ImGui::SetNextWindowPos({ ImGui::GetMainViewport()->WorkPos.x + 800, ImGui::GetMainViewport()->WorkPos.y + 10 }, ImGuiCond_Once);
-		ImGui::SetNextWindowSize({ 400, 400 });
+		ImGui::SetNextWindowSize({ 400, 400 }, ImGuiCond_FirstUseEver);
 
-		ImGuiWindowFlags window_flags = 0;
-		window_flags |= ImGuiWindowFlags_NoResize;
-		ImGui::Begin("Sprite Control", NULL, window_flags);
+		ImGui::Begin("Sprite Control");
 
 		if (ImGui::Button("Reset")) {
 			pos[0] = RWindow::GetWidth() / 2.0f;

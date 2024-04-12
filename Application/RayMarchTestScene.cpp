@@ -131,12 +131,9 @@ void RayMarchTestScene::Update()
 
 	skydome.TransferBuffer(camera.mViewProjection);
 
-	ImGui::SetNextWindowSize({ 300, 200 });
+	ImGui::SetNextWindowSize({ 300, 200 }, ImGuiCond_FirstUseEver);
 
-	ImGuiWindowFlags window_flags = 0;
-	window_flags |= ImGuiWindowFlags_NoResize;
-
-	ImGui::Begin("plane", NULL);
+	ImGui::Begin("plane");
 	ImGui::DragFloat3("板の位置", &plane.mTransform.position.x);
 	ImGui::DragFloat3("板の大きさ", &plane.mTransform.scale.x);
 	ImGui::DragFloat("magY", &magY,0.1f);

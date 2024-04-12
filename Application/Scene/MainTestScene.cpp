@@ -38,10 +38,9 @@ void MainTestScene::Init()
 void MainTestScene::Update()
 {
 	ImGui::SetNextWindowPos({ ImGui::GetMainViewport()->WorkPos.x + 800, ImGui::GetMainViewport()->WorkPos.y + 10 }, ImGuiCond_Once);
-	ImGui::SetNextWindowSize({ 400, 500 });
+	ImGui::SetNextWindowSize({ 400, 500 }, ImGuiCond_FirstUseEver);
 
-	ImGuiWindowFlags window_flags = 0;
-	ImGui::Begin("Melt Control", NULL, window_flags);
+	ImGui::Begin("Melt Control");
 	ImGui::Text("modelAxis");
 	ImGui::DragFloat3("Pos##model", &testModel.mTransform.position.x, 0.05f);
 	static Vector3 lRot;

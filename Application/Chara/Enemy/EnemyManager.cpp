@@ -75,12 +75,9 @@ void EnemyManager::Update()
 	solidCombo = 0;	//同フレームで固まった敵のみカウントするので逐一0に戻す
 	
 #pragma region ImGui
-	ImGui::SetNextWindowSize({ 300, 150 });
+	ImGui::SetNextWindowSize({ 300, 150 }, ImGuiCond_FirstUseEver);
 
-	ImGuiWindowFlags window_flags = 0;
-	window_flags |= ImGuiWindowFlags_NoResize;
-
-	ImGui::Begin("Enemy", NULL, window_flags);
+	ImGui::Begin("Enemy");
 
 	if (ImGui::Button("敵を攻撃状態へ遷移")) {
 		for (auto& enemy : enemys)

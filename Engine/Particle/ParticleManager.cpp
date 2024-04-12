@@ -42,13 +42,10 @@ void ParticleManager::Update()
 	}
 
 #pragma region ImGui
-	ImGui::SetNextWindowSize({ 150, 70 });
-
-	ImGuiWindowFlags window_flags = 0;
-	window_flags |= ImGuiWindowFlags_NoResize;
+	ImGui::SetNextWindowSize({ 150, 70 }, ImGuiCond_FirstUseEver);
 
 	// パーティクル //
-	ImGui::Begin("Particle", NULL, window_flags);
+	ImGui::Begin("Particle");
 
 	size_t particleSize = 0;
 	for (auto& emitter : emitters_)
@@ -111,6 +108,18 @@ void ParticleManager::AddSimple(Vector3 emitPos, std::string pDataHandle)
 	emitters_.back()->Add(
 		pdata.addNum, pdata.life, pdata.color, pdata.tex, pdata.minScale, pdata.maxScale,
 		pdata.minVelo, pdata.maxVelo, pdata.accelPower, pdata.minRot, pdata.maxRot,
+		pdata.growingTimer, pdata.endScale, pdata.isGravity, pdata.isBillboard);
+}
+
+void ParticleManager::AddRing(Vector3 emitPos, std::string pDataHandle)
+{
+	emitters_.emplace_back();
+	emitters_.back() = std::make_unique<RingParticle>();
+	emitters_.back()->SetPos(emitPos);
+	RingPData pdata = ParticleEditor::LoadRing(pDataHandle);
+	emitters_.back()->AddRing(
+		pdata.addNum, pdata.life, pdata.color, pdata.tex, pdata.startRadius, pdata.endRadius,
+		pdata.minScale, pdata.maxScale, pdata.minVeloY, pdata.maxVeloY, pdata.minRot, pdata.maxRot,
 		pdata.growingTimer, pdata.endScale, pdata.isGravity, pdata.isBillboard);
 }
 
