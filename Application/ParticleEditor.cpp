@@ -7,7 +7,8 @@
 std::ofstream ParticleEditor::writing_file;
 std::string ParticleEditor::saveFileName = "";
 std::string ParticleEditor::loadFileName = "";
-SimplePData ParticleEditor::savePData;
+SimplePData ParticleEditor::saveSimplePData;
+RingPData ParticleEditor::saveRingPData;
 bool ParticleEditor::isAlwaysUpdate = false;
 
 Vector3 GetVector3Data(const std::string& str)
@@ -18,7 +19,7 @@ Vector3 GetVector3Data(const std::string& str)
 	result.x = std::stof(strs2[0]);
 	result.y = std::stof(strs2[1]);
 	result.z = std::stof(strs2[2]);
-	
+
 	return result;
 }
 
@@ -35,7 +36,7 @@ Color GetColorData(const std::string& str)
 	return result;
 }
 
-std::string SaveVector3(const Vector3& data) 
+std::string SaveVector3(const Vector3& data)
 {
 	return std::to_string(data.x) + "_" + std::to_string(data.y) + "_" + std::to_string(data.z);
 }
@@ -53,44 +54,97 @@ void ParticleEditor::OrderCreateGUI()
 	window_flags |= ImGuiWindowFlags_NoResize;
 
 	ImGui::Begin("ParticleCreateGUI", NULL, window_flags);
-	
+
 	ImGui::PushItemWidth(200);
 	ImGui::Checkbox("常に更新する", &isAlwaysUpdate);
 	ImGui::InputText("読み込むファイル名", &loadFileName);
 	if (ImGui::Button("ロード")) {
-		savePData = LoadSimple(loadFileName);
+		if (Util::ContainString(loadFileName, "_ring"))
+		{
+			saveRingPData = LoadRing(loadFileName);
+		}
+		else
+		{
+			saveSimplePData = LoadSimple(loadFileName);
+		}
 		saveFileName = loadFileName;
 	}
 	//エラーメッセージが入っているなら表示
-	if (savePData.error != "") {
-		ImGui::Text(savePData.error.c_str());
+	if (saveSimplePData.error != "") {
+		ImGui::Text(saveSimplePData.error.c_str());
 	}
-	ImGui::Text("テクスチャは/Particle/の中に入れてください");
-	ImGui::InputText("使用するテクスチャ", &savePData.tex);
-	ImGui::ColorEdit4("パーティクルの色", &savePData.color.r);
-	ImGui::Text("------------------------------------------");
-	ImGui::InputInt("生成数", &savePData.addNum,1);
-	ImGui::InputFloat("パーティクルの生存時間", &savePData.life);
-	ImGui::Text("------------------------------------------");
-	ImGui::InputFloat3("大きさ(倍率?)", &savePData.emitScale.x);
-	ImGui::InputFloat("最小の大きさ(ランダムのmin)", &savePData.minScale);
-	ImGui::InputFloat("最大の大きさ(ランダムのmax)", &savePData.endScale);
-	ImGui::InputFloat3("最小の方向(ランダムのmin)", &savePData.minVelo.x);
-	ImGui::InputFloat3("最大の方向(ランダムのmax)", &savePData.maxVelo.x);
-	ImGui::InputFloat3("最小の回転(ランダムのmin)", &savePData.minRot.x);
-	ImGui::InputFloat3("最大の回転(ランダムのmax)", &savePData.maxRot.x);
-	ImGui::Text("------------------------------------------");
-	ImGui::InputFloat("光る時間", &savePData.growingTimer, 1.0f);
-	ImGui::InputFloat("加速度", &savePData.accelPower, 1.0f);
-	ImGui::Text("------------------------------------------");
-	ImGui::Checkbox("重力を適用するか", &savePData.isGravity);
-	ImGui::Checkbox("Y軸ビルボード化するか", &savePData.isBillboard);
-	ImGui::Text("------------------------------------------");
-	ImGui::InputText("セーブするファイル名", &saveFileName);
-	ImGui::PopItemWidth();
 
-	if (ImGui::Button("セーブ") || isAlwaysUpdate) {
-		SaveSimple(savePData, saveFileName);
+	if (ImGui::TreeNode("シンプルパーティクル"))
+	{
+		ImGui::Text("テクスチャは/Particle/の中に入れてください");
+		ImGui::InputText("使用するテクスチャ", &saveSimplePData.tex);
+		ImGui::ColorEdit4("パーティクルの色", &saveSimplePData.color.r);
+		ImGui::Text("------------------------------------------");
+		ImGui::InputInt("生成数", &saveSimplePData.addNum, 1);
+		ImGui::InputFloat("パーティクルの生存時間", &saveSimplePData.life);
+		ImGui::Text("------------------------------------------");
+		ImGui::InputFloat3("大きさ(倍率?)", &saveSimplePData.emitScale.x);
+		ImGui::InputFloat("最小の大きさ(ランダムのmin)", &saveSimplePData.minScale);
+		ImGui::InputFloat("最大の大きさ(ランダムのmax)", &saveSimplePData.endScale);
+		ImGui::InputFloat3("最小の方向(ランダムのmin)", &saveSimplePData.minVelo.x);
+		ImGui::InputFloat3("最大の方向(ランダムのmax)", &saveSimplePData.maxVelo.x);
+		ImGui::InputFloat3("最小の回転(ランダムのmin)", &saveSimplePData.minRot.x);
+		ImGui::InputFloat3("最大の回転(ランダムのmax)", &saveSimplePData.maxRot.x);
+		ImGui::Text("------------------------------------------");
+		ImGui::InputFloat("大きくなるまでの時間", &saveSimplePData.growingTimer, 0.1f);
+		ImGui::InputFloat("加速度", &saveSimplePData.accelPower, 1.0f);
+		ImGui::Text("------------------------------------------");
+		ImGui::Checkbox("重力を適用するか", &saveSimplePData.isGravity);
+		ImGui::Checkbox("Y軸ビルボード化するか", &saveSimplePData.isBillboard);
+		ImGui::Text("------------------------------------------");
+		ImGui::InputText("セーブするファイル名", &saveFileName);
+		ImGui::PopItemWidth();
+
+		if (ImGui::Button("セーブ") || isAlwaysUpdate) {
+			SaveSimple(saveSimplePData, saveFileName);
+		}
+
+		ImGui::TreePop();
+	}
+	if (ImGui::TreeNode("円形パーティクル"))
+	{
+		ImGui::Text("テクスチャは/Particle/の中に入れてください");
+		ImGui::InputText("使用するテクスチャ", &saveRingPData.tex);
+		ImGui::ColorEdit4("パーティクルの色", &saveRingPData.color.r);
+		ImGui::Text("------------------------------------------");
+		ImGui::InputInt("生成数", &saveRingPData.addNum, 1);
+		ImGui::InputFloat("パーティクルの生存時間", &saveRingPData.life);
+		ImGui::Text("------------------------------------------");
+		ImGui::InputFloat("開始半径", &saveRingPData.startRadius);
+		ImGui::InputFloat("終了半径", &saveRingPData.endRadius);
+		ImGui::InputFloat("最小の大きさ(ランダムのmin)", &saveRingPData.minScale);
+		ImGui::InputFloat("最大の大きさ(ランダムのmax)", &saveRingPData.maxScale);
+		ImGui::InputFloat("最小のY方向(ランダムのmin)", &saveRingPData.minVeloY);
+		ImGui::InputFloat("最大のY方向(ランダムのmax)", &saveRingPData.maxVeloY);
+		ImGui::InputFloat3("最小の回転(ランダムのmin)", &saveRingPData.minRot.x);
+		ImGui::InputFloat3("最大の回転(ランダムのmax)", &saveRingPData.maxRot.x);
+		ImGui::InputFloat("最終スケール", &saveRingPData.endScale);
+		ImGui::Text("------------------------------------------");
+		ImGui::InputFloat("大きくなるまでの時間", &saveRingPData.growingTimer, 0.1f);
+		ImGui::Text("------------------------------------------");
+		ImGui::Checkbox("重力を適用するか", &saveRingPData.isGravity);
+		ImGui::Checkbox("Y軸ビルボード化するか", &saveRingPData.isBillboard);
+		ImGui::Text("------------------------------------------");
+		ImGui::InputText("セーブするファイル名", &saveFileName);
+		ImGui::PopItemWidth();
+
+		if (ImGui::Button("セーブ") || isAlwaysUpdate) {
+			if (Util::ContainString(saveFileName, "_ring"))
+			{
+				SaveRing(saveRingPData, saveFileName);
+			}
+			else
+			{
+				SaveRing(saveRingPData, saveFileName + "_ring");
+			}
+		}
+
+		ImGui::TreePop();
 	}
 	ImGui::End();
 }
@@ -152,7 +206,7 @@ SimplePData ParticleEditor::LoadSimple(const std::string& filename)
 		if (Util::ContainString(line, "isgravity")) {
 			std::vector<std::string> strs = Util::StringSplit(line, ":");
 			result.isGravity = false;
-			if (Util::ContainString(strs[1],"true")) {
+			if (Util::ContainString(strs[1], "true")) {
 				result.isGravity = true;
 			}
 		}
@@ -193,8 +247,116 @@ SimplePData ParticleEditor::LoadSimple(const std::string& filename)
 		}
 		if (Util::ContainString(line, "tex")) {
 			std::vector<std::string> strs = Util::StringSplit(line, ":");
-			
-			TextureManager::Load("./Resources/Particle/" + strs[1] + ".png",strs[1]);
+
+			TextureManager::Load("./Resources/Particle/" + strs[1] + ".png", strs[1]);
+
+			result.tex = strs[1].c_str();
+		}
+	}
+
+	return result;
+}
+
+RingPData ParticleEditor::LoadRing(const std::string& filename)
+{
+	std::string outputName = "";
+	outputName = "./Resources/Data/ParticleOrder/" + filename + ".txt";
+
+	std::filesystem::path path = PathUtil::ConvertAbsolute(
+		Util::ConvertStringToWString(outputName));
+
+	RingPData result;
+
+	//ファイルストリーム
+	std::ifstream file;
+	//ファイルを開く
+	file.open(path.c_str());
+	if (file.fail()) {
+		result.error = "error_ファイルの展開に失敗しました";
+		return result;
+	}
+
+	std::string line = "";
+	while (getline(file, line)) {
+		std::istringstream line_stream(line);
+
+		//intとかfloatとか
+		if (Util::ContainString(line, "addNum")) {
+			std::vector<std::string> strs = Util::StringSplit(line, ":");
+			result.addNum = std::stoi(strs[1]);
+		}
+		if (Util::ContainString(line, "life")) {
+			std::vector<std::string> strs = Util::StringSplit(line, ":");
+			result.life = std::stof(strs[1]);
+		}
+		if (Util::ContainString(line, "startradius")) {
+			std::vector<std::string> strs = Util::StringSplit(line, ":");
+			result.startRadius = std::stof(strs[1]);
+		}
+		if (Util::ContainString(line, "endradius")) {
+			std::vector<std::string> strs = Util::StringSplit(line, ":");
+			result.endRadius = std::stof(strs[1]);
+		}
+		if (Util::ContainString(line, "minscale")) {
+			std::vector<std::string> strs = Util::StringSplit(line, ":");
+			result.minScale = std::stof(strs[1]);
+		}
+		if (Util::ContainString(line, "maxscale")) {
+			std::vector<std::string> strs = Util::StringSplit(line, ":");
+			result.maxScale = std::stof(strs[1]);
+		}
+		if (Util::ContainString(line, "minveloY")) {
+			std::vector<std::string> strs = Util::StringSplit(line, ":");
+			result.minVeloY = std::stof(strs[1]);
+		}
+		if (Util::ContainString(line, "maxveloY")) {
+			std::vector<std::string> strs = Util::StringSplit(line, ":");
+			result.maxVeloY = std::stof(strs[1]);
+		}
+		if (Util::ContainString(line, "growingTimer")) {
+			std::vector<std::string> strs = Util::StringSplit(line, ":");
+			result.growingTimer = std::stof(strs[1]);
+		}
+		if (Util::ContainString(line, "endscale")) {
+			std::vector<std::string> strs = Util::StringSplit(line, ":");
+			result.endScale = std::stof(strs[1]);
+		}
+
+		//boolども
+		if (Util::ContainString(line, "isgravity")) {
+			std::vector<std::string> strs = Util::StringSplit(line, ":");
+			result.isGravity = false;
+			if (Util::ContainString(strs[1], "true")) {
+				result.isGravity = true;
+			}
+		}
+		if (Util::ContainString(line, "isbillboard")) {
+			std::vector<std::string> strs = Util::StringSplit(line, ":");
+			result.isBillboard = false;
+			if (Util::ContainString(strs[1], "true")) {
+				result.isBillboard = true;
+			}
+		}
+
+		//Vector3ども
+		if (Util::ContainString(line, "minrot")) {
+			std::vector<std::string> strs = Util::StringSplit(line, ":");
+			result.minRot = GetVector3Data(strs[1]);
+		}
+		if (Util::ContainString(line, "maxrot")) {
+			std::vector<std::string> strs = Util::StringSplit(line, ":");
+			result.maxRot = GetVector3Data(strs[1]);
+		}
+
+		//色とテクスチャ
+		if (Util::ContainString(line, "color")) {
+			std::vector<std::string> strs = Util::StringSplit(line, ":");
+			result.color = GetColorData(strs[1]);
+		}
+		if (Util::ContainString(line, "tex")) {
+			std::vector<std::string> strs = Util::StringSplit(line, ":");
+
+			TextureManager::Load("./Resources/Particle/" + strs[1] + ".png", strs[1]);
 
 			result.tex = strs[1].c_str();
 		}
@@ -219,19 +381,55 @@ void ParticleEditor::SaveSimple(const SimplePData& saveData, const std::string& 
 	writing_file << "accelpower:" << saveData.accelPower << std::endl;
 	writing_file << "growingTimer:" << saveData.growingTimer << std::endl;
 	writing_file << "endscale:" << saveData.endScale << std::endl;
-	
+
 	std::string tempGrab = "false";
 	if (saveData.isGravity)tempGrab = "true";
 	writing_file << "isgravity:" << tempGrab << std::endl;
-	
+
 	std::string tempbill = "false";
 	if (saveData.isBillboard)tempbill = "true";
 	writing_file << "isbillboard:" << tempbill << std::endl;
 
 	writing_file << "emitscale:" << SaveVector3(saveData.emitScale) << std::endl;
-	writing_file << "minvelo:" <<  SaveVector3(saveData.minVelo) << std::endl;
-	writing_file << "maxvelo:" <<  SaveVector3(saveData.maxVelo) << std::endl;
-	writing_file << "maxvelo:" <<  SaveVector3(saveData.maxVelo) << std::endl;
+	writing_file << "minvelo:" << SaveVector3(saveData.minVelo) << std::endl;
+	writing_file << "maxvelo:" << SaveVector3(saveData.maxVelo) << std::endl;
+	writing_file << "minrot:" << SaveVector3(saveData.minRot) << std::endl;
+	writing_file << "maxrot:" << SaveVector3(saveData.maxRot) << std::endl;
+
+	writing_file << "color:" << SaveColor(saveData.color) << std::endl;
+	writing_file << "tex:" << saveData.tex << std::endl;
+
+	writing_file.close();
+}
+
+void ParticleEditor::SaveRing(const RingPData& saveData, const std::string& saveFileName_)
+{
+	std::string outputName = "";
+	outputName = "./Resources/Data/ParticleOrder/" + saveFileName_ + ".txt";
+
+	std::filesystem::path path = PathUtil::ConvertAbsolute(Util::ConvertStringToWString(outputName));
+
+	writing_file.open(path, std::ios::out);
+
+	writing_file << "addNum:" << saveData.addNum << std::endl;
+	writing_file << "life:" << saveData.life << std::endl;
+	writing_file << "startradius:" << saveData.startRadius << std::endl;
+	writing_file << "endradius:" << saveData.endRadius << std::endl;
+	writing_file << "minscale:" << saveData.minScale << std::endl;
+	writing_file << "maxscale:" << saveData.maxScale << std::endl;
+	writing_file << "minveloY:" << saveData.minVeloY << std::endl;
+	writing_file << "maxveloY:" << saveData.maxVeloY << std::endl;
+	writing_file << "growingTimer:" << saveData.growingTimer << std::endl;
+	writing_file << "endscale:" << saveData.endScale << std::endl;
+
+	std::string tempGrab = "false";
+	if (saveData.isGravity)tempGrab = "true";
+	writing_file << "isgravity:" << tempGrab << std::endl;
+
+	std::string tempbill = "false";
+	if (saveData.isBillboard)tempbill = "true";
+	writing_file << "isbillboard:" << tempbill << std::endl;
+
 	writing_file << "minrot:" << SaveVector3(saveData.minRot) << std::endl;
 	writing_file << "maxrot:" << SaveVector3(saveData.maxRot) << std::endl;
 
