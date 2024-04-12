@@ -34,6 +34,8 @@ moveSpeed(0.1f), hp(0), maxHP(10.f)
 	parts[(size_t)PartsNum::LeftHand].oriPos = { -50.f,20.f,0.f };
 	parts[(size_t)PartsNum::RightHand].oriPos = { 50.f,20.f,0.f };
 
+	targetCircle = ModelObj(Model::Load("./Resources/Model/targetMark/targetMark.obj", "targetMark", true));
+
 	BossUI::LoadResource();
 
 	std::map<std::string, std::string> extract = Parameter::Extract("Boss");
@@ -197,6 +199,9 @@ void Boss::Update()
 		state = std::make_unique<BossPunch>(false);
 	}
 
+	targetCircle.mTransform.UpdateMatrix();
+	targetCircle.TransferBuffer(Camera::sNowCamera->mViewProjection);
+
 #pragma region ImGui
 	ImGui::SetNextWindowSize({ 300, 250 });
 
@@ -272,6 +277,12 @@ void Boss::Draw()
 		for (size_t i = 0; i < parts.size(); i++)
 		{
 			parts[i].DrawCollider();
+		}
+
+		//パンチ中のみ描画
+		if (punchTimer.GetRun())
+		{
+			targetCircle.Draw();
 		}
 
 		ui.Draw();

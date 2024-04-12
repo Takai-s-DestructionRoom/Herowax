@@ -35,6 +35,16 @@ void BossPunch::Update(Boss* boss)
 			boss->GetTarget()->mTransform.position				//目標地点まで
 		};
 
+		//スプラインの終点に攻撃マーク表示
+		boss->targetCircle.mTransform.position = splinePoints.back();
+		//ちょい浮かせる
+		boss->targetCircle.mTransform.rotation.y = 0.02f;
+
+		boss->targetCircle.mTransform.scale =
+		{ boss->parts[(size_t)isLeft_].collider.r,
+			1.f,
+			boss->parts[(size_t)isLeft_].collider.r };
+
 		isStart = false;
 	}
 

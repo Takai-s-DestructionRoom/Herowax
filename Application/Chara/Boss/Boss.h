@@ -58,6 +58,7 @@ public:
 	std::unique_ptr<BossState> state;	//状態管理
 
 	std::array<Parts, 2> parts;			//体のパーツ
+	ModelObj targetCircle;				//攻撃位置表示用
 
 	//------------ 行動関連 ------------//
 	Easing::EaseTimer standTimer;		//待機時間
