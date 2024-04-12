@@ -32,10 +32,11 @@ public:
 
 	std::list<ModelObj> objects;	//オブジェクトたち
 	ModelObj ground;				//地面
-	std::array<ModelObj,4> wall;	//壁
+	std::vector<ModelObj> wall;	//壁
 	Tower tower;					//タワー
 	SpawnerManager* spawnerManager = SpawnerManager::GetInstance();	//スポナー
 
-	std::array<float,4> moveLimit;	//移動制限(左,上,右,下)
+	Vector2 moveLimitMax = {0,0};	//移動制限
+	Vector2 moveLimitMin = {0,0};	//移動制限
 };
 

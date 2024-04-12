@@ -45,12 +45,12 @@ moveSpeed(0.1f), hp(0), maxHP(10.f)
 	colliderSize = Parameter::GetParam(extract,"ボス本体の当たり判定", colliderSize);
 	mutekiTimer.maxTime_ = Parameter::GetParam(extract,"無敵時間", mutekiTimer.maxTime_);
 	
-	 parts[(int32_t)PartsNum::LeftHand].obj.mTransform.scale.x = Parameter::GetParam(extract,"左手スケールX", parts[(int32_t)PartsNum::LeftHand].obj.mTransform.scale.x);
-	 parts[(int32_t)PartsNum::LeftHand].obj.mTransform.scale.y = Parameter::GetParam(extract,"左手スケールY", parts[(int32_t)PartsNum::LeftHand].obj.mTransform.scale.y);
-	 parts[(int32_t)PartsNum::LeftHand].obj.mTransform.scale.z = Parameter::GetParam(extract,"左手スケールZ", parts[(int32_t)PartsNum::LeftHand].obj.mTransform.scale.z);
-	 parts[(int32_t)PartsNum::RightHand].obj.mTransform.scale.x = Parameter::GetParam(extract,"右手スケールX", parts[(int32_t)PartsNum::RightHand].obj.mTransform.scale.x);
-	 parts[(int32_t)PartsNum::RightHand].obj.mTransform.scale.y = Parameter::GetParam(extract,"右手スケールY", parts[(int32_t)PartsNum::RightHand].obj.mTransform.scale.y);
-	 parts[(int32_t)PartsNum::RightHand].obj.mTransform.scale.z = Parameter::GetParam(extract,"右手スケールZ", parts[(int32_t)PartsNum::RightHand].obj.mTransform.scale.z);
+	parts[(int32_t)PartsNum::LeftHand].obj.mTransform.scale.x = Parameter::GetParam(extract,"左手スケールX", parts[(int32_t)PartsNum::LeftHand].obj.mTransform.scale.x);
+	parts[(int32_t)PartsNum::LeftHand].obj.mTransform.scale.y = Parameter::GetParam(extract,"左手スケールY", parts[(int32_t)PartsNum::LeftHand].obj.mTransform.scale.y);
+	parts[(int32_t)PartsNum::LeftHand].obj.mTransform.scale.z = Parameter::GetParam(extract,"左手スケールZ", parts[(int32_t)PartsNum::LeftHand].obj.mTransform.scale.z);
+	parts[(int32_t)PartsNum::RightHand].obj.mTransform.scale.x = Parameter::GetParam(extract,"右手スケールX", parts[(int32_t)PartsNum::RightHand].obj.mTransform.scale.x);
+	parts[(int32_t)PartsNum::RightHand].obj.mTransform.scale.y = Parameter::GetParam(extract,"右手スケールY", parts[(int32_t)PartsNum::RightHand].obj.mTransform.scale.y);
+	parts[(int32_t)PartsNum::RightHand].obj.mTransform.scale.z = Parameter::GetParam(extract,"右手スケールZ", parts[(int32_t)PartsNum::RightHand].obj.mTransform.scale.z);
 	standTimer = Parameter::GetParam(extract,"モーション待機時間", 3.f);
 	punchTimer = Parameter::GetParam(extract,"パンチにかかる時間", 0.7f);
 	punchStayTimer = Parameter::GetParam(extract,"パンチ後留まる時間", 1.5f);
@@ -188,15 +188,24 @@ void Boss::Update()
 	// モーションの変更(デバッグ用)
 	if (RInput::GetInstance()->GetKeyDown(DIK_1))
 	{
-		state = std::make_unique<BossNormal>();
+		ChangeState<BossNormal>();
 	}
 	else if (RInput::GetInstance()->GetKeyDown(DIK_2))
 	{
-		state = std::make_unique<BossPunch>(true);
+		nextState = std::make_unique<BossPunch>(true);
+		changingState = true;
 	}
 	else if (RInput::GetInstance()->GetKeyDown(DIK_3))
 	{
-		state = std::make_unique<BossPunch>(false);
+		nextState = std::make_unique<BossPunch>(false);
+		changingState = true;
+	}
+
+	if (changingState) {
+		//ステートを変化させる
+		std::swap(state, nextState);
+		changingState = false;
+		nextState = nullptr;
 	}
 
 	targetCircle.mTransform.UpdateMatrix();

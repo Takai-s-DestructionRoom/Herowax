@@ -44,7 +44,7 @@ private:
 	float phaseTimer;	//フェーズ移行に使うタイマー
 
 	//---------死亡表現関連------------//
-	Easing::EaseTimer deadTimer;
+	Easing::EaseTimer deadTimer = 5.0f;
 
 	//---------被弾時表現関連------------//
 	Easing::EaseTimer whiteTimer;	//被弾時に白く光るのを管理する
@@ -68,6 +68,13 @@ public:
 private:
 	//すべてのステートでの共通処理
 	void AllStateUpdate();
+
+	//状態変更
+	template <typename ChangePlayerState>
+	void ChangeState() {
+		nextState = std::make_unique<ChangePlayerState>();
+		changingState = true;
+	};
 
 public:
 	Boss();
