@@ -1057,7 +1057,7 @@
         },
         {
             "type": "MESH",
-            "name": "壁.003",
+            "name": "壁.004",
             "transform": {
                 "translation": [
                     0.0,
@@ -1079,7 +1079,7 @@
         },
         {
             "type": "MESH",
-            "name": "壁.001",
+            "name": "壁.003",
             "transform": {
                 "translation": [
                     -90.0,
@@ -1123,7 +1123,7 @@
         },
         {
             "type": "MESH",
-            "name": "壁.004",
+            "name": "壁.001",
             "transform": {
                 "translation": [
                     110.0,
