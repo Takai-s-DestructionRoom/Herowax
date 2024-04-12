@@ -91,7 +91,7 @@ void BossPunch::Update(Boss* boss)
 		emitterPos.y = 0.f;
 
 		//パーティクル生成
-		ParticleManager::GetInstance()->AddRing(emitterPos, "punch_impact");
+		ParticleManager::GetInstance()->AddRing(emitterPos, "punch_impact_ring");
 	}
 
 	if (boss->punchStayTimer.GetEnd())
