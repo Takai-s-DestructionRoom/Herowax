@@ -34,6 +34,8 @@ moveSpeed(0.1f), hp(0), maxHP(10.f)
 	parts[(size_t)PartsNum::LeftHand].oriPos = { -50.f,20.f,0.f };
 	parts[(size_t)PartsNum::RightHand].oriPos = { 50.f,20.f,0.f };
 
+	targetCircle = ModelObj(Model::Load("./Resources/Model/targetMark/targetMark.obj", "targetMark", true));
+
 	BossUI::LoadResource();
 
 	std::map<std::string, std::string> extract = Parameter::Extract("Boss");
@@ -186,16 +188,28 @@ void Boss::Update()
 	// モーションの変更(デバッグ用)
 	if (RInput::GetInstance()->GetKeyDown(DIK_1))
 	{
-		state = std::make_unique<BossNormal>();
+		ChangeState<BossNormal>();
 	}
 	else if (RInput::GetInstance()->GetKeyDown(DIK_2))
 	{
-		state = std::make_unique<BossPunch>(true);
+		nextState = std::make_unique<BossPunch>(true);
+		changingState = true;
 	}
 	else if (RInput::GetInstance()->GetKeyDown(DIK_3))
 	{
-		state = std::make_unique<BossPunch>(false);
+		nextState = std::make_unique<BossPunch>(false);
+		changingState = true;
 	}
+
+	if (changingState) {
+		//ステートを変化させる
+		std::swap(state, nextState);
+		changingState = false;
+		nextState = nullptr;
+	}
+
+	targetCircle.mTransform.UpdateMatrix();
+	targetCircle.TransferBuffer(Camera::sNowCamera->mViewProjection);
 
 #pragma region ImGui
 	ImGui::SetNextWindowSize({ 300, 250 });
@@ -272,6 +286,12 @@ void Boss::Draw()
 		for (size_t i = 0; i < parts.size(); i++)
 		{
 			parts[i].DrawCollider();
+		}
+
+		//パンチ中のみ描画
+		if (punchTimer.GetRun())
+		{
+			targetCircle.Draw();
 		}
 
 		ui.Draw();

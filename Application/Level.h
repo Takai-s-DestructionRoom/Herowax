@@ -35,5 +35,8 @@ public:
 	std::array<ModelObj,4> wall;	//壁
 	Tower tower;					//タワー
 	SpawnerManager* spawnerManager = SpawnerManager::GetInstance();	//スポナー
+
+	Vector2 moveLimitMax = {0,0};	//移動制限
+	Vector2 moveLimitMin = {0,0};	//移動制限
 };
 

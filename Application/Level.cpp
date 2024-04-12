@@ -133,6 +133,16 @@ void Level::Extract(const std::string& handle)
 			wall[num].mTransform.scale = objectData->scaling;
 			wall[num].mTransform.rotation = objectData->rotation;
 
+			////移動制限設定(壁とちゃんと当たり判定取るならいらない)
+			//if (num % 2 == 0)
+			//{
+			//	moveLimit[num] = objectData->translation.x;
+			//}
+			//else
+			//{
+			//	moveLimit[num] = objectData->translation.z;
+			//}
+
 			num++;
 		}
 		//後ろに_Objがついているものであれば適用
