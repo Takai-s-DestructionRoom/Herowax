@@ -21,6 +21,8 @@ void GameCamera::Init()
 	cameraSpeed.y = Parameter::GetParam(extract, "カメラの移動速度Y", 0.003f);
 	mmCameraDist = Parameter::GetParam(extract, "ミニマップ用カメラ距離", -250.f);
 	cameraUpOffset = Parameter::GetParam(extract, "プレイヤーからのYのオフセット", cameraUpOffset);
+	inverse.x = Parameter::GetParam(extract, "カメラ方向反転X", inverse.x);
+	inverse.y = Parameter::GetParam(extract, "カメラ方向反転Y", inverse.y);
 }
 
 void GameCamera::Update()
@@ -29,10 +31,10 @@ void GameCamera::Update()
 
 	if (stick.LengthSq() > 0.0f) {
 		if (abs(stick.x) > 0.3f) {
-			cameraAngle.y += cameraSpeed.x * -stick.x;
+			cameraAngle.y += cameraSpeed.x * inverse.x * -stick.x;
 		}
 		if (abs(stick.y) > 0.3f) {
-			cameraAngle.x += cameraSpeed.y * stick.y;
+			cameraAngle.x += cameraSpeed.y * inverse.y * stick.y;
 		}
 	}
 	cameraAngle.x = Util::Clamp(cameraAngle.x, 0.f, Util::AngleToRadian(89.f));
@@ -71,6 +73,36 @@ void GameCamera::Update()
 	ImGui::SliderFloat("カメラ移動速度X", &cameraSpeed.x, 0.0f, 0.5f);
 	ImGui::SliderFloat("カメラ移動速度Y", &cameraSpeed.y, 0.0f, 0.5f);
 	ImGui::SliderFloat("ミニマップカメラ距離:%f", &mmCameraDist, -1000.f, 0.f);
+
+	if (ImGui::Button("カメラ移動反転X"))
+	{
+		inverse.x *= -1;
+	}
+	if (inverse.x >= 0) {
+		invStr = "通常";
+	}
+	else
+	{
+		invStr = "反転";
+	}
+	ImGui::SameLine();
+	ImGui::Text(invStr.c_str());
+	
+	if (ImGui::Button("カメラ移動反転Y"))
+	{
+		inverse.y *= -1;
+	}
+
+	if (inverse.y >= 0) {
+		invStr = "反転";
+	}
+	else
+	{
+		invStr = "通常";
+	}
+	ImGui::SameLine();
+	ImGui::Text(invStr.c_str());
+	
 
 	static float saveDist = cameraDist;
 	static Vector2 saveAngle = cameraAngle;
@@ -141,6 +173,8 @@ void GameCamera::Update()
 		Parameter::Save("カメラの移動速度X", cameraSpeed.x);
 		Parameter::Save("カメラの移動速度Y", cameraSpeed.y);
 		Parameter::Save("ミニマップ用カメラ距離", mmCameraDist);
+		Parameter::Save("カメラ方向反転X", inverse.x);
+		Parameter::Save("カメラ方向反転Y", inverse.y);
 		Parameter::End();
 	}
 

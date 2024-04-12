@@ -24,6 +24,9 @@ private:
 	Vector2 cameraSpeed{};				//カメラの移動速度
 	Vector2 mAngle = { 0, 0 };
 
+	Vector2 inverse = {1,-1};
+	std::string invStr = "";
+
 	float cameraUpOffset = 6.5f;
 
 	bool changeFPS = false;
