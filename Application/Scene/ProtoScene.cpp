@@ -71,6 +71,7 @@ void ProtoScene::Update()
 {
 	//初期化周り
 	InstantDrawer::DrawInit();
+	WaxManager::GetInstance()->slimeWax.Reset();
 
 	gameCamera.Update();
 
@@ -339,11 +340,10 @@ void ProtoScene::Update()
 	}
 
 #pragma endregion
-	WaxManager::GetInstance()->Update();
-	//FireManager::GetInstance()->Update();
-	//TemperatureManager::GetInstance()->Update();
 	ParticleManager::GetInstance()->SetPlayerPos(player.GetCenterPos());
 	ParticleManager::GetInstance()->Update();
+
+	WaxManager::GetInstance()->Update();
 
 	Minimap::GetInstance()->Update();
 

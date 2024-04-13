@@ -163,7 +163,6 @@ void WaxManager::Update()
 		waxGroup->Update();
 	}
 
-	slimeWax.spheres.clear();
 	//ロウを入れる
 	for (auto& group : waxGroups)
 	{

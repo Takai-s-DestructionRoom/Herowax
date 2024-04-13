@@ -92,6 +92,11 @@ void SlimeWax::Draw()
 	Renderer::DrawCall("Transparent", order);
 }
 
+void SlimeWax::Reset()
+{
+	spheres.clear();
+}
+
 GraphicsPipeline SlimeWax::SlimeShaderPipeLine()
 {
 	DescriptorRange descriptorRange{};
