@@ -274,31 +274,6 @@ float WaxManager::GetCalcHeatBonus()
 	return heatBonus * (float)isBurningNum;
 }
 
-bool RayToSphereCol(ColPrimitive3D::Ray rayCol, ColPrimitive3D::Sphere sphereCol)
-{
-	Vector3 rayToSphere = sphereCol.pos - rayCol.start;
-
-	//レイとの内積が0以下なら当たってない(レイより後ろに球があるときスルー)
-	if (rayToSphere.Dot(rayCol.dir) < 0)
-	{
-		return false;
-	}
-
-	float t = rayCol.dir.GetNormalize().Dot(rayToSphere);
-
-	//垂線を降ろした点
-	Vector3 a = rayCol.start + rayCol.dir.GetNormalize() * t;
-	//レイから球の最短ベクトル
-	Vector3 b = sphereCol.pos - a;
-
-	float len = b.Length();
-	if (len - (sphereCol.r + rayCol.radius) <= 0.f)
-	{
-		return true;
-	}
-
-	return false;
-}
 
 bool WaxManager::Collect(ColPrimitive3D::Ray collider)
 {
@@ -309,7 +284,7 @@ bool WaxManager::Collect(ColPrimitive3D::Ray collider)
 	{
 		for (auto& wax : group->waxs)
 		{
-			if (RayToSphereCol(collider, wax->collider))
+			if (ColPrimitive3D::RayToSphereCol(collider, wax->collider))
 			{
 				//今一番遠いロウがないなら入れておく
 				if (farObj == nullptr)

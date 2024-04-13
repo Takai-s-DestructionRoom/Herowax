@@ -821,16 +821,37 @@ void Player::WaxCollect()
 		}
 		//腕吸収
 		if (boss->parts[(int32_t)PartsNum::LeftHand].isCollected) {
-			//とりあえず壊しちゃう
-			boss->parts[(int32_t)PartsNum::LeftHand].isAlive = false;
-			//腕の吸収値も変数化したい
-			waxCollectAmount += 1;
+			if (RayToSphereCol(collectCol, boss->parts[(int32_t)PartsNum::LeftHand].collider))
+			{
+				//今のロウとの距離
+				float len = (collectCol.start - 
+					boss->parts[(int32_t)PartsNum::LeftHand].GetPos()).Length();
+
+				//見たロウが範囲外ならスキップ
+				if (waxCollectVertical >= len) {
+					//とりあえず壊しちゃう
+					boss->parts[(int32_t)PartsNum::LeftHand].collectPos = collectCol.start;
+					boss->parts[(int32_t)PartsNum::LeftHand].ChangeState<BossPartCollect>();
+					waxCollectAmount += 1;
+				}
+			}
 		}
 		if (boss->parts[(int32_t)PartsNum::RightHand].isCollected) {
-			//とりあえず壊しちゃう
-			boss->parts[(int32_t)PartsNum::RightHand].isAlive = false;
-			//腕の吸収値も変数化したい
-			waxCollectAmount += 1;
+			if (ColPrimitive3D::RayToSphereCol(collectCol, boss->parts[(int32_t)PartsNum::RightHand].collider))
+			{
+				//今のロウとの距離
+				float len = (collectCol.start -
+					boss->parts[(int32_t)PartsNum::RightHand].GetPos()).Length();
+
+				//見たロウが範囲外ならスキップ
+				if (waxCollectVertical >= len) {
+					//とりあえず壊しちゃう
+					boss->parts[(int32_t)PartsNum::RightHand].collectPos = collectCol.start;
+					boss->parts[(int32_t)PartsNum::RightHand].ChangeState<BossPartCollect>();
+					//腕の吸収値も変数化したい
+					waxCollectAmount += 1;
+				}
+			}
 		}
 	}
 }

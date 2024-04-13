@@ -131,24 +131,19 @@ void ProtoScene::Update()
 			bool isCollision = ColPrimitive3D::CheckSphereToSphere(boss.collider, wax->collider);
 
 			//投げられてる蝋に当たった時はダメージと蝋蓄積
-			if (isCollision &&
-				wax->isSolid == false &&
-				wax->isGround == false)
+			if (isCollision && wax->isSolid == false && wax->isGround == false)
 			{
-				//一応1ダメージ
+				//一応1ダメージ(ダメージ量に応じてロウのかかり具合も進行)
 				boss.DealDamage(1);
 			}
 
 			for (size_t i = 0; i < boss.parts.size(); i++)
 			{
 				//腕との判定
-				isCollision = ColPrimitive3D::CheckSphereToSphere(boss.parts[i].collider,
-					wax->collider);
-				if (isCollision &&
-					wax->isSolid == false &&
-					wax->isGround == false)
+				isCollision = ColPrimitive3D::CheckSphereToSphere(boss.parts[i].collider,wax->collider);
+				if (isCollision && wax->isSolid == false && wax->isGround == false)
 				{
-					//一応1ダメージ
+					//一応1ダメージ(ダメージ量に応じてロウのかかり具合も進行)
 					boss.parts[i].DealDamage(1);
 				}
 			}

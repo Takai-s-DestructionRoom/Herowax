@@ -56,5 +56,6 @@ namespace ColPrimitive3D
 	bool CheckRayToPlane(Ray ray, Plane plane, float* outDistance = nullptr, Vector3* outInter = nullptr);
 	bool CheckRayToTriangle(Ray ray, Triangle triangle, float* outDistance = nullptr, Vector3* outInter = nullptr);
 	bool CheckRayToSphere(Ray ray, Sphere sphere, float* outDistance = nullptr, Vector3* outInter = nullptr);
+	bool RayToSphereCol(ColPrimitive3D::Ray rayCol, ColPrimitive3D::Sphere sphereCol);
 };
 
