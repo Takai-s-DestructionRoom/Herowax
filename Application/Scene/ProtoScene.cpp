@@ -104,7 +104,7 @@ void ProtoScene::Update()
 	for (auto& part : CollectPartManager::GetInstance()->parts)
 	{
 		if ((int32_t)player.carryingParts.size() < 
-			CollectPartManager::GetInstance()->maxCarryingNum) {
+			CollectPartManager::GetInstance()->GetMaxCarryingNum()) {
 			if (ColPrimitive3D::CheckSphereToSphere(part->collider, player.collider)) {
 				//一旦複数持てる
 				//後でプレイヤー側でフラグ立てて個数制限する
@@ -136,14 +136,29 @@ void ProtoScene::Update()
 	}
 
 	//10個溜まったら(後で制作状態も作る)
-	if (CollectPartManager::GetInstance()->zone.GetPartsNum() >= 10) {
-		//ゴッドモードへ
-		player.SetIsGodmode(true);
-		
-		//パーツ削除
-		for (auto& part : *CollectPartManager::GetInstance()->zone.GetPartsData())
+	if (CollectPartManager::GetInstance()->GetAllowCreate()) {
+
+		//範囲内に居て
+		if (ColPrimitive3D::CheckSphereToAABB(player.collider,
+			CollectPartManager::GetInstance()->zone.aabbCol))
 		{
-			part->SetIsAlive(false);
+			//ボタンを押しているなら
+			if (RInput::GetKey(DIK_E) || 
+				RInput::GetPadButton(XINPUT_GAMEPAD_RIGHT_SHOULDER))
+			{
+				//制作
+				CollectPartManager::GetInstance()->zone.GodModeCreate();
+			}
+			else {
+				CollectPartManager::GetInstance()->zone.GodModeCreateStop();
+			}
+		}
+
+		//ゴッドモードへ
+		if (CollectPartManager::GetInstance()->zone.GodModeCreateEnd()) {
+			player.SetIsGodmode(true);
+
+			CollectPartManager::GetInstance()->CratePostDelete();
 		}
 	}
 
