@@ -18,6 +18,7 @@ public:
 	virtual void Init() = 0;
 	virtual void Render() = 0;
 
+	void DrawCall(RenderOrder& order, RenderOrder& memo);
 	void AllCall();
 
 	RenderOrder mDefParamater;
