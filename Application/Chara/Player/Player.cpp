@@ -876,7 +876,7 @@ void Player::DealDamage(uint32_t damage)
 	hp -= damage;
 
 	//パーティクル生成
-	ParticleManager::GetInstance()->AddSimple(obj.mTransform.position, "star");
+	ParticleManager::GetInstance()->AddSimple(obj.mTransform.position, "player_hit");
 
 	//ちょっとのけぞる
 	//モーション遷移
