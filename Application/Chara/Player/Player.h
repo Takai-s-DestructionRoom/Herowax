@@ -122,6 +122,8 @@ private:
 
 	Boss* boss = nullptr;
 
+	Color defColor;
+
 public:
 	Player();
 

@@ -69,7 +69,7 @@ void CollectPart::Draw()
 
 void CollectPart::Carrying(ModelObj* target_)
 {
-	if (target != nullptr || isCollected) return;
+	if (IsCarrying() || isCollected) return;
 
 	//ターゲットの背中に背負われる
 	target = target_;
@@ -79,4 +79,9 @@ void CollectPart::Collect()
 {
 	target = nullptr;
 	isCollected = true;
+}
+
+bool CollectPart::IsCarrying()
+{
+	return target != nullptr;
 }

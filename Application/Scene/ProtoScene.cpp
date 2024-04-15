@@ -101,16 +101,32 @@ void ProtoScene::Update()
 	}
 
 	//パーツとの判定
-	for (auto& part : CollectPartManager::GetInstance()->parts)
+	for (std::unique_ptr<CollectPart>& part : CollectPartManager::GetInstance()->parts)
 	{
 		if (ColPrimitive3D::CheckSphereToSphere(part->collider, player.collider)) {
 			//一旦複数持てる
 			//後でプレイヤー側でフラグ立てて個数制限する
 			part->Carrying(&player.obj);
 		}
-		if (ColPrimitive3D::CheckSphereToAABB(part->collider,
-			CollectPartManager::GetInstance()->zone.aabbCol)) {
-			part->Collect();
+		//プレイヤーが持っているなら
+		if (part->IsCarrying()) {
+			//当たり判定する
+			if (ColPrimitive3D::CheckSphereToAABB(part->collider,
+				CollectPartManager::GetInstance()->zone.aabbCol)) {
+				part->Collect();
+			}
+		}
+	}
+
+	//10個溜まったら(後で制作状態も作る)
+	if (CollectPartManager::GetInstance()->zone.GetPartsNum() >= 10) {
+		//ゴッドモードへ
+		player.SetIsGodmode(true);
+		
+		//パーツ削除
+		for (std::unique_ptr<CollectPart>& part : CollectPartManager::GetInstance()->parts)
+		{
+			part->SetIsAlive(false);
 		}
 	}
 

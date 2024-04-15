@@ -14,6 +14,8 @@ public:
 
 	void Craete(const Vector3& spawnPos);
 
+	void ImGui();
+
 	static CollectPartManager* GetInstance();
 
 	std::vector<std::unique_ptr<CollectPart>> parts;

@@ -17,6 +17,8 @@ public:
 	//格納される
 	void Collect();
 
+	bool IsCarrying();
+
 private:
 	Vector3 moveVec;
 	float gravity = 0.01f;

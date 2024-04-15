@@ -26,5 +26,7 @@ public:
 	void Draw()override;//どの範囲がcollectZoneなのかを半透明オブジェクトで描画
 
 	void Move(CollectPart* part);
+
+	int32_t GetPartsNum();
 };
 

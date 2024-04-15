@@ -1,4 +1,5 @@
 #include "CollectPartManager.h"
+#include "RImGui.h"
 
 void CollectPartManager::LoadResouces()
 {
@@ -20,12 +21,25 @@ void CollectPartManager::Init()
 
 void CollectPartManager::Update()
 {
+    for (auto itr = parts.begin(); itr != parts.end();)
+    {
+        //死んでたら殺す
+        if (!(*itr)->isAlive) {
+            itr = parts.erase(itr);
+        }
+        else {
+            itr++;
+        }
+    }
+
     for (auto& part : parts)
     {
         part->Update();
     }
 
     zone.Update();
+
+    ImGui();
 }
 
 void CollectPartManager::Draw()
@@ -43,6 +57,22 @@ void CollectPartManager::Craete(const Vector3& spawnPos)
     parts.emplace_back();
     parts.back() = std::make_unique<CollectPart>();
     parts.back()->obj.mTransform.position = spawnPos;
+}
+
+void CollectPartManager::ImGui()
+{
+    ImGui::SetNextWindowSize({ 400, 200 }, ImGuiCond_FirstUseEver);
+
+    // デバッグモード //
+    ImGui::Begin("部品集める");
+
+    if (ImGui::TreeNode("調整項目_ゾーン")) {
+        ImGui::DragFloat3("位置", &zone.pos.x,1.f);
+        ImGui::DragFloat2("大きさ", &zone.scale.x,1.f);
+        ImGui::DragFloat("透明度", &zone.obj.mTuneMaterial.mColor.a,0.1f);
+    }
+
+    ImGui::End();
 }
 
 CollectPartManager* CollectPartManager::GetInstance()

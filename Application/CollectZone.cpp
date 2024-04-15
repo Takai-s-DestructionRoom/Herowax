@@ -4,6 +4,11 @@
 void CollectZone::Init()
 {
 	obj = PaintableModelObj(Model::Load("./Resources/Model/Cube.obj", "Cube"));
+
+	obj.mTuneMaterial.mColor = { 1,0,0,0.7f };
+	obj.mTuneMaterial.mAmbient = Vector3::ONE * 100.f;
+	obj.mTuneMaterial.mDiffuse = Vector3::ZERO;
+	obj.mTuneMaterial.mSpecular = Vector3::ZERO;
 }
 
 void CollectZone::Update()
@@ -15,11 +20,9 @@ void CollectZone::Update()
 
 	aabbCol.pos = pos;
 	aabbCol.size = { scale.x / 2,1,scale.y / 2 };
-	
-	obj.mTuneMaterial.mColor = { 1,0,0,0.5f };
-	obj.mTuneMaterial.mAmbient = Vector3::ONE * 100000.f;
-	brightColor.a += Easing::InQuad(0, 0.2f, timer.GetTimeRate());
-	
+
+	brightColor.a = Easing::InQuad(0, 0.2f, timer.GetTimeRate());
+
 	obj.mTransform.UpdateMatrix();
 	BrightTransferBuffer(Camera::sNowCamera->mViewProjection);
 }
@@ -32,4 +35,9 @@ void CollectZone::Draw()
 void CollectZone::Move(CollectPart* part)
 {
 	gatheredParts.push_back(part);
+}
+
+int32_t CollectZone::GetPartsNum()
+{
+	return (int32_t)gatheredParts.size();
 }
