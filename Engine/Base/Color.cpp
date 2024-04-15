@@ -27,6 +27,32 @@ Color::Color(int32_t hexcolor)
 	b = b_ / 255.0f;
 }
 
+Color Color::operator+(const float num) const
+{
+	return { r + num, g + num, b + num };
+}
+
+Color Color::operator-(const float num) const
+{
+	return { r - num, g - num, b - num };
+}
+
+Color Color::operator*(const float num) const
+{
+	return { r * num, g * num, b * num };
+}
+
+Color Color::operator/(const float num) const
+{
+	return { r / num, g / num, b / num };
+}
+
+Color Color::operator=(const Color& col)
+{
+	r = col.r, g = col.g, b = col.b, a = col.a;
+	return *this;
+}
+
 bool Color::operator==(const Color& o) const
 {
 	return r == o.r && g == o.g && b == o.b && a == o.a;
