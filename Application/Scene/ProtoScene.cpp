@@ -84,7 +84,7 @@ void ProtoScene::Update()
 
 	//ここに無限に当たり判定増やしていくの嫌なのであとで何か作ります
 	//クソ手抜き当たり判定
-	
+
 	//ボスの腕との判定
 	for (size_t i = 0; i < boss.parts.size(); i++)
 	{
@@ -101,9 +101,10 @@ void ProtoScene::Update()
 	}
 
 	//パーツとの判定
-	for (std::unique_ptr<CollectPart>& part : CollectPartManager::GetInstance()->parts)
+	for (auto& part : CollectPartManager::GetInstance()->parts)
 	{
-		if ((int32_t)player.carryingParts.size() < CollectPartManager::GetInstance()->maxCarryingNum) {
+		if ((int32_t)player.carryingParts.size() < 
+			CollectPartManager::GetInstance()->maxCarryingNum) {
 			if (ColPrimitive3D::CheckSphereToSphere(part->collider, player.collider)) {
 				//一旦複数持てる
 				//後でプレイヤー側でフラグ立てて個数制限する
@@ -114,8 +115,11 @@ void ProtoScene::Update()
 		//プレイヤーが持っているなら
 		if (part->IsCarrying()) {
 			//当たり判定する
-			if (ColPrimitive3D::CheckSphereToAABB(part->collider,CollectPartManager::GetInstance()->zone.aabbCol)) {
+			if (ColPrimitive3D::CheckSphereToAABB(part->collider,
+				CollectPartManager::GetInstance()->zone.aabbCol)) {
 				part->Collect();
+				part->SetIsAlive(false);
+				CollectPartManager::GetInstance()->zone.Create(part->GetPos());
 			}
 		}
 	}
@@ -137,7 +141,7 @@ void ProtoScene::Update()
 		player.SetIsGodmode(true);
 		
 		//パーツ削除
-		for (std::unique_ptr<CollectPart>& part : CollectPartManager::GetInstance()->parts)
+		for (auto& part : *CollectPartManager::GetInstance()->zone.GetPartsData())
 		{
 			part->SetIsAlive(false);
 		}

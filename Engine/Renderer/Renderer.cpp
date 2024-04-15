@@ -62,14 +62,7 @@ void Renderer::DrawCall(std::string stageID, RenderOrder order)
 	for (auto itr = instance->mStages.begin(); itr != instance->mStages.end(); itr++) {
 		IRenderStage* stage = itr->get();
 		if (stage->GetTypeIndentifier() == stageID) {
-			//未設定の項目をレンダラーの設定で自動で補完する
-			//ここでも未設定のままになった場合はレンダーステージに任せる
-			if(order.renderTargets.empty()) order.renderTargets = instance->mRenderTargets;
-			if(order.primitiveTopology == D3D_PRIMITIVE_TOPOLOGY_UNDEFINED) order.primitiveTopology = instance->mPrimitiveTopology;
-			if(order.viewports.empty()) order.viewports = instance->mViewports;
-			if(order.scissorRects.empty()) order.scissorRects = instance->mScissorRects;
-			if(order.mRootSignature == nullptr) order.mRootSignature = instance->mRootSignature;
-			if(order.pipelineState == nullptr) order.pipelineState = instance->mPipelineState;
+			SetParamAuto(order);
 
 			stage->mOrders.emplace_back(std::move(order));
 			return;
@@ -133,6 +126,19 @@ std::vector<std::string> Renderer::GetRenderStageIDs()
 		result.push_back((*itr)->GetTypeIndentifier());
 	}
 	return result;
+}
+
+void Renderer::SetParamAuto(RenderOrder& order)
+{
+	Renderer* instance = GetInstance();
+	//未設定の項目をレンダラーの設定で自動で補完する
+	//ここでも未設定のままになった場合はレンダーステージに任せる
+	if (order.renderTargets.empty()) order.renderTargets = instance->mRenderTargets;
+	if (order.primitiveTopology == D3D_PRIMITIVE_TOPOLOGY_UNDEFINED) order.primitiveTopology = instance->mPrimitiveTopology;
+	if (order.viewports.empty()) order.viewports = instance->mViewports;
+	if (order.scissorRects.empty()) order.scissorRects = instance->mScissorRects;
+	if (order.mRootSignature == nullptr) order.mRootSignature = instance->mRootSignature;
+	if (order.pipelineState == nullptr) order.pipelineState = instance->mPipelineState;
 }
 
 void Renderer::SetAllParamaterToAuto()

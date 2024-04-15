@@ -13,6 +13,22 @@ void CollectZone::Init()
 
 void CollectZone::Update()
 {
+	for (auto itr = gatheredParts.begin(); itr != gatheredParts.end();)
+	{
+		//死んでたら殺す
+		if (!(*itr)->isAlive) {
+			itr = gatheredParts.erase(itr);
+		}
+		else {
+			itr++;
+		}
+	}
+
+	for (auto& part : gatheredParts)
+	{
+		part->Update();
+	}
+
 	timer.RoopReverse();
 
 	obj.mTransform.position = pos;
@@ -29,12 +45,18 @@ void CollectZone::Update()
 
 void CollectZone::Draw()
 {
+	for (auto& part : gatheredParts)
+	{
+		part->Draw();
+	}
 	BrightDraw("Transparent");
 }
 
-void CollectZone::Move(CollectPart* part)
+void CollectZone::Create(const Vector3& spawnPos)
 {
-	gatheredParts.push_back(part);
+	gatheredParts.emplace_back();
+	gatheredParts.back() = std::make_unique<CollectPart>();
+	gatheredParts.back()->SetPos(spawnPos);
 }
 
 int32_t CollectZone::GetPartsNum()

@@ -10,6 +10,34 @@
 #include "ModelObj.h"
 #include "Sprite.h"
 #include "SRConstBuffer.h"
+#include "Float4.h"
+#include "RenderTarget.h"
+
+struct WaxData {
+	Float4 spheres[1024] = {};
+	uint32_t sphereNum = 0;
+	uint32_t rayMatchNum = 16;
+	float hitThreshold = 0.001f;
+	float smoothFactor = 4;
+};
+
+struct CameraData {
+	Vector3 pos;
+	float pad;
+	Vector3 dir;
+	float pad2;
+	Vector3 up;
+	float pad3;
+	Matrix4 matViewProj;
+	Matrix4 matInvView;
+	Matrix4 matInvProj;
+	Matrix4 matInvViewport;
+};
+
+struct HogeData {
+	float hoge = 0.01f;
+	float hoge2 = 0.01f;
+};
 
 class MainTestScene : public IScene
 {
@@ -26,21 +54,24 @@ private:
 	LightGroup light;
 
 	ModelObj skydome;
+	ModelObj testObj;
+	Sprite sprite;
 
-	ModelObj testModel;
+	RenderTexture* rtTex;
+	std::vector<Float4> spheres;
+	int32_t sphereCreateNum = 10;
 
-	Transform meltAxis;
-	struct TestSetting {
-		float factor;
-		float falloff;
-		float radius;
-		float top;
-		float bottom;
-		float pad[3];
-		Matrix4 matMeshToAxis;
-		Matrix4 matAxisToMesh;
-		bool clampAtBottom;
-	};
-	SRConstBuffer<TestSetting> meltBuff;
-	bool useWireframe = false;
+	Material material;
+	SRVertexBuffer vertBuff;
+	SRIndexBuffer indexBuff;
+	SRConstBuffer<MaterialBuffer> materialBuff;
+	SRConstBuffer<CameraData> cameraBuff;
+	SRConstBuffer<WaxData> constBuff;
+	SRConstBuffer<HogeData> hogeBuff;
+
+	RootSignature* GetRootSig();
+	GraphicsPipeline* GetPipeline();
+
+	RootSignature* GetRootSigB();
+	GraphicsPipeline* GetPipelineB();
 };

@@ -83,6 +83,8 @@ struct RenderOrder
 	/// </summary>
 	std::function<void()> postCommand;
 
-	
+	//この描画の直後に実行してほしいOrderを入れておくと順番に実行します
+	//postCommandの実行の方が先です
+	std::vector<RenderOrder> postOrder;
 };
 
