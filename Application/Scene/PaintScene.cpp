@@ -16,7 +16,7 @@ PaintScene::PaintScene()
 	
 	sprite = Sprite(TextureManager::Load("./Resources/Brush.png", "brush"), { 0.5f, 0.5f });
 	
-	objA = PaintableModelObj(Model::Load("./Resources/Model/firewisp/firewisp.obj", "hoge", true));
+	objA = PaintableModelObj(Model::Load("./Resources/Model/bossBody/bossBody.obj", "hoge", true));
 	objA.mTuneMaterial.mDiffuse = { 0, 1, 0 };
 	objA.mTransform.position = { -3, 1, 2 };
 	objA.mTransform.UpdateMatrix();
@@ -44,11 +44,9 @@ void PaintScene::Init()
 void PaintScene::Update()
 {
 	ImGui::SetNextWindowPos({ ImGui::GetMainViewport()->WorkPos.x + 800, ImGui::GetMainViewport()->WorkPos.y + 10 }, ImGuiCond_Once);
-	ImGui::SetNextWindowSize({ 400, 250 });
+	ImGui::SetNextWindowSize({ 400, 250 }, ImGuiCond_FirstUseEver);
 
-	ImGuiWindowFlags window_flags = 0;
-	window_flags |= ImGuiWindowFlags_NoResize;
-	ImGui::Begin("Paint Control", NULL, window_flags);
+	ImGui::Begin("Paint Control");
 	ImGui::DragFloat("DissolveValue", &dissolveVal, 0.01f, 0.0f, 1.0f);
 	ImGui::ColorEdit4("PaintColor", &paintColor.r);
 	ImGui::DragFloat3("PaintAmbient", &mAmbient.x, 0.01f);

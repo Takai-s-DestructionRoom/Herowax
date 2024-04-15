@@ -111,9 +111,9 @@ void LevelLoader::ObjectLoad(LevelData& levelData,nlohmann::json& object)
 
 		//回転
 		
-		objectData.rotation.x = -1 * Util::AngleToRadian((float)transform["rotation"][0]);
-		objectData.rotation.y = -1 * (float)Util::AngleToRadian(transform["rotation"][2]);
-		objectData.rotation.z = (float)Util::AngleToRadian(transform["rotation"][1]);
+		objectData.rotation.x = -1 *Util::AngleToRadian((float)transform["rotation"][0]);
+		objectData.rotation.y = -1 *Util::AngleToRadian((float)transform["rotation"][2]);
+		objectData.rotation.z = Util::AngleToRadian((float)transform["rotation"][1]);
 
 		//スケーリング
 		objectData.scaling.x = (float)transform["scaling"][0] * 2;
@@ -126,13 +126,13 @@ void LevelLoader::ObjectLoad(LevelData& levelData,nlohmann::json& object)
 		{
 			objectData.collider.have = true;
 			//中心点
-			objectData.collider.center.x = (float)collider["center"][1];
+			objectData.collider.center.x = (float)collider["center"][0];
 			objectData.collider.center.y = (float)collider["center"][2];
-			objectData.collider.center.z = (float)collider["center"][0];
+			objectData.collider.center.z = (float)collider["center"][1];
 			//大きさ
-			objectData.collider.size.x = (float)collider["size"][1];
+			objectData.collider.size.x = (float)collider["size"][0];
 			objectData.collider.size.y = (float)collider["size"][2];
-			objectData.collider.size.z = (float)collider["size"][0];
+			objectData.collider.size.z = (float)collider["size"][1];
 		}
 
 		//子ノードがいるなら再帰

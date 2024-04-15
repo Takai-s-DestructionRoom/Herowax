@@ -30,6 +30,7 @@ public:
 
 	Color() {}
 	Color(float r, float g, float b, float a) : r(r), g(g), b(b), a(a) {}
+	Color(float r, float g, float b) : r(r), g(g), b(b), a(1.0f) {}
 	Color(int32_t hexcolor);
 
 	//すぐ呼べる用の色
@@ -44,6 +45,18 @@ public:
 
 	const static Color kFireOutside;
 	const static Color kFireInside;
+
+	//単項演算子
+	//加算
+	Color operator+(const float num) const;
+	//減算
+	Color operator-(const float num) const;
+	//乗算
+	Color operator*(const float num) const;
+	//除算
+	Color operator/(const float num) const;
+	//代入
+	Color operator=(const Color& col);
 
 	bool operator==(const Color& o) const;
 

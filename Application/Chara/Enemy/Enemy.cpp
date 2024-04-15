@@ -3,22 +3,25 @@
 #include "EnemyManager.h"
 #include "ParticleManager.h"
 #include "Parameter.h"
+#include "Level.h"
 #include "Quaternion.h"
 #include "RImGui.h"
+#include "Renderer.h"
 #include <TimeManager.h>
+#include "CollectPartManager.h"
 
 Enemy::Enemy(ModelObj* target_) : GameObject(),
 moveSpeed(0.1f), slowMag(0.8f),
 isGraund(true), hp(0), maxHP(10.f),
 isEscape(false), escapePower(0.f), escapeCoolTimer(1.f),
 isAttack(false), atkPower(0.f), atkCoolTimer(1.f),
-gravity(0.2f), groundPos(0)
+gravity(0.2f)
 {
 	state = std::make_unique<EnemyNormal>();
 	attackState = std::make_unique<EnemyNonAttackState>();
 	nextState = nullptr;
 	nextAttackState = nullptr;
-	obj = PaintableModelObj(Model::Load("./Resources/Model/firewisp/firewisp.obj", "firewisp", true));
+	obj = PaintableModelObj(Model::Load("./Resources/Model/enemy/enemy.obj", "enemy", true));
 	obj.mPaintDissolveMapTex = TextureManager::Load("./Resources/DissolveMap.png", "DissolveMapTex");
 	target = target_;
 
@@ -29,17 +32,27 @@ gravity(0.2f), groundPos(0)
 	mutekiTimer.maxTime_ = Parameter::GetParam(extract, "無敵時間さん", 0.1f);
 
 	obj.mTransform.scale = { 3,3,3 };
-	attach = ModelObj(Model::Load("./Resources/Model/WaxAttach/WaxAttach.obj", "WaxAttach", true));
+
+	predictionLine = ModelObj(Model::Load("./Resources/Model/Cube.obj", "Cube"));
+	//影をなくす
+	predictionLine.mTuneMaterial.mAmbient = Vector3::ONE * 100.f;
+	predictionLine.mTuneMaterial.mDiffuse = Vector3::ZERO;
+	predictionLine.mTuneMaterial.mSpecular = Vector3::ZERO;
+	
+	attackDrawerObj = ModelObj(Model::Load("./Resources/Model/Sphere.obj", "Sphere", true));
 }
 
 Enemy::~Enemy()
 {
+	//50%の確率でドロップ
+	int32_t rand = Util::GetRand(0, 1);
+	if (rand == 1) {
+		CollectPartManager::GetInstance()->Craete(obj.mTransform.position);
+	}
+
 	//死んだときパーティクル出す
 	ParticleManager::GetInstance()->AddSimple(
-		obj.mTransform.position, obj.mTransform.scale * 0.5f, 10, 0.3f,
-		Color::kGreen, "", 0.5f, 0.8f,
-		{ -0.3f,-0.3f,-0.3f }, { 0.3f,0.3f,0.3f },
-		0.05f, -Vector3::ONE * 0.1f, Vector3::ONE * 0.1f, 0.05f);
+		obj.mTransform.position,"enemy_dead");
 }
 
 void Enemy::Init()
@@ -47,15 +60,22 @@ void Enemy::Init()
 	hp = maxHP;
 }
 
-void Enemy::Update()
+void Enemy::Reset()
 {
 	moveVec.x = 0;
 	moveVec.z = 0;
+
+	rotVec = { 0,0,0 };
 
 	//ステートに入る前に、前フレームに足したシェイクを引いて元に戻す
 	obj.mTransform.position -= shack;
 	//シェイクを元に戻す
 	shack = { 0,0,0 };
+}
+
+void Enemy::Update()
+{
+	Reset();
 
 	//かかっているロウを振り払う
 	if (waxSolidCount > 0 && waxSolidCount < requireWaxSolidCount) {
@@ -70,7 +90,7 @@ void Enemy::Update()
 	}
 
 	//固まっていなければする処理
-	if (waxSolidCount < requireWaxSolidCount) {
+	if (!GetIsSolid()) {
 		//各ステート時の固有処理
 		state->Update(this);	//移動速度に関係するので移動の更新より前に置く
 
@@ -83,6 +103,9 @@ void Enemy::Update()
 			nextState = nullptr;
 		}
 
+		//ステートに入る前に、予測線は消しておきたいのでスケールを0に
+		predictionLine.mTransform.scale = { 0.f,0.f,0.f };
+		//予測線を使う場合はこの中で値を変える
 		attackState->Update(this);
 		//前のステートと異なれば
 		if (changingAttackState) {
@@ -92,7 +115,6 @@ void Enemy::Update()
 			nextAttackState = nullptr;
 		}
 	}
-
 	hp = Util::Clamp(hp, 0.f, maxHP);
 
 	if (hp <= 0) {
@@ -100,16 +122,17 @@ void Enemy::Update()
 		ChangeState<EnemyAllStop>();
 	}
 
-	//プレイヤーに向かって移動するAI
-	Vector3 pVec = target->mTransform.position - obj.mTransform.position;
-	pVec.Normalize();
-	pVec.y = 0;
-
 	//無敵時間さん!?の更新
 	mutekiTimer.Update();
 
-	//ノックバックとかのけぞりとか
-	KnockBack(pVec);
+	///-------------移動、回転の加算--------------///
+
+	//プレイヤーに向かって移動するAI
+	//普段はプレイヤーにではなく、ランダムだったり特定方向へ進み続けて、
+	//ぶつかって初めてターゲットに入れるようにしたい
+	Vector3 pVec = target->mTransform.position - obj.mTransform.position;
+	pVec.Normalize();
+	pVec.y = 0;
 
 	//ノックバック中でないなら重力をかける
 	if (!knockbackTimer.GetRun()) {
@@ -117,9 +140,27 @@ void Enemy::Update()
 		moveVec.y -= gravity;
 	}
 
+	//攻撃準備に入ったらプレイヤーへ向けた移動をしない
+	//(ステート内に書いてもいいけどどこにあるかわからなくなりそうなのでここで)
+	if (GetAttackState() != "NowAttack" && 
+		GetAttackState() != "PreAttack")
+	{
+		//プレイヤーへ向けた移動をする
+		moveVec += pVec * moveSpeed;
+	}
+
+	//ノックバックも攻撃準備に入ったら無効化する
+	//(条件式一緒だけど処理違うので段落分けてます)
+	if (GetAttackState() != "NowAttack" &&
+		GetAttackState() != "PreAttack")
+	{
+		KnockBack();
+		KnockRota();
+	}
+
+	//いろいろ足した後減速
 	//減速率は大きいほどスピード下がるから1.0から引くようにしてる
-	moveVec += pVec * moveSpeed *
-		(1.f - slowMag) * (1.f - slowCoatingMag);
+	moveVec *= (1.f - slowMag) * (1.f - slowCoatingMag);
 
 	//シェイクの値
 	moveVec += shack;
@@ -128,48 +169,64 @@ void Enemy::Update()
 	obj.mTransform.position += moveVec;
 
 	//地面座標を下回るなら戻す
-	if (obj.mTransform.position.y <= groundPos) {
-		obj.mTransform.position.y = groundPos;
+	if (obj.mTransform.position.y <= Level::Get()->ground.mTransform.position.y) {
+		obj.mTransform.position.y = Level::Get()->ground.mTransform.position.y;
 		moveVec.y = 0;
 	}
 
+	//もし何も回転の加算がない場合、
+	if (rotVec.LengthSq() == 0) {
+		//固まっていなければ通常時の回転をする
+		if (!GetIsSolid() && !knockbackTimer.GetRun()) {
+			Rotation(pVec);
+		}
+	}
+	//回転の適用
+	obj.mTransform.rotation = rotVec;
+
 	obj.mTuneMaterial.mColor = changeColor;
 
+	//色の加算
+	whiteTimer.Update();
+	brightColor.r = Easing::OutQuad(1, 0, whiteTimer.GetTimeRate());
+	brightColor.g = Easing::OutQuad(1, 0, whiteTimer.GetTimeRate());
+	brightColor.b = Easing::OutQuad(1, 0, whiteTimer.GetTimeRate());
+	brightColor.a = Easing::OutQuad(1, 0, whiteTimer.GetTimeRate());
+	if (!whiteTimer.GetStarted())brightColor = { 0,0,0,0 };
+
 	UpdateCollider();
+	UpdateAttackCollider();
 
 	//更新してからバッファに送る
 	obj.mTransform.UpdateMatrix();
 	obj.mPaintDataBuff->dissolveVal = waxSolidCount >= requireWaxSolidCount ? 1.0f : 0.3f / (requireWaxSolidCount - 1) * waxSolidCount;
 	obj.mPaintDataBuff->color = Color(0.8f, 0.6f, 0.35f, 1.0f);
 	obj.mPaintDataBuff->slide += TimeManager::deltaTime;
-	obj.TransferBuffer(Camera::sNowCamera->mViewProjection);
+	BrightTransferBuffer(Camera::sNowCamera->mViewProjection);
 
 	ui.Update(this);
 
-	attach.mTransform.position = obj.mTransform.position;
-
-	attach.mTransform.UpdateMatrix();
-	attach.TransferBuffer(Camera::sNowCamera->mViewProjection);
+	predictionLine.mTransform.UpdateMatrix();
+	predictionLine.TransferBuffer(Camera::sNowCamera->mViewProjection);
 }
 
 void Enemy::Draw()
 {
 	if (isAlive)
 	{
-		obj.Draw();
+		BrightDraw();
+		//obj.Draw();
+		
 		ui.Draw();
+		
+		predictionLine.Draw();
 
-		if (isDrawCollider) {
-			DrawCollider();
-		}
-
-		/*if (GetState() == "AllStop") {
-			attach.Draw();
-		}*/
+		DrawCollider();
+		DrawAttackCollider();
 	}
 }
 
-void Enemy::KnockBack(const Vector3& pVec)
+void Enemy::KnockBack()
 {
 	//ノックバック時間の更新
 	knockbackTimer.Update();
@@ -180,8 +237,18 @@ void Enemy::KnockBack(const Vector3& pVec)
 	//ノックバックを減少
 	knockbackSpeed = Easing::OutQuad(knockbackRange, 0, knockbackTimer.GetTimeRate());
 
+	//ノックバックが終わったら
+	if (knockbackTimer.GetEnd()) {
+		//ターゲットを解除
+		attackTarget = nullptr;
+	}
+}
+
+void Enemy::KnockRota()
+{
 	//攻撃されたら
-	if (attackTarget) {
+	if (attackTarget) 
+	{
 		//プレイヤーに向かって移動するAI
 		Vector3 aVec = attackTarget->mTransform.position - obj.mTransform.position;
 		aVec.Normalize();
@@ -189,8 +256,6 @@ void Enemy::KnockBack(const Vector3& pVec)
 
 		//ターゲットの方向を向いてくれる
 		Quaternion aLookat = Quaternion::LookAt(aVec);
-		////モデルが90度ずれた方向を向いているので無理やり修正(モデル変更時にチェック)
-		//aLookat *= Quaternion::AngleAxis({ 0,1,0 }, -Util::PI / 2);
 
 		//喰らい時のモーション遷移
 		knockRadianX = Easing::InQuad(knockRadianStart.x, 0, knockbackTimer.GetTimeRate());
@@ -203,29 +268,31 @@ void Enemy::KnockBack(const Vector3& pVec)
 		aLookat = aLookat * knockQuaterX * knockQuaterZ;
 
 		//euler軸へ変換
-		obj.mTransform.rotation = aLookat.ToEuler();
-		//ノックバックが終わったら
-		if (knockbackTimer.GetEnd()) {
-			//ターゲットを解除
-			attackTarget = nullptr;
-		}
+		RotVecPlus(aLookat.ToEuler());
 	}
-	else
-	{
-		//普段はターゲットの方向を向く
-		//ターゲットの方向を向いてくれる
-		Quaternion pLookat = Quaternion::LookAt(pVec);
-		////モデルが90度ずれた方向を向いているので無理やり修正(モデル変更時にチェック)
-		//pLookat *= Quaternion::AngleAxis({ 0,1,0 }, -Util::PI / 2);
+}
 
-		//euler軸へ変換
-		obj.mTransform.rotation = pLookat.ToEuler();
-	}
+void Enemy::Rotation(const Vector3& pVec)
+{
+	//普段はターゲットの方向を向く
+	Quaternion pLookat = Quaternion::LookAt(pVec);
+	//euler軸へ変換
+	RotVecPlus(pLookat.ToEuler());
 }
 
 void Enemy::SetTarget(ModelObj* target_)
 {
 	target = target_;
+}
+
+ModelObj* Enemy::GetTarget()
+{
+	return target;
+}
+
+bool Enemy::GetIsSolid()
+{
+	return waxSolidCount >= requireWaxSolidCount;
 }
 
 void Enemy::SetIsEscape(bool flag)
@@ -261,6 +328,9 @@ void Enemy::DealDamage(uint32_t damage, const Vector3& dir, ModelObj* target_)
 
 	knockbackVec = dir;
 
+	//whiteTimer.maxTime_ = mutekiTimer.maxTime_ / 4;
+	whiteTimer.Start();
+
 	//ノックバックのスピード加算
 	knockbackSpeed = knockbackRange;
 
@@ -276,7 +346,7 @@ void Enemy::DealDamage(uint32_t damage, const Vector3& dir, ModelObj* target_)
 	//ヒットモーションタイマーを開始
 	knockbackTimer.Start();
 
-	//ヒットパーティクル出す
+	//ヒットパーティクル出す(攻撃方向に依存するのでエディタのは使えない)
 	ParticleManager::GetInstance()->AddSimple(
 		obj.mTransform.position, obj.mTransform.scale,
 		10, 0.3f, obj.mTuneMaterial.mColor, "", 0.5f, 1.2f,
@@ -286,10 +356,7 @@ void Enemy::DealDamage(uint32_t damage, const Vector3& dir, ModelObj* target_)
 	//ヒットエフェクト出す
 	ParticleManager::GetInstance()->AddSimple(
 		obj.mTransform.position + Vector3::UP * obj.mTransform.scale.y,
-		obj.mTransform.scale * 0.f, 1, 0.3f,
-		obj.mTuneMaterial.mColor, TextureManager::Load("./Resources/hit_circle.png"),
-		0.f, 0.f, Vector3::ZERO, Vector3::ZERO,
-		0.f, Vector3::ONE * 0.1f, Vector3::ONE * 0.1f, 0.1f, 3.f, false, true);
+		"enemy_hit");
 
 	//かかりカウント加算
 	waxSolidCount++;
@@ -299,4 +366,44 @@ void Enemy::DealDamage(uint32_t damage, const Vector3& dir, ModelObj* target_)
 void Enemy::SetDeath()
 {
 	isAlive = false;
+}
+
+void Enemy::MoveVecPlus(const Vector3& plusVec)
+{
+	moveVec += plusVec;
+}
+
+void Enemy::RotVecPlus(const Vector3& plusVec)
+{
+	rotVec += plusVec;
+}
+
+void Enemy::UpdateAttackCollider()
+{
+	attackHitCollider.pos = GetPos();
+
+	attackDrawerObj.mTuneMaterial.mColor = { 1,1,0,1 };
+	attackDrawerObj.mTransform.position = attackHitCollider.pos;
+	float r = attackHitCollider.r;
+	attackDrawerObj.mTransform.scale = { r,r,r };
+
+	attackDrawerObj.mTransform.UpdateMatrix();
+	attackDrawerObj.TransferBuffer(Camera::sNowCamera->mViewProjection);
+
+}
+
+void Enemy::DrawAttackCollider()
+{
+	//描画しないならスキップ
+	if (!isDrawCollider)return;
+
+	//パイプラインをワイヤーフレームに
+	PipelineStateDesc pipedesc = RDirectX::GetDefPipeline().mDesc;
+	pipedesc.RasterizerState.FillMode = D3D12_FILL_MODE_WIREFRAME;
+
+	GraphicsPipeline pipe = GraphicsPipeline::GetOrCreate("WireObject", pipedesc);
+	for (RenderOrder& order : attackDrawerObj.GetRenderOrder()) {
+		order.pipelineState = pipe.mPtr.Get();
+		Renderer::DrawCall("Opaque", order);
+	}
 }

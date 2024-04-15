@@ -41,7 +41,7 @@ std::vector<RenderOrder> PaintableModelObj::GetRenderOrder()
 			{ RootDataType::SRBUFFER_CBV, mViewProjectionBuff.mBuff },
 			{ RootDataType::LIGHT },
 			{ TextureManager::Get(mPaintDissolveMapTex).mGpuHandle },
-			{ RootDataType::SRBUFFER_CBV, mPaintDataBuff.mBuff }
+			{ RootDataType::SRBUFFER_CBV, mPaintDataBuff.mBuff },
 		};
 
 		RenderOrder order;

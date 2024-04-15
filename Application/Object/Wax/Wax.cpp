@@ -26,7 +26,7 @@ void Wax::DeadParticle()
 {
 	ParticleManager::GetInstance()->AddHoming(
 		obj.mTransform.position, obj.mTransform.scale,
-		10, 0.8f, waxOriginColor, "", 0.8f, 1.5f,
+		1, 0.8f, waxOriginColor, "", 0.8f, 1.5f,
 		-Vector3::ONE * 0.3f, Vector3::ONE * 0.3f,
 		0.03f, -Vector3::ONE * 0.1f, Vector3::ONE * 0.1f, 0.3f, 0.5f);
 }
@@ -41,7 +41,7 @@ bool Wax::GetIsSolidNow()
 }
 
 void Wax::Init(uint32_t power, Vector3 vec,float speed,
-	Vector2 range, float size, float atkTime)
+	float range, float size, float atkTime)
 {
 	//hp = maxHP;
 	atkPower = power;
@@ -51,7 +51,7 @@ void Wax::Init(uint32_t power, Vector3 vec,float speed,
 	atkTimer = atkTime;
 	atkTimer.Start();
 
-	iconSize = { 0.7f,0.7f };
+	iconSize = { 0.5f,0.5f };
 	minimapIcon.SetTexture(TextureManager::Load("./Resources/circle.png", "circle"));
 	minimapIcon.mMaterial.mColor = waxOriginColor;
 }
@@ -64,7 +64,7 @@ void Wax::Update()
 
 	//段々大きくなる
 	atkSize = Easing::OutBack(atkTimer.GetTimeRate());
-	Vector3 waxScale = { atkRange.x,1.f,atkRange.y };	//蝋の大きさ
+	Vector3 waxScale = { atkRange,1.f,atkRange };	//蝋の大きさ
 	waxScale *= atkSize;
 	SetScale(waxScale);									//大きさを反映
 
@@ -105,7 +105,10 @@ void Wax::Update()
 	minimapIcon.mTransform.position = { screenPos.x,screenPos.y,0.f };
 
 	//決めたサイズに
-	minimapIcon.mTransform.scale = { iconSize.x,iconSize.y,1.f };
+	iconSize = 
+	{ obj.mTransform.scale.x * 0.5f * WaxManager::GetInstance()->GetSlimeWaxSizeMag(),
+		obj.mTransform.scale.z * 0.5f * WaxManager::GetInstance()->GetSlimeWaxSizeMag() };
+	minimapIcon.mTransform.scale = Vector3(iconSize.x,iconSize.y,1.f) * Minimap::GetInstance()->iconSize;
 
 	//更新忘れずに
 	minimapIcon.mTransform.UpdateMatrix();
@@ -121,7 +124,7 @@ void Wax::Draw()
 {
 	if (isAlive)
 	{
-		/*GraphicsPipeline pipe = WaxManager::GetInstance()->CreateDisolvePipeLine();
+		GraphicsPipeline pipe = WaxManager::GetInstance()->CreateDisolvePipeLine();
 
 		for (std::shared_ptr<ModelMesh> data : obj.mModel->mData) {
 			std::vector<RootData> rootData = {
@@ -143,15 +146,18 @@ void Wax::Draw()
 			order.indexCount = static_cast<uint32_t>(data->mIndices.size());
 
 			Renderer::DrawCall("Opaque", order);
-		}*/
-
-		//描画範囲制限
-		Renderer::SetScissorRects({ Minimap::GetInstance()->rect });
-		minimapIcon.Draw();
-
-		//元の範囲に戻してあげる
-		Renderer::SetScissorRects({ Minimap::GetInstance()->defaultRect });
+		}
 	}
+}
+
+void Wax::DrawUI()
+{
+	//描画範囲制限
+	Renderer::SetScissorRects({ Minimap::GetInstance()->rect });
+	minimapIcon.Draw();
+
+	//元の範囲に戻してあげる
+	Renderer::SetScissorRects({ Minimap::GetInstance()->defaultRect });
 }
 
 bool Wax::IsBurning()

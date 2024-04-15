@@ -7,7 +7,11 @@
 #include "PlayerUI.h"
 #include "FireUnit.h"
 #include "ColPrimitive3D.h"
- 
+#include <stdint.h>
+#include "CollectPart.h"
+
+class Boss;
+
 class Player : public GameObject
 {
 public:
@@ -28,16 +32,24 @@ public:
 	Vector3 initPos = { 0,0,0 };	//初期位置
 	Vector3 initRot = { 0,0,0 };	//初期向き
 
+	//------------ 回転関連 ------------//
+	Vector3 rotVec;				//回転ベクトル
+	Vector3 oldRot;				//回転ベクトル
+
+	Easing::EaseTimer backwardTimer;	//のけぞり管理
+
 	//------------ HP関連 ------------//
 	float hp;				//現在のヒットポイント
 	float maxHP;			//最大HP
+
+	Easing::EaseTimer damageCoolTimer;	//再びダメージくらうようになるまでのクールタイム
 
 	//------------ 攻撃関連 ------------//
 	bool isAttack;					//攻撃中かフラグ
 	Vector3 atkVec;					//攻撃方向
 	float atkHeight;				//攻撃する高さ
 	float atkSpeed;					//攻撃の射出速度
-	Vector2 atkRange{};				//攻撃範囲
+	float atkRange;					//攻撃範囲
 	float atkSize;					//攻撃範囲の大きさ
 	int32_t atkPower;				//攻撃力
 	Easing::EaseTimer atkCoolTimer;	//攻撃のクールタイム
@@ -50,10 +62,20 @@ public:
 	int32_t waxStock;			//ロウストック
 	int32_t maxWaxStock;		//ロウストック最大値
 	bool isWaxStock;			//ストック性にするかフラグ
+	bool isCollectFan;			//回収範囲扇型にするかフラグ
+	bool isCollect;				//回収できるかフラグ
 
-	float waxCollectRange;				//ロウ回収する範囲
+	float waxCollectRange;				//ロウ回収するレイの範囲(横幅)
 	ColPrimitive3D::Ray collectCol;		//ロウ回収する範囲当たり判定
 	ModelObj collectRangeModel;			//ロウ回収範囲描画用
+	float waxCollectVertical;			//ロウ回収するレイの範囲(縦幅)
+
+	float waxCollectDist;					//ロウ回収する扇の距離
+	float waxCollectAngle;					//ロウ回収する扇の角度(180°以内)
+	ColPrimitive3D::Sphere collectColFan;	//ロウ回収する範囲当たり判定
+	ModelObj collectRangeModelCircle;		//ロウ回収範囲描画用
+	ModelObj collectRangeModelRayLeft;			//ロウ回収範囲描画用
+	ModelObj collectRangeModelRayRight;			//ロウ回収範囲描画用
 
 	int32_t waxCollectAmount;			//ロウ回収量
 	
@@ -73,12 +95,37 @@ public:
 	FireUnit fireUnit;
 	bool isFireStock;			//炎をストック性にするかフラグ
 
+	//------------ ☆MUTEKI☆関連 ------------//
+	Easing::EaseTimer godmodeTimer;	//無敵の制限時間(デフォ10秒)
+	bool isGodmode;					//無敵かフラグ
+
+	//ゲーミングパレットの遷移タイマー
+	const float kGamingTimer_ = 0.3f;
+	Easing::EaseTimer redTimer_ = kGamingTimer_;
+	Easing::EaseTimer greenTimer_ = kGamingTimer_;
+	Easing::EaseTimer blueTimer_ = kGamingTimer_;
+
+	std::vector<CollectPart*> carryingParts;
+	
 	//------------ その他 ------------//
 	std::unique_ptr<PlayerState> attackState;
 	std::unique_ptr<PlayerState> nextState;
 	bool changingState = false;
 
+	ColPrimitive3D::Sphere attackHitCollider;	//敵が攻撃状態へ遷移する当たり判定
+	
 	PlayerUI ui;
+
+private:
+	ModelObj attackDrawerObj;			//上記の当たり判定描画オブジェクト
+
+	Easing::EaseTimer blinkTimer;
+
+	float blinkNum = 10;		//点滅回数
+
+	Boss* boss = nullptr;
+
+	Color defColor;
 
 public:
 	Player();
@@ -103,6 +150,10 @@ public:
 	//ロウを回収
 	void WaxCollect();
 
+	//ゲーミングカラーの更新処理
+	//ゲーミングカラー返す
+	Color GamingColorUpdate();
+
 	//状態変更
 	template <typename ChangePlayerState>
 	void ChangeState() {
@@ -110,11 +161,29 @@ public:
 		changingState = true;
 	};
 
+	//ボスを参照するために入れる
+	void SetBoss(Boss* boss_) {boss = boss_;};
+
 	// ゲッター //
 	//お試し実装:殴った相手が自分を追っかけてくるモード
 	bool GetTauntMode() { return isTauntMode; };
-	//正面ベクトルを取得
-	Vector3 GetFrontVec();
 	//足元の座標取得
 	Vector3 GetFootPos();
+
+	// セッター //
+	//回収できるかフラグ設定
+	void SetIsCollect(bool frag) { isCollect = frag; }
+	//無敵状態設定
+	void SetIsGodmode(bool frag) { isGodmode = frag; }
+
+	//ダメージを与える
+	void DealDamage(uint32_t damage);
+
+private:
+	void DamageBlink();	//被弾時の点滅(後々もっとリッチなのに置き換え予定)
+
+	void Reset();	//Updateの最初で初期化するもの
+
+	void UpdateAttackCollider();
+	void DrawAttackCollider();
 };

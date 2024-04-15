@@ -28,6 +28,7 @@ public:
 	void Init();
 	void Update();
 	void Draw();
+	void DrawUI();
 	void DrawCollider();
 
 	//ダメージ受ける

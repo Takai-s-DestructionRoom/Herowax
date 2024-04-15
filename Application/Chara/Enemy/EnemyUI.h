@@ -9,9 +9,10 @@ class Enemy;
 class EnemyUI
 {
 public:
-	Vector3 position;
-	Vector2 size;
-	Vector2 maxSize;
+	//HP表示いったん意味ないのでコメントアウト
+	//Vector3 position;
+	//Vector2 size;
+	//Vector2 maxSize;
 
 	Vector2 screenPos;
 	Vector2 iconSize;

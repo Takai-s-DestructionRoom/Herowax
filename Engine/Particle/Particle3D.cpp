@@ -144,11 +144,9 @@ void IEmitter3D::Update()
 		billboardMat[3][3] = 1;
 	}
 
-
 	//バッファにデータ送信
 	TransferBuffer(Camera::sNowCamera->mViewProjection);
 	transform.UpdateMatrix();
-
 }
 
 void IEmitter3D::Draw()

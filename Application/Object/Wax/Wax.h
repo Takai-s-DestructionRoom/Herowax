@@ -16,7 +16,7 @@ public:
 	uint32_t atkPower;			//攻撃力
 	Vector3 atkVec;				//攻撃方向
 	float atkSpeed;				//攻撃の射出速度
-	Vector2 atkRange{};			//攻撃範囲
+	float atkRange;				//攻撃範囲
 	float atkSize;				//攻撃範囲の大きさ
 	Easing::EaseTimer atkTimer;	//攻撃時間計測用
 
@@ -58,12 +58,13 @@ public:
 	//生成時に必要な情報だけもらって独立
 	void Init(
 		uint32_t power, Vector3 vec,float speed,
-		Vector2 range, float size, float atkTime);
+		float range, float size, float atkTime);
 	//継承元との齟齬がないように空のやつを宣言だけしておく
 	void Init()override {};
 	
 	void Update()override;
 	void Draw()override;
+	void DrawUI();
 
 	Color SolidBling(const Easing::EaseTimer& timer);
 

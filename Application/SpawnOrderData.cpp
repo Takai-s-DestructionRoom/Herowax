@@ -16,7 +16,7 @@ std::string enemyHandles::bombsolider = "bombsolider";
 SpawnOrderData SpawnDataLoader::Load(const std::string& filename)
 {
 	std::string outputName = "";
-	outputName = "./Data/SpawnOrder/" + filename + ".txt";
+	outputName = "./Resources/Data/SpawnOrder/" + filename + ".txt";
 	
 	std::filesystem::path path = PathUtil::ConvertAbsolute(
 		Util::ConvertStringToWString(outputName));
@@ -61,7 +61,7 @@ SpawnOrderData SpawnDataLoader::Load(const std::string& filename)
 void SpawnDataLoader::Save(const SpawnOrderData& saveOrder, const std::string& saveFileName_)
 {
 	std::string outputName = "";
-	outputName = "./Data/SpawnOrder/" + saveFileName_ + ".txt";
+	outputName = "./Resources/Data/SpawnOrder/" + saveFileName_ + ".txt";
 
 	std::filesystem::path path = PathUtil::ConvertAbsolute(Util::ConvertStringToWString(outputName));
 
@@ -82,13 +82,9 @@ void SpawnDataLoader::Save(const SpawnOrderData& saveOrder, const std::string& s
 
 void SpawnDataLoader::OrderCreateGUI()
 {
-	ImGui::SetNextWindowSize({ 400, 400 });
+	ImGui::SetNextWindowSize({ 400, 400 }, ImGuiCond_FirstUseEver);
 
-	ImGuiWindowFlags window_flags = 0;
-	window_flags |= ImGuiWindowFlags_NoResize;
-
-
-	ImGui::Begin("OrderCreateGUI", NULL, window_flags);
+	ImGui::Begin("OrderCreateGUI");
 
 	//------------ファイル読み込み-----------------//
 	static std::string loadfilename;

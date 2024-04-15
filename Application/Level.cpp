@@ -21,8 +21,9 @@ void Level::Reset()
 	spawnerManager->Init();
 	tower.Init();
 	EnemyManager::GetInstance()->Init();
-	EnemyManager::GetInstance()->SetTarget(&tower.obj);
+	//EnemyManager::GetInstance()->SetTarget(&tower.obj);
 	objects.clear();
+	wall.clear();
 }
 
 void Level::Reload()
@@ -57,8 +58,14 @@ void Level::Update()
 
 	ground.mTransform.UpdateMatrix();
 	ground.TransferBuffer(Camera::sNowCamera->mViewProjection);
-	
+
 	tower.Update();
+
+	for (auto& tempWall : Level::Get()->wall)
+	{
+		tempWall.mTransform.UpdateMatrix();
+		tempWall.TransferBuffer(Camera::sNowCamera->mViewProjection);
+	}
 }
 
 void Level::Draw()
@@ -67,6 +74,11 @@ void Level::Draw()
 	EnemyManager::GetInstance()->Draw();
 	ground.Draw();
 	tower.Draw();
+
+	for (auto& tempWall : Level::Get()->wall)
+	{
+		tempWall.Draw();
+	}
 
 	for (auto& obj : objects)
 	{
@@ -82,13 +94,13 @@ void Level::Extract(const std::string& handle)
 
 	std::vector<float> saveStartTiming;
 
-	for (auto objectData = nowLevel->mObjects.begin(); 
+	for (auto objectData = nowLevel->mObjects.begin();
 		objectData != nowLevel->mObjects.end(); objectData++)
 	{
 		if (objectData->setObjectName == "Ground")
 		{
 			ground = ModelObj(Model::Load("./Resources/Model/Ground/ground.obj", "Ground"));
-			
+
 			//座標を設定
 			ground.mTransform.position = objectData->translation;
 			ground.mTransform.scale = objectData->scaling;
@@ -106,17 +118,26 @@ void Level::Extract(const std::string& handle)
 		}
 		if (objectData->setObjectName == "Tower")
 		{
-			tower.Init(); 
+			tower.Init();
 			//座標を設定
 			tower.SetPos(objectData->translation);
 			tower.SetScale(objectData->scaling);
 			tower.SetRota(objectData->rotation);
 		}
+		if (objectData->setObjectName == "Wall")
+		{
+			wall.emplace_back();
+			wall.back() = ModelObj(Model::Load("./Resources/Model/Ami/Ami.obj", "Wall"));
+			//座標を設定
+			wall.back().mTransform.position = objectData->translation;
+			wall.back().mTransform.scale = objectData->scaling;
+			wall.back().mTransform.rotation = objectData->rotation;
+		}
 		//後ろに_Objがついているものであれば適用
 		//書式として[ハンドル名]+[_Obj]になっていないとエラーとなる
 		if (Util::ContainString(objectData->setObjectName, "_Obj"))
 		{
-			std::vector<std::string> objHandle = Util::StringSplit(objectData->setObjectName,"_");
+			std::vector<std::string> objHandle = Util::StringSplit(objectData->setObjectName, "_");
 			objects.emplace_back(ModelObj(objHandle[0]));
 
 			objects.back().mTransform.position = objectData->translation;

@@ -98,7 +98,7 @@ void Tower::Draw()
 {
 	if (isAlive)
 	{
-		obj.Draw();
+		//obj.Draw();
 		if (isViewCol) {
 			DrawCollider();
 		}

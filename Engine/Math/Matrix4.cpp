@@ -231,6 +231,15 @@ Matrix4 Matrix4::Translation(float x, float y, float z)
 	return mat;
 }
 
+Matrix4 Matrix4::Translation(Vector3 pos)
+{
+	Matrix4 mat;
+	mat[0][0] = pos.x;
+	mat[1][1] = pos.y;
+	mat[2][2] = pos.z;
+	return mat;
+}
+
 Matrix4 Matrix4::Scaling(float x, float y, float z)
 {
 	Matrix4 mat;
@@ -276,6 +285,15 @@ Matrix4 Matrix4::RotationZXY(float radianX, float radianY, float radianZ)
 	mat *= RotationZ(radianZ);
 	mat *= RotationX(radianX);
 	mat *= RotationY(radianY);
+	return mat;
+}
+
+Matrix4 Matrix4::RotationZXY(Vector3 rot)
+{
+	Matrix4 mat;
+	mat *= RotationZ(rot.z);
+	mat *= RotationX(rot.x);
+	mat *= RotationY(rot.y);
 	return mat;
 }
 

@@ -111,7 +111,7 @@ namespace Easing
 		void Update(const float elapseTimer = 1.0f);
 		//タイマー更新+無限ループ
 		void Roop(const float elapseTimer = 1.0f);
-		//タイマー更新+無限ループ
+		//タイマー更新+無限ループ(0.0~1.0f~0.0f~1.0f~...)
 		void RoopReverse(const float elapseTimer = 1.0f);
 
 		//現在が最大秒数のうちどの割合かを(0.0f～1.0f)の値で返す
@@ -123,3 +123,5 @@ namespace Easing
 Vector3 InQuadVec3(const Vector3& start, const Vector3& end, float timerate);
 //イージング関数
 Vector3 OutQuadVec3(const Vector3& start, const Vector3& end, float timerate);
+//イージング関数
+Vector3 InBackVec3(const Vector3& start, const Vector3& end, float timerate);

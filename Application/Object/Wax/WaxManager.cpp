@@ -4,6 +4,7 @@
 //#include "Temperature.h"
 #include "Parameter.h"
 #include "ColPrimitive3D.h"
+#include "Quaternion.h"
 
 WaxManager* WaxManager::GetInstance()
 {
@@ -117,6 +118,8 @@ WaxManager::WaxManager() :
 	heatUpTemperature = Parameter::GetParam(extract, "ロウが燃えたときの上昇温度", 5.f);
 	heatBonus = Parameter::GetParam(extract, "ボーナス上昇温度", 2.f);
 	accelAmount = Parameter::GetParam(extract, "回収時の加速度", 0.1f);
+	colliderSize = Parameter::GetParam(extract, "当たり判定の大きさ", 2.5f);
+	slimeWaxSizeMag = Parameter::GetParam(extract, "ロウの見た目の大きさの係数", 1.0f);
 
 	for (int i = 0; i < 10; i++)
 	{
@@ -153,38 +156,41 @@ void WaxManager::Update()
 
 	for (auto& waxGroup : waxGroups)
 	{
+		for (auto& wax : waxGroup->waxs)
+		{
+			wax->colliderSize = colliderSize;
+		}
 		waxGroup->Update();
 	}
 
-	slimeWax.spheres.clear();
 	//ロウを入れる
 	for (auto& group : waxGroups)
 	{
 		for (auto& wax : group->waxs)
 		{
 			slimeWax.spheres.emplace_back();
-			slimeWax.spheres.back().collider.pos = wax->obj.mTransform.position;
-			slimeWax.spheres.back().collider.r = wax->obj.mTransform.scale.x;
+			//コライダー基準でデータを送るように
+			slimeWax.spheres.back().collider.pos = wax->collider.pos;
+			slimeWax.spheres.back().collider.r = wax->collider.r * slimeWaxSizeMag;
 		}
 	}
 
 	slimeWax.Update();
 
 #pragma region ImGui
-	ImGui::SetNextWindowSize({ 350, 180 });
+	ImGui::SetNextWindowSize({ 350, 180 }, ImGuiCond_FirstUseEver);
 
-	ImGuiWindowFlags window_flags = 0;
-	window_flags |= ImGuiWindowFlags_NoResize;
-
-	ImGui::Begin("Wax", NULL, window_flags);
+	ImGui::Begin("Wax");
 	ImGui::Text("存在しているロウの数:%d", (int)GetWaxNum());
-	//ImGui::Text("燃えているロウの数:%d", isBurningNum);
-	//ImGui::Text("現在の温度:%f", TemperatureManager::GetInstance()->GetTemperature());
 	ImGui::PushItemWidth(100);
-	//ImGui::InputFloat("ロウが燃えたときの上昇温度", &heatUpTemperature, 1.0f);
-	//ImGui::InputFloat("ボーナス上昇温度", &heatBonus, 1.0f);
 
 	ImGui::InputFloat("回収時の加速度", &accelAmount, 0.05f);
+	ImGui::InputFloat("当たり判定の大きさ", &colliderSize, 0.1f);
+	ImGui::InputFloat("ロウの見た目の大きさの係数", &slimeWaxSizeMag, 0.1f);
+
+	ImGui::Checkbox("当たり判定の描画", &isViewCol);
+	ImGui::Checkbox("ロウの見た目の描画", &isViewSlimeWax);
+	ImGui::Checkbox("オブジェクトロウの描画", &isViewObjectWax);
 
 	ImGui::Text("敵を捕まえたときの固まっている秒数");
 	for (int i = 0; i < 10; i++)
@@ -198,10 +204,6 @@ void WaxManager::Update()
 	ImGui::Text("ロウグループ数:%d", (int)waxGroups.size());
 	ImGui::PopItemWidth();
 
-	if (ImGui::Button("当たり判定の描画")) {
-		isViewCol = !isViewCol;
-	}
-
 	if (ImGui::Button("Reset")) {
 		Init();
 	}
@@ -210,6 +212,9 @@ void WaxManager::Update()
 		Parameter::Save("ロウが燃えたときの上昇温度", heatUpTemperature);
 		Parameter::Save("ボーナス上昇温度", heatBonus);
 		Parameter::Save("回収時の加速度", accelAmount);
+		Parameter::Save("当たり判定の大きさ", colliderSize);
+		Parameter::Save("ロウの見た目の大きさの係数", slimeWaxSizeMag);
+
 		for (int i = 0; i < 10; i++)
 		{
 			std::string waxnum = std::to_string(i + 1) + "体の時";
@@ -229,20 +234,26 @@ void WaxManager::Draw()
 {
 	for (auto& group : waxGroups)
 	{
-		group->Draw();
+		group->DrawUI();
+		if (isViewObjectWax) {
+			group->Draw();
+		}
 		for (auto& wax : group->waxs)
 		{
 			if (isViewCol) {
+				wax->SetDrawCollider(true);
 				wax->DrawCollider();
 			}
 		}
 	}
 
-	slimeWax.Draw();
+	if (isViewSlimeWax) {
+		slimeWax.Draw();
+	}
 }
 
 void WaxManager::Create(Transform transform, uint32_t power, Vector3 vec,
-	float speed, Vector2 range, float size, float atkTime, float solidTime)
+	float speed, float range, float size, float atkTime, float solidTime)
 {
 	//生成時にグループ作成
 	waxGroups.emplace_back();
@@ -263,31 +274,6 @@ float WaxManager::GetCalcHeatBonus()
 	return heatBonus * (float)isBurningNum;
 }
 
-bool RayToSphereCol(ColPrimitive3D::Ray rayCol, ColPrimitive3D::Sphere sphereCol)
-{
-	Vector3 rayToSphere = sphereCol.pos - rayCol.start;
-
-	//レイとの内積が0以下なら当たってない(レイより後ろに球があるときスルー)
-	if (rayToSphere.Dot(rayCol.dir) < 0)
-	{
-		return false;
-	}
-
-	float t = rayCol.dir.GetNormalize().Dot(rayToSphere);
-
-	//垂線を降ろした点
-	Vector3 a = rayCol.start + rayCol.dir.GetNormalize() * t;
-	//レイから球の最短ベクトル
-	Vector3 b = sphereCol.pos - a;
-
-	float len = b.Length();
-	if (len - (sphereCol.r + rayCol.radius) <= 0.f)
-	{
-		return true;
-	}
-
-	return false;
-}
 
 bool WaxManager::Collect(ColPrimitive3D::Ray collider)
 {
@@ -298,8 +284,7 @@ bool WaxManager::Collect(ColPrimitive3D::Ray collider)
 	{
 		for (auto& wax : group->waxs)
 		{
-			//回収範囲内にいるなら
-			if (RayToSphereCol(collider, wax->collider))
+			if (ColPrimitive3D::RayToSphereCol(collider, wax->collider))
 			{
 				//今一番遠いロウがないなら入れておく
 				if (farObj == nullptr)
@@ -333,6 +318,84 @@ bool WaxManager::Collect(ColPrimitive3D::Ray collider)
 	}
 
 	return false;
+}
+
+int32_t WaxManager::Collect(ColPrimitive3D::Ray collider, float waxCollectVertical)
+{
+	int32_t getNum = 0;
+	for (auto& group : waxGroups)
+	{
+		for (auto& wax : group->waxs)
+		{
+			if (RayToSphereCol(collider, wax->collider))
+			{
+				//今のロウとの距離
+				float len = (collider.start - wax->GetPos()).Length();
+
+				//見たロウが範囲外ならスキップ
+				if (waxCollectVertical < len) {
+					continue;
+				}
+
+				//回収モードにする
+				wax.get()->collectPos = collider.start;
+				wax.get()->ChangeState<WaxCollect>();
+				getNum++;
+
+				isCollected = false;
+			}
+		}
+	}
+
+	return getNum;
+}
+
+void WaxManager::CollectFan(ColPrimitive3D::Sphere collider, Vector3 vec, float angle)
+{
+	//指定された角度をもとに扇の辺決める
+	Vector3 lVec, rVec;
+	lVec = vec * Quaternion::AngleAxis(Vector3::UP, -angle * 0.5f);
+	rVec = vec * Quaternion::AngleAxis(Vector3::UP, angle * 0.5f);
+	//2次元ベクトルに直す
+	Vector2 leftVec, rightVec, colPos, waxPos;
+	leftVec = { lVec.x,lVec.z };
+	rightVec = { rVec.x,rVec.z };
+	colPos = { collider.pos.x,collider.pos.z };
+
+	for (auto& group : waxGroups)
+	{
+		for (auto& wax : group->waxs)
+		{
+			//球の回収範囲内にないならスルー
+			if (ColPrimitive3D::CheckSphereToSphere(wax->collider, collider) == false)
+			{
+				break;
+			}
+
+			Vector3 waxToSphere = wax->collider.pos - collider.pos;
+			//内積が0以下なら当たってない(後ろに球があるときスルー)
+			if (waxToSphere.Dot(vec) < 0)
+			{
+				break;
+			}
+
+			//指定された角度外なら当たってない
+			waxPos = { wax->collider.pos.x,wax->collider.pos.z };
+			Vector2 colToWaxVec = (colPos - waxPos).GetNormalize();
+			if (leftVec.Cross(colToWaxVec) < 0.f)
+			{
+				break;
+			}
+			if (rightVec.Cross(colToWaxVec) > 0.f)
+			{
+				break;
+			}
+
+			//当たってるなら扇用回収モードにする
+			wax->collectPos = collider.pos;
+			wax->ChangeState<WaxCollectFan>();
+		}
+	}
 }
 
 uint32_t WaxManager::GetWaxNum()

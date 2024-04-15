@@ -5,6 +5,11 @@ using namespace ColPrimitive3D;
 
 bool ColPrimitive3D::CheckSphereToSphere(Sphere a, Sphere b)
 {
+    //両者の当たり判定がどちらも0ならあたらない
+    if (a.r == 0 && b.r == 0) {
+        return false;
+    }
+
     Vector3 dis = b.pos - a.pos;
     float lf = dis.LengthSq();
     float rf = (a.r + b.r) * (a.r + b.r);
@@ -221,4 +226,30 @@ bool ColPrimitive3D::CheckRayToSphere(Ray ray, Sphere sphere, float* outDistance
     if (outInter) *outInter = ray.start + t * ray.dir;
 
     return true;
+}
+
+bool ColPrimitive3D::RayToSphereCol(ColPrimitive3D::Ray rayCol, ColPrimitive3D::Sphere sphereCol)
+{
+    Vector3 rayToSphere = sphereCol.pos - rayCol.start;
+
+    //レイとの内積が0以下なら当たってない(レイより後ろに球があるときスルー)
+    if (rayToSphere.Dot(rayCol.dir) < 0)
+    {
+        return false;
+    }
+
+    float t = rayCol.dir.GetNormalize().Dot(rayToSphere);
+
+    //垂線を降ろした点
+    Vector3 a = rayCol.start + rayCol.dir.GetNormalize() * t;
+    //レイから球の最短ベクトル
+    Vector3 b = sphereCol.pos - a;
+
+    float len = b.Length();
+    if (len - (sphereCol.r + rayCol.radius) <= 0.f)
+    {
+        return true;
+    }
+
+    return false;
 }

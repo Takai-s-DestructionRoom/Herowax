@@ -51,13 +51,14 @@ void Minimap::Update()
 	rect = { (long)(pos.x - size * 0.5f), (long)(pos.x + size * 0.5f),
 		(long)(pos.y - size * 0.5f), (long)(pos.y + size * 0.5f) };
 
-	ImGui::SetNextWindowSize({ 300, 200 });
+	//カメラの距離とミニマップのサイズを基準にアイコン倍率設定
+	float cameraDist = Camera::sMinimapCamera->mViewProjection.mEye.y;
+	iconSize = 1.f / (cameraDist / 250.f) * (Minimap::GetInstance()->size / 180.f);
 
-	ImGuiWindowFlags window_flags = 0;
-	window_flags |= ImGuiWindowFlags_NoResize;
+	ImGui::SetNextWindowSize({ 300, 200 }, ImGuiCond_FirstUseEver);
 
 	// カメラ //
-	ImGui::Begin("Minimap", NULL, window_flags);
+	ImGui::Begin("Minimap");
 
 	ImGui::InputFloat("ミニマップ座標X", &pos.x, 1.0f);
 	ImGui::InputFloat("ミニマップ座標Y", &pos.y, 1.0f);

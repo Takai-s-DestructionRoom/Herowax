@@ -303,3 +303,12 @@ Vector3 OutQuadVec3(const Vector3& start, const Vector3& end, float timerate)
 	result.z = Easing::OutQuad(start.z, end.z, timerate);
 	return result;
 }
+
+Vector3 InBackVec3(const Vector3& start, const Vector3& end, float timerate)
+{
+	Vector3 result;
+	result.x = Easing::InBack(start.x, end.x, timerate);
+	result.y = Easing::InBack(start.y, end.y, timerate);
+	result.z = Easing::InBack(start.z, end.z, timerate);
+	return result;
+}

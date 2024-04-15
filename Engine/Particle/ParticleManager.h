@@ -1,6 +1,7 @@
 #pragma once
 #include "SimpleParticle.h"
 #include <unordered_map>
+#include "ParticleEditor.h"
 
 // パーティクルの管理 //
 // エミッターを登録して更新処理をまとめてかけてる //
@@ -36,6 +37,10 @@ public:
 		Color color, TextureHandle tex, float minScale, float maxScale, Vector3 minVelo, Vector3 maxVelo,
 		float accelPower = 0.f, Vector3 minRot = {}, Vector3 maxRot = {},
 		float growingTimer = 0.f, float endScale = 0.f, bool isGravity = false, bool isBillboard = false);
+
+	//パーティクルの追加(外部データを使用)
+	void AddSimple(Vector3 emitPos,std::string pDataHandle);
+	void AddRing(Vector3 emitPos, std::string pDataHandle);
 
 	//パーティクルの追加
 	void AddHoming(Vector3 emitPos, Vector3 emitScale, uint32_t addNum, float life,

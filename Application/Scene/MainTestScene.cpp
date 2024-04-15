@@ -45,7 +45,7 @@ void MainTestScene::Init()
 void MainTestScene::Update()
 {
 	ImGui::SetNextWindowPos({ ImGui::GetMainViewport()->WorkPos.x + 800, ImGui::GetMainViewport()->WorkPos.y + 10 }, ImGuiCond_Once);
-	ImGui::SetNextWindowSize({ 400, 500 });
+	ImGui::SetNextWindowSize({ 400, 500 }, ImGuiCond_FirstUseEver);
 
 	ImGuiWindowFlags window_flags = 0;
 	ImGui::Begin("RayMarch Control", NULL, window_flags);

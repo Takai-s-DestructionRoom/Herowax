@@ -42,13 +42,10 @@ void ParticleManager::Update()
 	}
 
 #pragma region ImGui
-	ImGui::SetNextWindowSize({ 150, 70 });
-
-	ImGuiWindowFlags window_flags = 0;
-	window_flags |= ImGuiWindowFlags_NoResize;
+	ImGui::SetNextWindowSize({ 150, 70 }, ImGuiCond_FirstUseEver);
 
 	// パーティクル //
-	ImGui::Begin("Particle", NULL, window_flags);
+	ImGui::Begin("Particle");
 
 	size_t particleSize = 0;
 	for (auto& emitter : emitters_)
@@ -99,6 +96,31 @@ void ParticleManager::AddSimple(
 		addNum, life, color, tex, minScale, maxScale,
 		minVelo, maxVelo, accelPower, minRot, maxRot,
 		growingTimer, endScale, isGravity, isBillboard);
+}
+
+void ParticleManager::AddSimple(Vector3 emitPos, std::string pDataHandle)
+{
+	emitters_.emplace_back();
+	emitters_.back() = std::make_unique<SimpleParticle>();
+	emitters_.back()->SetPos(emitPos);
+	SimplePData pdata = ParticleEditor::LoadSimple(pDataHandle);
+	emitters_.back()->SetScale(pdata.emitScale);
+	emitters_.back()->Add(
+		pdata.addNum, pdata.life, pdata.color, pdata.tex, pdata.minScale, pdata.maxScale,
+		pdata.minVelo, pdata.maxVelo, pdata.accelPower, pdata.minRot, pdata.maxRot,
+		pdata.growingTimer, pdata.endScale, pdata.isGravity, pdata.isBillboard);
+}
+
+void ParticleManager::AddRing(Vector3 emitPos, std::string pDataHandle)
+{
+	emitters_.emplace_back();
+	emitters_.back() = std::make_unique<RingParticle>();
+	emitters_.back()->SetPos(emitPos);
+	RingPData pdata = ParticleEditor::LoadRing(pDataHandle);
+	emitters_.back()->AddRing(
+		pdata.addNum, pdata.life, pdata.color, pdata.tex, pdata.startRadius, pdata.endRadius,
+		pdata.minScale, pdata.maxScale, pdata.minVeloY, pdata.maxVeloY, pdata.minRot, pdata.maxRot,
+		pdata.growingTimer, pdata.endScale, pdata.isGravity, pdata.isBillboard);
 }
 
 void ParticleManager::AddHoming(Vector3 emitPos, Vector3 emitScale, uint32_t addNum, float life, Color color, TextureHandle tex, float minScale, float maxScale, Vector3 minVelo, Vector3 maxVelo, float accelPower, Vector3 minRot, Vector3 maxRot, float growingTimer, float endScale, bool isGravity, bool isBillboard)

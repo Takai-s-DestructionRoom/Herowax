@@ -51,6 +51,7 @@ public:
 	Vector3& operator-=(const Vector3& a);
 	//ベクトルのかけ算
 	Vector3& operator*=(const Vector3& a);
+	Vector3& operator*(const Vector3& a);
 	//定数倍
 	Vector3& operator*=(const float a);
 	//定数分の1倍

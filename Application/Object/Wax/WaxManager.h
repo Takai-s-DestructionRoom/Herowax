@@ -10,7 +10,13 @@ class WaxManager final
 private:
 	bool isWaxDead = false;
 
-	bool isViewCol = false;
+	bool isViewCol = false;			//当たり判定の表示フラグ
+
+	bool isViewSlimeWax = true;		//スライムロウ(レイマーチ描画)の表示フラグ
+
+	bool isViewObjectWax = false;	//オブジェクトロウ(モデル描画)の表示フラグ
+
+	float colliderSize = 0.0f;
 
 	float heatBonus;			//上記の同時燃焼数に応じたボーナス係数
 	//↑これは燃えた量が多ければ多いほど温度を保ちやすい、ってやつを
@@ -18,6 +24,8 @@ private:
 	//後でよりそれっぽいシステムにしてくださいプランナーさん
 
 	std::string fileName = "Wax";
+
+	float slimeWaxSizeMag = 1.0f;	//ロウのサイズを全部統一で小さくする
 
 public:
 	std::vector<float> waxTime;
@@ -48,18 +56,27 @@ public:
 	//生成
 	void Create(
 		Transform transform, uint32_t power, Vector3 vec,
-		float speed, Vector2 range, float size,float atkTime, float solidTime);
+		float speed, float range, float size,float atkTime, float solidTime);
 
 	//現在の温度ボーナスを返す(計算済み)
 	float GetCalcHeatBonus();
 
 	//回収される
 	bool Collect(ColPrimitive3D::Ray collider);
+	/// <summary>
+	/// 回収される(縦幅指定バージョン)
+	/// </summary>
+	/// <param name="collider"></param>
+	/// <param name="waxCollectVertical"></param>
+	/// <returns>回収した数</returns>
+	int32_t Collect(ColPrimitive3D::Ray collider,float waxCollectVertical);
+	void CollectFan(ColPrimitive3D::Sphere collider,Vector3 vec, float angle);
 	
 	uint32_t GetWaxNum();
 
 	//満杯かどうか返す
 	bool GetIsFull() { return GetWaxNum() >= kMaxWax; }
+	float GetSlimeWaxSizeMag() { return slimeWaxSizeMag; }
 
 	bool CheckHitWaxGroups(std::unique_ptr<WaxGroup>& group1,
 		std::unique_ptr<WaxGroup>& group2);

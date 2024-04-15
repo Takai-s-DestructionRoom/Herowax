@@ -145,6 +145,14 @@
     <ClCompile Include="Application\EnemyAttackState.cpp" />
     <ClCompile Include="Application\Chara\Boss\Boss.cpp" />
     <ClCompile Include="Application\Chara\Boss\BossState.cpp" />
+    <ClCompile Include="Application\Chara\Boss\BossUI.cpp" />
+    <ClCompile Include="Application\Chara\Boss\BossPunch.cpp" />
+    <ClCompile Include="Application\Chara\Boss\BossNormal.cpp" />
+    <ClCompile Include="Application\Chara\Boss\BossAI.cpp" />
+    <ClCompile Include="Application\BossPart.cpp" />
+    <ClCompile Include="Application\BossPartState.cpp" />
+    <ClCompile Include="Application\CollectPartManager.cpp" />
+    <ClCompile Include="Application\CollectZone.cpp" />
     <ClCompile Include="Engine\Collision\AABBCollider.cpp" />
     <ClCompile Include="Application\Chara\Enemy\EnemySpawner.cpp" />
     <ClCompile Include="Application\InstantDrawer.cpp" />
@@ -201,6 +209,8 @@
     <ClCompile Include="Application\Level.cpp" />
     <ClCompile Include="Application\Object\FireUnit.cpp" />
     <ClCompile Include="Engine\Particle\HomingParticle.cpp" />
+    <ClCompile Include="Application\GameCamera.cpp" />
+    <ClCompile Include="IEventScene.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Engine\Base\Material.cpp" />
     <ClCompile Include="Engine\Math\Matrix4.cpp" />
@@ -270,8 +280,35 @@
     <ClCompile Include="Application\SlimeWax.cpp" />
     <ClCompile Include="Engine\Collision\PlaneCollider.cpp" />
     <ClCompile Include="Application\Minimap.cpp" />
+    <ClCompile Include="Application\ParticleEditor.cpp" />
+    <ClCompile Include="Application\ParticleEditorScene.cpp" />
+    <ClCompile Include="Application\CollectPart.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <FxCompile Include="Shader\PaintedBright\PaintedBrightPS.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='DebugIT|x64'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.1</ShaderModel>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='DebugIT|x64'">5.1</ShaderModel>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.1</ShaderModel>
+    </FxCompile>
+    <FxCompile Include="Shader\GameObject\GameObjectPS.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='DebugIT|x64'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='DebugIT|x64'">5.0</ShaderModel>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
+    </FxCompile>
+    <FxCompile Include="Shader\GameObject\GameObjectVS.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='DebugIT|x64'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='DebugIT|x64'">5.0</ShaderModel>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
+    </FxCompile>
     <FxCompile Include="Shader\Billboard\BillboardPS.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='DebugIT|x64'">Pixel</ShaderType>
@@ -713,6 +750,14 @@
     <ClInclude Include="Application\EnemyAttackState.h" />
     <ClInclude Include="Application\Chara\Boss\Boss.h" />
     <ClInclude Include="Application\Chara\Boss\BossState.h" />
+    <ClInclude Include="Application\Chara\Boss\BossUI.h" />
+    <ClInclude Include="Application\Chara\Boss\BossPunch.h" />
+    <ClInclude Include="Application\Chara\Boss\BossNormal.h" />
+    <ClInclude Include="Application\Chara\Boss\BossAI.h" />
+    <ClInclude Include="Application\BossPart.h" />
+    <ClInclude Include="Application\BossPartState.h" />
+    <ClInclude Include="Application\CollectPartManager.h" />
+    <ClInclude Include="Application\CollectZone.h" />
     <ClInclude Include="Engine\Collision\AABBCollider.h" />
     <ClInclude Include="Application\Chara\Enemy\EnemySpawner.h" />
     <ClInclude Include="Application\InstantDrawer.h" />
@@ -843,8 +888,14 @@
     <ClInclude Include="Application\SlimeWax.h" />
     <ClInclude Include="Engine\Collision\PlaneCollider.h" />
     <ClInclude Include="Application\Minimap.h" />
+    <ClInclude Include="Application\ParticleEditor.h" />
+    <ClInclude Include="Application\ParticleEditorScene.h" />
+    <ClInclude Include="Application\GameCamera.h" />
+    <ClInclude Include="IEventScene.h" />
+    <ClInclude Include="Application\CollectPart.h" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Shader\GameObject\GameObject.hlsli" />
     <None Include="Shader\Billboard\Billboard.hlsli" />
     <None Include="Shader\Bloom\Bloom.hlsli" />
     <None Include="Shader\BrightCut\BrightCut.hlsli" />

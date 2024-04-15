@@ -31,8 +31,12 @@ public:
 	LevelData* nowLevel = nullptr;
 
 	std::list<ModelObj> objects;	//オブジェクトたち
-	ModelObj ground;	//地面
-	Tower tower;		//タワー
+	ModelObj ground;				//地面
+	std::vector<ModelObj> wall;	//壁
+	Tower tower;					//タワー
 	SpawnerManager* spawnerManager = SpawnerManager::GetInstance();	//スポナー
+
+	Vector2 moveLimitMax = {0,0};	//移動制限
+	Vector2 moveLimitMin = {0,0};	//移動制限
 };
 

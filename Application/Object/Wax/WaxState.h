@@ -52,3 +52,12 @@ public:
 private:
 	float accel = 0.f;			//回収の加速度
 };
+
+class WaxCollectFan : public WaxState
+{
+public:
+	void Update(Wax* wax)override;
+
+private:
+	float accel = 0.f;			//回収の加速度
+};

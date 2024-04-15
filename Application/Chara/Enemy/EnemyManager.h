@@ -11,9 +11,6 @@ public:
 	//敵リスト
 	std::list<std::unique_ptr<Enemy>> enemys;
 
-	//地面座標(平面想定のみ、ちゃんと地形を入れるならまた変えないといけない)
-	ModelObj* ground = nullptr;
-
 	float knockRandXS;
 	float knockRandXE;
 
@@ -38,7 +35,12 @@ private:
 	float mutekiTime;
 
 	Vector3 enemySize = { 3,3,3 };
+	
+	//調整項目
 	float collideSize = 3;
+	float attackHitColliderSize = 3.0f;
+	float attackMove = 10.0f;
+	float moveSpeed = 0.0f;
 
 public:
 	static EnemyManager* GetInstance();
@@ -51,13 +53,10 @@ public:
 		enemys.back() = std::make_unique<TEnemy>(target);
 		enemys.back()->SetPos(position);
 		enemys.back()->Init();
-		enemys.back()->SetGroundPos(ground->mTransform.position.y);
 	}
 
 	//敵の追跡対象を変更(プレイヤーを入れるのを想定)
 	void SetTarget(ModelObj* target_);
-	//地面座標を入れる
-	void SetGround(ModelObj* ground_);
 	
 	static void LoadResource();
 

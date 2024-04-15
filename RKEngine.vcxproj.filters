@@ -292,6 +292,15 @@
     <Filter Include="ソース ファイル\Application\Object\Chara\Boss">
       <UniqueIdentifier>{005df920-9a2f-470c-b9ff-a950934d15d2}</UniqueIdentifier>
     </Filter>
+    <Filter Include="シェーダー ファイル\GameObject">
+      <UniqueIdentifier>{ce86bff6-1b57-4af4-b255-e4251f7b8ee8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\Application\Object\CollectPart">
+      <UniqueIdentifier>{7e369ffd-0621-4903-979f-4bcaddf2de32}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\Application\Object\CollectPart">
+      <UniqueIdentifier>{e3fa3e20-a353-477b-870f-56af2ff2b512}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Engine\2d\Sprite.cpp">
@@ -669,6 +678,45 @@
     <ClCompile Include="Application\Chara\Boss\BossState.cpp">
       <Filter>ソース ファイル\Application\Object\Chara\Boss</Filter>
     </ClCompile>
+    <ClCompile Include="Application\Chara\Boss\BossUI.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Application\ParticleEditor.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Application\ParticleEditorScene.cpp">
+      <Filter>ソース ファイル\Application\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="Application\Chara\Boss\BossPunch.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Application\Chara\Boss\BossNormal.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Application\BossPart.cpp">
+      <Filter>ソース ファイル\Application\Object\Chara\Boss</Filter>
+    </ClCompile>
+    <ClCompile Include="Application\Chara\Boss\BossAI.cpp">
+      <Filter>ソース ファイル\Application\Object\Chara\Boss</Filter>
+    </ClCompile>
+    <ClCompile Include="Application\GameCamera.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Application\BossPartState.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="IEventScene.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Application\CollectZone.cpp">
+      <Filter>ソース ファイル\Application\Object\CollectPart</Filter>
+    </ClCompile>
+    <ClCompile Include="Application\CollectPart.cpp">
+      <Filter>ソース ファイル\Application\Object\CollectPart</Filter>
+    </ClCompile>
+    <ClCompile Include="Application\CollectPartManager.cpp">
+      <Filter>ソース ファイル\Application\Object\CollectPart</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Shader\Basic\BasicPS.hlsl">
@@ -839,6 +887,13 @@
     <FxCompile Include="Shader\SlimeShader\WaxMergeVS.hlsl">
       <Filter>シェーダー ファイル\SlimeShader</Filter>
     </FxCompile>
+    <FxCompile Include="Shader\GameObject\GameObjectPS.hlsl">
+      <Filter>シェーダー ファイル\GameObject</Filter>
+    </FxCompile>
+    <FxCompile Include="Shader\GameObject\GameObjectVS.hlsl">
+      <Filter>シェーダー ファイル\GameObject</Filter>
+    </FxCompile>
+    <FxCompile Include="Shader\PaintedBright\PaintedBrightPS.hlsl" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\2d\Sprite.h">
@@ -1240,6 +1295,36 @@
     <ClInclude Include="Application\Chara\Boss\BossState.h">
       <Filter>ヘッダー ファイル\Application\Object\Chara\Boss</Filter>
     </ClInclude>
+    <ClInclude Include="Application\Chara\Boss\BossUI.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Application\ParticleEditorScene.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Application\ParticleEditor.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Application\Chara\Boss\BossPunch.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Application\Chara\Boss\BossNormal.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Application\BossPart.h">
+      <Filter>ヘッダー ファイル\Application\Object\Chara\Boss</Filter>
+    </ClInclude>
+    <ClInclude Include="Application\Chara\Boss\BossAI.h">
+      <Filter>ヘッダー ファイル\Application\Object\Chara\Boss</Filter>
+    </ClInclude>
+    <ClInclude Include="Application\GameCamera.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Application\BossPartState.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="IEventScene.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="Shader\Bloom\Bloom.hlsli">
@@ -1322,6 +1407,9 @@
     </None>
     <None Include="Shader\SlimeShader\WaxMerge.hlsli">
       <Filter>シェーダー ファイル\SlimeShader</Filter>
+    </None>
+    <None Include="Shader\GameObject\GameObject.hlsli">
+      <Filter>シェーダー ファイル\GameObject</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>

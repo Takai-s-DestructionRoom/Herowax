@@ -56,13 +56,10 @@ void SlimeWax::Update()
 	screen.mTransform.position = GetNearSpherePosition();
 	
 	screen.Update(Camera::sNowCamera->mViewProjection);
-	//cube.mTransform.UpdateMatrix();
-	//cube.TransferBuffer(Camera::sNowCamera->mViewProjection);
-
+	
 	sphereCenter += masterMoveVec;
 	for (auto& sphere : spheres)
 	{
-		//sphere.collider.pos += masterMoveVec; 
 		sphere.Update();
 	}
 	masterMoveVec = { 0,0,0 };
@@ -74,28 +71,7 @@ void SlimeWax::Draw()
 {
 	if (isPlaneDraw) {
 		screen.Draw();
-		//cube.Draw();
 	}
-	
-	/*GraphicsPipeline pipe = SlimeShaderPipeLine();
-	for (std::shared_ptr<ModelMesh> data : cube.mModel->mData) {
-		RenderOrder order;
-		order.pipelineState = pipe.mPtr.Get();
-		order.mRootSignature = pipe.mDesc.pRootSignature;
-		order.vertView = &data->mVertBuff.mView;
-		order.indexView = &data->mIndexBuff.mView;
-		order.indexCount = static_cast<uint32_t>(data->mIndices.size());
-		order.rootData = {
-			{ RootDataType::SRBUFFER_CBV, cube.mMaterialBuffMap[data->mMaterial.mName].mBuff },
-			{ RootDataType::SRBUFFER_CBV, cube.mTransformBuff.mBuff },
-			{ RootDataType::SRBUFFER_CBV, cube.mViewProjectionBuff.mBuff },
-			{ RootDataType::LIGHT },
-			{ TextureManager::Get(data->mMaterial.mTexture).mGpuHandle },
-			{ RootDataType::SRBUFFER_CBV, slimeBuff.mBuff}
-		};
-
-		Renderer::DrawCall("Opaque",order);
-	}*/
 
 	GraphicsPipeline pipe = SlimeShaderPipeLine();
 	RenderOrder order;
@@ -114,6 +90,11 @@ void SlimeWax::Draw()
 	};
 
 	Renderer::DrawCall("Transparent", order);
+}
+
+void SlimeWax::Reset()
+{
+	spheres.clear();
 }
 
 GraphicsPipeline SlimeWax::SlimeShaderPipeLine()
@@ -194,11 +175,9 @@ void SlimeWax::TransferBuffer()
 
 void SlimeWax::ImGui()
 {
-	ImGui::SetNextWindowSize({ 300, 200 });
+	ImGui::SetNextWindowSize({ 300, 200 }, ImGuiCond_FirstUseEver);
 
-	ImGuiWindowFlags window_flags = 0;
-	window_flags |= ImGuiWindowFlags_NoResize;
-	ImGui::Begin("RayMarchTest", NULL);
+	ImGui::Begin("RayMarchTest");
 	if (ImGui::Button("カメラ位置に配置")) {
 		//cube.mTransform.position = GetNearSpherePosition();
 		screen.mTransform.position = GetNearSpherePosition();
@@ -216,10 +195,6 @@ void SlimeWax::ImGui()
 		}
 	}
 	ImGui::Checkbox("板描画切り替え", &isPlaneDraw);
-	/*ImGui::DragFloat3("position", &cube.mTransform.position.x);
-	ImGui::DragFloat3("scale", &cube.mTransform.scale.x);
-	ImGui::DragFloat3("rotation", &cube.mTransform.rotation.x);*/
-
 	ImGui::DragFloat3("position", &screen.mTransform.position.x);
 	static Vector2 size = screen.mImage.GetSize();
 	ImGui::DragFloat2("size", &size.x);

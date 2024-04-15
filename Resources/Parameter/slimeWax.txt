@@ -1,1 +1,4 @@
-__TEST__GGEZ__:1
+sphereNum:8
+slimeValue:1
+rayMatchNum:24
+clipValue:0.75
