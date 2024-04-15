@@ -21,6 +21,8 @@
 #include "BreakableObj.h"
 #include "GameCamera.h"
 
+#include "IEventScene.h"
+
 class ProtoScene : public IScene
 {
 public:
@@ -39,6 +41,7 @@ private:
 	EggUI eggUI;
 	//BreakableObj nest;
 	Boss boss;
+	std::unique_ptr<IEventScene> eventScene;
 
 	Camera minimapCamera = Camera();	//ミニマップ用の仮想カメラ
 

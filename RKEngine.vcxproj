@@ -83,7 +83,7 @@
       <ConformanceMode>false</ConformanceMode>
       <TreatWarningAsError>true</TreatWarningAsError>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
-      <AdditionalIncludeDirectories>$(ProjectDir)Application;$(ProjectDir)Application\BackGround;$(ProjectDir)Application\Scene;$(ProjectDir)Application\RhythmCore;$(ProjectDir)Application\Particle;$(ProjectDir)Engine;$(ProjectDir)Engine\2d;$(ProjectDir)Engine\3d;$(ProjectDir)Engine\3d\Model;$(ProjectDir)Engine\Base;$(ProjectDir)Engine\Camera;$(ProjectDir)Engine\Collision;$(ProjectDir)Engine\Light;$(ProjectDir)Engine\Math;$(ProjectDir)Engine\Scene;$(ProjectDir)Engine\PostEffect;$(ProjectDir)Engine\SimpleDrawer;$(ProjectDir)Engine\Renderer;$(ProjectDir)Application\Chara\Player;$(ProjectDir)Application\Object\Tower;$(ProjectDir)Application\Chara\Enemy;$(ProjectDir)Application\Object\Wax;$(ProjectDir)Engine\Particle;$(ProjectDir)Application\Paint;$(ProjectDir)Application\Object;$(ProjectDir)Application\Chara\Boss</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)Application;$(ProjectDir)Application\BackGround;$(ProjectDir)Application\Scene;$(ProjectDir)Application\RhythmCore;$(ProjectDir)Application\Particle;$(ProjectDir)Engine;$(ProjectDir)Engine\2d;$(ProjectDir)Engine\3d;$(ProjectDir)Engine\3d\Model;$(ProjectDir)Engine\Base;$(ProjectDir)Engine\Camera;$(ProjectDir)Engine\Collision;$(ProjectDir)Engine\Light;$(ProjectDir)Engine\Math;$(ProjectDir)Engine\Scene;$(ProjectDir)Engine\PostEffect;$(ProjectDir)Engine\SimpleDrawer;$(ProjectDir)Engine\Renderer;$(ProjectDir)Application\Chara\Player;$(ProjectDir)Application\Object\Tower;$(ProjectDir)Application\Chara\Enemy;$(ProjectDir)Application\Object\Wax;$(ProjectDir)Engine\Particle;$(ProjectDir)Application\Paint;$(ProjectDir)Application\Object;$(ProjectDir)Application\Chara\Boss;$(ProjectDir)Application\EventScene</AdditionalIncludeDirectories>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
@@ -103,7 +103,7 @@
       <ConformanceMode>false</ConformanceMode>
       <TreatWarningAsError>true</TreatWarningAsError>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
-      <AdditionalIncludeDirectories>$(ProjectDir)Application;$(ProjectDir)Application\BackGround;$(ProjectDir)Application\Scene;$(ProjectDir)Application\RhythmCore;$(ProjectDir)Application\Particle;$(ProjectDir)Engine;$(ProjectDir)Engine\2d;$(ProjectDir)Engine\3d;$(ProjectDir)Engine\3d\Model;$(ProjectDir)Engine\Base;$(ProjectDir)Engine\Camera;$(ProjectDir)Engine\Collision;$(ProjectDir)Engine\Light;$(ProjectDir)Engine\Math;$(ProjectDir)Engine\Scene;$(ProjectDir)Engine\PostEffect;$(ProjectDir)Engine\SimpleDrawer;$(ProjectDir)Engine\Renderer;$(ProjectDir)Application\Chara\Player;$(ProjectDir)Application\Object\Tower;$(ProjectDir)Application\Chara\Enemy;$(ProjectDir)Application\Object\Wax;$(ProjectDir)Engine\Particle;$(ProjectDir)Application\Paint;$(ProjectDir)Application\Object;$(ProjectDir)Application\Chara\Boss</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)Application;$(ProjectDir)Application\BackGround;$(ProjectDir)Application\Scene;$(ProjectDir)Application\RhythmCore;$(ProjectDir)Application\Particle;$(ProjectDir)Engine;$(ProjectDir)Engine\2d;$(ProjectDir)Engine\3d;$(ProjectDir)Engine\3d\Model;$(ProjectDir)Engine\Base;$(ProjectDir)Engine\Camera;$(ProjectDir)Engine\Collision;$(ProjectDir)Engine\Light;$(ProjectDir)Engine\Math;$(ProjectDir)Engine\Scene;$(ProjectDir)Engine\PostEffect;$(ProjectDir)Engine\SimpleDrawer;$(ProjectDir)Engine\Renderer;$(ProjectDir)Application\Chara\Player;$(ProjectDir)Application\Object\Tower;$(ProjectDir)Application\Chara\Enemy;$(ProjectDir)Application\Object\Wax;$(ProjectDir)Engine\Particle;$(ProjectDir)Application\Paint;$(ProjectDir)Application\Object;$(ProjectDir)Application\Chara\Boss;$(ProjectDir)Application\EventScene</AdditionalIncludeDirectories>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
@@ -125,7 +125,7 @@
       <ConformanceMode>false</ConformanceMode>
       <TreatWarningAsError>true</TreatWarningAsError>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
-      <AdditionalIncludeDirectories>$(ProjectDir)Application;$(ProjectDir)Application\BackGround;$(ProjectDir)Application\Scene;$(ProjectDir)Application\RhythmCore;$(ProjectDir)Application\Particle;$(ProjectDir)Engine;$(ProjectDir)Engine\2d;$(ProjectDir)Engine\3d;$(ProjectDir)Engine\3d\Model;$(ProjectDir)Engine\Base;$(ProjectDir)Engine\Camera;$(ProjectDir)Engine\Collision;$(ProjectDir)Engine\Light;$(ProjectDir)Engine\Math;$(ProjectDir)Engine\Scene;$(ProjectDir)Engine\PostEffect;$(ProjectDir)Engine\SimpleDrawer;$(ProjectDir)Engine\Renderer;$(ProjectDir)Application\Chara\Player;$(ProjectDir)Application\Object\Tower;$(ProjectDir)Application\Chara\Enemy;$(ProjectDir)Application\Object\Wax;$(ProjectDir)Engine\Particle;$(ProjectDir)Application\Paint;$(ProjectDir)Application\Object;$(ProjectDir)Application\Chara\Boss</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)Application;$(ProjectDir)Application\BackGround;$(ProjectDir)Application\Scene;$(ProjectDir)Application\RhythmCore;$(ProjectDir)Application\Particle;$(ProjectDir)Engine;$(ProjectDir)Engine\2d;$(ProjectDir)Engine\3d;$(ProjectDir)Engine\3d\Model;$(ProjectDir)Engine\Base;$(ProjectDir)Engine\Camera;$(ProjectDir)Engine\Collision;$(ProjectDir)Engine\Light;$(ProjectDir)Engine\Math;$(ProjectDir)Engine\Scene;$(ProjectDir)Engine\PostEffect;$(ProjectDir)Engine\SimpleDrawer;$(ProjectDir)Engine\Renderer;$(ProjectDir)Application\Chara\Player;$(ProjectDir)Application\Object\Tower;$(ProjectDir)Application\Chara\Enemy;$(ProjectDir)Application\Object\Wax;$(ProjectDir)Engine\Particle;$(ProjectDir)Application\Paint;$(ProjectDir)Application\Object;$(ProjectDir)Application\Chara\Boss;$(ProjectDir)Application\EventScene</AdditionalIncludeDirectories>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
@@ -153,6 +153,7 @@
     <ClCompile Include="Application\BossPartState.cpp" />
     <ClCompile Include="Application\CollectPartManager.cpp" />
     <ClCompile Include="Application\CollectZone.cpp" />
+    <ClCompile Include="Application\EventScene\BossAppearanceScene.cpp" />
     <ClCompile Include="Engine\Collision\AABBCollider.cpp" />
     <ClCompile Include="Application\Chara\Enemy\EnemySpawner.cpp" />
     <ClCompile Include="Application\InstantDrawer.cpp" />
@@ -210,7 +211,7 @@
     <ClCompile Include="Application\Object\FireUnit.cpp" />
     <ClCompile Include="Engine\Particle\HomingParticle.cpp" />
     <ClCompile Include="Application\GameCamera.cpp" />
-    <ClCompile Include="IEventScene.cpp" />
+    <ClCompile Include="Application\EventScene\IEventScene.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Engine\Base\Material.cpp" />
     <ClCompile Include="Engine\Math\Matrix4.cpp" />
@@ -726,6 +727,7 @@
     <ClInclude Include="Application\BossPartState.h" />
     <ClInclude Include="Application\CollectPartManager.h" />
     <ClInclude Include="Application\CollectZone.h" />
+    <ClInclude Include="Application\EventScene\BossAppearanceScene.h" />
     <ClInclude Include="Engine\Collision\AABBCollider.h" />
     <ClInclude Include="Application\Chara\Enemy\EnemySpawner.h" />
     <ClInclude Include="Application\InstantDrawer.h" />
@@ -859,7 +861,7 @@
     <ClInclude Include="Application\ParticleEditor.h" />
     <ClInclude Include="Application\ParticleEditorScene.h" />
     <ClInclude Include="Application\GameCamera.h" />
-    <ClInclude Include="IEventScene.h" />
+    <ClInclude Include="Application\EventScene\IEventScene.h" />
     <ClInclude Include="Application\CollectPart.h" />
   </ItemGroup>
   <ItemGroup>

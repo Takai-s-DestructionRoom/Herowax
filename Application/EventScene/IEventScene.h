@@ -5,6 +5,7 @@
 
 #pragma once
 #include "Camera.h"
+#include "Easing.h"
 
 //基本的にはゲームシーンのカメラを奪う感じ
 //イベントシーン中に動かしたいものはこのシーン内だったり、
@@ -12,13 +13,13 @@
 class IEventScene
 {
 public:
-	bool isActive;	//イベントシーン稼働してるかフラグ
-	Camera camera;	//カメラは基本使うと思うのでここで定義
-
-	IEventScene();
+	bool isActive = false;	//イベントシーン稼働してるかフラグ
+	Camera camera;			//カメラは基本使うと思うのでここで定義
+	Easing::EaseTimer eventTimer;	//イベントシーンの発生時間
 
 	virtual ~IEventScene() {}
 
-	virtual void Init() {}
+	virtual void Init(const Vector3 target = {0.f,0.f,0.f}) {}
 	virtual void Update() {}
+	virtual void Draw() {}
 };
