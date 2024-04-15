@@ -8,6 +8,7 @@
 #include "FireUnit.h"
 #include "ColPrimitive3D.h"
 #include <stdint.h>
+#include "CollectPart.h"
 
 class Boss;
 
@@ -104,6 +105,8 @@ public:
 	Easing::EaseTimer greenTimer_ = kGamingTimer_;
 	Easing::EaseTimer blueTimer_ = kGamingTimer_;
 
+	std::vector<CollectPart*> carryingParts;
+	
 	//------------ その他 ------------//
 	std::unique_ptr<PlayerState> attackState;
 	std::unique_ptr<PlayerState> nextState;
@@ -121,6 +124,8 @@ private:
 	float blinkNum = 10;		//点滅回数
 
 	Boss* boss = nullptr;
+
+	Color defColor;
 
 public:
 	Player();

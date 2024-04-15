@@ -25,6 +25,15 @@ struct RootParamater {
     D3D12_ROOT_CONSTANTS Constants = {};
     D3D12_ROOT_DESCRIPTOR Descriptor = {};
     D3D12_SHADER_VISIBILITY ShaderVisibility = {};
+
+    static DescriptorRanges OneTex(uint32_t shaderRegister) {
+        DescriptorRange descriptorRange{};
+        descriptorRange.NumDescriptors = 1; //一度の描画に使うテクスチャが1枚なので1
+        descriptorRange.RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_SRV;
+        descriptorRange.BaseShaderRegister = shaderRegister; //テクスチャレジスタ0番
+        descriptorRange.OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND;
+        return DescriptorRanges{ descriptorRange };
+    }
 };
 
 typedef std::vector<RootParamater> RootParamaters;

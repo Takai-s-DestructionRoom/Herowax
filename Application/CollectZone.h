@@ -16,15 +16,37 @@ public:
 
 	ColPrimitive3D::AABB aabbCol;
 
-private:
-	std::vector<CollectPart*> gatheredParts; //おいてあるパーツを保持
+	bool isCreate = false;
 
-	Easing::EaseTimer timer;
+	Easing::EaseTimer hammerTimer;
+
+private:
+	std::vector<std::unique_ptr<CollectPart>> gatheredParts; //おいてあるパーツを保持
+
+	Easing::EaseTimer colorTimer;
+
+	Easing::EaseTimer createTimer;
+
+	Vector2 hampos;
+	Vector2 anvpos;
+	float hamRot;
+
 public:
 	void Init()override;
 	void Update()override;	//当たり判定更新など
 	void Draw()override;//どの範囲がcollectZoneなのかを半透明オブジェクトで描画
 
-	void Move(CollectPart* part);
+	void Create(const Vector3& spawnPos);
+
+	void UIDraw();
+
+	void GodModeCreate();
+	void GodModeCreateStop();
+
+	bool GodModeCreateEnd();
+
+	int32_t GetPartsNum();
+
+	std::vector<std::unique_ptr<CollectPart>>* GetPartsData() {return &gatheredParts;};
 };
 

@@ -76,9 +76,12 @@ void Player::Init()
 	obj = PaintableModelObj(Model::Load("./Resources/Model/player/player_bird.obj", "player_bird", true));
 
 	std::map<std::string, std::string> extract = Parameter::Extract("Player");
-	obj.mTuneMaterial.mColor.r = Parameter::GetParam(extract, "プレイヤーの色R", 1);
-	obj.mTuneMaterial.mColor.g = Parameter::GetParam(extract, "プレイヤーの色G", 1);
-	obj.mTuneMaterial.mColor.b = Parameter::GetParam(extract, "プレイヤーの色B", 1);
+	defColor.r = Parameter::GetParam(extract, "プレイヤーの色R", 1);
+	defColor.g = Parameter::GetParam(extract, "プレイヤーの色G", 1);
+	defColor.b = Parameter::GetParam(extract, "プレイヤーの色B", 1);
+	defColor.a = 1;
+
+	obj.mTuneMaterial.mColor = defColor;
 
 	hp = maxHP;
 	//fireUnit.Init();
@@ -237,7 +240,7 @@ void Player::Update()
 	if (godmodeTimer.GetEnd())
 	{
 		isGodmode = false;
-		obj.mTuneMaterial.mColor = Color::kWhite;
+		obj.mTuneMaterial.mColor = defColor;
 
 		godmodeTimer.Reset();
 	}

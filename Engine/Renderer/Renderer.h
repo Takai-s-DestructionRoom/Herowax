@@ -108,6 +108,9 @@ public:
 	//Rendererに登録されているRenderStageのIDを全て取得します
 	static std::vector<std::string> GetRenderStageIDs();
 
+	//一部未設定の項目をRendererの設定に合わせます
+	static void SetParamAuto(RenderOrder& order);
+
 	//今後の描画に使うPrimitiveTopologyを指定します
 	//一度セットするとその後ずっと維持されます
 	//一時的に変える場合などに戻し忘れないよう注意

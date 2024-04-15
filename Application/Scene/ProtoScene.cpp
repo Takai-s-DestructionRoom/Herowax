@@ -123,14 +123,62 @@ void ProtoScene::Update()
 	//パーツとの判定
 	for (auto& part : CollectPartManager::GetInstance()->parts)
 	{
-		if (ColPrimitive3D::CheckSphereToSphere(part->collider, player.collider)) {
-			//一旦複数持てる
-			//後でプレイヤー側でフラグ立てて個数制限する
-			part->Carrying(&player.obj);
+		if ((int32_t)player.carryingParts.size() < 
+			CollectPartManager::GetInstance()->GetMaxCarryingNum()) {
+			if (ColPrimitive3D::CheckSphereToSphere(part->collider, player.collider)) {
+				//一旦複数持てる
+				//後でプレイヤー側でフラグ立てて個数制限する
+				part->Carrying(&player);
+			}
 		}
-		if (ColPrimitive3D::CheckSphereToAABB(part->collider,
-			CollectPartManager::GetInstance()->zone.aabbCol)) {
-			part->Collect();
+		
+		//プレイヤーが持っているなら
+		if (part->IsCarrying()) {
+			//当たり判定する
+			if (ColPrimitive3D::CheckSphereToAABB(part->collider,
+				CollectPartManager::GetInstance()->zone.aabbCol)) {
+				part->Collect();
+				part->SetIsAlive(false);
+				CollectPartManager::GetInstance()->zone.Create(part->GetPos());
+			}
+		}
+	}
+
+	for (auto itr = player.carryingParts.begin();itr != player.carryingParts.end();)
+	{
+		//捕まったら保持から消す
+		if ((*itr)->IsCollected()) {
+			itr = player.carryingParts.erase(itr);
+		}
+		else {
+			itr++;
+		}
+	}
+
+	//10個溜まったら(後で制作状態も作る)
+	if (CollectPartManager::GetInstance()->GetAllowCreate()) {
+
+		//範囲内に居て
+		if (ColPrimitive3D::CheckSphereToAABB(player.collider,
+			CollectPartManager::GetInstance()->zone.aabbCol))
+		{
+			//ボタンを押しているなら
+			if (RInput::GetKey(DIK_E) || 
+				RInput::GetPadButton(XINPUT_GAMEPAD_RIGHT_SHOULDER))
+			{
+				//制作
+				CollectPartManager::GetInstance()->zone.GodModeCreate();
+			}
+			else {
+				CollectPartManager::GetInstance()->zone.GodModeCreateStop();
+			}
+		}
+
+		//ゴッドモードへ
+		if (CollectPartManager::GetInstance()->zone.GodModeCreateEnd()) {
+			player.SetIsGodmode(true);
+
+			CollectPartManager::GetInstance()->CratePostDelete();
 		}
 	}
 
