@@ -46,7 +46,7 @@ public:
 	void BrightTransferBuffer(const ViewProjection& view);
 	
 	//自身が持っているobjのDrawを専用のシェーダーで描画するもの
-	void BrightDraw();
+	void BrightDraw(std::string stageID = "Opaque");
 
 	//当たり判定の描画
 	void DrawCollider();

@@ -138,12 +138,12 @@ void GameObject::BrightTransferBuffer(const ViewProjection& view)
 	AddColor->addColor.w = brightColor.a;
 }
 
-void GameObject::BrightDraw()
+void GameObject::BrightDraw(std::string stageID)
 {
 	GraphicsPipeline pipe = *GetPipeline();
 
 	for (RenderOrder order : GetRenderOrder()) {
-		Renderer::DrawCall("Opaque", order);
+		Renderer::DrawCall(stageID, order);
 	}
 }
 
