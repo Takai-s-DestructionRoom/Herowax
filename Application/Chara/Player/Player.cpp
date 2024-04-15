@@ -67,6 +67,8 @@ isFireStock(false), isWaxStock(true), isCollectFan(false), maxWaxStock(20)
 	attackState = std::make_unique<PlayerNormal>();
 
 	attackDrawerObj = ModelObj(Model::Load("./Resources/Model/Sphere.obj", "Sphere", true));
+
+	godmodeTimer.maxTime_ = Parameter::GetParam(extract, "無敵時間", 10.f);
 }
 
 void Player::Init()
@@ -74,12 +76,26 @@ void Player::Init()
 	obj = PaintableModelObj(Model::Load("./Resources/Model/player/player_bird.obj", "player_bird", true));
 
 	std::map<std::string, std::string> extract = Parameter::Extract("Player");
-	obj.mTuneMaterial.mColor.r = Parameter::GetParam(extract, "プレイヤーの色R", 1);
-	obj.mTuneMaterial.mColor.g = Parameter::GetParam(extract, "プレイヤーの色G", 1);
-	obj.mTuneMaterial.mColor.b = Parameter::GetParam(extract, "プレイヤーの色B", 1);
+	defColor.r = Parameter::GetParam(extract, "プレイヤーの色R", 1);
+	defColor.g = Parameter::GetParam(extract, "プレイヤーの色G", 1);
+	defColor.b = Parameter::GetParam(extract, "プレイヤーの色B", 1);
+	defColor.a = 1;
+
+	obj.mTuneMaterial.mColor = defColor;
 
 	hp = maxHP;
 	//fireUnit.Init();
+	isGodmode = false;
+	godmodeTimer.Reset();
+
+	redTimer_.nowTime_ = kGamingTimer_;
+	redTimer_.Reset();
+	greenTimer_.Reset();
+	blueTimer_.Reset();
+
+	redTimer_.SetEnd(true);
+	greenTimer_.SetReverseEnd(true);
+	blueTimer_.SetReverseEnd(true);
 
 	waxStock = maxWaxStock;
 
@@ -105,8 +121,10 @@ void Player::Update()
 {
 	Reset();
 
-	//無敵時間更新
-	mutekiTimer.Update();
+	//タイマー更新
+	damageCoolTimer.Update();
+	godmodeTimer.Update();
+
 	//ダメージ時点滅
 	//DamageBlink();
 
@@ -174,9 +192,9 @@ void Player::Update()
 		isAlive = false;
 	}
 
-	//無敵時間中なら色を変える
-	if (mutekiTimer.GetStarted()) {
-		brightColor.r = Easing::OutQuad(1.0f, 0.0f, mutekiTimer.GetTimeRate());
+	//ダメージクールタイム中なら色を変える
+	if (damageCoolTimer.GetStarted()) {
+		brightColor.r = Easing::OutQuad(1.0f, 0.0f, damageCoolTimer.GetTimeRate());
 	}
 
 	//のけぞり中ならのけぞらせる
@@ -206,6 +224,28 @@ void Player::Update()
 		}
 	}
 
+	//無敵モードなら
+	if (isGodmode)
+	{
+		if (godmodeTimer.GetStarted() == false)
+		{
+			godmodeTimer.Start();
+		}
+
+		//ゲーミング色に
+		obj.mTuneMaterial.mColor = GamingColorUpdate();
+	}
+
+	//無敵時間終了したらフラグもfalseに
+	if (godmodeTimer.GetEnd())
+	{
+		isGodmode = false;
+		obj.mTuneMaterial.mColor = defColor;
+
+		godmodeTimer.Reset();
+	}
+
+	//移動制限
 	obj.mTransform.position.x =
 		Util::Clamp(obj.mTransform.position.x,
 			Level::Get()->moveLimitMin.x - obj.mTransform.scale.x,
@@ -334,6 +374,12 @@ void Player::Update()
 		ImGui::InputFloat("敵がこの範囲に入ると攻撃状態へ遷移する大きさ", &attackHitCollider.r, 1.0f);
 		ImGui::TreePop();
 	}
+	if (ImGui::TreeNode("MUTEKI系"))
+	{
+		ImGui::Checkbox("無敵状態切り替え", &isGodmode);
+		ImGui::InputFloat("無敵時間", &godmodeTimer.maxTime_, 1.0f);
+		ImGui::TreePop();
+	}
 
 	if (ImGui::Button("Reset")) {
 		Init();
@@ -369,6 +415,7 @@ void Player::Update()
 		Parameter::Save("プレイヤーの色R", obj.mTuneMaterial.mColor.r);
 		Parameter::Save("プレイヤーの色G", obj.mTuneMaterial.mColor.g);
 		Parameter::Save("プレイヤーの色B", obj.mTuneMaterial.mColor.b);
+		Parameter::Save("無敵時間", godmodeTimer.maxTime_);
 		Parameter::End();
 	}
 
@@ -821,16 +868,37 @@ void Player::WaxCollect()
 		}
 		//腕吸収
 		if (boss->parts[(int32_t)PartsNum::LeftHand].isCollected) {
-			//とりあえず壊しちゃう
-			boss->parts[(int32_t)PartsNum::LeftHand].isAlive = false;
-			//腕の吸収値も変数化したい
-			waxCollectAmount += 1;
+			if (RayToSphereCol(collectCol, boss->parts[(int32_t)PartsNum::LeftHand].collider))
+			{
+				//今のロウとの距離
+				float len = (collectCol.start - 
+					boss->parts[(int32_t)PartsNum::LeftHand].GetPos()).Length();
+
+				//見たロウが範囲外ならスキップ
+				if (waxCollectVertical >= len) {
+					//とりあえず壊しちゃう
+					boss->parts[(int32_t)PartsNum::LeftHand].collectPos = collectCol.start;
+					boss->parts[(int32_t)PartsNum::LeftHand].ChangeState<BossPartCollect>();
+					waxCollectAmount += 1;
+				}
+			}
 		}
 		if (boss->parts[(int32_t)PartsNum::RightHand].isCollected) {
-			//とりあえず壊しちゃう
-			boss->parts[(int32_t)PartsNum::RightHand].isAlive = false;
-			//腕の吸収値も変数化したい
-			waxCollectAmount += 1;
+			if (ColPrimitive3D::RayToSphereCol(collectCol, boss->parts[(int32_t)PartsNum::RightHand].collider))
+			{
+				//今のロウとの距離
+				float len = (collectCol.start -
+					boss->parts[(int32_t)PartsNum::RightHand].GetPos()).Length();
+
+				//見たロウが範囲外ならスキップ
+				if (waxCollectVertical >= len) {
+					//とりあえず壊しちゃう
+					boss->parts[(int32_t)PartsNum::RightHand].collectPos = collectCol.start;
+					boss->parts[(int32_t)PartsNum::RightHand].ChangeState<BossPartCollect>();
+					//腕の吸収値も変数化したい
+					waxCollectAmount += 1;
+				}
+			}
 		}
 	}
 }
@@ -846,31 +914,80 @@ Vector3 Player::GetFootPos()
 
 void Player::DealDamage(uint32_t damage)
 {
-	//無敵時間中ならダメージが与えられない
-	if (mutekiTimer.GetRun())return;
+	//ダメージクールタイム中か無敵モードならダメージが与えられない
+	if (damageCoolTimer.GetRun() || isGodmode)return;
 
-	mutekiTimer.Start();
+	damageCoolTimer.Start();
 	blinkTimer.Start();
 
 	hp -= damage;
 
 	//パーティクル生成
-	ParticleManager::GetInstance()->AddSimple(obj.mTransform.position, "star");
+	ParticleManager::GetInstance()->AddSimple(obj.mTransform.position, "player_hit");
 
 	//ちょっとのけぞる
 	//モーション遷移
-	backwardTimer.maxTime_ = mutekiTimer.maxTime_ / 2;
+	backwardTimer.maxTime_ = damageCoolTimer.maxTime_ / 2;
 	backwardTimer.Start();
+}
+
+Color Player::GamingColorUpdate()
+{
+	//タイマー更新
+	redTimer_.Update();
+	greenTimer_.Update();
+	blueTimer_.Update();
+
+	//タイマー無限ループ
+	if (blueTimer_.GetReverseEnd() && !greenTimer_.GetStarted())
+	{
+		greenTimer_.Start();
+	}
+
+	if (greenTimer_.GetEnd() && !redTimer_.GetReverseStarted())
+	{
+		redTimer_.ReverseStart();
+	}
+
+	if (redTimer_.GetReverseEnd() && !blueTimer_.GetStarted())
+	{
+		blueTimer_.Start();
+	}
+
+	if (blueTimer_.GetEnd() && !greenTimer_.GetReverseStarted())
+	{
+		greenTimer_.ReverseStart();
+	}
+
+	if (greenTimer_.GetReverseEnd() && !redTimer_.GetStarted())
+	{
+		redTimer_.Start();
+	}
+
+	if (redTimer_.GetEnd() && !blueTimer_.GetReverseStarted())
+	{
+		blueTimer_.ReverseStart();
+	}
+
+	Color gamingColor(redTimer_.GetTimeRate(), greenTimer_.GetTimeRate(), blueTimer_.GetTimeRate());
+
+	//若干暗めにしつつ
+	gamingColor = gamingColor * 0.7f;
+	//人間が見た時の見え方が違うからRGBごとに調整
+	gamingColor.r *= 0.8f;
+	gamingColor.g *= 0.6f;
+	gamingColor.b *= 1.2f;
+	return gamingColor;
 }
 
 void Player::DamageBlink()
 {
 	blinkTimer.RoopReverse();
 
-	blinkTimer.maxTime_ = mutekiTimer.maxTime_ / (blinkNum * 2);
+	blinkTimer.maxTime_ = damageCoolTimer.maxTime_ / (blinkNum * 2);
 
 	//ダメージ処理中なら
-	if (mutekiTimer.GetRun()) {
+	if (damageCoolTimer.GetRun()) {
 		obj.mTuneMaterial.mColor.a = (1.0f - blinkTimer.GetTimeRate()) + 0.2f;
 	}
 	else {

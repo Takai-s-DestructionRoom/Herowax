@@ -1,0 +1,16 @@
+addNum:1
+life:0.25
+minscale:4
+maxscale:4
+accelpower:0
+growingTimer:0.05
+endscale:10
+isgravity:false
+isbillboard:true
+emitscale:0.010000_0.010000_0.010000
+minvelo:0.000000_0.000000_0.000000
+maxvelo:0.000000_0.000000_0.000000
+minrot:0.200000_0.200000_0.200000
+maxrot:0.200000_0.200000_0.200000
+color:1.000000_1.000000_1.000000_1.000000
+tex:hit_circle

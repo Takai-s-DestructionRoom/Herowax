@@ -41,7 +41,7 @@ public:
 	float hp;				//現在のヒットポイント
 	float maxHP;			//最大HP
 
-	Easing::EaseTimer mutekiTimer;		//無敵時間さん
+	Easing::EaseTimer damageCoolTimer;	//再びダメージくらうようになるまでのクールタイム
 
 	//------------ 攻撃関連 ------------//
 	bool isAttack;					//攻撃中かフラグ
@@ -94,6 +94,16 @@ public:
 	FireUnit fireUnit;
 	bool isFireStock;			//炎をストック性にするかフラグ
 
+	//------------ ☆MUTEKI☆関連 ------------//
+	Easing::EaseTimer godmodeTimer;	//無敵の制限時間(デフォ10秒)
+	bool isGodmode;					//無敵かフラグ
+
+	//ゲーミングパレットの遷移タイマー
+	const float kGamingTimer_ = 0.3f;
+	Easing::EaseTimer redTimer_ = kGamingTimer_;
+	Easing::EaseTimer greenTimer_ = kGamingTimer_;
+	Easing::EaseTimer blueTimer_ = kGamingTimer_;
+
 	//------------ その他 ------------//
 	std::unique_ptr<PlayerState> attackState;
 	std::unique_ptr<PlayerState> nextState;
@@ -111,6 +121,8 @@ private:
 	float blinkNum = 10;		//点滅回数
 
 	Boss* boss = nullptr;
+
+	Color defColor;
 
 public:
 	Player();
@@ -135,6 +147,10 @@ public:
 	//ロウを回収
 	void WaxCollect();
 
+	//ゲーミングカラーの更新処理
+	//ゲーミングカラー返す
+	Color GamingColorUpdate();
+
 	//状態変更
 	template <typename ChangePlayerState>
 	void ChangeState() {
@@ -152,7 +168,10 @@ public:
 	Vector3 GetFootPos();
 
 	// セッター //
+	//回収できるかフラグ設定
 	void SetIsCollect(bool frag) { isCollect = frag; }
+	//無敵状態設定
+	void SetIsGodmode(bool frag) { isGodmode = frag; }
 
 	//ダメージを与える
 	void DealDamage(uint32_t damage);

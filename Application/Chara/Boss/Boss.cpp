@@ -25,14 +25,13 @@ moveSpeed(0.1f), hp(0), maxHP(10.f)
 	parts[(int32_t)PartsNum::RightHand].obj = PaintableModelObj(Model::Load("./Resources/Model/leftArm/leftArm.obj", "leftArm", true));
 	parts[(int32_t)PartsNum::LeftHand].obj = PaintableModelObj(Model::Load("./Resources/Model/rightArm/rightArm.obj", "rightArm", true));
 
-	for (size_t i = 0; i < parts.size(); i++)
-	{
-		parts[i].obj.mPaintDissolveMapTex = TextureManager::Load("./Resources/DissolveMap.png", "DissolveMapTex");
-		parts[i].obj.mTransform.scale = Vector3::ONE * 2.f;
-	}
-
 	parts[(size_t)PartsNum::LeftHand].oriPos = { -50.f,20.f,0.f };
 	parts[(size_t)PartsNum::RightHand].oriPos = { 50.f,20.f,0.f };
+
+	for (size_t i = 0; i < parts.size(); i++)
+	{
+		parts[i].Init();
+	}
 
 	targetCircle = ModelObj(Model::Load("./Resources/Model/targetMark/targetMark.obj", "targetMark", true));
 
@@ -326,7 +325,7 @@ void Boss::DealDamage(int32_t damage)
 	whiteTimer.Start();
 
 	//かかりカウント加算
-	waxSolidCount++;
+	waxSolidCount += damage;
 	//振り払いタイマー開始
 	//(初期化も行うため、攻撃を受ける度にタイマーが継続する形に)
 	waxShakeOffTimer.Start();

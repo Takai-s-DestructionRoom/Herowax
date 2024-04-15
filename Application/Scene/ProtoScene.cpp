@@ -13,10 +13,12 @@
 #include "Parameter.h"
 #include "SpawnOrderData.h"
 #include "Minimap.h"
+#include "CollectPartManager.h"
 
 ProtoScene::ProtoScene()
 {
 	TextureManager::Load("./Resources/Brush.png", "brush");
+	CollectPartManager::LoadResouces();
 
 	skydome = ModelObj(Model::Load("./Resources/Model/Skydome/Skydome.obj", "Skydome"));
 	skydome.mTransform.scale = { 5, 5, 5 };
@@ -29,7 +31,6 @@ ProtoScene::ProtoScene()
 	Level::Get()->Load();
 
 	wave.Load();
-
 	//EggUI::LoadResource();
 }
 
@@ -65,12 +66,17 @@ void ProtoScene::Init()
 
 	std::map<std::string, std::string> extract = Parameter::Extract("DebugBool");
 	Util::debugBool = Parameter::GetParam(extract, "debugBool", false);
+	
+	CollectPartManager::GetInstance()->Init();
+	CollectPartManager::GetInstance()->zone.pos = {100,1,100};
+	CollectPartManager::GetInstance()->zone.scale = {100,100};
 }
 
 void ProtoScene::Update()
 {
 	//初期化周り
 	InstantDrawer::DrawInit();
+	WaxManager::GetInstance()->slimeWax.Reset();
 
 	gameCamera.Update();
 
@@ -78,6 +84,8 @@ void ProtoScene::Update()
 
 	//ここに無限に当たり判定増やしていくの嫌なのであとで何か作ります
 	//クソ手抜き当たり判定
+	
+	//ボスの腕との判定
 	for (size_t i = 0; i < boss.parts.size(); i++)
 	{
 		if (ColPrimitive3D::CheckSphereToSphere(boss.parts[i].collider,
@@ -89,6 +97,36 @@ void ProtoScene::Update()
 				//1ダメージ(どっかに参照先作るべき)
 				player.DealDamage(1);
 			}
+		}
+	}
+
+	//パーツとの判定
+	for (std::unique_ptr<CollectPart>& part : CollectPartManager::GetInstance()->parts)
+	{
+		if (ColPrimitive3D::CheckSphereToSphere(part->collider, player.collider)) {
+			//一旦複数持てる
+			//後でプレイヤー側でフラグ立てて個数制限する
+			part->Carrying(&player.obj);
+		}
+		//プレイヤーが持っているなら
+		if (part->IsCarrying()) {
+			//当たり判定する
+			if (ColPrimitive3D::CheckSphereToAABB(part->collider,
+				CollectPartManager::GetInstance()->zone.aabbCol)) {
+				part->Collect();
+			}
+		}
+	}
+
+	//10個溜まったら(後で制作状態も作る)
+	if (CollectPartManager::GetInstance()->zone.GetPartsNum() >= 10) {
+		//ゴッドモードへ
+		player.SetIsGodmode(true);
+		
+		//パーツ削除
+		for (std::unique_ptr<CollectPart>& part : CollectPartManager::GetInstance()->parts)
+		{
+			part->SetIsAlive(false);
 		}
 	}
 
@@ -130,24 +168,19 @@ void ProtoScene::Update()
 			bool isCollision = ColPrimitive3D::CheckSphereToSphere(boss.collider, wax->collider);
 
 			//投げられてる蝋に当たった時はダメージと蝋蓄積
-			if (isCollision &&
-				wax->isSolid == false &&
-				wax->isGround == false)
+			if (isCollision && wax->isSolid == false && wax->isGround == false)
 			{
-				//一応1ダメージ
+				//一応1ダメージ(ダメージ量に応じてロウのかかり具合も進行)
 				boss.DealDamage(1);
 			}
 
 			for (size_t i = 0; i < boss.parts.size(); i++)
 			{
 				//腕との判定
-				isCollision = ColPrimitive3D::CheckSphereToSphere(boss.parts[i].collider,
-					wax->collider);
-				if (isCollision &&
-					wax->isSolid == false &&
-					wax->isGround == false)
+				isCollision = ColPrimitive3D::CheckSphereToSphere(boss.parts[i].collider,wax->collider);
+				if (isCollision && wax->isSolid == false && wax->isGround == false)
 				{
-					//一応1ダメージ
+					//一応1ダメージ(ダメージ量に応じてロウのかかり具合も進行)
 					boss.parts[i].DealDamage(1);
 				}
 			}
@@ -339,11 +372,11 @@ void ProtoScene::Update()
 	}
 
 #pragma endregion
-	WaxManager::GetInstance()->Update();
-	//FireManager::GetInstance()->Update();
-	//TemperatureManager::GetInstance()->Update();
 	ParticleManager::GetInstance()->SetPlayerPos(player.GetCenterPos());
 	ParticleManager::GetInstance()->Update();
+
+	WaxManager::GetInstance()->Update();
+	CollectPartManager::GetInstance()->Update();
 
 	Minimap::GetInstance()->Update();
 
@@ -387,6 +420,8 @@ void ProtoScene::Draw()
 	ParticleManager::GetInstance()->Draw();
 	skydome.Draw();
 	WaxManager::GetInstance()->Draw();
+	CollectPartManager::GetInstance()->Draw();
+
 	//FireManager::GetInstance()->Draw();
 	//TemperatureManager::GetInstance()->Draw();
 	//eggUI.Draw();
