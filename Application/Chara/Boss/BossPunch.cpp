@@ -94,6 +94,14 @@ void BossPunch::Update(Boss* boss)
 		ParticleManager::GetInstance()->AddRing(emitterPos, "punch_impact_ring");
 	}
 
+	//どっちかの手が固まってるなら
+	if ((boss->parts[0].GetWaxSolidCount() >= 10 && boss->parts[0].GetIsAlive()) ||
+		(boss->parts[1].GetWaxSolidCount() >= 10 && boss->parts[1].GetIsAlive()))
+	{
+		//ステート変化を通らなくさせる
+		return;
+	}
+
 	if (boss->punchStayTimer.GetEnd())
 	{
 		isFinished = true;

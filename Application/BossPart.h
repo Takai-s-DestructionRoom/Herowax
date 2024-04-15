@@ -1,6 +1,7 @@
 #pragma once
 #include "GameObject.h"
 #include "Easing.h"
+#include "BossPartState.h"
 
 class Parts : public GameObject
 {
@@ -11,6 +12,7 @@ public:
 	const int32_t requireWaxSolidCount = 10; //完全に固まるまでに必要なロウのかかり回数
 
 	bool isCollected = false;
+	Vector3 collectPos = {0,0,0};
 
 private:
 	//------------ HP関連 ------------//
@@ -38,6 +40,11 @@ private:
 	float atkSpeed = 0;
 	float atkTime = 0;
 
+	//ステート管理
+	std::unique_ptr<BossPartState> state;
+	std::unique_ptr<BossPartState> nextState;
+	bool changingState = false;
+
 public:
 	Parts();
 	~Parts();
@@ -53,5 +60,12 @@ public:
 	void SetMutekiMaxTime(float time) { mutekiTimer.maxTime_ = time; };
 
 	void DealDamage(int32_t damage);
+
+	//状態変更
+	template <typename ChangePartState>
+	void ChangeState() {
+		nextState = std::make_unique<ChangePartState>();
+		changingState = true;
+	};
 };
 

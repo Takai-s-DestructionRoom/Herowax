@@ -163,9 +163,7 @@ void Player::Update()
 			Vector3 emitterPos = GetCenterPos();
 
 			ParticleManager::GetInstance()->AddRing(
-				emitterPos, 16, 0.3f, obj.mTuneMaterial.mColor, "",
-				0.7f, 1.2f, 0.3f, 0.6f, 0.01f, 0.05f,
-				-Vector3::ONE * 0.1f, Vector3::ONE * 0.1f, 0.05f);
+				emitterPos, "player_landing_ring");
 		}
 		isJumping = false;
 	}
@@ -428,10 +426,7 @@ void Player::MovePad()
 		emitterPos.z += mVelo.y * obj.mTransform.scale.z;
 
 		ParticleManager::GetInstance()->AddSimple(
-			emitterPos, obj.mTransform.scale * 0.5f,
-			2, 0.5f, obj.mTuneMaterial.mColor, "", 0.3f, 0.7f,
-			{ -0.001f,0.01f,-0.001f }, { 0.001f,0.03f,0.001f },
-			0.01f, -Vector3::ONE * 0.1f, Vector3::ONE * 0.1f, 0.1f, 0.f, false, false);
+			emitterPos, "player_move");
 	}
 	else
 	{
@@ -457,9 +452,7 @@ void Player::MovePad()
 		Vector3 emitterPos = GetCenterPos();
 
 		ParticleManager::GetInstance()->AddRing(
-			emitterPos, 20, 0.5f, obj.mTuneMaterial.mColor, "",
-			1.f, 2.5f, 0.5f, 0.8f, 0.01f, 0.05f,
-			-Vector3::ONE * 0.1f, Vector3::ONE * 0.1f, 0.05f);
+			emitterPos,"player_jump_ring");
 	}
 
 	//ジャンプ中は
@@ -537,9 +530,7 @@ void Player::MoveKey()
 		Vector3 emitterPos = GetCenterPos();
 
 		ParticleManager::GetInstance()->AddRing(
-			emitterPos, 16, 0.5f, obj.mTuneMaterial.mColor, "",
-			1.f, 2.5f, 0.5f, 0.8f, 0.01f, 0.03f,
-			-Vector3::ONE * 0.1f, Vector3::ONE * 0.1f, 0.05f);
+			emitterPos, "player_jump_ring");
 	}
 
 	//ジャンプ中は
@@ -565,10 +556,7 @@ void Player::MoveKey()
 		emitterPos.z += mVelo.y * obj.mTransform.scale.z;
 
 		ParticleManager::GetInstance()->AddSimple(
-			emitterPos, obj.mTransform.scale * 0.5f,
-			2, 0.5f, obj.mTuneMaterial.mColor, TextureManager::Load("./Resources/white2x2.png"), 0.3f, 0.7f,
-			{ -0.001f,0.01f,-0.001f }, { 0.001f,0.03f,0.001f },
-			0.01f, -Vector3::ONE * 0.1f, Vector3::ONE * 0.1f, 0.05f, 0.f, false, false);
+			emitterPos, "player_move");
 	}
 
 	//「ジャンプの高さ」+「プレイヤーの大きさ」を反映
@@ -833,16 +821,37 @@ void Player::WaxCollect()
 		}
 		//腕吸収
 		if (boss->parts[(int32_t)PartsNum::LeftHand].isCollected) {
-			//とりあえず壊しちゃう
-			boss->parts[(int32_t)PartsNum::LeftHand].isAlive = false;
-			//腕の吸収値も変数化したい
-			waxCollectAmount += 1;
+			if (RayToSphereCol(collectCol, boss->parts[(int32_t)PartsNum::LeftHand].collider))
+			{
+				//今のロウとの距離
+				float len = (collectCol.start - 
+					boss->parts[(int32_t)PartsNum::LeftHand].GetPos()).Length();
+
+				//見たロウが範囲外ならスキップ
+				if (waxCollectVertical >= len) {
+					//とりあえず壊しちゃう
+					boss->parts[(int32_t)PartsNum::LeftHand].collectPos = collectCol.start;
+					boss->parts[(int32_t)PartsNum::LeftHand].ChangeState<BossPartCollect>();
+					waxCollectAmount += 1;
+				}
+			}
 		}
 		if (boss->parts[(int32_t)PartsNum::RightHand].isCollected) {
-			//とりあえず壊しちゃう
-			boss->parts[(int32_t)PartsNum::RightHand].isAlive = false;
-			//腕の吸収値も変数化したい
-			waxCollectAmount += 1;
+			if (ColPrimitive3D::RayToSphereCol(collectCol, boss->parts[(int32_t)PartsNum::RightHand].collider))
+			{
+				//今のロウとの距離
+				float len = (collectCol.start -
+					boss->parts[(int32_t)PartsNum::RightHand].GetPos()).Length();
+
+				//見たロウが範囲外ならスキップ
+				if (waxCollectVertical >= len) {
+					//とりあえず壊しちゃう
+					boss->parts[(int32_t)PartsNum::RightHand].collectPos = collectCol.start;
+					boss->parts[(int32_t)PartsNum::RightHand].ChangeState<BossPartCollect>();
+					//腕の吸収値も変数化したい
+					waxCollectAmount += 1;
+				}
+			}
 		}
 	}
 }
@@ -867,7 +876,7 @@ void Player::DealDamage(uint32_t damage)
 	hp -= damage;
 
 	//パーティクル生成
-	ParticleManager::GetInstance()->AddSimple(obj.mTransform.position, "star");
+	ParticleManager::GetInstance()->AddSimple(obj.mTransform.position, "player_hit");
 
 	//ちょっとのけぞる
 	//モーション遷移

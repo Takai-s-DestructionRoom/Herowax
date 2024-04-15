@@ -84,8 +84,6 @@ void IEmitter3D::Update()
 		particle.pos.y -= particle.gravity * isGravity_ * elapseSpeed_;
 	}
 
-
-
 	//頂点バッファへデータ転送
 	//パーティクルの情報を1つずつ反映
 	for (size_t i = 0; i < vertices.size(); i++)

@@ -4,12 +4,15 @@
 #include <cassert>
 #include "RImGui.h"
 
+using namespace std::filesystem;
+
 std::ofstream ParticleEditor::writing_file;
 std::string ParticleEditor::saveFileName = "";
 std::string ParticleEditor::loadFileName = "";
 SimplePData ParticleEditor::saveSimplePData;
 RingPData ParticleEditor::saveRingPData;
 bool ParticleEditor::isAlwaysUpdate = false;
+std::vector<std::string> ParticleEditor::file_names;
 
 Vector3 GetVector3Data(const std::string& str)
 {
@@ -51,10 +54,23 @@ void ParticleEditor::OrderCreateGUI()
 	ImGui::SetNextWindowSize({ 500, 400 }, ImGuiCond_FirstUseEver);
 
 	ImGui::Begin("ParticleCreateGUI");
-	
+
 	ImGui::PushItemWidth(200);
 	ImGui::Checkbox("常に更新する", &isAlwaysUpdate);
-	ImGui::InputText("読み込むファイル名", &loadFileName);
+	
+	if (!file_names.empty())
+	{
+		//ハンドルの一覧をプルダウンで表示
+		std::vector<const char*> temp;
+		for (size_t i = 0; i < file_names.size(); i++)
+		{
+			temp.push_back(file_names[i].c_str());
+		}
+		static int32_t select = 0;
+		ImGui::Combo("読み込むファイル名", &select, &temp[0], (int32_t)file_names.size());
+		loadFileName = file_names[select];
+	}
+
 	if (ImGui::Button("ロード")) {
 		if (Util::ContainString(loadFileName, "_ring"))
 		{
@@ -80,23 +96,23 @@ void ParticleEditor::OrderCreateGUI()
 		ImGui::InputInt("生成数", &saveSimplePData.addNum, 1);
 		ImGui::InputFloat("パーティクルの生存時間", &saveSimplePData.life);
 		ImGui::Text("------------------------------------------");
-		ImGui::InputFloat3("大きさ(倍率?)", &saveSimplePData.emitScale.x);
+		ImGui::InputFloat3("エミッターサイズ", &saveSimplePData.emitScale.x);
 		ImGui::InputFloat("最小の大きさ(ランダムのmin)", &saveSimplePData.minScale);
-		ImGui::InputFloat("最大の大きさ(ランダムのmax)", &saveSimplePData.endScale);
+		ImGui::InputFloat("最大の大きさ(ランダムのmax)", &saveSimplePData.maxScale);
 		ImGui::InputFloat3("最小の方向(ランダムのmin)", &saveSimplePData.minVelo.x);
 		ImGui::InputFloat3("最大の方向(ランダムのmax)", &saveSimplePData.maxVelo.x);
 		ImGui::InputFloat3("最小の回転(ランダムのmin)", &saveSimplePData.minRot.x);
 		ImGui::InputFloat3("最大の回転(ランダムのmax)", &saveSimplePData.maxRot.x);
+		ImGui::InputFloat("最終スケール", &saveSimplePData.endScale);
 		ImGui::Text("------------------------------------------");
-		ImGui::InputFloat("大きくなるまでの時間", &saveSimplePData.growingTimer, 0.1f);
-		ImGui::InputFloat("加速度", &saveSimplePData.accelPower, 1.0f);
+		ImGui::InputFloat("大きくなるまでの時間", &saveSimplePData.growingTimer, 0.05f);
+		ImGui::InputFloat("加速度", &saveSimplePData.accelPower, 0.05f);
 		ImGui::Text("------------------------------------------");
 		ImGui::Checkbox("重力を適用するか", &saveSimplePData.isGravity);
 		ImGui::Checkbox("Y軸ビルボード化するか", &saveSimplePData.isBillboard);
 		ImGui::Text("------------------------------------------");
 		ImGui::InputText("セーブするファイル名", &saveFileName);
-		ImGui::PopItemWidth();
-
+		
 		if (ImGui::Button("セーブ") || isAlwaysUpdate) {
 			SaveSimple(saveSimplePData, saveFileName);
 		}
@@ -122,14 +138,13 @@ void ParticleEditor::OrderCreateGUI()
 		ImGui::InputFloat3("最大の回転(ランダムのmax)", &saveRingPData.maxRot.x);
 		ImGui::InputFloat("最終スケール", &saveRingPData.endScale);
 		ImGui::Text("------------------------------------------");
-		ImGui::InputFloat("大きくなるまでの時間", &saveRingPData.growingTimer, 0.1f);
+		ImGui::InputFloat("大きくなるまでの時間", &saveRingPData.growingTimer, 0.05f);
 		ImGui::Text("------------------------------------------");
 		ImGui::Checkbox("重力を適用するか", &saveRingPData.isGravity);
 		ImGui::Checkbox("Y軸ビルボード化するか", &saveRingPData.isBillboard);
 		ImGui::Text("------------------------------------------");
 		ImGui::InputText("セーブするファイル名", &saveFileName);
-		ImGui::PopItemWidth();
-
+		
 		if (ImGui::Button("セーブ") || isAlwaysUpdate) {
 			if (Util::ContainString(saveFileName, "_ring"))
 			{
@@ -139,11 +154,39 @@ void ParticleEditor::OrderCreateGUI()
 			{
 				SaveRing(saveRingPData, saveFileName + "_ring");
 			}
+
+			//セーブを押したらディレクトリ内を参照して文字列更新
+			file_names = LoadFileNames();
 		}
 
 		ImGui::TreePop();
 	}
+	ImGui::PopItemWidth();
 	ImGui::End();
+}
+
+void ParticleEditor::Init()
+{
+	file_names = LoadFileNames();
+}
+
+std::vector<std::string> ParticleEditor::LoadFileNames()
+{
+	std::filesystem::path path = PathUtil::ConvertAbsolute(Util::ConvertStringToWString("./Resources/Data/ParticleOrder/"));
+	directory_iterator iter(path), end;
+	std::error_code err;
+
+	std::vector<std::string> temp_file_names;
+	
+	for (; iter != end && !err; iter.increment(err)) {
+		const directory_entry entry = *iter;
+
+		temp_file_names.push_back(entry.path().filename().string());
+		std::vector<std::string> temp2 = Util::StringSplit(temp_file_names.back(), ".");
+		temp_file_names.back() = temp2[0];
+	}
+
+	return temp_file_names;
 }
 
 SimplePData ParticleEditor::LoadSimple(const std::string& filename)

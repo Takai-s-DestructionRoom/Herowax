@@ -26,7 +26,7 @@ void Wax::DeadParticle()
 {
 	ParticleManager::GetInstance()->AddHoming(
 		obj.mTransform.position, obj.mTransform.scale,
-		10, 0.8f, waxOriginColor, "", 0.8f, 1.5f,
+		1, 0.8f, waxOriginColor, "", 0.8f, 1.5f,
 		-Vector3::ONE * 0.3f, Vector3::ONE * 0.3f,
 		0.03f, -Vector3::ONE * 0.1f, Vector3::ONE * 0.1f, 0.3f, 0.5f);
 }

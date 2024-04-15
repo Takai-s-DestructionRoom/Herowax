@@ -35,6 +35,7 @@
 #include <SRBuffer.h>
 #include <DebugGUI.h>
 #include <PathUtil.h>
+#include "ParticleEditorScene.h"
 
 using namespace std;
 using namespace DirectX;
@@ -110,6 +111,7 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 
 	//初期シーンセット
 	SceneManager::Set<ProtoScene>();
+	//SceneManager::Set<ParticleEditorScene>();
 
 	//////////////////////////////////////
 

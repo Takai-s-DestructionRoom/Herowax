@@ -3,6 +3,7 @@
 #include "RImGui.h"
 #include "ParticleManager.h"
 #include "RInput.h"
+#include "Renderer.h"
 
 void ParticleEditorScene::Init()
 {
@@ -18,6 +19,8 @@ void ParticleEditorScene::Init()
 
 	drawEmitter = ModelObj(Model::Load("./Resources/Model/Cube.obj","Cube"));
 	drawEmitter.mTransform.scale = { 1,1,1 };
+
+	ParticleEditor::Init();	//初期化
 }
 
 void ParticleEditorScene::Update()
@@ -51,6 +54,7 @@ void ParticleEditorScene::Update()
 			//それ以外はシンプルパーティクルとみなす
 			else if (loadPartName != "") {
 				ParticleManager::GetInstance()->AddSimple(emitPos, loadPartName);
+				drawEmitter.mTransform.scale = ParticleEditor::LoadSimple(loadPartName).emitScale * 2.f;
 			}
 		}
 	}
@@ -60,7 +64,22 @@ void ParticleEditorScene::Update()
 	ImGui::SetNextWindowSize({ 400, 200 }, ImGuiCond_FirstUseEver);
 
 	ImGui::Begin("パーティクル生成GUI");
-	ImGui::InputText("読み込むパーティクル名", &loadPartName);
+
+	fileNames = ParticleEditor::LoadFileNames();
+
+	//ImGui::InputText("読み込むパーティクル名", &loadPartName);
+	if (!fileNames.empty())
+	{
+		//ハンドルの一覧をプルダウンで表示
+		std::vector<const char*> temp;
+		for (size_t i = 0; i < fileNames.size(); i++)
+		{
+			temp.push_back(fileNames[i].c_str());
+		}
+		static int32_t select = 0;
+		ImGui::Combo("読み込むパーティクル名", &select, &temp[0], (int32_t)fileNames.size());
+		loadPartName = fileNames[select];
+	}
 	ImGui::DragFloat3("生成位置", &emitPos.x);
 	if (ImGui::Button("一回生成")) {
 		//ファイル名に"_ring"が含まれてるなら円形パーティクルを出す
@@ -70,6 +89,7 @@ void ParticleEditorScene::Update()
 		//それ以外はシンプルパーティクルとみなす
 		else if (loadPartName != "") {
 			ParticleManager::GetInstance()->AddSimple(emitPos, loadPartName);
+			drawEmitter.mTransform.scale = ParticleEditor::LoadSimple(loadPartName).emitScale * 2.f;
 		}
 	}
 	ImGui::Checkbox("無限に生成するか", &isAutoCreate);
@@ -81,7 +101,16 @@ void ParticleEditorScene::Update()
 
 void ParticleEditorScene::Draw()
 {
-	drawEmitter.Draw();
+	//パイプラインをワイヤーフレームに
+	PipelineStateDesc pipedesc = RDirectX::GetDefPipeline().mDesc;
+	pipedesc.RasterizerState.FillMode = D3D12_FILL_MODE_WIREFRAME;
+
+	GraphicsPipeline pipe = GraphicsPipeline::GetOrCreate("WireObject", pipedesc);
+	for (RenderOrder& order : drawEmitter.GetRenderOrder()) {
+		order.pipelineState = pipe.mPtr.Get();
+		Renderer::DrawCall("Opaque", order);
+	}
+	//drawEmitter.Draw();
 	ParticleManager::GetInstance()->Draw();
 }
 

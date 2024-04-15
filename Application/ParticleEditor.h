@@ -5,6 +5,7 @@
 #include "Texture.h"
 #include <fstream>
 #include <string>
+#include <vector>
 
 struct SimplePData
 {
@@ -58,6 +59,12 @@ public:
 	//オーダーを作るImgui
 	static void OrderCreateGUI();
 	
+	//初期化
+	static void Init();
+
+	//ディレクトリ内のファイル名を取得
+	static std::vector<std::string> LoadFileNames();
+
 	//読み込み
 	static SimplePData LoadSimple(const std::string& filename);
 	static RingPData LoadRing(const std::string& filename);
@@ -75,4 +82,6 @@ private:
 	static RingPData saveRingPData;
 
 	static bool isAlwaysUpdate;
+
+	static std::vector<std::string> file_names;
 };

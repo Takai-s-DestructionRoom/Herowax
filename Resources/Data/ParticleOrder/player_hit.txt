@@ -1,0 +1,16 @@
+addNum:7
+life:0.4
+minscale:5
+maxscale:8
+accelpower:0.001
+growingTimer:0.05
+endscale:0
+isgravity:false
+isbillboard:true
+emitscale:0.000000_0.000000_0.000000
+minvelo:-0.300000_-0.300000_-0.300000
+maxvelo:0.300000_0.300000_0.300000
+minrot:0.000000_0.000000_0.200000
+maxrot:0.000000_0.000000_0.250000
+color:0.907173_0.879555_0.179903_1.000000
+tex:particle_star_4

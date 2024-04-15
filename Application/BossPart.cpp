@@ -30,6 +30,11 @@ Parts::~Parts()
 void Parts::Init()
 {
 	hp = maxHP;
+
+	obj.mPaintDissolveMapTex = TextureManager::Load("./Resources/DissolveMap.png", "DissolveMapTex");
+	obj.mTransform.scale = Vector3::ONE * 2.f;
+
+	state = std::make_unique<BossPartNormal>();
 }
 
 void Parts::Update()
@@ -43,6 +48,14 @@ void Parts::Update()
 	//シェイクを初期化
 	obj.mTransform.position -= shake;
 	shake = { 0,0,0 };
+
+	//ステート更新(吸収)
+	state->Update(this);
+	if (changingState) {
+		std::swap(state, nextState);
+		changingState = false;
+		nextState = nullptr;
+	}
 
 	//かかっているロウを振り払う
 	//10段階かかったら固まる
@@ -120,7 +133,7 @@ void Parts::DealDamage(int32_t damage)
 	whiteTimer.Start();
 
 	//かかりカウント加算
-	waxSolidCount++;
+	waxSolidCount += damage;
 	//振り払いタイマー開始
 	//(初期化も行うため、攻撃を受ける度にタイマーが継続する形に)
 	waxShakeOffTimer.Start();

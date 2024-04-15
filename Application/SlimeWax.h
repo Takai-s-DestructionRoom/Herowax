@@ -53,6 +53,8 @@ public:
 	void Update()override;
 	void Draw()override;
 
+	void Reset();
+
 private:
 	GraphicsPipeline SlimeShaderPipeLine();	//パイプライン生成
 	Vector3 GetNearSpherePosition();		//一番カメラに近い球の位置を返す
