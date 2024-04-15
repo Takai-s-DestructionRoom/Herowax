@@ -65,6 +65,7 @@ void CollectPartManager::ImGui()
 
     // デバッグモード //
     ImGui::Begin("部品集める");
+    ImGui::Text("ゾーン内の数 %d", zone.GetPartsNum());
     ImGui::InputInt("一度に運べる数", &maxCarryingNum, 1);
     if (ImGui::TreeNode("調整項目_ゾーン")) {
         ImGui::DragFloat3("位置", &zone.pos.x,1.f);
