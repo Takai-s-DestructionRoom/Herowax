@@ -827,6 +827,18 @@
     <FxCompile Include="Shader\Billboard\BillboardVS.hlsl">
       <Filter>シェーダー ファイル\Billboard</Filter>
     </FxCompile>
+    <FxCompile Include="Shader\SlimeShader\WaxShaderPS.hlsl">
+      <Filter>シェーダー ファイル\SlimeShader</Filter>
+    </FxCompile>
+    <FxCompile Include="Shader\SlimeShader\WaxShaderVS.hlsl">
+      <Filter>シェーダー ファイル\SlimeShader</Filter>
+    </FxCompile>
+    <FxCompile Include="Shader\SlimeShader\WaxMergePS.hlsl">
+      <Filter>シェーダー ファイル\SlimeShader</Filter>
+    </FxCompile>
+    <FxCompile Include="Shader\SlimeShader\WaxMergeVS.hlsl">
+      <Filter>シェーダー ファイル\SlimeShader</Filter>
+    </FxCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\2d\Sprite.h">
@@ -1304,6 +1316,12 @@
     </None>
     <None Include="Shader\Billboard\Billboard.hlsli">
       <Filter>シェーダー ファイル\Billboard</Filter>
+    </None>
+    <None Include="Shader\SlimeShader\WaxShader.hlsli">
+      <Filter>シェーダー ファイル\SlimeShader</Filter>
+    </None>
+    <None Include="Shader\SlimeShader\WaxMerge.hlsli">
+      <Filter>シェーダー ファイル\SlimeShader</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>
