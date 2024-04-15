@@ -130,7 +130,7 @@ void Level::Extract(const std::string& handle)
 			wall.back() = ModelObj(Model::Load("./Resources/Model/Ami/Ami.obj", "Wall"));
 			//座標を設定
 			wall.back().mTransform.position = objectData->translation;
-			wall.back().mTransform.scale = objectData->scaling;
+			wall.back().mTransform.scale = objectData->scaling / 2;
 			wall.back().mTransform.rotation = objectData->rotation;
 		}
 		//後ろに_Objがついているものであれば適用
