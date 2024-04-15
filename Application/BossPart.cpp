@@ -32,7 +32,6 @@ void Parts::Init()
 	hp = maxHP;
 
 	obj.mPaintDissolveMapTex = TextureManager::Load("./Resources/DissolveMap.png", "DissolveMapTex");
-	obj.mTransform.scale = Vector3::ONE * 2.f;
 
 	state = std::make_unique<BossPartNormal>();
 }

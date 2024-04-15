@@ -1,6 +1,7 @@
 #include "CollectPart.h"
 #include "Util.h"
 #include "Camera.h"
+#include "Player.h"
 
 CollectPart::CollectPart()
 {
@@ -45,7 +46,7 @@ void CollectPart::Update()
 	{
 		//一旦ターゲットの位置に合わせる
 		//後で位置調整する
-		obj.mTransform.position = target->mTransform.position;
+		obj.mTransform.position = target->obj.mTransform.position;
 	}
 	if (isCollected) {
 		//地面座標を超えたら戻す
@@ -67,12 +68,13 @@ void CollectPart::Draw()
 	DrawCollider();
 }
 
-void CollectPart::Carrying(ModelObj* target_)
+void CollectPart::Carrying(Player* target_)
 {
 	if (IsCarrying() || isCollected) return;
 
 	//ターゲットの背中に背負われる
 	target = target_;
+	target->carryingParts.push_back(this);
 }
 
 void CollectPart::Collect()
@@ -84,4 +86,9 @@ void CollectPart::Collect()
 bool CollectPart::IsCarrying()
 {
 	return target != nullptr;
+}
+
+bool CollectPart::IsCollected()
+{
+	return (target == nullptr && isCollected);
 }

@@ -103,18 +103,31 @@ void ProtoScene::Update()
 	//パーツとの判定
 	for (std::unique_ptr<CollectPart>& part : CollectPartManager::GetInstance()->parts)
 	{
-		if (ColPrimitive3D::CheckSphereToSphere(part->collider, player.collider)) {
-			//一旦複数持てる
-			//後でプレイヤー側でフラグ立てて個数制限する
-			part->Carrying(&player.obj);
+		if ((int32_t)player.carryingParts.size() < CollectPartManager::GetInstance()->maxCarryingNum) {
+			if (ColPrimitive3D::CheckSphereToSphere(part->collider, player.collider)) {
+				//一旦複数持てる
+				//後でプレイヤー側でフラグ立てて個数制限する
+				part->Carrying(&player);
+			}
 		}
+		
 		//プレイヤーが持っているなら
 		if (part->IsCarrying()) {
 			//当たり判定する
-			if (ColPrimitive3D::CheckSphereToAABB(part->collider,
-				CollectPartManager::GetInstance()->zone.aabbCol)) {
+			if (ColPrimitive3D::CheckSphereToAABB(part->collider,CollectPartManager::GetInstance()->zone.aabbCol)) {
 				part->Collect();
 			}
+		}
+	}
+
+	for (auto itr = player.carryingParts.begin();itr != player.carryingParts.end();)
+	{
+		//捕まったら保持から消す
+		if ((*itr)->IsCollected()) {
+			itr = player.carryingParts.erase(itr);
+		}
+		else {
+			itr++;
 		}
 	}
 

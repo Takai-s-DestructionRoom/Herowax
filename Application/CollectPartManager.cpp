@@ -65,7 +65,7 @@ void CollectPartManager::ImGui()
 
     // デバッグモード //
     ImGui::Begin("部品集める");
-
+    ImGui::InputInt("一度に運べる数", &maxCarryingNum, 1);
     if (ImGui::TreeNode("調整項目_ゾーン")) {
         ImGui::DragFloat3("位置", &zone.pos.x,1.f);
         ImGui::DragFloat2("大きさ", &zone.scale.x,1.f);

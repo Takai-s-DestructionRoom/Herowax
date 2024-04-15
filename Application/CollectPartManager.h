@@ -21,5 +21,7 @@ public:
 	std::vector<std::unique_ptr<CollectPart>> parts;
 
 	CollectZone zone;
+
+	int32_t maxCarryingNum = 1;
 };
 
