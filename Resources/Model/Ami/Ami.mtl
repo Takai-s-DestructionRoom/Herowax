@@ -1,9 +1,9 @@
-# Blender 4.0.2 MTL File: 'Ami.blend'
+# Blender 4.0.2 MTL File: 'None'
 # www.blender.org
 
-newmtl Material
+newmtl Material.001
 Ns 250.000000
-Ka 0.833333 0.833333 0.833333
+Ka 1.000000 1.000000 1.000000
 Kd 0.165108 0.161129 0.161129
 Ks 0.000000 0.000000 0.000000
 Ke 0.000000 0.000000 0.000000
