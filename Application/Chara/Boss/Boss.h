@@ -64,6 +64,7 @@ public:
 	Easing::EaseTimer standTimer;		//待機時間
 	Easing::EaseTimer punchTimer;		//パンチにかかる時間
 	Easing::EaseTimer punchStayTimer;	//パンチ終わってからモーション終了までの時間
+	bool isAppearance = false;			//出現中かフラグ
 
 private:
 	//すべてのステートでの共通処理

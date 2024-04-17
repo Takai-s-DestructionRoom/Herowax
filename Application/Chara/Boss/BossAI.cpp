@@ -42,6 +42,10 @@ void BossAI::Update(Boss* boss)
 		changeAct = true;
 	}
 
+	if (situation == BossSituation::Appearance) {
+		boss->state = std::make_unique<BossNormal>();
+	}
+
 	if (changeAct) {
 		boss->standTimer.Reset();
 

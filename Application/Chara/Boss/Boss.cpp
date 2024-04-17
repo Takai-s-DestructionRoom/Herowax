@@ -1,4 +1,5 @@
 #include "Boss.h"
+#include "BossAppearance.h"
 #include "BossNormal.h"
 #include "BossPunch.h"
 #include "Camera.h"
@@ -198,6 +199,17 @@ void Boss::Update()
 	{
 		nextState = std::make_unique<BossPunch>(false);
 		changingState = true;
+	}
+
+	//出現中なのに出現ステートになってないなら
+	if (isAppearance && stateStr != "Appearance")
+	{
+		ChangeState<BossAppearance>();
+	}
+	//逆に出現中じゃないのに出現ステートになってたら
+	else if (isAppearance == false && stateStr == "Appearance")
+	{
+		ChangeState<BossNormal>();
 	}
 
 	if (changingState) {
