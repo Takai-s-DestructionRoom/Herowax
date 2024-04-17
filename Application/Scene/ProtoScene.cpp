@@ -91,12 +91,14 @@ void ProtoScene::Update()
 	if (eventScene->isActive)
 	{
 		eventScene->Update();
+		boss.isAppearance = true;
 	}
 	
 	//イベントシーンが終わりカメラが空っぽになったら
 	if(Camera::sNowCamera == nullptr)
 	{
 		gameCamera.Init();	//カメラ入れる
+		boss.isAppearance = false;
 	}
 
 	gameCamera.Update();
