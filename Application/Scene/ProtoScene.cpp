@@ -135,7 +135,7 @@ void ProtoScene::Update()
 		//プレイヤーが持っているなら
 		if (part->IsCarrying()) {
 			//当たり判定する
-			if (ColPrimitive3D::CheckSphereToAABB(part->collider,
+			if (ColPrimitive3D::CheckSphereToAABB(player.collider,
 				CollectPartManager::GetInstance()->zone.aabbCol)) {
 				part->Collect();
 				part->SetIsAlive(false);

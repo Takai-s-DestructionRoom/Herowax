@@ -25,6 +25,8 @@ public:
 
 	void ImGui();
 
+	int32_t GetCarryingNum();
+
 public:
 	std::vector<std::unique_ptr<CollectPart>> parts;
 

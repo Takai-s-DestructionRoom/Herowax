@@ -2,6 +2,7 @@
 #include "Util.h"
 #include "Camera.h"
 #include "Player.h"
+#include "CollectPartManager.h"
 
 CollectPart::CollectPart()
 {
@@ -53,7 +54,9 @@ void CollectPart::Update()
 	{
 		//一旦ターゲットの位置に合わせる
 		//後で位置調整する
-		obj.mTransform.position = target->obj.mTransform.position;
+		collectPos = target->GetPos();
+		collectPos.y += GetScale().y * collectNum;
+		obj.mTransform.position = collectPos;
 	}
 
 	UpdateCollider();
@@ -75,6 +78,7 @@ void CollectPart::Carrying(Player* target_)
 	//ターゲットの背中に背負われる
 	target = target_;
 	target->carryingParts.push_back(this);
+	collectNum = (int32_t)target->carryingParts.size();
 }
 
 void CollectPart::Collect()

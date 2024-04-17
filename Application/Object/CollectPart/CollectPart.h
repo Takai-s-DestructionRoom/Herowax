@@ -29,6 +29,8 @@ public:
 	//ゾーン内でのバウンド
 	void CollectBound();
 
+	Vector3 collectPos;
+
 private:
 	Vector3 moveVec;	//このフレームの移動量
 	Vector3 rotVec;
@@ -47,5 +49,7 @@ private:
 	bool isCollected = false;	//ゾーンに格納されているか
 
 	bool isNewBound = true;
+
+	int32_t collectNum = 0;
 };
 

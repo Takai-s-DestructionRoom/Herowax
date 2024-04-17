@@ -114,6 +114,16 @@ void CollectPartManager::ImGui()
     ImGui::End();
 }
 
+int32_t CollectPartManager::GetCarryingNum()
+{
+    int32_t temp = 0;
+    for (auto& part : parts)
+    {
+        temp += part->IsCollected();
+    }
+    return temp;
+}
+
 CollectPartManager* CollectPartManager::GetInstance()
 {
     static CollectPartManager instance;
