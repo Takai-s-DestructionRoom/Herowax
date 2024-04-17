@@ -70,7 +70,7 @@ void ProtoScene::Init()
 	Util::debugBool = Parameter::GetParam(extract, "debugBool", false);
 
 	CollectPartManager::GetInstance()->Init();
-	CollectPartManager::GetInstance()->zone.pos = { 100,1,100 };
+	CollectPartManager::GetInstance()->zone.pos = { 100,0,100 };
 	CollectPartManager::GetInstance()->zone.scale = { 100,100 };
 }
 
@@ -141,7 +141,7 @@ void ProtoScene::Update()
 				CollectPartManager::GetInstance()->zone.aabbCol)) {
 				part->Collect();
 				part->SetIsAlive(false);
-				CollectPartManager::GetInstance()->zone.Create(part->GetPos());
+				CollectPartManager::GetInstance()->zone.Create(*part);
 			}
 		}
 	}
