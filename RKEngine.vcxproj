@@ -83,7 +83,7 @@
       <ConformanceMode>false</ConformanceMode>
       <TreatWarningAsError>true</TreatWarningAsError>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
-      <AdditionalIncludeDirectories>$(ProjectDir)Application;$(ProjectDir)Application\BackGround;$(ProjectDir)Application\Scene;$(ProjectDir)Application\RhythmCore;$(ProjectDir)Application\Particle;$(ProjectDir)Engine;$(ProjectDir)Engine\2d;$(ProjectDir)Engine\3d;$(ProjectDir)Engine\3d\Model;$(ProjectDir)Engine\Base;$(ProjectDir)Engine\Camera;$(ProjectDir)Engine\Collision;$(ProjectDir)Engine\Light;$(ProjectDir)Engine\Math;$(ProjectDir)Engine\Scene;$(ProjectDir)Engine\PostEffect;$(ProjectDir)Engine\SimpleDrawer;$(ProjectDir)Engine\Renderer;$(ProjectDir)Application\Chara\Player;$(ProjectDir)Application\Object\Tower;$(ProjectDir)Application\Chara\Enemy;$(ProjectDir)Application\Object\Wax;$(ProjectDir)Engine\Particle;$(ProjectDir)Application\Paint;$(ProjectDir)Application\Object;$(ProjectDir)Application\Chara\Boss;$(ProjectDir)Application\EventScene</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)Application;$(ProjectDir)Application\BackGround;$(ProjectDir)Application\Scene;$(ProjectDir)Application\RhythmCore;$(ProjectDir)Application\Particle;$(ProjectDir)Engine;$(ProjectDir)Engine\2d;$(ProjectDir)Engine\3d;$(ProjectDir)Engine\3d\Model;$(ProjectDir)Engine\Base;$(ProjectDir)Engine\Camera;$(ProjectDir)Engine\Collision;$(ProjectDir)Engine\Light;$(ProjectDir)Engine\Math;$(ProjectDir)Engine\Scene;$(ProjectDir)Engine\PostEffect;$(ProjectDir)Engine\SimpleDrawer;$(ProjectDir)Engine\Renderer;$(ProjectDir)Application\Chara\Player;$(ProjectDir)Application\Object\Tower;$(ProjectDir)Application\Chara\Enemy;$(ProjectDir)Application\Object\Wax;$(ProjectDir)Engine\Particle;$(ProjectDir)Application\Paint;$(ProjectDir)Application\Object;$(ProjectDir)Application\Chara\Boss;$(ProjectDir)Application\EventScene;$(ProjectDir)Application\Level;$(ProjectDir)Application\Parameter;$(ProjectDir)Application\ParticleEditor;$(ProjectDir)Application\Object\CollectPart</AdditionalIncludeDirectories>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
@@ -103,7 +103,7 @@
       <ConformanceMode>false</ConformanceMode>
       <TreatWarningAsError>true</TreatWarningAsError>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
-      <AdditionalIncludeDirectories>$(ProjectDir)Application;$(ProjectDir)Application\BackGround;$(ProjectDir)Application\Scene;$(ProjectDir)Application\RhythmCore;$(ProjectDir)Application\Particle;$(ProjectDir)Engine;$(ProjectDir)Engine\2d;$(ProjectDir)Engine\3d;$(ProjectDir)Engine\3d\Model;$(ProjectDir)Engine\Base;$(ProjectDir)Engine\Camera;$(ProjectDir)Engine\Collision;$(ProjectDir)Engine\Light;$(ProjectDir)Engine\Math;$(ProjectDir)Engine\Scene;$(ProjectDir)Engine\PostEffect;$(ProjectDir)Engine\SimpleDrawer;$(ProjectDir)Engine\Renderer;$(ProjectDir)Application\Chara\Player;$(ProjectDir)Application\Object\Tower;$(ProjectDir)Application\Chara\Enemy;$(ProjectDir)Application\Object\Wax;$(ProjectDir)Engine\Particle;$(ProjectDir)Application\Paint;$(ProjectDir)Application\Object;$(ProjectDir)Application\Chara\Boss;$(ProjectDir)Application\EventScene</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)Application;$(ProjectDir)Application\BackGround;$(ProjectDir)Application\Scene;$(ProjectDir)Application\RhythmCore;$(ProjectDir)Application\Particle;$(ProjectDir)Engine;$(ProjectDir)Engine\2d;$(ProjectDir)Engine\3d;$(ProjectDir)Engine\3d\Model;$(ProjectDir)Engine\Base;$(ProjectDir)Engine\Camera;$(ProjectDir)Engine\Collision;$(ProjectDir)Engine\Light;$(ProjectDir)Engine\Math;$(ProjectDir)Engine\Scene;$(ProjectDir)Engine\PostEffect;$(ProjectDir)Engine\SimpleDrawer;$(ProjectDir)Engine\Renderer;$(ProjectDir)Application\Chara\Player;$(ProjectDir)Application\Object\Tower;$(ProjectDir)Application\Chara\Enemy;$(ProjectDir)Application\Object\Wax;$(ProjectDir)Engine\Particle;$(ProjectDir)Application\Paint;$(ProjectDir)Application\Object;$(ProjectDir)Application\Chara\Boss;$(ProjectDir)Application\EventScene;$(ProjectDir)Application\Level;$(ProjectDir)Application\Parameter;$(ProjectDir)Application\ParticleEditor;$(ProjectDir)Application\Object\CollectPart</AdditionalIncludeDirectories>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
@@ -125,7 +125,7 @@
       <ConformanceMode>false</ConformanceMode>
       <TreatWarningAsError>true</TreatWarningAsError>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
-      <AdditionalIncludeDirectories>$(ProjectDir)Application;$(ProjectDir)Application\BackGround;$(ProjectDir)Application\Scene;$(ProjectDir)Application\RhythmCore;$(ProjectDir)Application\Particle;$(ProjectDir)Engine;$(ProjectDir)Engine\2d;$(ProjectDir)Engine\3d;$(ProjectDir)Engine\3d\Model;$(ProjectDir)Engine\Base;$(ProjectDir)Engine\Camera;$(ProjectDir)Engine\Collision;$(ProjectDir)Engine\Light;$(ProjectDir)Engine\Math;$(ProjectDir)Engine\Scene;$(ProjectDir)Engine\PostEffect;$(ProjectDir)Engine\SimpleDrawer;$(ProjectDir)Engine\Renderer;$(ProjectDir)Application\Chara\Player;$(ProjectDir)Application\Object\Tower;$(ProjectDir)Application\Chara\Enemy;$(ProjectDir)Application\Object\Wax;$(ProjectDir)Engine\Particle;$(ProjectDir)Application\Paint;$(ProjectDir)Application\Object;$(ProjectDir)Application\Chara\Boss;$(ProjectDir)Application\EventScene</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)Application;$(ProjectDir)Application\BackGround;$(ProjectDir)Application\Scene;$(ProjectDir)Application\RhythmCore;$(ProjectDir)Application\Particle;$(ProjectDir)Engine;$(ProjectDir)Engine\2d;$(ProjectDir)Engine\3d;$(ProjectDir)Engine\3d\Model;$(ProjectDir)Engine\Base;$(ProjectDir)Engine\Camera;$(ProjectDir)Engine\Collision;$(ProjectDir)Engine\Light;$(ProjectDir)Engine\Math;$(ProjectDir)Engine\Scene;$(ProjectDir)Engine\PostEffect;$(ProjectDir)Engine\SimpleDrawer;$(ProjectDir)Engine\Renderer;$(ProjectDir)Application\Chara\Player;$(ProjectDir)Application\Object\Tower;$(ProjectDir)Application\Chara\Enemy;$(ProjectDir)Application\Object\Wax;$(ProjectDir)Engine\Particle;$(ProjectDir)Application\Paint;$(ProjectDir)Application\Object;$(ProjectDir)Application\Chara\Boss;$(ProjectDir)Application\EventScene;$(ProjectDir)Application\Level;$(ProjectDir)Application\Parameter;$(ProjectDir)Application\ParticleEditor;$(ProjectDir)Application\Object\CollectPart</AdditionalIncludeDirectories>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
@@ -142,23 +142,23 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="Application\EnemyAttackState.cpp" />
+    <ClCompile Include="Application\Chara\Enemy\EnemyAttackState.cpp" />
     <ClCompile Include="Application\Chara\Boss\Boss.cpp" />
     <ClCompile Include="Application\Chara\Boss\BossState.cpp" />
     <ClCompile Include="Application\Chara\Boss\BossUI.cpp" />
     <ClCompile Include="Application\Chara\Boss\BossPunch.cpp" />
     <ClCompile Include="Application\Chara\Boss\BossNormal.cpp" />
     <ClCompile Include="Application\Chara\Boss\BossAI.cpp" />
-    <ClCompile Include="Application\BossPart.cpp" />
-    <ClCompile Include="Application\BossPartState.cpp" />
-    <ClCompile Include="Application\CollectPartManager.cpp" />
-    <ClCompile Include="Application\CollectZone.cpp" />
+    <ClCompile Include="Application\Chara\Boss\BossPart.cpp" />
+    <ClCompile Include="Application\Chara\Boss\BossPartState.cpp" />
+    <ClCompile Include="Application\Object\CollectPart\CollectPartManager.cpp" />
+    <ClCompile Include="Application\Object\CollectPart\CollectZone.cpp" />
     <ClCompile Include="Application\EventScene\BossAppearanceScene.cpp" />
     <ClCompile Include="Engine\Collision\AABBCollider.cpp" />
     <ClCompile Include="Application\Chara\Enemy\EnemySpawner.cpp" />
     <ClCompile Include="Application\InstantDrawer.cpp" />
-    <ClCompile Include="Application\LevelData.cpp" />
-    <ClCompile Include="Application\LevelLoader.cpp" />
+    <ClCompile Include="Application\Level\LevelData.cpp" />
+    <ClCompile Include="Application\Level\LevelLoader.cpp" />
     <ClCompile Include="Application\Paint\PaintUtil.cpp" />
     <ClCompile Include="Application\Scene\ControllerScene.cpp" />
     <ClCompile Include="Application\Scene\MainTestScene.cpp" />
@@ -169,9 +169,7 @@
     <ClCompile Include="Application\Chara\Enemy\EnemyManager.cpp" />
     <ClCompile Include="Application\Chara\Enemy\EnemyState.cpp" />
     <ClCompile Include="Application\Chara\Enemy\EnemyUI.cpp" />
-    <ClCompile Include="Application\BombSolider.cpp" />
-    <ClCompile Include="Application\EggUI.cpp" />
-    <ClCompile Include="Application\BreakableObj.cpp" />
+    <ClCompile Include="Application\Chara\Enemy\BombSolider.cpp" />
     <ClCompile Include="Engine\Easing.cpp" />
     <ClCompile Include="Engine\Base\RenderTarget.cpp" />
     <ClCompile Include="Engine\Base\SRIndexBuffer.cpp" />
@@ -207,7 +205,7 @@
     <ClCompile Include="Application\Object\GameObject.cpp" />
     <ClCompile Include="Application\Object\Fire.cpp" />
     <ClCompile Include="Application\Object\FireManager.cpp" />
-    <ClCompile Include="Application\Level.cpp" />
+    <ClCompile Include="Application\Level\Level.cpp" />
     <ClCompile Include="Application\Object\FireUnit.cpp" />
     <ClCompile Include="Engine\Particle\HomingParticle.cpp" />
     <ClCompile Include="Application\GameCamera.cpp" />
@@ -266,24 +264,23 @@
     <ClCompile Include="Application\Object\Wax\WaxState.cpp" />
     <ClCompile Include="Application\Singleton.cpp" />
     <ClCompile Include="Application\Object\SpawnerManager.cpp" />
-    <ClCompile Include="Application\Parameter.cpp" />
+    <ClCompile Include="Application\Parameter\Parameter.cpp" />
     <ClCompile Include="Application\Scene\PaintScene.cpp" />
     <ClCompile Include="Application\Object\Wax\WaxGroup.cpp" />
     <ClCompile Include="Application\Object\TemperatueUI.cpp" />
     <ClCompile Include="Application\Chara\Player\PlayerState.cpp" />
     <ClCompile Include="Application\Paint\PaintableModelObj.cpp" />
     <ClCompile Include="Engine\Particle\RingParticle.cpp" />
-    <ClCompile Include="Application\SpawnOrderData.cpp" />
+    <ClCompile Include="Application\Object\SpawnOrderData.cpp" />
     <ClCompile Include="Application\Chara\Player\PlayerUI.cpp" />
     <ClCompile Include="Application\Wave.cpp" />
-    <ClCompile Include="Application\PhysicsCircle.cpp" />
     <ClCompile Include="Application\RayMarchTestScene.cpp" />
-    <ClCompile Include="Application\SlimeWax.cpp" />
+    <ClCompile Include="Application\Object\SlimeWax.cpp" />
     <ClCompile Include="Engine\Collision\PlaneCollider.cpp" />
     <ClCompile Include="Application\Minimap.cpp" />
-    <ClCompile Include="Application\ParticleEditor.cpp" />
-    <ClCompile Include="Application\ParticleEditorScene.cpp" />
-    <ClCompile Include="Application\CollectPart.cpp" />
+    <ClCompile Include="Application\ParticleEditor\ParticleEditor.cpp" />
+    <ClCompile Include="Application\ParticleEditor\ParticleEditorScene.cpp" />
+    <ClCompile Include="Application\Object\CollectPart\CollectPart.cpp" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Shader\PaintedBright\PaintedBrightPS.hlsl">
@@ -748,23 +745,23 @@
     </FxCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Application\EnemyAttackState.h" />
+    <ClInclude Include="Application\Chara\Enemy\EnemyAttackState.h" />
     <ClInclude Include="Application\Chara\Boss\Boss.h" />
     <ClInclude Include="Application\Chara\Boss\BossState.h" />
     <ClInclude Include="Application\Chara\Boss\BossUI.h" />
     <ClInclude Include="Application\Chara\Boss\BossPunch.h" />
     <ClInclude Include="Application\Chara\Boss\BossNormal.h" />
     <ClInclude Include="Application\Chara\Boss\BossAI.h" />
-    <ClInclude Include="Application\BossPart.h" />
-    <ClInclude Include="Application\BossPartState.h" />
-    <ClInclude Include="Application\CollectPartManager.h" />
-    <ClInclude Include="Application\CollectZone.h" />
+    <ClInclude Include="Application\Chara\Boss\BossPart.h" />
+    <ClInclude Include="Application\Chara\Boss\BossPartState.h" />
+    <ClInclude Include="Application\Object\CollectPart\CollectPartManager.h" />
+    <ClInclude Include="Application\Object\CollectPart\CollectZone.h" />
     <ClInclude Include="Application\EventScene\BossAppearanceScene.h" />
     <ClInclude Include="Engine\Collision\AABBCollider.h" />
     <ClInclude Include="Application\Chara\Enemy\EnemySpawner.h" />
     <ClInclude Include="Application\InstantDrawer.h" />
-    <ClInclude Include="Application\LevelData.h" />
-    <ClInclude Include="Application\LevelLoader.h" />
+    <ClInclude Include="Application\Level\LevelData.h" />
+    <ClInclude Include="Application\Level\LevelLoader.h" />
     <ClInclude Include="Application\Paint\PaintUtil.h" />
     <ClInclude Include="Application\Scene\ControllerScene.h" />
     <ClInclude Include="Application\Scene\MainTestScene.h" />
@@ -775,9 +772,7 @@
     <ClInclude Include="Application\Chara\Enemy\EnemyManager.h" />
     <ClInclude Include="Application\Chara\Enemy\EnemyState.h" />
     <ClInclude Include="Application\Chara\Enemy\EnemyUI.h" />
-    <ClInclude Include="Application\BombSolider.h" />
-    <ClInclude Include="Application\EggUI.h" />
-    <ClInclude Include="Application\BreakableObj.h" />
+    <ClInclude Include="Application\Chara\Enemy\BombSolider.h" />
     <ClInclude Include="Engine\Easing.h" />
     <ClInclude Include="Engine\Base\Rect.h" />
     <ClInclude Include="Engine\Base\RenderTarget.h" />
@@ -870,31 +865,30 @@
     <ClInclude Include="Application\Object\Fire.h" />
     <ClInclude Include="Application\Object\FireManager.h" />
     <ClInclude Include="Application\Object\Wax\WaxState.h" />
-    <ClInclude Include="Application\Level.h" />
+    <ClInclude Include="Application\Level\Level.h" />
     <ClInclude Include="Application\Singleton.h" />
     <ClInclude Include="Application\Object\SpawnerManager.h" />
-    <ClInclude Include="Application\Parameter.h" />
+    <ClInclude Include="Application\Parameter\Parameter.h" />
     <ClInclude Include="Application\Scene\PaintScene.h" />
     <ClInclude Include="Application\Object\Wax\WaxGroup.h" />
     <ClInclude Include="Application\Object\TemperatueUI.h" />
     <ClInclude Include="Application\Chara\Player\PlayerState.h" />
     <ClInclude Include="Application\Paint\PaintableModelObj.h" />
     <ClInclude Include="Engine\Particle\RingParticle.h" />
-    <ClInclude Include="Application\SpawnOrderData.h" />
+    <ClInclude Include="Application\Object\SpawnOrderData.h" />
     <ClInclude Include="Application\Chara\Player\PlayerUI.h" />
     <ClInclude Include="Application\Object\FireUnit.h" />
     <ClInclude Include="Application\Wave.h" />
     <ClInclude Include="Engine\Particle\HomingParticle.h" />
-    <ClInclude Include="Application\PhysicsCircle.h" />
     <ClInclude Include="Application\RayMarchTestScene.h" />
-    <ClInclude Include="Application\SlimeWax.h" />
+    <ClInclude Include="Application\Object\SlimeWax.h" />
     <ClInclude Include="Engine\Collision\PlaneCollider.h" />
     <ClInclude Include="Application\Minimap.h" />
-    <ClInclude Include="Application\ParticleEditor.h" />
-    <ClInclude Include="Application\ParticleEditorScene.h" />
+    <ClInclude Include="Application\ParticleEditor\ParticleEditor.h" />
+    <ClInclude Include="Application\ParticleEditor\ParticleEditorScene.h" />
     <ClInclude Include="Application\GameCamera.h" />
     <ClInclude Include="Application\EventScene\IEventScene.h" />
-    <ClInclude Include="Application\CollectPart.h" />
+    <ClInclude Include="Application\Object\CollectPart\CollectPart.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Shader\GameObject\GameObject.hlsli" />
