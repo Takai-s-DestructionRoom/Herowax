@@ -284,6 +284,7 @@
     <ClCompile Include="Application\ParticleEditor\ParticleEditor.cpp" />
     <ClCompile Include="Application\ParticleEditor\ParticleEditorScene.cpp" />
     <ClCompile Include="Application\Object\CollectPart\CollectPart.cpp" />
+    <ClCompile Include="Application\Scene\SceneTrance.cpp" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Shader\PaintedBright\PaintedBrightPS.hlsl">
@@ -895,6 +896,7 @@
     <ClInclude Include="Application\GameCamera.h" />
     <ClInclude Include="Application\EventScene\IEventScene.h" />
     <ClInclude Include="Application\Object\CollectPart\CollectPart.h" />
+    <ClInclude Include="Application\Scene\SceneTrance.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Shader\GameObject\GameObject.hlsli" />
