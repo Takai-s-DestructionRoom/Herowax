@@ -9,7 +9,7 @@ BossAppearanceScene::~BossAppearanceScene()
 
 void BossAppearanceScene::Init(const Vector3 target)
 {
-	camera.mViewProjection.mEye = { 0, 70, -100 };
+	camera.mViewProjection.mEye = { 0, 10, -100 };
 	camera.mViewProjection.mTarget = target;
 	camera.mViewProjection.UpdateMatrix();
 

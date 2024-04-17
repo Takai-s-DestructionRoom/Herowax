@@ -84,7 +84,7 @@ void ProtoScene::Update()
 	if (RInput::GetInstance()->GetKeyDown(DIK_B))
 	{
 		eventScene = std::make_unique<BossAppearanceScene>();
-		eventScene->Init(boss.GetCenterPos());
+		eventScene->Init(boss.GetCenterPos() + Vector3::UP * 20.f);
 	}
 
 	//イベントシーン中なら
