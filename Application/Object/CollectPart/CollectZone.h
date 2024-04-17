@@ -36,7 +36,7 @@ public:
 	void Update()override;	//当たり判定更新など
 	void Draw()override;//どの範囲がcollectZoneなのかを半透明オブジェクトで描画
 
-	void Create(const Vector3& spawnPos);
+	void Create(const CollectPart& collect);
 
 	void UIDraw();
 

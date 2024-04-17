@@ -68,11 +68,17 @@ void CollectZone::Draw()
 	UIDraw();
 }
 
-void CollectZone::Create(const Vector3& spawnPos)
+void CollectZone::Create(const CollectPart& collect)
 {
 	gatheredParts.emplace_back();
 	gatheredParts.back() = std::make_unique<CollectPart>();
+	//ゾーンの中心位置に配置(ちょい空中から落とす)
+	Vector3 spawnPos = GetPos() + Vector3(0,10,0);
 	gatheredParts.back()->SetPos(spawnPos);
+
+	//モデルを収集したものと合わせる
+	gatheredParts.back()->obj.mModel = collect.obj.mModel;
+	gatheredParts.back()->Collect();
 }
 
 void CollectZone::UIDraw()
