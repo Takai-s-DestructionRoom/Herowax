@@ -100,7 +100,7 @@ void Level::Extract(const std::string& handle)
 		if (objectData->setObjectName == "Ground")
 		{
 			ground = ModelObj(Model::Load("./Resources/Model/Ground/ground.obj", "Ground"));
-
+			
 			//座標を設定
 			ground.mTransform.position = objectData->translation;
 			ground.mTransform.scale = objectData->scaling;
@@ -128,6 +128,7 @@ void Level::Extract(const std::string& handle)
 		{
 			wall.emplace_back();
 			wall.back() = ModelObj(Model::Load("./Resources/Model/Ami/Ami.obj", "Wall"));
+		
 			//座標を設定
 			wall.back().mTransform.position = objectData->translation;
 			wall.back().mTransform.scale = objectData->scaling / 2;
