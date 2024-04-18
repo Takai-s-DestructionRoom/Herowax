@@ -18,7 +18,7 @@ public:
 	//------------ 移動関連 ------------//
 	Vector3 moveVec;			//移動ベクトル
 	float moveSpeed;			//移動速度
-	float moveAccel;			//移動加速度
+	float moveAccel = 0;		//移動加速度
 	float moveAccelAmount;		//移動加速度の1Fあたりの加算量
 	bool isGround;				//接地しているかフラグ
 	bool isJumping;					//ジャンプ中かフラグ
