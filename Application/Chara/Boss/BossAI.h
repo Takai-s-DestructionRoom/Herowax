@@ -8,6 +8,7 @@ enum class BossSituation
 	OnlyLeft,
 	OnlyRight,
 	NoArms,
+	Appearance,	//出現
 };
 
 class BossAI

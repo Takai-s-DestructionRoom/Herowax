@@ -1,4 +1,5 @@
 #include "Boss.h"
+#include "BossAppearance.h"
 #include "BossNormal.h"
 #include "BossPunch.h"
 #include "Camera.h"
@@ -7,10 +8,9 @@
 #include "RImGui.h"
 #include "TimeManager.h"
 #include "Parameter.h"
-#include "SceneManager.h"
-#include "SimpleSceneTransition.h"
-#include "ResultScene.h"
 #include "GameCamera.h"
+#include "WaxManager.h"
+#include "BossCollectStandState.h"
 
 Boss::Boss() : GameObject(),
 moveSpeed(0.1f), hp(0), maxHP(10.f)
@@ -53,6 +53,14 @@ moveSpeed(0.1f), hp(0), maxHP(10.f)
 	standTimer = Parameter::GetParam(extract,"モーション待機時間", 3.f);
 	punchTimer = Parameter::GetParam(extract,"パンチにかかる時間", 0.7f);
 	punchStayTimer = Parameter::GetParam(extract,"パンチ後留まる時間", 1.5f);
+
+	extract = Parameter::Extract("Player");
+	solidTime = Parameter::GetParam(extract, "固まるまでの時間", 5.f);
+	atkPower = (int32_t)Parameter::GetParam(extract, "敵に与えるダメージ", 10.0f);
+	atkRange = Parameter::GetParam(extract, "攻撃範囲", 3.f);
+	atkSize = 0.f;
+	atkSpeed = Parameter::GetParam(extract, "射出速度", 1.f);
+	atkTime = Parameter::GetParam(extract, "攻撃時間", 0.5f);
 }
 
 Boss::~Boss()
@@ -75,19 +83,21 @@ void Boss::Init()
 	{
 		parts[i].Init();
 	}
-
-	deadTimer.Reset();
 }
 
 void Boss::AllStateUpdate()
 {
 	//全ステート共通処理
+	//シェイクを初期化
+	obj.mTransform.position -= shake;
+	shake = { 0,0,0 };
 
 	//タイマー更新
 	mutekiTimer.Update();
 	whiteTimer.Update();
 	waxShakeOffTimer.Update();
-	deadTimer.Update();
+	shakeTimer.Update();
+	waxScatterTimer.Update();
 
 	//かかっているロウを振り払う
 	//10段階かかったら固まる
@@ -99,7 +109,35 @@ void Boss::AllStateUpdate()
 			waxShakeOffTimer.Start();
 			//減るのは一段階
 			waxSolidCount--;
+
+			//体だけ残っているならシェイクも入れる
+			if (GetIsOnlyBody()) {
+				shakeTimer.Start();
+			}
 		}
+	}
+
+	//シェイク中なら適当な値を入れる
+	if (shakeTimer.GetRun()) {
+		shake.x = Util::GetRand(-1.0f, 1.0f);
+		shake.y = Util::GetRand(-1.0f, 1.0f);
+		shake.z = Util::GetRand(-1.0f, 1.0f);
+
+		//本体はロウ出さない
+		//Vector3 atkVec = Util::GetRandVector3({ 0,0,0 }, -0.1f, 0.1f, { 1,0,1 });
+
+		////ついでにその場にロウをばらまく(勝手実装)
+		////生成
+		//if (!waxScatterTimer.GetRun()) {
+		//	waxScatterTimer.Start();
+		//	Transform spawnTrans = obj.mTransform;
+		//	spawnTrans.position.y -= spawnTrans.scale.y * 2;
+		//	WaxManager::GetInstance()->Create(
+		//		spawnTrans, atkPower, atkVec, atkSpeed,
+		//		atkRange, atkSize, atkTime, solidTime);
+		//	//シェイク中に自分が出したロウに当たらないように無敵にする
+		//	mutekiTimer.Start();
+		//}
 	}
 
 	//固まったなら
@@ -126,22 +164,12 @@ void Boss::AllStateUpdate()
 	{
 		ai.SetSituation(BossSituation::NoArms);
 	}
-
-	//本体が固まってるならシーン遷移
-	if (GetIsSolid(PartsNum::Max))
-	{
-		//演出の猶予作りたいので、ちょっとタイマーでディレイを入れる
-		//今は適当に固定カメラの位置に移動させて、ボスが完全に固まったことを見せてから遷移
-		if (!deadTimer.GetStarted()) {
-			deadTimer.Start();
-			GameCamera::GetInstance()->cameraDist -= 100.f;
-		}
-
-
-		if (deadTimer.GetNowEnd()) {
-			SceneManager::Change<ResultScene, SimpleSceneTransition>();
-		}
-	}
+	////本体が固まった瞬間なら
+	//if (GetIsSolid(PartsNum::Max) && !isOldBodySolid)
+	//{
+	//	//ステートをコレクト待機へ
+	//	ChangeState<BossCollectStandState>();
+	//}
 
 	//白を加算
 	if (whiteTimer.GetStarted()) {
@@ -155,6 +183,9 @@ void Boss::AllStateUpdate()
 
 	//ミニマップ表示
 	ui.Update(this);
+
+	//座標加算
+	obj.mTransform.position += shake;
 
 	//更新してからバッファに送る
 	obj.mTransform.UpdateMatrix();
@@ -176,6 +207,8 @@ void Boss::AllStateUpdate()
 
 void Boss::Update()
 {
+	isOldBodySolid = GetIsSolid(PartsNum::Max);
+
 	ai.Update(this);
 
 	//各ステート時の固有処理
@@ -198,6 +231,17 @@ void Boss::Update()
 	{
 		nextState = std::make_unique<BossPunch>(false);
 		changingState = true;
+	}
+
+	//出現中なのに出現ステートになってないなら
+	if (isAppearance && stateStr != "Appearance")
+	{
+		ChangeState<BossAppearance>();
+	}
+	//逆に出現中じゃないのに出現ステートになってたら
+	else if (isAppearance == false && stateStr == "Appearance")
+	{
+		ChangeState<BossNormal>();
 	}
 
 	if (changingState) {
@@ -312,6 +356,11 @@ bool Boss::GetIsSolid(PartsNum num)
 	}
 }
 
+bool Boss::GetIsOnlyBody()
+{
+	return GetIsSolid(PartsNum::RightHand) && GetIsSolid(PartsNum::LeftHand);
+}
+
 void Boss::DealDamage(int32_t damage)
 {
 	//無敵時間さん中ならスキップ
@@ -328,8 +377,23 @@ void Boss::DealDamage(int32_t damage)
 	waxSolidCount += damage;
 	//振り払いタイマー開始
 	//(初期化も行うため、攻撃を受ける度にタイマーが継続する形に)
+	
+	//腕が残っていないなら通常タイマー
+	if (GetIsOnlyBody()) {
+		waxShakeOffTimer.maxTime_ = armBreakOffTime;
+	}
+	//残っているなら超短いタイマー
+	else {
+		waxShakeOffTimer.maxTime_ = armRemainOffTime;
+	}
+	
 	waxShakeOffTimer.Start();
 
 	//一応HPにダメージ(使うか不明)
 	hp -= damage;
+
+	//固まってるなら
+	if (GetIsSolid(PartsNum::Max) && !isOldBodySolid) {
+		ChangeState<BossCollectStandState>();
+	}
 }

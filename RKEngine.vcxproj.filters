@@ -301,6 +301,30 @@
     <Filter Include="ヘッダー ファイル\Application\Object\CollectPart">
       <UniqueIdentifier>{e3fa3e20-a353-477b-870f-56af2ff2b512}</UniqueIdentifier>
     </Filter>
+    <Filter Include="ヘッダー ファイル\Application\EventScene">
+      <UniqueIdentifier>{ead60591-8608-4bb2-a27b-378cdc7e91ee}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\Application\ParticleEditor">
+      <UniqueIdentifier>{c9240381-993c-4e05-8002-7dbed23c77c9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\Application\ParticleEditor">
+      <UniqueIdentifier>{7c97a1a4-352d-4bb6-bf16-64b7858cdf98}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\Application\EventScene">
+      <UniqueIdentifier>{e636080b-1fa6-404e-b4a0-560fe18c2f56}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\Application\Minimap">
+      <UniqueIdentifier>{902466e0-2ccd-4d9f-aec7-5eb5f8ef4fda}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\Application\Minimap">
+      <UniqueIdentifier>{ed6476de-78a0-4d49-aa3a-ca37e3d7ec7b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\Application\GameCamera">
+      <UniqueIdentifier>{96aed6d7-ab6f-4a8e-ab83-90c6d3111902}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\Application\GameCamera">
+      <UniqueIdentifier>{c65e08c9-555f-4a9d-b1da-940bc4bb3776}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Engine\2d\Sprite.cpp">
@@ -585,19 +609,19 @@
     <ClCompile Include="Application\Object\SpawnerManager.cpp">
       <Filter>ソース ファイル\Application\Object\EnemySpawner</Filter>
     </ClCompile>
-    <ClCompile Include="Application\Level.cpp">
+    <ClCompile Include="Application\Level\Level.cpp">
       <Filter>ソース ファイル\Application\Loader</Filter>
     </ClCompile>
-    <ClCompile Include="Application\LevelData.cpp">
+    <ClCompile Include="Application\Level\LevelData.cpp">
       <Filter>ソース ファイル\Application\Loader</Filter>
     </ClCompile>
-    <ClCompile Include="Application\LevelLoader.cpp">
+    <ClCompile Include="Application\Level\LevelLoader.cpp">
       <Filter>ソース ファイル\Application\Loader</Filter>
     </ClCompile>
     <ClCompile Include="Application\Chara\Enemy\EnemyState.cpp">
       <Filter>ソース ファイル\Application\Object\Chara\Enemy</Filter>
     </ClCompile>
-    <ClCompile Include="Application\Parameter.cpp">
+    <ClCompile Include="Application\Parameter\Parameter.cpp">
       <Filter>ソース ファイル\Application\Parameter</Filter>
     </ClCompile>
     <ClCompile Include="Application\Singleton.cpp">
@@ -624,11 +648,8 @@
     <ClCompile Include="Engine\Particle\RingParticle.cpp">
       <Filter>ソース ファイル\Engine\Particle</Filter>
     </ClCompile>
-    <ClCompile Include="Application\BombSolider.cpp">
+    <ClCompile Include="Application\Chara\Enemy\BombSolider.cpp">
       <Filter>ソース ファイル\Application\Object\Chara\Enemy</Filter>
-    </ClCompile>
-    <ClCompile Include="Application\SpawnOrderData.cpp">
-      <Filter>ソース ファイル</Filter>
     </ClCompile>
     <ClCompile Include="Application\Chara\Player\PlayerUI.cpp">
       <Filter>ソース ファイル\Application\Object\Chara\Player</Filter>
@@ -642,14 +663,8 @@
     <ClCompile Include="Application\Object\FireUnit.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Application\EggUI.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
     <ClCompile Include="Engine\Particle\HomingParticle.cpp">
       <Filter>ソース ファイル\Engine\Particle</Filter>
-    </ClCompile>
-    <ClCompile Include="Application\BreakableObj.cpp">
-      <Filter>ソース ファイル</Filter>
     </ClCompile>
     <ClCompile Include="Engine\Collision\PlaneCollider.cpp">
       <Filter>ソース ファイル\Engine\Collision</Filter>
@@ -657,19 +672,13 @@
     <ClCompile Include="Engine\Collision\AABBCollider.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Application\Minimap.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="Application\PhysicsCircle.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
     <ClCompile Include="Application\RayMarchTestScene.cpp">
       <Filter>ソース ファイル\Application\Scene</Filter>
     </ClCompile>
-    <ClCompile Include="Application\SlimeWax.cpp">
+    <ClCompile Include="Application\Object\SlimeWax.cpp">
       <Filter>ソース ファイル\Application\Object\SlimeWax</Filter>
     </ClCompile>
-    <ClCompile Include="Application\EnemyAttackState.cpp">
+    <ClCompile Include="Application\Chara\Enemy\EnemyAttackState.cpp">
       <Filter>ソース ファイル\Application\Object\Chara\Enemy</Filter>
     </ClCompile>
     <ClCompile Include="Application\Chara\Boss\Boss.cpp">
@@ -678,44 +687,65 @@
     <ClCompile Include="Application\Chara\Boss\BossState.cpp">
       <Filter>ソース ファイル\Application\Object\Chara\Boss</Filter>
     </ClCompile>
-    <ClCompile Include="Application\Chara\Boss\BossUI.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="Application\ParticleEditor.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="Application\ParticleEditorScene.cpp">
+    <ClCompile Include="Application\ParticleEditor\ParticleEditorScene.cpp">
       <Filter>ソース ファイル\Application\Scene</Filter>
     </ClCompile>
-    <ClCompile Include="Application\Chara\Boss\BossPunch.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="Application\Chara\Boss\BossNormal.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="Application\BossPart.cpp">
+    <ClCompile Include="Application\Chara\Boss\BossPart.cpp">
       <Filter>ソース ファイル\Application\Object\Chara\Boss</Filter>
     </ClCompile>
     <ClCompile Include="Application\Chara\Boss\BossAI.cpp">
       <Filter>ソース ファイル\Application\Object\Chara\Boss</Filter>
     </ClCompile>
+    <ClCompile Include="Application\Object\CollectPart\CollectZone.cpp">
+      <Filter>ソース ファイル\Application\Object\CollectPart</Filter>
+    </ClCompile>
+    <ClCompile Include="Application\Object\CollectPart\CollectPart.cpp">
+      <Filter>ソース ファイル\Application\Object\CollectPart</Filter>
+    </ClCompile>
+    <ClCompile Include="Application\Object\CollectPart\CollectPartManager.cpp">
+      <Filter>ソース ファイル\Application\Object\CollectPart</Filter>
+    </ClCompile>
+    <ClCompile Include="Application\Chara\Boss\BossNormal.cpp">
+      <Filter>ソース ファイル\Application\Object\Chara\Boss</Filter>
+    </ClCompile>
+    <ClCompile Include="Application\Chara\Boss\BossPartState.cpp">
+      <Filter>ソース ファイル\Application\Object\Chara\Boss</Filter>
+    </ClCompile>
+    <ClCompile Include="Application\Chara\Boss\BossPunch.cpp">
+      <Filter>ソース ファイル\Application\Object\Chara\Boss</Filter>
+    </ClCompile>
+    <ClCompile Include="Application\Chara\Boss\BossUI.cpp">
+      <Filter>ソース ファイル\Application\Object\Chara\Boss</Filter>
+    </ClCompile>
+    <ClCompile Include="Application\ParticleEditor\ParticleEditor.cpp">
+      <Filter>ソース ファイル\Application\ParticleEditor</Filter>
+    </ClCompile>
+    <ClCompile Include="Application\EventScene\BossAppearanceScene.cpp">
+      <Filter>ソース ファイル\Application\EventScene</Filter>
+    </ClCompile>
+    <ClCompile Include="Application\EventScene\IEventScene.cpp">
+      <Filter>ソース ファイル\Application\EventScene</Filter>
+    </ClCompile>
+    <ClCompile Include="Application\Object\SpawnOrderData.cpp">
+      <Filter>ソース ファイル\Application\Object\EnemySpawner</Filter>
+    </ClCompile>
+    <ClCompile Include="Application\Minimap.cpp">
+      <Filter>ソース ファイル\Application\Minimap</Filter>
+    </ClCompile>
     <ClCompile Include="Application\GameCamera.cpp">
+      <Filter>ソース ファイル\Application\GameCamera</Filter>
+    </ClCompile>
+    <ClCompile Include="Application\Chara\Boss\BossAppearance.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Application\BossPartState.cpp">
+    <ClCompile Include="Application\BossDeadState.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="IEventScene.cpp">
+    <ClCompile Include="Application\BossCollectStandState.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Application\CollectZone.cpp">
-      <Filter>ソース ファイル\Application\Object\CollectPart</Filter>
-    </ClCompile>
-    <ClCompile Include="Application\CollectPart.cpp">
-      <Filter>ソース ファイル\Application\Object\CollectPart</Filter>
-    </ClCompile>
-    <ClCompile Include="Application\CollectPartManager.cpp">
-      <Filter>ソース ファイル\Application\Object\CollectPart</Filter>
+    <ClCompile Include="Application\Scene\SceneTrance.cpp">
+      <Filter>ソース ファイル</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -1199,13 +1229,13 @@
     <ClInclude Include="Application\Object\Wax\WaxState.h">
       <Filter>ヘッダー ファイル\Application\Object\Wax</Filter>
     </ClInclude>
-    <ClInclude Include="Application\Level.h">
+    <ClInclude Include="Application\Level\Level.h">
       <Filter>ヘッダー ファイル\Application\Loader</Filter>
     </ClInclude>
-    <ClInclude Include="Application\LevelData.h">
+    <ClInclude Include="Application\Level\LevelData.h">
       <Filter>ヘッダー ファイル\Application\Loader</Filter>
     </ClInclude>
-    <ClInclude Include="Application\LevelLoader.h">
+    <ClInclude Include="Application\Level\LevelLoader.h">
       <Filter>ヘッダー ファイル\Application\Loader</Filter>
     </ClInclude>
     <ClInclude Include="Application\Object\SpawnerManager.h">
@@ -1214,7 +1244,7 @@
     <ClInclude Include="Application\Chara\Enemy\EnemyState.h">
       <Filter>ヘッダー ファイル\Application\Object\Chara\Enemy</Filter>
     </ClInclude>
-    <ClInclude Include="Application\Parameter.h">
+    <ClInclude Include="Application\Parameter\Parameter.h">
       <Filter>ヘッダー ファイル\Application\Parameter</Filter>
     </ClInclude>
     <ClInclude Include="Application\Singleton.h">
@@ -1241,11 +1271,8 @@
     <ClInclude Include="Engine\Particle\RingParticle.h">
       <Filter>ヘッダー ファイル\Engine\Particle</Filter>
     </ClInclude>
-    <ClInclude Include="Application\BombSolider.h">
+    <ClInclude Include="Application\Chara\Enemy\BombSolider.h">
       <Filter>ヘッダー ファイル\Application\Object\Chara\Enemy</Filter>
-    </ClInclude>
-    <ClInclude Include="Application\SpawnOrderData.h">
-      <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
     <ClInclude Include="Application\Chara\Player\PlayerUI.h">
       <Filter>ヘッダー ファイル\Application\Object\Chara\Player</Filter>
@@ -1259,14 +1286,8 @@
     <ClInclude Include="Application\Object\FireUnit.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Application\EggUI.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
     <ClInclude Include="Engine\Particle\HomingParticle.h">
       <Filter>ヘッダー ファイル\Engine\Particle</Filter>
-    </ClInclude>
-    <ClInclude Include="Application\BreakableObj.h">
-      <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
     <ClInclude Include="Engine\Collision\PlaneCollider.h">
       <Filter>ヘッダー ファイル\Engine\Collision</Filter>
@@ -1274,19 +1295,13 @@
     <ClInclude Include="Engine\Collision\AABBCollider.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Application\Minimap.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Application\PhysicsCircle.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
     <ClInclude Include="Application\RayMarchTestScene.h">
       <Filter>ヘッダー ファイル\Application\Scene</Filter>
     </ClInclude>
-    <ClInclude Include="Application\SlimeWax.h">
+    <ClInclude Include="Application\Object\SlimeWax.h">
       <Filter>ヘッダー ファイル\Application\Object\SlimeWax</Filter>
     </ClInclude>
-    <ClInclude Include="Application\EnemyAttackState.h">
+    <ClInclude Include="Application\Chara\Enemy\EnemyAttackState.h">
       <Filter>ヘッダー ファイル\Application\Object\Chara\Enemy</Filter>
     </ClInclude>
     <ClInclude Include="Application\Chara\Boss\Boss.h">
@@ -1295,34 +1310,64 @@
     <ClInclude Include="Application\Chara\Boss\BossState.h">
       <Filter>ヘッダー ファイル\Application\Object\Chara\Boss</Filter>
     </ClInclude>
-    <ClInclude Include="Application\Chara\Boss\BossUI.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Application\ParticleEditorScene.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Application\ParticleEditor.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Application\Chara\Boss\BossPunch.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Application\Chara\Boss\BossNormal.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Application\BossPart.h">
+    <ClInclude Include="Application\Chara\Boss\BossPart.h">
       <Filter>ヘッダー ファイル\Application\Object\Chara\Boss</Filter>
     </ClInclude>
     <ClInclude Include="Application\Chara\Boss\BossAI.h">
       <Filter>ヘッダー ファイル\Application\Object\Chara\Boss</Filter>
     </ClInclude>
+    <ClInclude Include="Application\EventScene\BossAppearanceScene.h">
+      <Filter>ヘッダー ファイル\Application\EventScene</Filter>
+    </ClInclude>
+    <ClInclude Include="Application\Chara\Boss\BossPartState.h">
+      <Filter>ヘッダー ファイル\Application\Object\Chara\Boss</Filter>
+    </ClInclude>
+    <ClInclude Include="Application\Chara\Boss\BossNormal.h">
+      <Filter>ヘッダー ファイル\Application\Object\Chara\Boss</Filter>
+    </ClInclude>
+    <ClInclude Include="Application\Chara\Boss\BossPunch.h">
+      <Filter>ヘッダー ファイル\Application\Object\Chara\Boss</Filter>
+    </ClInclude>
+    <ClInclude Include="Application\Object\CollectPart\CollectPart.h">
+      <Filter>ヘッダー ファイル\Application\Object\CollectPart</Filter>
+    </ClInclude>
+    <ClInclude Include="Application\Object\CollectPart\CollectPartManager.h">
+      <Filter>ヘッダー ファイル\Application\Object\CollectPart</Filter>
+    </ClInclude>
+    <ClInclude Include="Application\Object\CollectPart\CollectZone.h">
+      <Filter>ヘッダー ファイル\Application\Object\CollectPart</Filter>
+    </ClInclude>
+    <ClInclude Include="Application\ParticleEditor\ParticleEditor.h">
+      <Filter>ヘッダー ファイル\Application\ParticleEditor</Filter>
+    </ClInclude>
+    <ClInclude Include="Application\Chara\Boss\BossUI.h">
+      <Filter>ヘッダー ファイル\Application\Object\Chara\Boss</Filter>
+    </ClInclude>
+    <ClInclude Include="Application\ParticleEditor\ParticleEditorScene.h">
+      <Filter>ヘッダー ファイル\Application\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="Application\EventScene\IEventScene.h">
+      <Filter>ヘッダー ファイル\Application\EventScene</Filter>
+    </ClInclude>
+    <ClInclude Include="Application\Object\SpawnOrderData.h">
+      <Filter>ヘッダー ファイル\Application\Object\EnemySpawner</Filter>
+    </ClInclude>
+    <ClInclude Include="Application\Minimap.h">
+      <Filter>ヘッダー ファイル\Application\Minimap</Filter>
+    </ClInclude>
     <ClInclude Include="Application\GameCamera.h">
+      <Filter>ヘッダー ファイル\Application\GameCamera</Filter>
+    </ClInclude>
+    <ClInclude Include="Application\Chara\Boss\BossAppearance.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Application\BossPartState.h">
+    <ClInclude Include="Application\BossDeadState.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="IEventScene.h">
+    <ClInclude Include="Application\BossCollectStandState.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Application\Scene\SceneTrance.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
   </ItemGroup>

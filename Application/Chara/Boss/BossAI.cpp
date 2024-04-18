@@ -12,6 +12,11 @@ void BossAI::Init()
 
 void BossAI::Update(Boss* boss)
 {
+	if (boss->GetStateStr() == "Dead" || 
+		boss->GetStateStr() == "Collected") {
+	
+	}
+
 	bool changeAct = false;
 	bool isStand = false;
 
@@ -40,6 +45,10 @@ void BossAI::Update(Boss* boss)
 	if (boss->state->GetIsFinished()) {
 		//次の行動へ
 		changeAct = true;
+	}
+
+	if (situation == BossSituation::Appearance) {
+		boss->state = std::make_unique<BossNormal>();
 	}
 
 	if (changeAct) {

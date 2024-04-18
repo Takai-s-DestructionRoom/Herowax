@@ -169,6 +169,8 @@ public:
 	bool GetTauntMode() { return isTauntMode; };
 	//足元の座標取得
 	Vector3 GetFootPos();
+	//攻撃力を取得
+	int32_t GetAttackPower() { return atkPower; };
 
 	// セッター //
 	//回収できるかフラグ設定

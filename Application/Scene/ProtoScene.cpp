@@ -14,6 +14,7 @@
 #include "SpawnOrderData.h"
 #include "Minimap.h"
 #include "CollectPartManager.h"
+#include "BossAppearanceScene.h"
 
 ProtoScene::ProtoScene()
 {
@@ -36,20 +37,21 @@ ProtoScene::ProtoScene()
 
 void ProtoScene::Init()
 {
+	eventScene = std::make_unique<BossAppearanceScene>();
+
 	Camera::sMinimapCamera = &minimapCamera;
-	
+
 	gameCamera.Init();
 
 	LightGroup::sNowLight = &light;
 
 	player.Init();
 	boss.Init();
-	
+
 	//色々入れる
 	player.SetBoss(&boss);
 	boss.SetTarget(&player.obj);
 	gameCamera.SetTarget(&player.obj);
-
 
 	ParticleManager::GetInstance()->Init();
 
@@ -66,10 +68,10 @@ void ProtoScene::Init()
 
 	std::map<std::string, std::string> extract = Parameter::Extract("DebugBool");
 	Util::debugBool = Parameter::GetParam(extract, "debugBool", false);
-	
+
 	CollectPartManager::GetInstance()->Init();
-	CollectPartManager::GetInstance()->zone.pos = {100,1,100};
-	CollectPartManager::GetInstance()->zone.scale = {100,100};
+	CollectPartManager::GetInstance()->zone.pos = { 100,0,100 };
+	CollectPartManager::GetInstance()->zone.scale = { 100,100 };
 }
 
 void ProtoScene::Update()
@@ -78,13 +80,33 @@ void ProtoScene::Update()
 	InstantDrawer::DrawInit();
 	WaxManager::GetInstance()->slimeWax.Reset();
 
-	gameCamera.Update();
+	//イベントシーンに遷移
+	if (RInput::GetInstance()->GetKeyDown(DIK_B))
+	{
+		eventScene = std::make_unique<BossAppearanceScene>();
+		eventScene->Init(boss.GetCenterPos() + Vector3::UP * 20.f);
+	}
 
+	//イベントシーン中なら
+	if (eventScene->isActive)
+	{
+		eventScene->Update();
+		boss.isAppearance = true;
+	}
+	
+	//イベントシーンが終わりカメラが空っぽになったら
+	if(Camera::sNowCamera == nullptr)
+	{
+		gameCamera.Init();	//カメラ入れる
+		boss.isAppearance = false;
+	}
+
+	gameCamera.Update();
 	MinimapCameraUpdate();
 
 	//ここに無限に当たり判定増やしていくの嫌なのであとで何か作ります
 	//クソ手抜き当たり判定
-	
+
 	//ボスの腕との判定
 	for (size_t i = 0; i < boss.parts.size(); i++)
 	{
@@ -101,9 +123,10 @@ void ProtoScene::Update()
 	}
 
 	//パーツとの判定
-	for (std::unique_ptr<CollectPart>& part : CollectPartManager::GetInstance()->parts)
+	for (auto& part : CollectPartManager::GetInstance()->parts)
 	{
-		if ((int32_t)player.carryingParts.size() < CollectPartManager::GetInstance()->maxCarryingNum) {
+		if ((int32_t)player.carryingParts.size() < 
+			CollectPartManager::GetInstance()->GetMaxCarryingNum()) {
 			if (ColPrimitive3D::CheckSphereToSphere(part->collider, player.collider)) {
 				//一旦複数持てる
 				//後でプレイヤー側でフラグ立てて個数制限する
@@ -114,8 +137,11 @@ void ProtoScene::Update()
 		//プレイヤーが持っているなら
 		if (part->IsCarrying()) {
 			//当たり判定する
-			if (ColPrimitive3D::CheckSphereToAABB(part->collider,CollectPartManager::GetInstance()->zone.aabbCol)) {
+			if (ColPrimitive3D::CheckSphereToAABB(player.collider,
+				CollectPartManager::GetInstance()->zone.aabbCol)) {
 				part->Collect();
+				part->SetIsAlive(false);
+				CollectPartManager::GetInstance()->zone.Create(*part);
 			}
 		}
 	}
@@ -132,14 +158,29 @@ void ProtoScene::Update()
 	}
 
 	//10個溜まったら(後で制作状態も作る)
-	if (CollectPartManager::GetInstance()->zone.GetPartsNum() >= 10) {
-		//ゴッドモードへ
-		player.SetIsGodmode(true);
-		
-		//パーツ削除
-		for (std::unique_ptr<CollectPart>& part : CollectPartManager::GetInstance()->parts)
+	if (CollectPartManager::GetInstance()->GetAllowCreate()) {
+
+		//範囲内に居て
+		if (ColPrimitive3D::CheckSphereToAABB(player.collider,
+			CollectPartManager::GetInstance()->zone.aabbCol))
 		{
-			part->SetIsAlive(false);
+			//ボタンを押しているなら
+			if (RInput::GetKey(DIK_E) || 
+				RInput::GetPadButton(XINPUT_GAMEPAD_RIGHT_SHOULDER))
+			{
+				//制作
+				CollectPartManager::GetInstance()->zone.GodModeCreate();
+			}
+			else {
+				CollectPartManager::GetInstance()->zone.GodModeCreateStop();
+			}
+		}
+
+		//ゴッドモードへ
+		if (CollectPartManager::GetInstance()->zone.GodModeCreateEnd()) {
+			player.SetIsGodmode(true);
+
+			CollectPartManager::GetInstance()->CratePostDelete();
 		}
 	}
 
@@ -184,17 +225,17 @@ void ProtoScene::Update()
 			if (isCollision && wax->isSolid == false && wax->isGround == false)
 			{
 				//一応1ダメージ(ダメージ量に応じてロウのかかり具合も進行)
-				boss.DealDamage(1);
+				boss.DealDamage(player.GetAttackPower());
 			}
 
 			for (size_t i = 0; i < boss.parts.size(); i++)
 			{
 				//腕との判定
-				isCollision = ColPrimitive3D::CheckSphereToSphere(boss.parts[i].collider,wax->collider);
+				isCollision = ColPrimitive3D::CheckSphereToSphere(boss.parts[i].collider, wax->collider);
 				if (isCollision && wax->isSolid == false && wax->isGround == false)
 				{
 					//一応1ダメージ(ダメージ量に応じてロウのかかり具合も進行)
-					boss.parts[i].DealDamage(1);
+					boss.parts[i].DealDamage(player.GetAttackPower());
 				}
 			}
 		}
@@ -443,6 +484,11 @@ void ProtoScene::Draw()
 	Level::Get()->Draw();
 	boss.Draw();
 	player.Draw();
+
+	if (eventScene->isActive)
+	{
+		eventScene->Draw();
+	}
 
 	//更新
 	InstantDrawer::AllUpdate();

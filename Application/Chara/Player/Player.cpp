@@ -13,6 +13,7 @@
 #include "boss.h"
 #include "BossPart.h"
 #include "Level.h"
+#include "BossDeadState.h"
 
 Player::Player() :GameObject(),
 moveSpeed(1.f), moveAccelAmount(0.05f), isGround(true), hp(0), maxHP(10.f),
@@ -331,12 +332,6 @@ void Player::Update()
 		ImGui::SliderFloat("固まるまでの時間", &solidTimer.maxTime_, 0.f, 10.f);
 		ImGui::InputInt("ロウの最大ストック数", &maxWaxStock, 1, 100);
 		ImGui::Text("ロウのストック数:%d", waxStock);
-
-		ImGui::TreePop();
-	}
-	if (ImGui::TreeNode("お自分の方に来る"))
-	{
-		ImGui::Checkbox("攻撃した相手が自分を攻撃するか", &isTauntMode);
 
 		ImGui::TreePop();
 	}
@@ -896,6 +891,23 @@ void Player::WaxCollect()
 					boss->parts[(int32_t)PartsNum::RightHand].collectPos = collectCol.start;
 					boss->parts[(int32_t)PartsNum::RightHand].ChangeState<BossPartCollect>();
 					//腕の吸収値も変数化したい
+					waxCollectAmount += 1;
+				}
+			}
+		}
+
+		//本体吸収
+		if (boss->GetStateStr() == "Collected") {
+			if (RayToSphereCol(collectCol,boss->collider))
+			{
+				//今のロウとの距離
+				float len = (collectCol.start -
+					boss->GetPos()).Length();
+
+				//見たロウが範囲外ならスキップ
+				if (waxCollectVertical >= len) {
+					boss->collectPos = collectCol.start;
+					boss->ChangeState<BossDeadState>();
 					waxCollectAmount += 1;
 				}
 			}

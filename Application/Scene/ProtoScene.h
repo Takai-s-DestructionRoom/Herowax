@@ -13,13 +13,13 @@
 #include "Tower.h"
 #include "EnemyManager.h"
 #include "EnemySpawner.h"
-#include "EggUI.h"
 #include "Boss.h"
 
 #include "Level.h"
 #include "Wave.h"
-#include "BreakableObj.h"
 #include "GameCamera.h"
+
+#include "IEventScene.h"
 
 class ProtoScene : public IScene
 {
@@ -36,9 +36,8 @@ private:
 	ModelObj skydome;	//天球
 	Player player;
 	Wave wave;
-	EggUI eggUI;
-	//BreakableObj nest;
 	Boss boss;
+	std::unique_ptr<IEventScene> eventScene;
 
 	Camera minimapCamera = Camera();	//ミニマップ用の仮想カメラ
 
