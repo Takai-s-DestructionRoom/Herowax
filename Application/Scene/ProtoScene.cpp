@@ -211,6 +211,15 @@ void ProtoScene::Update()
 				player.DealDamage(1);
 			}
 		}
+		//回収ボタン押されたときに固まってるなら吸収
+		if (player.GetWaxCollectButtonDown() &&
+			enemy->GetIsSolid())
+		{
+			//死ぬ
+			enemy->SetDeath();
+
+			player.waxCollectAmount++;
+		}
 	}
 
 	//蝋とボスの当たり判定
@@ -272,7 +281,7 @@ void ProtoScene::Update()
 						//enemyにダメージ
 						Vector3 knockVec = player.atkVec;
 						knockVec.y = 0;
-						enemy->DealDamage(wax->atkPower,
+						enemy->DealDamage(player.GetAttackPower(),
 							knockVec, &player.obj);
 
 						//お試し実装:自分が攻撃を当てた相手が自分を追いかけてくる
@@ -295,12 +304,13 @@ void ProtoScene::Update()
 				//回収中ものと通常の状態なら
 				if (isCollision && wax->stateStr == "WaxCollect")
 				{
-					//固まってるなら
-					if (enemy->GetIsSolid()) {
-						//死ぬ
-						enemy->SetDeath();
-
-						player.waxCollectAmount++;
+					//固まってないならダメージ
+					if(!enemy->GetIsSolid())
+					{
+						Vector3 knockVec = -player.atkVec;
+						knockVec.y = 0;
+						enemy->DealDamage(player.GetInvolvePower(),
+							knockVec, &player.obj);
 					}
 				}
 			}

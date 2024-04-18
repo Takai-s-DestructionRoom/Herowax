@@ -309,11 +309,6 @@ void Enemy::SetIsEscape(bool flag)
 	}
 }
 
-void Enemy::DealDamage(uint32_t damage)
-{
-	hp -= damage;
-}
-
 void Enemy::DealDamage(uint32_t damage, const Vector3& dir, ModelObj* target_)
 {
 	//無敵時間さん!?中なら攻撃を喰らわない

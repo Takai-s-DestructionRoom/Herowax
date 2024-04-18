@@ -851,9 +851,7 @@ void Player::WaxCollect()
 	}
 
 	//回収ボタンポチーw
-	if ((RInput::GetInstance()->GetPadButtonDown(XINPUT_GAMEPAD_LEFT_SHOULDER) ||
-		RInput::GetInstance()->GetLTriggerDown() ||
-		RInput::GetInstance()->GetKeyDown(DIK_Q)))
+	if (GetWaxCollectButtonDown())
 	{
 		//ロウがストック性かつ地面についてて回収できる状態なら
 		if (isWaxStock && isGround && WaxManager::GetInstance()->isCollected)
@@ -919,7 +917,7 @@ void Player::WaxCollect()
 					waxCollectAmount += 1;
 				}
 			}
-		}
+		}	
 	}
 }
 
@@ -1042,4 +1040,11 @@ void Player::DrawAttackCollider()
 		order.pipelineState = pipe.mPtr.Get();
 		Renderer::DrawCall("Opaque", order);
 	}
+}
+
+bool Player::GetWaxCollectButtonDown()
+{
+	return (RInput::GetInstance()->GetPadButtonDown(XINPUT_GAMEPAD_LEFT_SHOULDER) ||
+		RInput::GetInstance()->GetLTriggerDown() ||
+		RInput::GetInstance()->GetKeyDown(DIK_Q));
 }
