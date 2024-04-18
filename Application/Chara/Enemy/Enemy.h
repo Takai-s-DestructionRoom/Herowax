@@ -106,8 +106,6 @@ public:
 	void Update() override;
 	void Draw() override;
 
-	//ダメージを与える
-	void DealDamage(uint32_t damage);
 	//引数があればノックバックもする(その方向を向かせるために攻撃対象も入れる)
 	void DealDamage(uint32_t damage, const Vector3& dir, ModelObj* target_);
 

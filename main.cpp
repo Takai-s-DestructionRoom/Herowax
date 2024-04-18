@@ -111,9 +111,9 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 
 	//初期シーンセット
 	Util::debugBool = true;
-	SceneManager::Set<MainTestScene>();
-	//SceneManager::Set<ParticleEditorScene>();
-
+	//SceneManager::Set<MainTestScene>();
+	SceneManager::Set<ProtoScene>();
+	
 	//////////////////////////////////////
 
 	while (true) {
