@@ -311,6 +311,15 @@ void ProtoScene::Update()
 						knockVec.y = 0;
 						enemy->DealDamage(player.GetInvolvePower(),
 							knockVec, &player.obj);
+
+						//このタイミングで固まった場合も溶ける
+						if (enemy->GetIsSolid())
+						{
+							//死ぬ
+							enemy->SetDeath();
+
+							player.waxCollectAmount++;
+						}
 					}
 				}
 			}
