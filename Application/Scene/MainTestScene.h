@@ -16,7 +16,7 @@
 struct WaxData {
 	Float4 spheres[1024] = {};
 	uint32_t sphereNum = 0;
-	uint32_t rayMatchNum = 16;
+	uint32_t rayMatchNum = 100;
 	float hitThreshold = 0.001f;
 	float smoothFactor = 4;
 };
@@ -34,9 +34,9 @@ struct CameraData {
 	Matrix4 matInvViewport;
 };
 
-struct HogeData {
-	float hoge = 0.01f;
-	float hoge2 = 0.01f;
+struct BlurData {
+	float sigma = 0.01f;
+	float stepwidth = 0.001f;
 };
 
 class MainTestScene : public IScene
@@ -67,7 +67,7 @@ private:
 	SRConstBuffer<MaterialBuffer> materialBuff;
 	SRConstBuffer<CameraData> cameraBuff;
 	SRConstBuffer<WaxData> constBuff;
-	SRConstBuffer<HogeData> hogeBuff;
+	SRConstBuffer<BlurData> blurBuff;
 
 	RootSignature* GetRootSig();
 	GraphicsPipeline* GetPipeline();

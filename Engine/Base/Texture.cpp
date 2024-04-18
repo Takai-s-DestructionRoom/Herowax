@@ -4,6 +4,7 @@
 #pragma warning(push)
 #pragma warning(disable: 26813)
 #include <DirectXTex.h>
+#include <DirectXTex/d3dx12.h>
 #pragma warning(pop)
 
 #include "Color.h"
@@ -16,6 +17,30 @@ using namespace DirectX;
 void TextureManager::Init()
 {
 	HRESULT result;
+
+	//転送用コマンドアロケータを生成
+	result = RDirectX::GetDevice()->CreateCommandAllocator(
+		D3D12_COMMAND_LIST_TYPE_DIRECT,
+		IID_PPV_ARGS(&mCmdAllocator));
+	assert(SUCCEEDED(result));
+	mCmdAllocator->SetName(L"TextureTransferCmdAllocator");
+
+	//転送用コマンドリストを生成
+	result = RDirectX::GetDevice()->CreateCommandList(0,
+		D3D12_COMMAND_LIST_TYPE_DIRECT,
+		mCmdAllocator.Get(), nullptr,
+		IID_PPV_ARGS(&mCmdList));
+	assert(SUCCEEDED(result));
+	mCmdList->SetName(L"TextureTransferCmdList");
+
+	//転送用コマンドキューを生成
+	D3D12_COMMAND_QUEUE_DESC commandQueueDesc{};
+	result = RDirectX::GetDevice()->CreateCommandQueue(&commandQueueDesc, IID_PPV_ARGS(&mCmdQueue));
+	assert(SUCCEEDED(result));
+
+	//転送用フェンスを生成
+	result = RDirectX::GetDevice()->CreateFence(0, D3D12_FENCE_FLAG_NONE, IID_PPV_ARGS(&mFence));
+	assert(SUCCEEDED(result));
 
 	//デスクリプタヒープ(SRV)
 	D3D12_DESCRIPTOR_HEAP_DESC srvHeapDesc = {};
@@ -30,6 +55,52 @@ void TextureManager::Init()
 
 	RegisterInternal(GetEmptyTexture(), "PreRegisteredTex_Empty");
 	RegisterInternal(GetHogeHogeTexture(), "PreRegisteredTex_HogeHoge");
+}
+
+void TextureManager::Transfer()
+{
+	HRESULT result;
+
+	TextureManager* instance = GetInstance();
+
+	if (!instance->mRequireTransfer) return;
+	instance->mRequireTransfer = false;
+
+	//命令のクローズ
+	result = instance->mCmdList->Close();
+	assert(SUCCEEDED(result));
+	//コマンドリストの実行
+	ID3D12CommandList* cmdLists[] = { instance->mCmdList.Get() };
+	instance->mCmdQueue->ExecuteCommandLists(1, cmdLists);
+
+	instance->mCmdQueue->Signal(instance->mFence.Get(), ++instance->mFenceVal);
+	if (instance->mFence->GetCompletedValue() != instance->mFenceVal) {
+		HANDLE event = CreateEvent(nullptr, false, false, nullptr);
+		if (event != NULL) {
+			instance->mFence->SetEventOnCompletion(instance->mFenceVal, event);
+			WaitForSingleObject(event, INFINITE);
+			CloseHandle(event);
+		}
+		else {
+			assert(event != NULL);
+		}
+	}
+
+	//キューをクリア
+	result = instance->mCmdAllocator->Reset();
+	assert(SUCCEEDED(result));
+	//再びコマンドリストを貯める準備
+	result = instance->mCmdList->Reset(instance->mCmdAllocator.Get(), nullptr);
+	assert(SUCCEEDED(result));
+
+	//中間リソースの解放
+	instance->mIntermediateMap.clear();
+
+	//読み込み中フラグの解除
+	for (TextureHandle& handle : instance->mNowLoadingTextures) {
+		instance->mTextureMap[handle].mNowLoading = false;
+	}
+	instance->mNowLoadingTextures.clear();
 }
 
 Texture TextureManager::GetEmptyTexture()
@@ -281,16 +352,34 @@ TextureHandle TextureManager::LoadInternal(const std::string filepath, const std
 	std::unique_lock<std::recursive_mutex> lock(mMutex);
 	HRESULT result;
 
-	//一回読み込んだことがあるファイルはそのまま返す
-	auto itr = find_if(mTextureMap.begin(), mTextureMap.end(), [&](const std::pair<TextureHandle, Texture>& p) {
-		return p.second.mFilePath == Util::ConvertWStringToString(path.c_str());
-		});
-	if (itr != mTextureMap.end()) {
-		return itr->first;
+	//使用済みのハンドルかつそれが読み込み中だったらそのまま返す
+	//そうでなくとも同じファイル名を読み込もうとしてるなら返す
+	if (!handle.empty()) {
+		auto itr = mTextureMap.find(handle);
+		if (itr != mTextureMap.end()) {
+			if (itr->second.mNowLoading) {
+				Util::DebugLog("RKEngine WARNING : TextureManager::LoadInternal() : Tried to read into the same handle at the same time.");
+				return handle;
+			}
+			else if(itr->second.mFilePath == Util::ConvertWStringToString(path.c_str())){
+				return handle;
+			}
+		}
 	}
+	else {
+		//ハンドル未指定かつ一回読み込んだことがあるファイルはそのまま返す
+		auto itr = find_if(mTextureMap.begin(), mTextureMap.end(), [&](const std::pair<TextureHandle, Texture>& p) {
+			return p.second.mFilePath == Util::ConvertWStringToString(path.c_str());
+			});
+		if (itr != mTextureMap.end()) {
+			return itr->first;
+		}
+	}
+	
 	lock.unlock();
 
-	Texture texture = Texture(D3D12_RESOURCE_STATE_GENERIC_READ);
+	Texture texture = Texture(D3D12_RESOURCE_STATE_COPY_DEST);
+	texture.mNowLoading = true;
 	texture.mFilePath = Util::ConvertWStringToString(path.c_str());
 
 	// 画像イメージデータ
@@ -326,10 +415,7 @@ TextureHandle TextureManager::LoadInternal(const std::string filepath, const std
 	// テクスチャバッファ
 	// ヒープ設定
 	D3D12_HEAP_PROPERTIES textureHeapProp{};
-	textureHeapProp.Type = D3D12_HEAP_TYPE_CUSTOM;
-	textureHeapProp.CPUPageProperty =
-		D3D12_CPU_PAGE_PROPERTY_WRITE_BACK;
-	textureHeapProp.MemoryPoolPreference = D3D12_MEMORY_POOL_L0;
+	textureHeapProp.Type = D3D12_HEAP_TYPE_DEFAULT;
 	// リソース設定
 	D3D12_RESOURCE_DESC textureResourceDesc{};
 	textureResourceDesc.Dimension = D3D12_RESOURCE_DIMENSION_TEXTURE2D;
@@ -345,7 +431,7 @@ TextureHandle TextureManager::LoadInternal(const std::string filepath, const std
 		&textureHeapProp,
 		D3D12_HEAP_FLAG_NONE,
 		&textureResourceDesc,
-		D3D12_RESOURCE_STATE_GENERIC_READ,
+		D3D12_RESOURCE_STATE_COPY_DEST,
 		nullptr,
 		IID_PPV_ARGS(&texture.mResource)
 	);
@@ -353,21 +439,37 @@ TextureHandle TextureManager::LoadInternal(const std::string filepath, const std
 		return "FailedTextureHandle";
 	}
 
-	//てんそー
-	//全ミップマップについて
-	for (size_t i = 0; i < imgMetadata.mipLevels; i++) {
-		const Image* img = scratchImg.GetImage(i, 0, 0);
-		result = texture.mResource->WriteToSubresource(
-			(UINT)i,
-			nullptr, //全領域へコピー
-			img->pixels, //元データアドレス
-			(UINT)img->rowPitch, //1ラインサイズ
-			(UINT)img->slicePitch //1枚サイズ
-		);
-		if (FAILED(result)) {
-			return "FailedTextureHandle";
-		}
-	}
+	std::vector<D3D12_SUBRESOURCE_DATA> subResources;
+	DirectX::PrepareUpload(RDirectX::GetDevice(), scratchImg.GetImages(), scratchImg.GetImageCount(), scratchImg.GetMetadata(), subResources);
+	uint64_t intermediateSize = GetRequiredIntermediateSize(texture.mResource.Get(), 0, UINT(subResources.size()));
+
+	D3D12_HEAP_PROPERTIES imHeapProp{};
+	imHeapProp.Type = D3D12_HEAP_TYPE_UPLOAD;
+	D3D12_RESOURCE_DESC imResourceDesc{};
+	imResourceDesc.Dimension = D3D12_RESOURCE_DIMENSION_BUFFER;
+	imResourceDesc.Width = intermediateSize;
+	imResourceDesc.Height = 1;
+	imResourceDesc.DepthOrArraySize = 1;
+	imResourceDesc.MipLevels = 1;
+	imResourceDesc.SampleDesc.Count = 1;
+	imResourceDesc.Layout = D3D12_TEXTURE_LAYOUT_ROW_MAJOR;
+
+	lock.lock();
+	// 定数バッファの生成
+	result = RDirectX::GetDevice()->CreateCommittedResource(
+		&imHeapProp,
+		D3D12_HEAP_FLAG_NONE,
+		&imResourceDesc,
+		D3D12_RESOURCE_STATE_GENERIC_READ,
+		nullptr,
+		IID_PPV_ARGS(&mIntermediateMap[texture.mResource.Get()])
+	);
+	assert(SUCCEEDED(result));
+
+	UpdateSubresources(mCmdList.Get(), texture.mResource.Get(), mIntermediateMap[texture.mResource.Get()].Get(), 0, 0, UINT(subResources.size()), subResources.data());
+	texture.ChangeResourceState(D3D12_RESOURCE_STATE_GENERIC_READ, mCmdList.Get());
+	mRequireTransfer = true;
+	lock.unlock();
 
 	return RegisterInternal(texture, handle);
 }
@@ -550,6 +652,7 @@ TextureHandle TextureManager::RegisterInternal(Texture texture, TextureHandle ha
 
 	lock.lock();
 	mTextureMap[handle] = texture;
+	if (texture.mNowLoading) mNowLoadingTextures.push_back(handle);
 	return handle;
 }
 
@@ -634,15 +737,17 @@ void TextureManager::UnRegisterAll()
 	manager->mTextureMap.clear();
 }
 
-void Texture::ChangeResourceState(D3D12_RESOURCE_STATES state)
+void Texture::ChangeResourceState(D3D12_RESOURCE_STATES state, ID3D12GraphicsCommandList* cmdList)
 {
 	if (mState == state) return;
 	D3D12_RESOURCE_BARRIER barrierDesc{};
 	barrierDesc.Transition.pResource = mResource.Get();
+	barrierDesc.Transition.Subresource = D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES;
 	barrierDesc.Transition.StateBefore = mState;
 	barrierDesc.Transition.StateAfter = state;
 
-	RDirectX::GetCommandList()->ResourceBarrier(1, &barrierDesc);
+	if(cmdList) cmdList->ResourceBarrier(1, &barrierDesc);
+	else RDirectX::GetCommandList()->ResourceBarrier(1, &barrierDesc);
 	mState = state;
 }
 
