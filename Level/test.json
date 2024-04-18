@@ -482,7 +482,7 @@
                 ]
             },
             "setObject": "EnemySpawner",
-            "spawnerOrder": "test2"
+            "spawnerOrder": "03262"
         },
         {
             "type": "MESH",
@@ -505,7 +505,7 @@
                 ]
             },
             "setObject": "EnemySpawner",
-            "spawnerOrder": "order"
+            "spawnerOrder": "0326"
         }
     ]
 }
