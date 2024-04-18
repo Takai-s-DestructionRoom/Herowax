@@ -12,7 +12,7 @@ MainTestScene::MainTestScene()
 	skydome = ModelObj(Model::Load("./Resources/Model/Skydome/Skydome.obj", "Skydome", true));
 	testObj = ModelObj(Model::Load("./Resources/Model/Sphere.obj", "Sphere", true));
 
-	camera.mViewProjection.mEye = { 0, 0, -10 };
+	camera.mViewProjection.mEye = { 0, 0, -30 };
 	camera.mViewProjection.mTarget = { 0, 0, 0 };
 	camera.mViewProjection.UpdateMatrix();
 
@@ -26,14 +26,19 @@ MainTestScene::MainTestScene()
 	vertBuff.Init(verts);
 	indexBuff.Init(indices);
 
-	spheres.push_back({ 0, 0, 0, 1 });
+	for (int32_t i = 0; i < sphereCreateNum; i++) {
+		spheres.push_back({ Util::GetRand(-15.0f, 15.0f), Util::GetRand(-15.0f, 15.0f), Util::GetRand(-15.0f, 15.0f), Util::GetRand(1.0f, 3.0f) });
+	}
+	for (size_t i = 0; i < spheres.size(); i++) {
+		constBuff->spheres[i] = spheres[i];
+	}
 
 	rtTex = RenderTarget::CreateRenderTexture(RWindow::GetWidth() / 4, RWindow::GetHeight() / 4, { 0, 0, 0, 0 }, "MainTestScene_RT");
 }
 
 MainTestScene::~MainTestScene()
 {
-	RenderTarget::DeleteRenderTextureAtEndFrame(rtTex);
+	//RenderTarget::DeleteRenderTextureAtEndFrame(rtTex);
 }
 
 void MainTestScene::Init()
@@ -54,8 +59,17 @@ void MainTestScene::Update()
 	ImGui::DragFloat("SmoothFactor", &constBuff->smoothFactor, 0.01f, 0, FLT_MAX);
 	ImGui::DragInt("SphereCreateNum", &sphereCreateNum);
 	ImGui::Separator();
-	ImGui::DragFloat("sigma", &hogeBuff->hoge, 0.001f);
-	ImGui::DragFloat("stepwidth", &hogeBuff->hoge2, 0.001f, 0.0001f, 114514.0f, "%.3f", ImGuiSliderFlags_ClampOnInput);
+	ImGui::DragFloat("sigma", &blurBuff->sigma, 0.001f);
+	ImGui::DragFloat("stepwidth", &blurBuff->stepwidth, 0.001f, 0.001f, 114514.0f, "%.3f", ImGuiSliderFlags_ClampOnInput);
+	if (ImGui::Button("再生成")) {
+		spheres.clear();
+		for (int32_t i = 0; i < sphereCreateNum; i++) {
+			spheres.push_back({ Util::GetRand(-15.0f, 15.0f), Util::GetRand(-15.0f, 15.0f), Util::GetRand(-15.0f, 15.0f), Util::GetRand(1.0f, 3.0f) });
+		}
+		for (size_t i = 0; i < spheres.size(); i++) {
+			constBuff->spheres[i] = spheres[i];
+		}
+	}
 	ImGui::End();
 
 	light.Update();
@@ -74,10 +88,9 @@ void MainTestScene::Update()
 		for (int32_t i = 0; i < sphereCreateNum; i++) {
 			spheres.push_back({ Util::GetRand(-15.0f, 15.0f), Util::GetRand(-15.0f, 15.0f), Util::GetRand(-15.0f, 15.0f), Util::GetRand(1.0f, 3.0f) });
 		}
-	}
-
-	for (size_t i = 0; i < spheres.size(); i++) {
-		constBuff->spheres[i] = spheres[i];
+		for (size_t i = 0; i < spheres.size(); i++) {
+			constBuff->spheres[i] = spheres[i];
+		}
 	}
 
 	constBuff->sphereNum = static_cast<uint32_t>(spheres.size());
@@ -141,7 +154,7 @@ void MainTestScene::Draw()
 	orderB.rootData = {
 		{ rtTex->GetTexture().mGpuHandle },
 		{ rtTex->GetDepthTexture().mGpuHandle },
-		{ RootDataType::SRBUFFER_CBV, hogeBuff.mBuff }
+		{ RootDataType::SRBUFFER_CBV, blurBuff.mBuff }
 	};
 	orderB.mRootSignature = GetRootSigB()->mPtr.Get();
 	orderB.pipelineState = GetPipelineB()->mPtr.Get();

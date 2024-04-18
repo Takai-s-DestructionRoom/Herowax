@@ -10,12 +10,12 @@ struct PS_OUT
     float depth : SV_DEPTH;
 };
 
-struct HogeData
+struct BlurData
 {
     float sigma;
     float stepwidth;
 };
-ConstantBuffer<HogeData> hoge : register(b0);
+ConstantBuffer<BlurData> blur : register(b0);
 
 float Gaussian(float2 drawUV, float2 pickUV, float sigma)
 {
@@ -27,18 +27,25 @@ PS_OUT main(VSOUT input)
 {
     PS_OUT output;
     
+    if (blur.sigma == 0)
+    {
+        output.color = tex.Sample(smp, input.uv);
+        output.depth = depthtex.Sample(smp, input.uv);
+        return output;
+    }
+    
     float totalWeight = 0;
     float4 col;
     float depth;
     
     [loop]
-    for (float py = -hoge.sigma * 2; py <= hoge.sigma * 2; py += hoge.stepwidth)
+    for (float py = -blur.sigma * 2; py <= blur.sigma * 2; py += blur.stepwidth)
     {
         [loop]
-        for (float px = -hoge.sigma * 2; px <= hoge.sigma * 2; px += hoge.stepwidth)
+        for (float px = -blur.sigma * 2; px <= blur.sigma * 2; px += blur.stepwidth)
         {
             float2 pickUV = input.uv + float2(px, py);
-            float weight = Gaussian(input.uv, pickUV, hoge.sigma);
+            float weight = Gaussian(input.uv, pickUV, blur.sigma);
             col += tex.Sample(smp, pickUV) * weight;
             depth += depthtex.Sample(smp, pickUV) * weight;
             totalWeight += weight;

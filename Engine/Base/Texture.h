@@ -9,6 +9,7 @@
 #pragma warning(push, 0)
 #include <d3d12.h>
 #include <string>
+#include <vector>
 #include <list>
 #include <wrl.h>
 #include <memory>
@@ -30,6 +31,7 @@ public:
 	D3D12_GPU_DESCRIPTOR_HANDLE mGpuHandle = D3D12_GPU_DESCRIPTOR_HANDLE(); //SRVのハンドル(GPU側)
 	uint32_t mHeapIndex = UINT32_MAX;
 	std::string mFilePath; //ファイルへのパス
+	bool mNowLoading = false;
 
 	Texture() : mState(D3D12_RESOURCE_STATE_COMMON) {};
 	Texture(D3D12_RESOURCE_STATES firstState) : mState(firstState) {};
@@ -39,7 +41,8 @@ public:
 	/// この関数以外からリソースステートを変更すると良くないことが起きます
 	/// </summary>
 	/// <param name="state">変更先リソースステート</param>
-	void ChangeResourceState(D3D12_RESOURCE_STATES state);
+	/// <param name="cmdList>使用するコマンドリスト(通常指定する必要はなし</param>
+	void ChangeResourceState(D3D12_RESOURCE_STATES state, ID3D12GraphicsCommandList* cmdList = nullptr);
 
 	// テクスチャの現在のリソースステートを取得します
 	D3D12_RESOURCE_STATES GetResourceState() const {
@@ -66,6 +69,9 @@ public:
 		static TextureManager instance;
 		return &instance;
 	}
+
+	//読み込んだテクスチャをGPUへ転送
+	static void Transfer();
 
 	static Texture GetEmptyTexture();
 	static Texture GetHogeHogeTexture();
@@ -168,8 +174,20 @@ private:
 	void EndFrameProcessInternal();
 
 	std::recursive_mutex mMutex;
+
+	//テクスチャ転送用のリスト達
+	bool mRequireTransfer = false;
+	Microsoft::WRL::ComPtr<ID3D12CommandAllocator> mCmdAllocator = nullptr;
+	Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList> mCmdList = nullptr;
+	Microsoft::WRL::ComPtr<ID3D12CommandQueue> mCmdQueue = nullptr;
+	Microsoft::WRL::ComPtr<ID3D12Fence> mFence = nullptr;
+	size_t mFenceVal = 0;
+
+	//ヒープくん
 	static const uint32_t NUM_SRV_DESCRIPTORS = 2048; //デスクリプタヒープの数
 	Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> mSrvHeap; //テクスチャ用SRVデスクリプタヒープ
 	std::map<TextureHandle, Texture> mTextureMap;
+	std::vector<TextureHandle> mNowLoadingTextures;
+	std::map<ID3D12Resource*, Microsoft::WRL::ComPtr<ID3D12Resource>> mIntermediateMap;
 	std::list<TextureHandle> mUnregisterScheduledList; //UnRegisterAtEndFrame予定リスト
 };
