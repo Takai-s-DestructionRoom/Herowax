@@ -1,6 +1,7 @@
 #include "CollectZone.h"
 #include "Camera.h"
 #include "InstantDrawer.h"
+#include "Parameter.h"
 
 void CollectZone::Init()
 {
@@ -13,6 +14,8 @@ void CollectZone::Init()
 
 	anvpos = { Util::WIN_WIDTH / 2,Util::WIN_HEIGHT / 2 };
 	hampos = { Util::WIN_WIDTH / 2 + 100.f,Util::WIN_HEIGHT / 2 - 100.f };
+
+	
 }
 
 void CollectZone::Update()
