@@ -14,6 +14,9 @@
 #include "BossPart.h"
 #include "Level.h"
 #include "BossDeadState.h"
+#include "TitleScene.h"
+#include "SceneManager.h"
+#include "SimpleSceneTransition.h"
 
 Player::Player() :GameObject(),
 moveSpeed(1.f), moveAccelAmount(0.05f), isGround(true), hp(0), maxHP(10.f),
@@ -190,6 +193,11 @@ void Player::Update()
 	//HP0になったら死ぬ
 	if (hp <= 0)
 	{
+		//死んだ瞬間なら遷移を呼ぶ
+		if (isAlive) {
+			//シーン遷移
+			SceneManager::GetInstance()->Change<TitleScene, SimpleSceneTransition>();
+		}
 		isAlive = false;
 	}
 

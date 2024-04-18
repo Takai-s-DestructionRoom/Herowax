@@ -295,10 +295,13 @@ void ProtoScene::Update()
 				//回収中ものと通常の状態なら
 				if (isCollision && wax->stateStr == "WaxCollect")
 				{
-					//死ぬ
-					enemy->SetDeath();
+					//固まってるなら
+					if (enemy->GetIsSolid()) {
+						//死ぬ
+						enemy->SetDeath();
 
-					player.waxCollectAmount++;
+						player.waxCollectAmount++;
+					}
 				}
 			}
 		}
