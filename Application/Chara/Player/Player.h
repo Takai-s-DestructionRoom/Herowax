@@ -31,6 +31,7 @@ public:
 	Vector3 stickVec = { 0,0,1 };	//正面ベクトル
 	Vector3 initPos = { 0,0,0 };	//初期位置
 	Vector3 initRot = { 0,0,0 };	//初期向き
+	bool isMove;					//行動可能かフラグ
 
 	//------------ 回転関連 ------------//
 	Vector3 rotVec;				//回転ベクトル

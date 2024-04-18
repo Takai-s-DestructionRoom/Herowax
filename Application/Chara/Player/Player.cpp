@@ -109,6 +109,8 @@ void Player::Init()
 	rot.z = Util::AngleToRadian(initRot.z);
 	obj.mTransform.rotation = rot;
 	obj.mTransform.UpdateMatrix();
+
+	isMove = true;
 }
 
 void Player::Reset()
@@ -132,22 +134,31 @@ void Player::Update()
 	//パッド接続してたら
 	if (RInput::GetInstance()->GetPadConnect())
 	{
-		MovePad();
+		if (isMove)
+		{
+			MovePad();
+		}
 	}
 	else
 	{
-		MoveKey();
+		if (isMove)
+		{
+			MoveKey();
+		}
 	}
 
-	Rotation();
+	if (isMove)
+	{
+		Rotation();
 
-	attackState->Update(this);
-	//前のステートと異なれば
-	if (changingState) {
-		//ステートを変化させる
-		std::swap(attackState, nextState);
-		changingState = false;
-		nextState = nullptr;
+		attackState->Update(this);
+		//前のステートと異なれば
+		if (changingState) {
+			//ステートを変化させる
+			std::swap(attackState, nextState);
+			changingState = false;
+			nextState = nullptr;
+		}
 	}
 
 	//-----------クールタイム管理-----------//
@@ -255,7 +266,7 @@ void Player::Update()
 		Util::Clamp(obj.mTransform.position.z,
 			Level::Get()->moveLimitMin.y - obj.mTransform.scale.z,
 			Level::Get()->moveLimitMax.y + obj.mTransform.scale.z);
-	
+
 	UpdateCollider();
 	UpdateAttackCollider();
 
@@ -494,7 +505,7 @@ void Player::MovePad()
 		Vector3 emitterPos = GetCenterPos();
 
 		ParticleManager::GetInstance()->AddRing(
-			emitterPos,"player_jump_ring");
+			emitterPos, "player_jump_ring");
 	}
 
 	//ジャンプ中は
@@ -843,72 +854,75 @@ void Player::WaxCollect()
 	}
 
 	//回収ボタンポチーw
-	if ((RInput::GetInstance()->GetPadButtonDown(XINPUT_GAMEPAD_LEFT_SHOULDER) ||
-		RInput::GetInstance()->GetLTriggerDown() ||
-		RInput::GetInstance()->GetKeyDown(DIK_Q)))
+	if (isMove)
 	{
-		//ロウがストック性かつ地面についてて回収できる状態なら
-		if (isWaxStock && isGround && WaxManager::GetInstance()->isCollected)
+		if ((RInput::GetInstance()->GetPadButtonDown(XINPUT_GAMEPAD_LEFT_SHOULDER) ||
+			RInput::GetInstance()->GetLTriggerDown() ||
+			RInput::GetInstance()->GetKeyDown(DIK_Q)))
 		{
-			if (isCollectFan)
+			//ロウがストック性かつ地面についてて回収できる状態なら
+			if (isWaxStock && isGround && WaxManager::GetInstance()->isCollected)
 			{
-				//ロウ回収
-				WaxManager::GetInstance()->CollectFan(collectColFan, GetFrontVec(), waxCollectAngle);
-			}
-			else
-			{
-				//ロウ回収
-				waxCollectAmount += WaxManager::GetInstance()->Collect(collectCol, waxCollectVertical);
-			}
-		}
-		//腕吸収
-		if (boss->parts[(int32_t)PartsNum::LeftHand].isCollected) {
-			if (RayToSphereCol(collectCol, boss->parts[(int32_t)PartsNum::LeftHand].collider))
-			{
-				//今のロウとの距離
-				float len = (collectCol.start - 
-					boss->parts[(int32_t)PartsNum::LeftHand].GetPos()).Length();
-
-				//見たロウが範囲外ならスキップ
-				if (waxCollectVertical >= len) {
-					//とりあえず壊しちゃう
-					boss->parts[(int32_t)PartsNum::LeftHand].collectPos = collectCol.start;
-					boss->parts[(int32_t)PartsNum::LeftHand].ChangeState<BossPartCollect>();
-					waxCollectAmount += 1;
+				if (isCollectFan)
+				{
+					//ロウ回収
+					WaxManager::GetInstance()->CollectFan(collectColFan, GetFrontVec(), waxCollectAngle);
+				}
+				else
+				{
+					//ロウ回収
+					waxCollectAmount += WaxManager::GetInstance()->Collect(collectCol, waxCollectVertical);
 				}
 			}
-		}
-		if (boss->parts[(int32_t)PartsNum::RightHand].isCollected) {
-			if (ColPrimitive3D::RayToSphereCol(collectCol, boss->parts[(int32_t)PartsNum::RightHand].collider))
-			{
-				//今のロウとの距離
-				float len = (collectCol.start -
-					boss->parts[(int32_t)PartsNum::RightHand].GetPos()).Length();
+			//腕吸収
+			if (boss->parts[(int32_t)PartsNum::LeftHand].isCollected) {
+				if (RayToSphereCol(collectCol, boss->parts[(int32_t)PartsNum::LeftHand].collider))
+				{
+					//今のロウとの距離
+					float len = (collectCol.start -
+						boss->parts[(int32_t)PartsNum::LeftHand].GetPos()).Length();
 
-				//見たロウが範囲外ならスキップ
-				if (waxCollectVertical >= len) {
-					//とりあえず壊しちゃう
-					boss->parts[(int32_t)PartsNum::RightHand].collectPos = collectCol.start;
-					boss->parts[(int32_t)PartsNum::RightHand].ChangeState<BossPartCollect>();
-					//腕の吸収値も変数化したい
-					waxCollectAmount += 1;
+					//見たロウが範囲外ならスキップ
+					if (waxCollectVertical >= len) {
+						//とりあえず壊しちゃう
+						boss->parts[(int32_t)PartsNum::LeftHand].collectPos = collectCol.start;
+						boss->parts[(int32_t)PartsNum::LeftHand].ChangeState<BossPartCollect>();
+						waxCollectAmount += 1;
+					}
 				}
 			}
-		}
+			if (boss->parts[(int32_t)PartsNum::RightHand].isCollected) {
+				if (ColPrimitive3D::RayToSphereCol(collectCol, boss->parts[(int32_t)PartsNum::RightHand].collider))
+				{
+					//今のロウとの距離
+					float len = (collectCol.start -
+						boss->parts[(int32_t)PartsNum::RightHand].GetPos()).Length();
 
-		//本体吸収
-		if (boss->GetStateStr() == "Collected") {
-			if (RayToSphereCol(collectCol,boss->collider))
-			{
-				//今のロウとの距離
-				float len = (collectCol.start -
-					boss->GetPos()).Length();
+					//見たロウが範囲外ならスキップ
+					if (waxCollectVertical >= len) {
+						//とりあえず壊しちゃう
+						boss->parts[(int32_t)PartsNum::RightHand].collectPos = collectCol.start;
+						boss->parts[(int32_t)PartsNum::RightHand].ChangeState<BossPartCollect>();
+						//腕の吸収値も変数化したい
+						waxCollectAmount += 1;
+					}
+				}
+			}
 
-				//見たロウが範囲外ならスキップ
-				if (waxCollectVertical >= len) {
-					boss->collectPos = collectCol.start;
-					boss->ChangeState<BossDeadState>();
-					waxCollectAmount += 1;
+			//本体吸収
+			if (boss->GetStateStr() == "Collected") {
+				if (RayToSphereCol(collectCol, boss->collider))
+				{
+					//今のロウとの距離
+					float len = (collectCol.start -
+						boss->GetPos()).Length();
+
+					//見たロウが範囲外ならスキップ
+					if (waxCollectVertical >= len) {
+						boss->collectPos = collectCol.start;
+						boss->ChangeState<BossDeadState>();
+						waxCollectAmount += 1;
+					}
 				}
 			}
 		}

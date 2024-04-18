@@ -15,6 +15,7 @@
 #include "Minimap.h"
 #include "CollectPartManager.h"
 #include "BossAppearanceScene.h"
+#include "SceneTrance.h"
 
 ProtoScene::ProtoScene()
 {
@@ -80,11 +81,19 @@ void ProtoScene::Update()
 	InstantDrawer::DrawInit();
 	WaxManager::GetInstance()->slimeWax.Reset();
 
+	if (RInput::GetInstance()->GetKeyDown(DIK_T))
+	{
+		SceneTrance::GetInstance()->Start();
+	}
+	SceneTrance::GetInstance()->Update();
+
 	//イベントシーンに遷移
-	if (RInput::GetInstance()->GetKeyDown(DIK_B))
+	if (boss.isAppearance == false && SceneTrance::GetInstance()->GetIsChange())
 	{
 		eventScene = std::make_unique<BossAppearanceScene>();
 		eventScene->Init(boss.GetCenterPos() + Vector3::UP * 20.f);
+
+		SceneTrance::GetInstance()->SetIsChange(false);	//忘れずに
 	}
 
 	//イベントシーン中なら
@@ -92,6 +101,8 @@ void ProtoScene::Update()
 	{
 		eventScene->Update();
 		boss.isAppearance = true;
+
+		player.isMove = false;
 	}
 	
 	//イベントシーンが終わりカメラが空っぽになったら
@@ -99,6 +110,8 @@ void ProtoScene::Update()
 	{
 		gameCamera.Init();	//カメラ入れる
 		boss.isAppearance = false;
+
+		player.isMove = true;
 	}
 
 	gameCamera.Update();
@@ -493,6 +506,8 @@ void ProtoScene::Draw()
 	//更新
 	InstantDrawer::AllUpdate();
 	InstantDrawer::AllDraw2D();
+
+	SceneTrance::GetInstance()->Draw();
 }
 
 void ProtoScene::MinimapCameraUpdate()
