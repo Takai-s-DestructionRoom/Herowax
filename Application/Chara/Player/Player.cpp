@@ -229,22 +229,40 @@ void Player::Update()
 	//回転を適用
 	obj.mTransform.rotation = rotVec;
 
-	//移動制限
-	for (auto& wall : Level::Get()->wall)
+	/*bool isCollision = false;
+	uint32_t colCount = 0;
+	Vector3 plusVec{};*/
+
+	//移動制限(フェンス準拠)
+	/*for (auto& wall : Level::Get()->wallCol)
 	{
-		if (Level::Get()->moveLimitMax.x < wall.mTransform.position.x) {
-			Level::Get()->moveLimitMax.x = wall.mTransform.position.x;
-		}
-		if (Level::Get()->moveLimitMax.y < wall.mTransform.position.z) {
-			Level::Get()->moveLimitMax.y = wall.mTransform.position.z;
-		}
-		if (Level::Get()->moveLimitMin.x > wall.mTransform.position.x) {
-			Level::Get()->moveLimitMin.x = wall.mTransform.position.x;
-		}
-		if (Level::Get()->moveLimitMin.y > wall.mTransform.position.z) {
-			Level::Get()->moveLimitMin.y = wall.mTransform.position.z;
+		if (ColPrimitive3D::CheckSphereToPlane(collider, wall))
+		{
+			float len = wall.distance - Vector2(obj.mTransform.position.x, obj.mTransform.position.z).Length();
+			if (len < collider.r)
+			{
+				plusVec += wall.normal * len;
+			}
+
+			colCount++;
 		}
 	}
+
+	if (colCount > 0)
+	{
+		isCollision = true;
+		obj.mTransform.position += plusVec;
+	}
+
+	if (isCollision)
+	{
+		obj.mTuneMaterial.mColor = Color::kPink;
+	}
+	else
+	{
+		obj.mTuneMaterial.mColor = Color::kWhite;
+	}*/
+
 
 	//無敵モードなら
 	if (isGodmode)
@@ -265,6 +283,23 @@ void Player::Update()
 		obj.mTuneMaterial.mColor = defColor;
 
 		godmodeTimer.Reset();
+	}
+
+	//移動範囲設定
+	for (auto& wall : Level::Get()->wall)
+	{
+		if (Level::Get()->moveLimitMax.x < wall.mTransform.position.x) {
+			Level::Get()->moveLimitMax.x = wall.mTransform.position.x;
+		}
+		if (Level::Get()->moveLimitMax.y < wall.mTransform.position.z) {
+			Level::Get()->moveLimitMax.y = wall.mTransform.position.z;
+		}
+		if (Level::Get()->moveLimitMin.x > wall.mTransform.position.x) {
+			Level::Get()->moveLimitMin.x = wall.mTransform.position.x;
+		}
+		if (Level::Get()->moveLimitMin.y > wall.mTransform.position.z) {
+			Level::Get()->moveLimitMin.y = wall.mTransform.position.z;
+		}
 	}
 
 	//移動制限
@@ -304,8 +339,8 @@ void Player::Update()
 
 	ImGui::Begin("Player");
 
-	ImGui::Text("現在のHP:%f",hp);
-	ImGui::InputFloat("最大HP:",&maxHP,1.0f);
+	ImGui::Text("現在のHP:%f", hp);
+	ImGui::InputFloat("最大HP:", &maxHP, 1.0f);
 	ImGui::Text("Lスティック移動、Aボタンジャンプ、Rで攻撃,Lでロウ回収");
 	ImGui::Text("WASD移動、スペースジャンプ、右クリで攻撃,Pでパブロ攻撃,Qでロウ回収");
 
@@ -342,7 +377,7 @@ void Player::Update()
 	{
 		ImGui::Text("攻撃中か:%d", isAttack);
 		ImGui::Checkbox("ロウをストック性にするか", &isWaxStock);
-		
+
 		ImGui::InputInt("敵に与えるダメージ", &atkPower, 1);
 		ImGui::DragFloat("攻撃範囲_横", &pabloSideRange, 0.1f);
 		ImGui::DragFloat("攻撃範囲_最小", &minRange, 0.1f);
@@ -353,7 +388,7 @@ void Player::Update()
 		ImGui::InputInt("一度に出るロウの数", &waxNum, 1);
 		ImGui::InputInt("ロウの最大ストック数", &maxWaxStock, 1, 100);
 		ImGui::Text("現在のロウのストック数:%d", waxStock);
-		
+
 		ImGui::TreePop();
 	}
 	if (ImGui::TreeNode("ロウ回収系"))
@@ -757,14 +792,19 @@ void Player::WaxCollect()
 	collectRangeModelCircle.mTransform = obj.mTransform;
 	collectRangeModelCircle.mTransform.scale = { waxCollectDist,0.1f,waxCollectDist };
 
-	//大きさ分前に置く
-	Vector3 frontVec = GetFrontVec();
-	frontVec.y = 0;
-	collectRangeModel.mTransform.position += frontVec * waxCollectVertical * 0.5f;
+	//当たり判定で使うレイの設定
+	Vector3 dir = Camera::sNowCamera->mViewProjection.mTarget - Camera::sNowCamera->mViewProjection.mEye;
+	dir.y = 0;
+	collectCol.dir = dir.Normalize();
+	collectCol.start = GetFootPos();
+	collectCol.radius = waxCollectRange * 0.5f;
 
-	//xとz軸は回転してほしくないので無理やり0に
-	collectRangeModel.mTransform.rotation.x = 0;
-	collectRangeModel.mTransform.rotation.z = 0;
+	//大きさ分前に置く
+	collectRangeModel.mTransform.position += collectCol.dir * waxCollectVertical * 0.5f;
+
+	//回転
+	Quaternion lookat = Quaternion::LookAt(collectCol.dir);
+	collectRangeModel.mTransform.rotation = lookat.ToEuler();
 
 	//更新
 	collectRangeModel.mTransform.UpdateMatrix();
@@ -772,11 +812,6 @@ void Player::WaxCollect()
 
 	collectRangeModelCircle.mTransform.UpdateMatrix();
 	collectRangeModelCircle.TransferBuffer(Camera::sNowCamera->mViewProjection);
-
-	//当たり判定で使うレイの設定
-	collectCol.dir = GetFrontVec();
-	collectCol.start = GetFootPos();
-	collectCol.radius = waxCollectRange * 0.5f;
 
 	//当たり判定で使う球の設定
 	collectColFan.pos = GetFootPos();
