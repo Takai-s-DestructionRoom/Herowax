@@ -329,33 +329,17 @@ void Player::Update()
 	if (ImGui::TreeNode("攻撃系"))
 	{
 		ImGui::Text("攻撃中か:%d", isAttack);
-		ImGui::Checkbox("攻撃中でも次の攻撃を出せるか", &isMugenAttack);
 		ImGui::Checkbox("ロウをストック性にするか", &isWaxStock);
-		ImGui::Checkbox("回収範囲を扇型にするか", &isCollectFan);
-		ImGui::Checkbox("炎をストック性にするか", &isFireStock);
-
+		
 		ImGui::InputInt("敵に与えるダメージ", &atkPower, 1);
-		ImGui::SliderFloat("攻撃時間", &atkTimer.maxTime_, 0.f, 2.f);
-		ImGui::SliderFloat("射出速度", &atkSpeed, 0.f, 2.f);
-		ImGui::SliderFloat("射出高度", &atkHeight, 0.f, 3.f);
-		ImGui::SliderFloat("攻撃範囲", &atkRange, 0.f, 10.f);
-		ImGui::SliderFloat("クールタイム", &atkCoolTimer.maxTime_, 0.f, 2.f);
-		ImGui::SliderFloat("固まるまでの時間", &solidTimer.maxTime_, 0.f, 10.f);
-		ImGui::InputInt("ロウの最大ストック数", &maxWaxStock, 1, 100);
-		ImGui::Text("ロウのストック数:%d", waxStock);
-
-		ImGui::TreePop();
-	}
-	if (ImGui::TreeNode("パブロアタック"))
-	{
-		ImGui::Text("スティックの入力:%f", abs(RInput::GetInstance()->GetPadLStick().LengthSq()));
-		ImGui::SliderFloat("ショットが出る基準", &shotDeadZone, 0.0f, 2.0f);
+		ImGui::DragFloat("攻撃範囲_横", &pabloSideRange, 0.1f);
+		ImGui::DragFloat("攻撃範囲_奥", &atkSpeed, 0.1f);
+		ImGui::DragFloat("射出高度", &atkHeight, 0.1f);
+		ImGui::DragFloat("クールタイム", &atkCoolTimer.maxTime_, 0.1f);
 		ImGui::InputInt("一度に出るロウの数", &waxNum, 1);
-		ImGui::SliderFloat("奥方向への広がり", &pabloRange, 0.0f, 10.f);
-		ImGui::SliderFloat("横の広がり", &pabloSideRange, 0.0f, 10.f);
-		ImGui::SliderFloat("パブロ攻撃時の移動速度低下係数", &pabloSpeedMag, 0.0f, 1.0f);
-		ImGui::SliderFloat("パブロ攻撃を移動しながら撃った時の係数", &pabloShotSpeedMag, 1.0f, 5.f);
-
+		ImGui::InputInt("ロウの最大ストック数", &maxWaxStock, 1, 100);
+		ImGui::Text("現在のロウのストック数:%d", waxStock);
+		
 		ImGui::TreePop();
 	}
 	if (ImGui::TreeNode("ロウ回収系"))
