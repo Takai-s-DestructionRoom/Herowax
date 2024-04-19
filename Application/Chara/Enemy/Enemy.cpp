@@ -40,6 +40,8 @@ gravity(0.2f)
 	predictionLine.mTuneMaterial.mSpecular = Vector3::ZERO;
 	
 	attackDrawerObj = ModelObj(Model::Load("./Resources/Model/Sphere.obj", "Sphere", true));
+
+	loadData = EnemyBehaviorEditor::Load("test");
 }
 
 Enemy::~Enemy()
@@ -127,10 +129,8 @@ void Enemy::Update()
 
 	///-------------移動、回転の加算--------------///
 
-	//プレイヤーに向かって移動するAI
-	//普段はプレイヤーにではなく、ランダムだったり特定方向へ進み続けて、
-	//ぶつかって初めてターゲットに入れるようにしたい
-	Vector3 pVec = target->mTransform.position - obj.mTransform.position;
+	//通常移動をオーダーをもとにやる
+	Vector3 pVec = loadData.GetMoveVec();
 	pVec.Normalize();
 	pVec.y = 0;
 

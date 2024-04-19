@@ -7,6 +7,7 @@
 #include "Quaternion.h"
 #include "Vector2.h"
 #include "EnemyAttackState.h"
+#include "EnemyBehaviorEditor.h"
 
 class Enemy : public GameObject
 {
@@ -69,6 +70,9 @@ private:
 	std::string stateStr;			//状態を文字列で保存
 	
 	EnemyUI ui;	//HP表示
+
+	BehaviorData loadData;
+	std::string loadFileName = "";
 
 public:
 	Easing::EaseTimer solidTimer;	//動けなくなっている時間
