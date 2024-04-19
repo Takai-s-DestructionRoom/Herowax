@@ -52,10 +52,11 @@ void CollectPart::Update()
 	//ターゲットにつかまっているなら、そっちの座標に合うように上書きする
 	if (target != nullptr)
 	{
-		//一旦ターゲットの位置に合わせる
-		//後で位置調整する
+		//ターゲットの後ろにつく
 		collectPos = target->GetPos();
-		collectPos.y += GetScale().y * collectNum;
+		Vector3 frontVec = target->GetFrontVec();
+		frontVec.y = 0;
+		collectPos -= frontVec * (GetScale().x * GetScale().z) / 2 * (float)collectNum;
 		obj.mTransform.position = collectPos;
 	}
 
