@@ -195,7 +195,7 @@ void Player::Update()
 	if (hp <= 0)
 	{
 		//死んだ瞬間なら遷移を呼ぶ
-		if (isAlive) {
+		if (isAlive && !Util::debugBool) {
 			//シーン遷移
 			SceneManager::GetInstance()->Change<TitleScene, SimpleSceneTransition>();
 		}
