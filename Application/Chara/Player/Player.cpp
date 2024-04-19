@@ -74,7 +74,7 @@ isFireStock(false), isWaxStock(true), isCollectFan(false), maxWaxStock(20)
 	maxHP = Parameter::GetParam(extract,"最大HP", 10.0f);
 
 	minRange = Parameter::GetParam(extract,"攻撃範囲_最小", minRange);
-	maxRange = = Parameter::GetParam(extract, "攻撃範囲_最大", maxRange);
+	maxRange = Parameter::GetParam(extract, "攻撃範囲_最大", maxRange);
 }
 
 void Player::Init()
