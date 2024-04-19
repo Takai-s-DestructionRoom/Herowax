@@ -34,7 +34,7 @@ void BossAppearance::Update(Boss* boss)
 
 			splinePoints[i] = {
 				boss->parts[i].oriPos,					//元の座標から
-				boss->parts[i].oriPos + (boss->GetFrontVec() * sideVec * 20.f),		//横に膨らませる
+				boss->parts[i].oriPos + (boss->GetFrontVec() * sideVec * 30.f),		//横に膨らませる
 				Camera::sNowCamera->mViewProjection.mEye - handToTarget[i] * 50.f	//目標地点まで
 			};
 		}

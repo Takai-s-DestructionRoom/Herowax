@@ -1,10 +1,14 @@
 #include "BossAppearanceScene.h"
 #include "InstantDrawer.h"
-#include "Boss.h"
+#include "SceneTrance.h"
+
+BossAppearanceScene::BossAppearanceScene()
+{
+	TextureManager::Load("./Resources/boss.png", "boss");
+}
 
 BossAppearanceScene::~BossAppearanceScene()
 {
-	TextureManager::Load("./Resources/boss.png", "boss");
 }
 
 void BossAppearanceScene::Init(const Vector3 target)
@@ -39,13 +43,22 @@ void BossAppearanceScene::Update()
 	textOriSize = { 2.5f,2.5f };
 	textSize = textOriSize * Easing::OutBack(textEaseTimer.GetTimeRate());
 
+	//イベントシーン終わったらシーン遷移開始
 	if (eventTimer.GetEnd())
+	{
+		SceneTrance::GetInstance()->Start();
+	}
+
+	//切り替えても良くなったら切り替えして終了
+	if (eventTimer.GetEnd() && SceneTrance::GetInstance()->GetIsChange())
 	{
 		Camera::sNowCamera = nullptr;
 		isActive = false;
+
+		SceneTrance::GetInstance()->SetIsChange(false);
 	}
 
-	camera.Update();
+	camera.mViewProjection.UpdateMatrix();
 }
 
 void BossAppearanceScene::Draw()

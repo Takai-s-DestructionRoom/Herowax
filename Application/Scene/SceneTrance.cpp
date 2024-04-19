@@ -1,10 +1,12 @@
 #include "SceneTrance.h"
+#include "RWindow.h"
 
 SceneTrance::SceneTrance()
 {
 	blackBack_ = std::make_unique<Sprite>();
 	blackBack_->SetTexture(TextureManager::Load("./Resources/white2x2.png", "white2x2"));
 	blackBack_->mMaterial.mColor = Color::kBlack;
+	blackBack_->mTransform.scale = { (float)RWindow::GetWidth(),(float)RWindow::GetHeight(),0 };
 }
 
 SceneTrance* SceneTrance::GetInstance()
@@ -35,13 +37,7 @@ void SceneTrance::Update()
 		{
 			inTimer_.Start();
 		}
-
-		//前半のタイマーが動いてる時
-		if (inTimer_.GetRun())
-		{
-			//暗幕で覆う
-		}
-
+		
 		//前半が終わったなら後半スタート
 		if (inTimer_.GetEnd() && outTimer_.GetStarted() == false)
 		{
@@ -49,11 +45,9 @@ void SceneTrance::Update()
 			isSceneTrance_ = true;		//シーン切り替えてﾖｼ!!!
 		}
 
-		//後半のタイマーが動いてる時
-		if (outTimer_.GetRun())
-		{
-			//暗幕晴らす
-		}
+		//透明度をタイマーによって変える
+		blackBack_->mMaterial.mColor.a =
+			inTimer_.GetTimeRate() - outTimer_.GetTimeRate();
 
 		//終わり
 		if (outTimer_.GetEnd())
@@ -69,8 +63,20 @@ void SceneTrance::Update()
 
 void SceneTrance::Draw()
 {
+	if (isSceneTranceNow_)
+	{
+		blackBack_->Draw();
+	}
 }
 
 void SceneTrance::Start()
 {
+	if (isSceneTranceNow_ == false)
+	{
+		//SEならしたり//
+
+		Init();
+		isSceneTrance_ = false;		//まだだ、まだ切り替えるな
+		isSceneTranceNow_ = true;
+	}
 }
