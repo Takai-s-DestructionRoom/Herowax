@@ -184,7 +184,7 @@ public:
 	void SetIsGodmode(bool frag) { isGodmode = frag; }
 
 	//ダメージを与える
-	void DealDamage(uint32_t damage);
+	void DealDamage(float damage);
 
 private:
 	void DamageBlink();	//被弾時の点滅(後々もっとリッチなのに置き換え予定)

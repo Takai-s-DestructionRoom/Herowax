@@ -934,7 +934,7 @@ Vector3 Player::GetFootPos()
 	return result;
 }
 
-void Player::DealDamage(uint32_t damage)
+void Player::DealDamage(float damage)
 {
 	//ダメージクールタイム中か無敵モードならダメージが与えられない
 	if (damageCoolTimer.GetRun() || isGodmode)return;
