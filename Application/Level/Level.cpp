@@ -100,7 +100,7 @@ void Level::Extract(const std::string& handle)
 		if (objectData->setObjectName == "Ground")
 		{
 			ground = ModelObj(Model::Load("./Resources/Model/Ground/ground.obj", "Ground"));
-			
+
 			//座標を設定
 			ground.mTransform.position = objectData->translation;
 			ground.mTransform.scale = objectData->scaling;
@@ -128,11 +128,18 @@ void Level::Extract(const std::string& handle)
 		{
 			wall.emplace_back();
 			wall.back() = ModelObj(Model::Load("./Resources/Model/Ami/Ami.obj", "Wall"));
-		
+
 			//座標を設定
 			wall.back().mTransform.position = objectData->translation;
 			wall.back().mTransform.scale = objectData->scaling / 2;
 			wall.back().mTransform.rotation = objectData->rotation;
+
+			//壁の当たり判定設定
+			wallCol.emplace_back();
+
+			Vector3 normal = wall.back().mTransform.position - Vector3(0, wall.back().mTransform.position.y, 0);
+			wallCol.back().normal = normal.Normalize();
+			wallCol.back().distance = Vector2(wall.back().mTransform.position.x, wall.back().mTransform.position.z).Length();
 		}
 		//後ろに_Objがついているものであれば適用
 		//書式として[ハンドル名]+[_Obj]になっていないとエラーとなる
