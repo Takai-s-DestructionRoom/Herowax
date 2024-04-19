@@ -456,17 +456,26 @@ TextureHandle TextureManager::LoadInternal(const std::string filepath, const std
 
 	lock.lock();
 	// 定数バッファの生成
+
+	//置き場所
+	ID3D12Resource* itBuff = mIntermediateMap[texture.mResource.Get()].Get();
+
 	result = RDirectX::GetDevice()->CreateCommittedResource(
 		&imHeapProp,
 		D3D12_HEAP_FLAG_NONE,
 		&imResourceDesc,
 		D3D12_RESOURCE_STATE_GENERIC_READ,
 		nullptr,
-		IID_PPV_ARGS(&mIntermediateMap[texture.mResource.Get()])
+		IID_PPV_ARGS(&itBuff)
 	);
 	assert(SUCCEEDED(result));
+	if (!itBuff) {
+		Util::DebugLogC(Util::StringFormat("テクスチャ中間バッファ確保失敗 : %ld", result));
+		lock.unlock();
+		return "Error_IntermediateBuffer_Alloc_Failed";
+	}
 
-	UpdateSubresources(mCmdList.Get(), texture.mResource.Get(), mIntermediateMap[texture.mResource.Get()].Get(), 0, 0, UINT(subResources.size()), subResources.data());
+	UpdateSubresources(mCmdList.Get(), texture.mResource.Get(), itBuff, 0, 0, UINT(subResources.size()), subResources.data());
 	texture.ChangeResourceState(D3D12_RESOURCE_STATE_GENERIC_READ, mCmdList.Get());
 	mRequireTransfer = true;
 	lock.unlock();
