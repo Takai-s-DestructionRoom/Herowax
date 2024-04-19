@@ -41,6 +41,9 @@ private:
 	float attackHitColliderSize = 3.0f;
 	float attackMove = 10.0f;
 	float moveSpeed = 0.0f;
+	
+	//通常の敵の攻撃力
+	int32_t normalAtkPower = 1;
 
 public:
 	static EnemyManager* GetInstance();
@@ -76,6 +79,8 @@ public:
 	float GetBurningBonus() { return burningBonus; }
 	//攻撃に当たった時のノックバックする距離を取得
 	float GetKnockBack() { return knockRange; };
+	//攻撃力取得(今後種類が増えるなら、引数にenum入れる形に変更)
+	int32_t GetNormalAttackPower() { return normalAtkPower; };
 
 	// セッター //
 	//連続で固まった敵の数カウント増やす
