@@ -15,6 +15,7 @@
 #include "Minimap.h"
 #include "CollectPartManager.h"
 #include "BossAppearanceScene.h"
+#include "BossDeadScene.h"
 #include "SceneTrance.h"
 
 ProtoScene::ProtoScene()
@@ -81,32 +82,63 @@ void ProtoScene::Update()
 	InstantDrawer::DrawInit();
 	WaxManager::GetInstance()->slimeWax.Reset();
 
+	//ボス撃破シーンに切り替え
+	if (RInput::GetInstance()->GetKeyDown(DIK_B))
+	{
+		SceneTrance::GetInstance()->Start();
+		player.isMove = false;
+		isBossDead = true;
+	}
+
+	//ボス登場シーンに切り替え
 	if (RInput::GetInstance()->GetKeyDown(DIK_T))
 	{
 		SceneTrance::GetInstance()->Start();
+		player.isMove = false;
+		isBossAppearance = true;
 	}
+
 	SceneTrance::GetInstance()->Update();
 
-	//イベントシーンに遷移
-	if (boss.isAppearance == false && SceneTrance::GetInstance()->GetIsChange())
+	//ボス撃破シーンに遷移
+	if (isBossDead && SceneTrance::GetInstance()->GetIsChange())
+	{
+		eventScene = std::make_unique<BossDeadScene>();
+		eventScene->Init(boss.GetCenterPos() + Vector3::UP * 20.f);
+
+		SceneTrance::GetInstance()->SetIsChange(false);	//忘れずに
+		boss.isDead = true;
+		isBossDead = false;
+	}
+
+	//ボス登場シーンに遷移
+	if (isBossAppearance && SceneTrance::GetInstance()->GetIsChange())
 	{
 		eventScene = std::make_unique<BossAppearanceScene>();
 		eventScene->Init(boss.GetCenterPos() + Vector3::UP * 20.f);
 
 		SceneTrance::GetInstance()->SetIsChange(false);	//忘れずに
+		boss.isAppearance = true;
+		isBossAppearance = false;
 	}
 
 	//イベントシーン中なら
 	if (eventScene->isActive)
 	{
 		eventScene->Update();
-		boss.isAppearance = true;
 
-		player.isMove = false;
+		if (boss.isDead && eventScene->eventTimer.GetTimeRate() > 0.7f)
+		{
+			if (boss.isAlive)
+			{
+				ParticleManager::GetInstance()->AddSimple(boss.GetPos() + Vector3::UP * 20.f, "boss_dead");
+			}
+			boss.isAlive = false;
+		}
 	}
-	
+
 	//イベントシーンが終わりカメラが空っぽになったら
-	if(Camera::sNowCamera == nullptr)
+	if (Camera::sNowCamera == nullptr)
 	{
 		gameCamera.Init();	//カメラ入れる
 		boss.isAppearance = false;
@@ -138,7 +170,7 @@ void ProtoScene::Update()
 	//パーツとの判定
 	for (auto& part : CollectPartManager::GetInstance()->parts)
 	{
-		if ((int32_t)player.carryingParts.size() < 
+		if ((int32_t)player.carryingParts.size() <
 			CollectPartManager::GetInstance()->GetMaxCarryingNum()) {
 			if (ColPrimitive3D::CheckSphereToSphere(part->collider, player.collider)) {
 				//一旦複数持てる
@@ -146,7 +178,7 @@ void ProtoScene::Update()
 				part->Carrying(&player);
 			}
 		}
-		
+
 		//プレイヤーが持っているなら
 		if (part->IsCarrying()) {
 			//当たり判定する
@@ -159,7 +191,7 @@ void ProtoScene::Update()
 		}
 	}
 
-	for (auto itr = player.carryingParts.begin();itr != player.carryingParts.end();)
+	for (auto itr = player.carryingParts.begin(); itr != player.carryingParts.end();)
 	{
 		//捕まったら保持から消す
 		if ((*itr)->IsCollected()) {
@@ -178,7 +210,7 @@ void ProtoScene::Update()
 			CollectPartManager::GetInstance()->zone.aabbCol))
 		{
 			//ボタンを押しているなら
-			if (RInput::GetKey(DIK_E) || 
+			if (RInput::GetKey(DIK_E) ||
 				RInput::GetPadButton(XINPUT_GAMEPAD_RIGHT_SHOULDER))
 			{
 				//制作
@@ -318,7 +350,7 @@ void ProtoScene::Update()
 				if (isCollision && wax->stateStr == "WaxCollect")
 				{
 					//固まってないならダメージ
-					if(!enemy->GetIsSolid())
+					if (!enemy->GetIsSolid())
 					{
 						Vector3 knockVec = -player.atkVec;
 						knockVec.y = 0;

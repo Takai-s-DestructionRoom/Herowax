@@ -1,11 +1,14 @@
 #include "BossAppearanceScene.h"
 #include "InstantDrawer.h"
-#include "Boss.h"
 #include "SceneTrance.h"
+
+BossAppearanceScene::BossAppearanceScene()
+{
+	TextureManager::Load("./Resources/boss.png", "boss");
+}
 
 BossAppearanceScene::~BossAppearanceScene()
 {
-	TextureManager::Load("./Resources/boss.png", "boss");
 }
 
 void BossAppearanceScene::Init(const Vector3 target)
@@ -55,7 +58,7 @@ void BossAppearanceScene::Update()
 		SceneTrance::GetInstance()->SetIsChange(false);
 	}
 
-	camera.Update();
+	camera.mViewProjection.UpdateMatrix();
 }
 
 void BossAppearanceScene::Draw()

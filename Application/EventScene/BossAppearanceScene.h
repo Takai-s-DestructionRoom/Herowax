@@ -1,8 +1,6 @@
 #pragma once
 #include "IEventScene.h"
 
-class Boss;
-
 class BossAppearanceScene : public IEventScene
 {
 public:
@@ -12,9 +10,8 @@ public:
 	Vector2 textOriSize;
 	Vector2 textSize;
 
-	std::unique_ptr<Boss> boss_;
-
 public:
+	BossAppearanceScene();
 	~BossAppearanceScene();
 
 	void Init(const Vector3 target) override;

@@ -157,6 +157,8 @@
     <ClCompile Include="Application\Chara\Boss\BossAppearance.cpp" />
     <ClCompile Include="Application\BossDeadState.cpp" />
     <ClCompile Include="Application\BossCollectStandState.cpp" />
+    <ClCompile Include="Application\Chara\Boss\BossDead.cpp" />
+    <ClCompile Include="Application\EventScene\BossDeadScene.cpp" />
     <ClCompile Include="Engine\Collision\AABBCollider.cpp" />
     <ClCompile Include="Application\Chara\Enemy\EnemySpawner.cpp" />
     <ClCompile Include="Application\InstantDrawer.cpp" />
@@ -764,6 +766,8 @@
     <ClInclude Include="Application\Chara\Boss\BossAppearance.h" />
     <ClInclude Include="Application\BossDeadState.h" />
     <ClInclude Include="Application\BossCollectStandState.h" />
+    <ClInclude Include="Application\Chara\Boss\BossDead.h" />
+    <ClInclude Include="Application\EventScene\BossDeadScene.h" />
     <ClInclude Include="Engine\Collision\AABBCollider.h" />
     <ClInclude Include="Application\Chara\Enemy\EnemySpawner.h" />
     <ClInclude Include="Application\InstantDrawer.h" />

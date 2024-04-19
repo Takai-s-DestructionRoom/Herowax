@@ -861,30 +861,32 @@ void Player::WaxCollect()
 		}
 	}
 
-	//回収ボタンポチーw
-	if (GetWaxCollectButtonDown())
+	if (isMove)
 	{
-		//ロウがストック性かつ地面についてて回収できる状態なら
-		if (isWaxStock && isGround && WaxManager::GetInstance()->isCollected)
+		//回収ボタンポチーw
+		if (GetWaxCollectButtonDown())
 		{
-			if (isCollectFan)
+			//ロウがストック性かつ地面についてて回収できる状態なら
+			if (isWaxStock && isGround && WaxManager::GetInstance()->isCollected)
 			{
-				//ロウ回収
-				WaxManager::GetInstance()->CollectFan(collectColFan, GetFrontVec(), waxCollectAngle);
+				if (isCollectFan)
+				{
+					//ロウ回収
+					WaxManager::GetInstance()->CollectFan(collectColFan, GetFrontVec(), waxCollectAngle);
+				}
+				else
+				{
+					//ロウ回収
+					waxCollectAmount += WaxManager::GetInstance()->Collect(collectCol, waxCollectVertical);
+				}
 			}
-			else
-			{
-				//ロウ回収
-				waxCollectAmount += WaxManager::GetInstance()->Collect(collectCol, waxCollectVertical);
-			}
-		}
-		//腕吸収
-		if (boss->parts[(int32_t)PartsNum::LeftHand].isCollected) {
-			if (RayToSphereCol(collectCol, boss->parts[(int32_t)PartsNum::LeftHand].collider))
-			{
-				//今のロウとの距離
-				float len = (collectCol.start - 
-					boss->parts[(int32_t)PartsNum::LeftHand].GetPos()).Length();
+			//腕吸収
+			if (boss->parts[(int32_t)PartsNum::LeftHand].isCollected) {
+				if (RayToSphereCol(collectCol, boss->parts[(int32_t)PartsNum::LeftHand].collider))
+				{
+					//今のロウとの距離
+					float len = (collectCol.start -
+						boss->parts[(int32_t)PartsNum::LeftHand].GetPos()).Length();
 
 					//見たロウが範囲外ならスキップ
 					if (waxCollectVertical >= len) {
@@ -921,11 +923,12 @@ void Player::WaxCollect()
 					float len = (collectCol.start -
 						boss->GetPos()).Length();
 
-				//見たロウが範囲外ならスキップ
-				if (waxCollectVertical >= len) {
-					boss->collectPos = collectCol.start;
-					boss->ChangeState<BossDeadState>();
-					waxCollectAmount += 1;
+					//見たロウが範囲外ならスキップ
+					if (waxCollectVertical >= len) {
+						boss->collectPos = collectCol.start;
+						boss->ChangeState<BossDeadState>();
+						waxCollectAmount += 1;
+					}
 				}
 			}
 		}

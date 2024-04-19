@@ -1,5 +1,6 @@
 #include "Boss.h"
 #include "BossAppearance.h"
+#include "BossDead.h"
 #include "BossNormal.h"
 #include "BossPunch.h"
 #include "Camera.h"
@@ -65,17 +66,33 @@ moveSpeed(0.1f), hp(0), maxHP(10.f)
 
 Boss::~Boss()
 {
-	//死んだときパーティクル出す
-	ParticleManager::GetInstance()->AddSimple(
-		obj.mTransform.position, obj.mTransform.scale * 0.5f, 20, 0.3f,
-		Color::kWhite, "", 0.5f, 0.8f,
-		{ -0.3f,-0.3f,-0.3f }, { 0.3f,0.3f,0.3f },
-		0.05f, -Vector3::ONE * 0.1f, Vector3::ONE * 0.1f, 0.05f);
 }
 
 void Boss::Init()
 {
 	hp = maxHP;
+	isAlive = true;
+	
+	mutekiTimer.Reset();
+
+	waxSolidCount = 0;
+	waxShakeOffTimer.Reset();
+
+	shakeTimer.Reset();
+	waxScatterTimer.Reset();
+
+	shake = Vector3::ZERO;
+
+	standTimer.Reset();
+	punchTimer.Reset();
+	punchStayTimer.Reset();
+
+	isAppearance = false;
+	isDead = false;
+
+	isOldBodySolid = false;
+
+	ChangeState<BossNormal>();
 
 	ai.Init();
 
@@ -244,6 +261,12 @@ void Boss::Update()
 		ChangeState<BossNormal>();
 	}
 
+	//撃破演出中なのに撃破演出ステートになってないなら
+	if (isDead && stateStr != "Dead")
+	{
+		ChangeState<BossDead>();
+	}
+
 	if (changingState) {
 		//ステートを変化させる
 		std::swap(state, nextState);
@@ -288,6 +311,9 @@ void Boss::Update()
 		ImGui::TreePop();
 	}
 
+	if (ImGui::Button("Reset")) {
+		Init();
+	}
 	if (ImGui::Button("セーブ")) {
 		Parameter::Begin("Boss");
 		Parameter::Save("ボス本体のスケールX", obj.mTransform.scale.x);
