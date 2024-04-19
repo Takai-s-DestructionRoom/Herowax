@@ -2,6 +2,8 @@
 #include "GameObject.h"
 #include "Easing.h"
 #include "WaxState.h"
+#include <vector>
+#include "Vector3.h"
 
 struct DisolveBuffer
 {
@@ -13,12 +15,15 @@ class Wax : public GameObject
 {
 public:
 	//------------ 攻撃関連 ------------//
-	uint32_t atkPower;			//攻撃力
-	Vector3 atkVec;				//攻撃方向
 	float atkSpeed;				//攻撃の射出速度
-	float atkRange;				//攻撃範囲
 	float atkSize;				//攻撃範囲の大きさ
 	Easing::EaseTimer atkTimer;	//攻撃時間計測用
+	Vector3 startPos;	//初期地点
+	Vector3 interPos;	//高さを入れた中間地点
+	Vector3 endPos;		//終点
+
+	//------------ 移動関連 -------//
+	Vector3 moveVec;
 
 	//------------ 燃焼関連 ------------//
 	static Color waxOriginColor;		//蝋の元の色
@@ -50,15 +55,17 @@ public:
 	Vector2 iconSize;
 	Sprite minimapIcon;
 
+	//コレクトステート内で使用するタイマー(調整できるようにwaxが持つ)
+	Easing::EaseTimer collectTimer;
+
 private:
 	SRConstBuffer<DisolveBuffer> mDisolveBuff;
 
+	std::vector<Vector3> spline;
 public:
 	Wax();
 	//生成時に必要な情報だけもらって独立
-	void Init(
-		uint32_t power, Vector3 vec,float speed,
-		float range, float size, float atkTime);
+	void Init(Transform transform, Vector3 endPos, float height, float size, float atkTime);
 	//継承元との齟齬がないように空のやつを宣言だけしておく
 	void Init()override {};
 	

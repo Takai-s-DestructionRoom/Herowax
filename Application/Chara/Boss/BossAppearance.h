@@ -1,5 +1,4 @@
 #pragma once
-#pragma once
 #include "BossState.h"
 #include <vector>
 #include <array>

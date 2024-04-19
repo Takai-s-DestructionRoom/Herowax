@@ -20,6 +20,8 @@ public:
 
 	Easing::EaseTimer hammerTimer;
 
+	float healPower = 1;	//回復量
+
 private:
 	std::vector<std::unique_ptr<CollectPart>> gatheredParts; //おいてあるパーツを保持
 

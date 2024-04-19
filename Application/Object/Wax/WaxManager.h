@@ -25,8 +25,9 @@ private:
 
 	std::string fileName = "Wax";
 
+	//調整項目
 	float slimeWaxSizeMag = 1.0f;	//ロウのサイズを全部統一で小さくする
-
+	
 public:
 	std::vector<float> waxTime;
 	//std::vector<std::unique_ptr<Wax>> waxs;	//蝋ども
@@ -39,6 +40,8 @@ public:
 
 	bool isCollected = true;	//回収し終えたか
 	float accelAmount = 0.1f;	//回収の加速度合い
+	
+	float collectTime = 1.0f;		//吸収されるまでの時間
 
 	SlimeWax slimeWax;
 
@@ -53,10 +56,17 @@ public:
 	//描画
 	void Draw();
 
-	//生成
-	void Create(
-		Transform transform, uint32_t power, Vector3 vec,
-		float speed, float range, float size,float atkTime, float solidTime);
+	/// <summary>
+	/// 生成
+	/// </summary>
+	/// <param name="transform">生成座標、大きさなど</param>
+	/// <param name="vec">飛ばす方向</param>
+	/// <param name="targetPos"></param>
+	/// <param name="range"></param>
+	/// <param name="size">大きさ</param>
+	/// <param name="atkTime">攻撃が地面に落ちるまでの時間</param>
+	/// <param name="solidTime">固まるまでの時間</param>
+	void Create(Transform transform, Vector3 endPos, float height, float size, float atkTime, float solidTime);
 
 	//現在の温度ボーナスを返す(計算済み)
 	float GetCalcHeatBonus();

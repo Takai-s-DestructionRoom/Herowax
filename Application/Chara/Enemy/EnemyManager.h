@@ -41,6 +41,14 @@ private:
 	float attackHitColliderSize = 3.0f;
 	float attackMove = 10.0f;
 	float moveSpeed = 0.0f;
+	
+	//通常の敵の攻撃力
+	float normalAtkPower = 1;
+	//接触時のダメージ
+	float contactAtkPower = 1;
+	
+	//攻撃していない時に敵と当たった場合でもダメージを入れる
+	bool isContactDamage = false;
 
 public:
 	static EnemyManager* GetInstance();
@@ -76,6 +84,12 @@ public:
 	float GetBurningBonus() { return burningBonus; }
 	//攻撃に当たった時のノックバックする距離を取得
 	float GetKnockBack() { return knockRange; };
+	//攻撃力取得(今後種類が増えるなら、引数にenum入れる形に変更)
+	float GetNormalAttackPower() { return normalAtkPower; };
+
+	float GetContactAttackPower() { return contactAtkPower; };
+	//攻撃していない時に敵と当たった場合でもダメージを入れる
+	bool GetIsContactDamage() {return isContactDamage;};
 
 	// セッター //
 	//連続で固まった敵の数カウント増やす

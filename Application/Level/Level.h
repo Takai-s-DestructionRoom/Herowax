@@ -3,6 +3,7 @@
 #include "ModelObj.h"
 #include "Tower.h"
 #include "SpawnerManager.h"
+#include "ColPrimitive3D.h"
 #include "Singleton.h"
 
 //ステージの単位(ウェーブとかそういうやつ)
@@ -30,10 +31,11 @@ public:
 public:
 	LevelData* nowLevel = nullptr;
 
-	std::list<ModelObj> objects;	//オブジェクトたち
-	ModelObj ground;				//地面
-	std::vector<ModelObj> wall;	//壁
-	Tower tower;					//タワー
+	std::list<ModelObj> objects;				//オブジェクトたち
+	ModelObj ground;							//地面
+	std::vector<ModelObj> wall;					//壁
+	std::vector<ColPrimitive3D::Plane> wallCol;	//壁の当たり判定
+	Tower tower;								//タワー
 	SpawnerManager* spawnerManager = SpawnerManager::GetInstance();	//スポナー
 
 	Vector2 moveLimitMax = {0,0};	//移動制限
