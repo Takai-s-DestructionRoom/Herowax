@@ -159,6 +159,7 @@ void WaxManager::Update()
 		for (auto& wax : waxGroup->waxs)
 		{
 			wax->colliderSize = colliderSize;
+			wax->collectTimer.maxTime_ = collectTime;
 		}
 		waxGroup->Update();
 	}
