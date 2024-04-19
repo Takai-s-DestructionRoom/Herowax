@@ -73,6 +73,7 @@ isFireStock(false), isWaxStock(true), isCollectFan(false), maxWaxStock(20)
 	attackDrawerObj = ModelObj(Model::Load("./Resources/Model/Sphere.obj", "Sphere", true));
 
 	godmodeTimer.maxTime_ = Parameter::GetParam(extract, "無敵時間", 10.f);
+	maxHP = Parameter::GetParam(extract,"最大HP", 10.0f);
 }
 
 void Player::Init()
@@ -292,6 +293,7 @@ void Player::Update()
 	ImGui::Begin("Player");
 
 	ImGui::Text("現在のHP:%f",hp);
+	ImGui::InputFloat("最大HP:",&maxHP,1.0f);
 	ImGui::Text("Lスティック移動、Aボタンジャンプ、Rで攻撃,Lでロウ回収");
 	ImGui::Text("WASD移動、スペースジャンプ、右クリで攻撃,Pでパブロ攻撃,Qでロウ回収");
 
@@ -420,6 +422,7 @@ void Player::Update()
 		Parameter::Save("プレイヤーの色G", obj.mTuneMaterial.mColor.g);
 		Parameter::Save("プレイヤーの色B", obj.mTuneMaterial.mColor.b);
 		Parameter::Save("無敵時間", godmodeTimer.maxTime_);
+		Parameter::Save("最大HP", maxHP);
 		Parameter::End();
 	}
 

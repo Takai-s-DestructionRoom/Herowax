@@ -1,6 +1,8 @@
 #include "CollectPartManager.h"
 #include "RImGui.h"
 #include "Parameter.h"
+#include "Player.h"
+#include "RInput.h"
 
 void CollectPartManager::LoadResouces()
 {
@@ -32,6 +34,7 @@ void CollectPartManager::Init()
     zone.scale.x = Parameter::GetParam(extract,"大きさX", zone.scale.x);
     zone.scale.y = Parameter::GetParam(extract,"大きさZ", zone.scale.y);
     zone.obj.mTuneMaterial.mColor.a = Parameter::GetParam(extract,"透明度", zone.obj.mTuneMaterial.mColor.a);
+    zone.healPower = Parameter::GetParam(extract, "回復量", 5.f);
 }
 
 void CollectPartManager::Update()
@@ -53,6 +56,9 @@ void CollectPartManager::Update()
     }
 
     zone.Update();
+
+    //制作報酬を渡す
+    CreateReward();
 
     ImGui();
 }
@@ -116,6 +122,7 @@ void CollectPartManager::ImGui()
     ImGui::Text("ゾーン内の数 %d", zone.GetPartsNum());
     ImGui::InputInt("一度に運べる数", &maxCarryingNum, 1);
     if (ImGui::TreeNode("調整項目_ゾーン")) {
+        ImGui::InputFloat("回復量", &zone.healPower,1.0f);
         ImGui::InputInt("作るのに必要な個数", &requireCreateNum);
         ImGui::InputFloat("作るまでにかかる時間", &zone.hammerTimer.maxTime_);
         ImGui::DragFloat3("位置", &zone.pos.x, 1.f);
@@ -133,6 +140,7 @@ void CollectPartManager::ImGui()
         Parameter::Save("大きさX", zone.scale.x);
         Parameter::Save("大きさZ", zone.scale.y);
         Parameter::Save("透明度", zone.obj.mTuneMaterial.mColor.a);
+        Parameter::Save("回復量", zone.healPower);
         Parameter::End();
     }
 
@@ -147,6 +155,38 @@ int32_t CollectPartManager::GetCarryingNum()
         temp += part->IsCollected();
     }
     return temp;
+}
+
+void CollectPartManager::CreateReward()
+{
+    //10個溜まったら(後で制作状態も作る)
+    if (CollectPartManager::GetInstance()->GetAllowCreate()) {
+
+        //範囲内に居て
+        if (ColPrimitive3D::CheckSphereToAABB(player->collider,
+            CollectPartManager::GetInstance()->zone.aabbCol))
+        {
+            //ボタンを押しているなら
+            if (RInput::GetKey(DIK_E) ||
+                RInput::GetPadButton(XINPUT_GAMEPAD_RIGHT_SHOULDER))
+            {
+                //制作
+                CollectPartManager::GetInstance()->zone.GodModeCreate();
+            }
+            else {
+                CollectPartManager::GetInstance()->zone.GodModeCreateStop();
+            }
+        }
+
+        //ゴッドモードへ
+        if (CollectPartManager::GetInstance()->zone.GodModeCreateEnd()) {
+            //player->SetIsGodmode(true);
+            //回復に変更
+            player->hp += zone.healPower;
+
+            CollectPartManager::GetInstance()->CratePostDelete();
+        }
+    }
 }
 
 CollectPartManager* CollectPartManager::GetInstance()
