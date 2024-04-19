@@ -39,7 +39,7 @@ EnemyManager::EnemyManager()
 	attackHitColliderSize = Parameter::GetParam(extract,"敵がプレイヤーと当たる判定の大きさ", 3.0f);
 	moveSpeed = Parameter::GetParam(extract,"移動速度", 0.1f);
 
-	normalAtkPower = (int32_t)Parameter::GetParam(extract,"敵の攻撃力", 1.f);
+	normalAtkPower = Parameter::GetParam(extract,"敵の攻撃力", 1.f);
 }
 
 void EnemyManager::SetTarget(ModelObj* target_)
@@ -90,7 +90,7 @@ void EnemyManager::Update()
 
 	ImGui::Text("EnemyNum:%d", enemys.size());
 	ImGui::DragFloat3("敵の大きさ", &enemySize.x, 0.1f);
-	ImGui::InputInt("敵の攻撃力", &normalAtkPower, 1);
+	ImGui::InputFloat("敵の攻撃力", &normalAtkPower, 1.f);
 	static bool hitChecker = false;
 	if (ImGui::TreeNode("当たり判定"))
 	{
