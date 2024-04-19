@@ -44,6 +44,9 @@ private:
 	
 	//通常の敵の攻撃力
 	float normalAtkPower = 1;
+	
+	//攻撃していない時に敵と当たった場合でもダメージを入れる
+	bool isContactDamage = false;
 
 public:
 	static EnemyManager* GetInstance();
@@ -81,6 +84,8 @@ public:
 	float GetKnockBack() { return knockRange; };
 	//攻撃力取得(今後種類が増えるなら、引数にenum入れる形に変更)
 	float GetNormalAttackPower() { return normalAtkPower; };
+	//攻撃していない時に敵と当たった場合でもダメージを入れる
+	bool GetIsContactDamage() {return isContactDamage;};
 
 	// セッター //
 	//連続で固まった敵の数カウント増やす

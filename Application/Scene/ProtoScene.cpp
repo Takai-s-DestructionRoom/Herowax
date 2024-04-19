@@ -178,7 +178,9 @@ void ProtoScene::Update()
 			}
 		}
 		//攻撃中に本体同士がぶつかったらプレイヤーにダメージ
-		if (enemy->GetAttackState() == "NowAttack")
+		//(フラグ立っている場合は関係なくダメージ判定)
+		if (enemy->GetAttackState() == "<NowAttack" ||
+			EnemyManager::GetInstance()->GetIsContactDamage())
 		{
 			if (ColPrimitive3D::CheckSphereToSphere(enemy->collider, player.collider))
 			{
