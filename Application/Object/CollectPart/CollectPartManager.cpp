@@ -1,5 +1,6 @@
 #include "CollectPartManager.h"
 #include "RImGui.h"
+#include "Parameter.h"
 
 void CollectPartManager::LoadResouces()
 {
@@ -20,6 +21,17 @@ void CollectPartManager::Init()
     }
 
     zone.Init();
+
+    std::map<std::string, std::string> extract = Parameter::Extract("zone");
+    maxCarryingNum = (int32_t)Parameter::GetParam(extract,"一度に運べる数", 1);
+    requireCreateNum = (int32_t)Parameter::GetParam(extract,"作るのに必要な個数", 10);
+    zone.hammerTimer.maxTime_ = Parameter::GetParam(extract,"作るまでにかかる時間", zone.hammerTimer.maxTime_);
+    zone.pos.x = Parameter::GetParam(extract,"位置X", zone.pos.x);
+    zone.pos.y = Parameter::GetParam(extract,"位置Y", zone.pos.y);
+    zone.pos.z = Parameter::GetParam(extract,"位置Z", zone.pos.z);
+    zone.scale.x = Parameter::GetParam(extract,"大きさX", zone.scale.x);
+    zone.scale.y = Parameter::GetParam(extract,"大きさZ", zone.scale.y);
+    zone.obj.mTuneMaterial.mColor.a = Parameter::GetParam(extract,"透明度", zone.obj.mTuneMaterial.mColor.a);
 }
 
 void CollectPartManager::Update()
@@ -106,9 +118,22 @@ void CollectPartManager::ImGui()
     if (ImGui::TreeNode("調整項目_ゾーン")) {
         ImGui::InputInt("作るのに必要な個数", &requireCreateNum);
         ImGui::InputFloat("作るまでにかかる時間", &zone.hammerTimer.maxTime_);
-        ImGui::DragFloat3("位置", &zone.pos.x,1.f);
-        ImGui::DragFloat2("大きさ", &zone.scale.x,1.f);
-        ImGui::DragFloat("透明度", &zone.obj.mTuneMaterial.mColor.a,0.1f);
+        ImGui::DragFloat3("位置", &zone.pos.x, 1.f);
+        ImGui::DragFloat2("大きさ", &zone.scale.x, 1.f);
+        ImGui::DragFloat("透明度", &zone.obj.mTuneMaterial.mColor.a, 0.1f);
+    }
+    if (ImGui::Button("セーブ")){
+        Parameter::Begin("zone");
+        Parameter::Save("一度に運べる数", maxCarryingNum);
+        Parameter::Save("作るのに必要な個数", requireCreateNum);
+        Parameter::Save("作るまでにかかる時間", zone.hammerTimer.maxTime_);
+        Parameter::Save("位置X", zone.pos.x);
+        Parameter::Save("位置Y", zone.pos.y);
+        Parameter::Save("位置Z", zone.pos.z);
+        Parameter::Save("大きさX", zone.scale.x);
+        Parameter::Save("大きさZ", zone.scale.y);
+        Parameter::Save("透明度", zone.obj.mTuneMaterial.mColor.a);
+        Parameter::End();
     }
 
     ImGui::End();

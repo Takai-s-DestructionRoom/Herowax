@@ -14,6 +14,9 @@
 #include "BossPart.h"
 #include "Level.h"
 #include "BossDeadState.h"
+#include "TitleScene.h"
+#include "SceneManager.h"
+#include "SimpleSceneTransition.h"
 
 Player::Player() :GameObject(),
 moveSpeed(1.f), moveAccelAmount(0.05f), isGround(true), hp(0), maxHP(10.f),
@@ -201,6 +204,11 @@ void Player::Update()
 	//HP0になったら死ぬ
 	if (hp <= 0)
 	{
+		//死んだ瞬間なら遷移を呼ぶ
+		if (isAlive) {
+			//シーン遷移
+			SceneManager::GetInstance()->Change<TitleScene, SimpleSceneTransition>();
+		}
 		isAlive = false;
 	}
 
@@ -854,33 +862,29 @@ void Player::WaxCollect()
 	}
 
 	//回収ボタンポチーw
-	if (isMove)
+	if (GetWaxCollectButtonDown())
 	{
-		if ((RInput::GetInstance()->GetPadButtonDown(XINPUT_GAMEPAD_LEFT_SHOULDER) ||
-			RInput::GetInstance()->GetLTriggerDown() ||
-			RInput::GetInstance()->GetKeyDown(DIK_Q)))
+		//ロウがストック性かつ地面についてて回収できる状態なら
+		if (isWaxStock && isGround && WaxManager::GetInstance()->isCollected)
 		{
-			//ロウがストック性かつ地面についてて回収できる状態なら
-			if (isWaxStock && isGround && WaxManager::GetInstance()->isCollected)
+			if (isCollectFan)
 			{
-				if (isCollectFan)
-				{
-					//ロウ回収
-					WaxManager::GetInstance()->CollectFan(collectColFan, GetFrontVec(), waxCollectAngle);
-				}
-				else
-				{
-					//ロウ回収
-					waxCollectAmount += WaxManager::GetInstance()->Collect(collectCol, waxCollectVertical);
-				}
+				//ロウ回収
+				WaxManager::GetInstance()->CollectFan(collectColFan, GetFrontVec(), waxCollectAngle);
 			}
-			//腕吸収
-			if (boss->parts[(int32_t)PartsNum::LeftHand].isCollected) {
-				if (RayToSphereCol(collectCol, boss->parts[(int32_t)PartsNum::LeftHand].collider))
-				{
-					//今のロウとの距離
-					float len = (collectCol.start -
-						boss->parts[(int32_t)PartsNum::LeftHand].GetPos()).Length();
+			else
+			{
+				//ロウ回収
+				waxCollectAmount += WaxManager::GetInstance()->Collect(collectCol, waxCollectVertical);
+			}
+		}
+		//腕吸収
+		if (boss->parts[(int32_t)PartsNum::LeftHand].isCollected) {
+			if (RayToSphereCol(collectCol, boss->parts[(int32_t)PartsNum::LeftHand].collider))
+			{
+				//今のロウとの距離
+				float len = (collectCol.start - 
+					boss->parts[(int32_t)PartsNum::LeftHand].GetPos()).Length();
 
 					//見たロウが範囲外ならスキップ
 					if (waxCollectVertical >= len) {
@@ -917,12 +921,11 @@ void Player::WaxCollect()
 					float len = (collectCol.start -
 						boss->GetPos()).Length();
 
-					//見たロウが範囲外ならスキップ
-					if (waxCollectVertical >= len) {
-						boss->collectPos = collectCol.start;
-						boss->ChangeState<BossDeadState>();
-						waxCollectAmount += 1;
-					}
+				//見たロウが範囲外ならスキップ
+				if (waxCollectVertical >= len) {
+					boss->collectPos = collectCol.start;
+					boss->ChangeState<BossDeadState>();
+					waxCollectAmount += 1;
 				}
 			}
 		}
@@ -1048,4 +1051,11 @@ void Player::DrawAttackCollider()
 		order.pipelineState = pipe.mPtr.Get();
 		Renderer::DrawCall("Opaque", order);
 	}
+}
+
+bool Player::GetWaxCollectButtonDown()
+{
+	return (RInput::GetInstance()->GetPadButtonDown(XINPUT_GAMEPAD_LEFT_SHOULDER) ||
+		RInput::GetInstance()->GetLTriggerDown() ||
+		RInput::GetInstance()->GetKeyDown(DIK_Q));
 }

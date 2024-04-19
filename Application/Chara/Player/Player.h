@@ -53,6 +53,7 @@ public:
 	float atkRange;					//攻撃範囲
 	float atkSize;					//攻撃範囲の大きさ
 	int32_t atkPower;				//攻撃力
+	int32_t involvePower = 1;		//巻き込み攻撃力
 	Easing::EaseTimer atkCoolTimer;	//攻撃のクールタイム
 	Easing::EaseTimer atkTimer;		//攻撃時間計測用
 	Easing::EaseTimer solidTimer;	//固まるまでの時間(調整用)
@@ -172,6 +173,10 @@ public:
 	Vector3 GetFootPos();
 	//攻撃力を取得
 	int32_t GetAttackPower() { return atkPower; };
+	//ロウに巻き込んだ時の攻撃力を取得
+	int32_t GetInvolvePower() { return involvePower; };
+
+	bool GetWaxCollectButtonDown();
 
 	// セッター //
 	//回収できるかフラグ設定
