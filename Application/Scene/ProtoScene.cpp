@@ -251,13 +251,19 @@ void ProtoScene::Update()
 		}
 		//攻撃中に本体同士がぶつかったらプレイヤーにダメージ
 		//(フラグ立っている場合は関係なくダメージ判定)
-		if (enemy->GetAttackState() == "<NowAttack" ||
-			EnemyManager::GetInstance()->GetIsContactDamage())
+		if (enemy->GetAttackState() == "NowAttack")
 		{
 			if (ColPrimitive3D::CheckSphereToSphere(enemy->collider, player.collider))
 			{
 				//1ダメージ(どっかに参照先作るべき)
 				player.DealDamage(EnemyManager::GetInstance()->GetNormalAttackPower());
+			}
+		}
+		if (EnemyManager::GetInstance()->GetIsContactDamage()) {
+			if (ColPrimitive3D::CheckSphereToSphere(enemy->collider, player.collider))
+			{
+				//1ダメージ(どっかに参照先作るべき)
+				player.DealDamage(EnemyManager::GetInstance()->GetContactAttackPower());
 			}
 		}
 		//回収ボタン押されたときに固まってるなら吸収
@@ -332,11 +338,6 @@ void ProtoScene::Update()
 						knockVec.y = 0;
 						enemy->DealDamage(player.GetAttackPower(),
 							knockVec, &player.obj);
-
-						//お試し実装:自分が攻撃を当てた相手が自分を追いかけてくる
-						if (player.GetTauntMode()) {
-							enemy->SetTarget(&player.obj);
-						}
 					}
 					//地面の蝋とぶつかってたら足盗られに
 					else

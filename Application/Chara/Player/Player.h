@@ -47,11 +47,11 @@ public:
 
 	//------------ 攻撃関連 ------------//
 	bool isAttack;					//攻撃中かフラグ
+	float minRange;			//最大射程
+	float maxRange;			//最大射程
+	float atkSize;
 	Vector3 atkVec;					//攻撃方向
 	float atkHeight;				//攻撃する高さ
-	float atkSpeed;					//攻撃の射出速度
-	float atkRange;					//攻撃範囲
-	float atkSize;					//攻撃範囲の大きさ
 	int32_t atkPower;				//攻撃力
 	int32_t involvePower = 1;		//巻き込み攻撃力
 	Easing::EaseTimer atkCoolTimer;	//攻撃のクールタイム
@@ -81,11 +81,7 @@ public:
 
 	int32_t waxCollectAmount;			//ロウ回収量
 	
-	//----------- 挑発関連 ------------//
-	bool isTauntMode = false;		//ロウを直接当てると敵の追いかける対象が自分に変わるモード
-
 	//----------- 新攻撃(パブロ攻撃)関連 -------------//
-	float pabloRange;			//最大射程
 	float pabloSideRange;		//横の射程
 	float pabloSeparator;		//射程の分割数
 	float pabloSpeedMag;		//パブロ攻撃時の移動速度
@@ -143,9 +139,6 @@ public:
 	//回転関数
 	void Rotation();
 
-	//攻撃(ステートに移動)
-	void Attack();
-
 	//パブロ攻撃処理のまとめ
 	void PabloAttack();
 
@@ -167,8 +160,6 @@ public:
 	void SetBoss(Boss* boss_) {boss = boss_;};
 
 	// ゲッター //
-	//お試し実装:殴った相手が自分を追っかけてくるモード
-	bool GetTauntMode() { return isTauntMode; };
 	//足元の座標取得
 	Vector3 GetFootPos();
 	//攻撃力を取得

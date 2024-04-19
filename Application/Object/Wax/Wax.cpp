@@ -10,7 +10,6 @@ Color Wax::waxEndColor = { 0.8f, 0.0f, 0.f, 1.f };
 
 Wax::Wax():GameObject(),
 	atkSpeed(1.f),
-	atkPower(1),
 	igniteTimer(0.25f),
 	burningTimer(1.0f),
 	extinguishTimer(0.5f),
@@ -40,13 +39,24 @@ bool Wax::GetIsSolidNow()
 	return false;
 }
 
-void Wax::Init(uint32_t power, Vector3 vec,float speed,
-	float range, float size, float atkTime)
+void Wax::Init(Transform transform, Vector3 endPos_, float height, float size, float atkTime)
 {
 	//hp = maxHP;
-	atkPower = power;
-	atkVec = vec * speed;
-	atkRange = range;
+	obj.mTransform = transform;
+	startPos = obj.mTransform.position;
+	endPos = endPos_;
+
+	Vector3 endLength = (endPos - startPos);
+	//開始地点+終点までの距離/2
+	interPos = startPos + (endLength / 2);
+	//高さは指定した位置
+	interPos.y = height;
+
+	spline.clear();
+	spline.push_back(startPos);
+	spline.push_back(interPos);
+	spline.push_back(endPos);
+
 	atkSize = size;
 	atkTimer = atkTime;
 	atkTimer.Start();
@@ -58,23 +68,19 @@ void Wax::Init(uint32_t power, Vector3 vec,float speed,
 
 void Wax::Update()
 {
+	moveVec = { 0,0,0 };
 	atkTimer.Update();
 	
 	isSolided = isSolid;	//1F前の状態を保存
 
 	//段々大きくなる
-	atkSize = Easing::OutBack(atkTimer.GetTimeRate());
-	Vector3 waxScale = { atkRange,1.f,atkRange };	//蝋の大きさ
-	waxScale *= atkSize;
-	SetScale(waxScale);									//大きさを反映
+	float atkRange = Easing::OutBack(atkTimer.GetTimeRate());
+	Vector3 waxScale = { atkSize,1.f,atkSize };	//蝋の大きさ
+	waxScale *= atkRange;
+	SetScale(waxScale);								//大きさを反映
 
-	//空中にいる時だけ
-	if (isGround == false)
-	{
-		obj.mTransform.position += atkVec;	//飛んでいく
-
-		//重力加算
-		atkVec.y -= gravity;
+	if (atkTimer.GetRun()) {
+		obj.mTransform.position = Util::Spline(spline,atkTimer.GetTimeRate());	//飛んでいく
 	}
 
 	//地面に埋ってたら
@@ -95,6 +101,9 @@ void Wax::Update()
 		changingState = false;
 		nextState = nullptr;
 	}
+
+	//spline以外で動かす場合の足し算
+	obj.mTransform.position += moveVec;
 
 	UpdateCollider();
 

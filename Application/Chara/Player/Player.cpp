@@ -21,7 +21,7 @@
 Player::Player() :GameObject(),
 moveSpeed(1.f), moveAccelAmount(0.05f), isGround(true), hp(0), maxHP(10.f),
 isJumping(false), jumpTimer(0.2f), jumpHeight(0.f), maxJumpHeight(5.f), jumpPower(2.f), jumpSpeed(0.f),
-isAttack(false), atkSpeed(1.f), atkRange(3.f), atkSize(0.f), atkPower(1),
+isAttack(false),atkSize(3.f), atkPower(1),
 atkCoolTimer(0.3f), atkTimer(0.5f), atkHeight(1.f), solidTimer(5.f),
 isFireStock(false), isWaxStock(true), isCollectFan(false), maxWaxStock(20)
 {
@@ -31,14 +31,12 @@ isFireStock(false), isWaxStock(true), isCollectFan(false), maxWaxStock(20)
 	gravity = Parameter::GetParam(extract, "重力", 0.098f);
 	jumpPower = Parameter::GetParam(extract, "ジャンプ力", 2.0f);
 	atkTimer.maxTime_ = Parameter::GetParam(extract, "攻撃時間", 0.5f);
-	atkSpeed = Parameter::GetParam(extract, "射出速度", 1.f);
 	atkHeight = Parameter::GetParam(extract, "射出高度", 1.f);
-	atkRange = Parameter::GetParam(extract, "攻撃範囲", 3.f);
+	atkSize = Parameter::GetParam(extract, "攻撃範囲", 3.f);
 	atkCoolTimer.maxTime_ = Parameter::GetParam(extract, "クールタイム", 0.3f);
 	solidTimer.maxTime_ = Parameter::GetParam(extract, "固まるまでの時間", 5.f);
 	atkPower = (int32_t)Parameter::GetParam(extract, "敵に与えるダメージ", 10.0f);
 
-	pabloRange = Parameter::GetParam(extract, "パブロ攻撃の広がり", 5.f);
 	pabloSideRange = Parameter::GetParam(extract, "パブロ攻撃の横の広がり", 5.f);
 	pabloSpeedMag = Parameter::GetParam(extract, "パブロ攻撃時の移動速度低下係数", 0.2f);
 	pabloShotSpeedMag = Parameter::GetParam(extract, "パブロ攻撃を移動しながら撃った時の係数", 2.0f);
@@ -73,7 +71,10 @@ isFireStock(false), isWaxStock(true), isCollectFan(false), maxWaxStock(20)
 	attackDrawerObj = ModelObj(Model::Load("./Resources/Model/Sphere.obj", "Sphere", true));
 
 	godmodeTimer.maxTime_ = Parameter::GetParam(extract, "無敵時間", 10.f);
-	maxHP = Parameter::GetParam(extract, "最大HP", 10.0f);
+	maxHP = Parameter::GetParam(extract,"最大HP", 10.0f);
+
+	minRange = Parameter::GetParam(extract,"攻撃範囲_最小", minRange);
+	maxRange = Parameter::GetParam(extract, "攻撃範囲_最大", maxRange);
 }
 
 void Player::Init()
@@ -379,8 +380,10 @@ void Player::Update()
 
 		ImGui::InputInt("敵に与えるダメージ", &atkPower, 1);
 		ImGui::DragFloat("攻撃範囲_横", &pabloSideRange, 0.1f);
-		ImGui::DragFloat("攻撃範囲_奥", &atkSpeed, 0.1f);
+		ImGui::DragFloat("攻撃範囲_最小", &minRange, 0.1f);
+		ImGui::DragFloat("攻撃範囲_最大", &maxRange, 0.1f);
 		ImGui::DragFloat("射出高度", &atkHeight, 0.1f);
+		ImGui::DragFloat("攻撃が地面につくまでの時間", &atkTimer.maxTime_, 0.1f);
 		ImGui::DragFloat("クールタイム", &atkCoolTimer.maxTime_, 0.1f);
 		ImGui::InputInt("一度に出るロウの数", &waxNum, 1);
 		ImGui::InputInt("ロウの最大ストック数", &maxWaxStock, 1, 100);
@@ -393,6 +396,7 @@ void Player::Update()
 		ImGui::SliderFloat("ロウ回収範囲(横幅)", &waxCollectRange, 0.f, 100.f);
 		ImGui::SliderFloat("範囲objの透明度", &collectRangeModel.mTuneMaterial.mColor.a, 0.f, 1.f);
 		ImGui::InputFloat("ロウ回収範囲(縦幅)", &waxCollectVertical, 1.f);
+		ImGui::InputFloat("ロウ回収の時間", &WaxManager::GetInstance()->collectTime, 1.f);
 		if (ImGui::TreeNode("扇"))
 		{
 			ImGui::SliderFloat("ロウ回収半径", &waxCollectDist, 0.f, 100.f);
@@ -428,12 +432,10 @@ void Player::Update()
 		Parameter::Save("ジャンプ力", jumpPower);
 		Parameter::Save("敵に与えるダメージ", (float)atkPower);
 		Parameter::Save("攻撃時間", atkTimer.maxTime_);
-		Parameter::Save("射出速度", atkSpeed);
 		Parameter::Save("射出高度", atkHeight);
-		Parameter::Save("攻撃範囲", atkRange);
+		Parameter::Save("攻撃範囲", atkSize);
 		Parameter::Save("クールタイム", atkCoolTimer.maxTime_);
 		Parameter::Save("固まるまでの時間", solidTimer.maxTime_);
-		Parameter::Save("パブロ攻撃の広がり", pabloRange);
 		Parameter::Save("パブロ攻撃の横の広がり", pabloSideRange);
 		Parameter::Save("パブロ攻撃時の移動速度低下係数", pabloSpeedMag);
 		Parameter::Save("パブロ攻撃を移動しながら撃った時の係数", pabloShotSpeedMag);
@@ -453,6 +455,9 @@ void Player::Update()
 		Parameter::Save("プレイヤーの色B", obj.mTuneMaterial.mColor.b);
 		Parameter::Save("無敵時間", godmodeTimer.maxTime_);
 		Parameter::Save("最大HP", maxHP);
+		Parameter::Save("攻撃範囲_最小", minRange);
+		Parameter::Save("攻撃範囲_最大", maxRange);
+
 		Parameter::End();
 	}
 
@@ -699,45 +704,6 @@ void Player::Rotation()
 	}
 }
 
-void Player::Attack()
-{
-	if (waxStock > 0)
-	{
-		if (isAttack == false || isMugenAttack)
-		{
-			if ((RInput::GetInstance()->GetPadButton(XINPUT_GAMEPAD_RIGHT_SHOULDER) ||
-				RInput::GetInstance()->GetMouseClick(1)) &&
-				!atkCoolTimer.GetRun())
-			{
-				//ストック減らす
-				waxStock--;
-
-				isAttack = true;
-				atkTimer.Start();
-
-				//ホントは塗った面積に応じて溜めたい
-				//fireUnit.FireGaugeCharge(1.f);
-
-				//入力時の出現位置と方向を記録
-				atkVec = GetFrontVec();
-				atkVec.y = atkHeight;
-
-				//生成
-				WaxManager::GetInstance()->Create(
-					obj.mTransform, atkPower, atkVec, atkSpeed,
-					atkRange, atkSize, atkTimer.maxTime_, solidTimer.maxTime_);
-
-				//すぐ攻撃のクールタイム始まるように
-				if (isMugenAttack)
-				{
-					atkCoolTimer.Start();
-					atkTimer.Reset();
-				}
-			}
-		}
-	}
-}
-
 void Player::PabloAttack()
 {
 	//攻撃中かストックないなら次の攻撃が出せない
@@ -747,10 +713,7 @@ void Player::PabloAttack()
 	Vector3 pabloVec = { 0,0,0 };
 	//入力があるならそっちへ
 	pabloVec = GetFrontVec();
-	pabloVec.y = atkHeight;
-
-	//ホントは塗った面積に応じて溜めたい
-	//fireUnit.FireGaugeCharge(1.f);
+	pabloVec.y = 0;
 
 	atkVec = pabloVec;
 
@@ -762,8 +725,6 @@ void Player::PabloAttack()
 	sidePabloVec.Normalize();
 
 	//発射数の半分(切り捨て)はマイナス横ベクトル方向へずらす
-
-	//imguiでいじれるようにするのと、前方向へのランダムを作る
 
 	//発射数分ロウを生成、座標を生成するたびプラス横ベクトル方向へずらす
 	//座標を生成するたびプラス正面ベクトル方向へずらす
@@ -793,22 +754,17 @@ void Player::PabloAttack()
 		spawnTrans.position.x += Util::GetRand(sideRandMin.x, sideRandMax.x);
 		spawnTrans.position.z += Util::GetRand(sideRandMin.z, sideRandMax.z);
 
-		//前に(幅 / 数)分進める(多少ランダムにしたい)
-		spawnTrans.position += (pabloVec * pabloRange / (float)waxNum) * (float)i;
+		//最低値と最大値を元に終点を決定
+		Vector3 minPos = spawnTrans.position + pabloVec * minRange;
+		Vector3 maxPos = spawnTrans.position + pabloVec * maxRange;
 
-		Vector2 stick = RInput::GetInstance()->GetPadLStick();
-		//stick.LengthSq()は大体0~1.0(斜めで1.2)くらいが返ってくるので、
-		//そのまま係数を掛ける
-		float hoge = stick.LengthSq() * pabloShotSpeedMag;
-		//最低でも1になってほしいのでclamp
-		hoge = Util::Clamp(hoge, 1.f, 100.f);
-		float atkVal = atkSpeed * hoge;
+		Vector3 endpos;
+		endpos.x = Util::GetRand(minPos.x, maxPos.x);
+		endpos.y = 0;	//yは地面座標(今は決め打ち0)
+		endpos.z = Util::GetRand(minPos.z, maxPos.z);
 
-		WaxManager::GetInstance()->Create(
-			spawnTrans, atkPower,
-			atkVec, atkVal,
-			atkRange, atkSize,
-			atkTimer.maxTime_, solidTimer.maxTime_);
+		WaxManager::GetInstance()->Create(spawnTrans,endpos,atkHeight,
+			atkSize,atkTimer.maxTime_, solidTimer.maxTime_);
 	}
 }
 
