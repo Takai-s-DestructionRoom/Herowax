@@ -291,7 +291,7 @@ void Player::Update()
 
 	ImGui::Begin("Player");
 
-	ImGui::Text("現在のHP:%d",hp);
+	ImGui::Text("現在のHP:%f",hp);
 	ImGui::Text("Lスティック移動、Aボタンジャンプ、Rで攻撃,Lでロウ回収");
 	ImGui::Text("WASD移動、スペースジャンプ、右クリで攻撃,Pでパブロ攻撃,Qでロウ回収");
 
