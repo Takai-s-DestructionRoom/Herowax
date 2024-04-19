@@ -24,6 +24,8 @@ void CollectPartManager::Init()
 
     zone.Init();
 
+    parts.clear();
+
     std::map<std::string, std::string> extract = Parameter::Extract("zone");
     maxCarryingNum = (int32_t)Parameter::GetParam(extract,"一度に運べる数", 1);
     requireCreateNum = (int32_t)Parameter::GetParam(extract,"作るのに必要な個数", 10);
