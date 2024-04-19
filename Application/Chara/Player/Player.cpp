@@ -229,9 +229,9 @@ void Player::Update()
 	//回転を適用
 	obj.mTransform.rotation = rotVec;
 
-	bool isCollision = false;
+	/*bool isCollision = false;
 	uint32_t colCount = 0;
-	Vector3 plusVec{};
+	Vector3 plusVec{};*/
 
 	//移動制限(フェンス準拠)
 	/*for (auto& wall : Level::Get()->wallCol)
@@ -792,14 +792,19 @@ void Player::WaxCollect()
 	collectRangeModelCircle.mTransform = obj.mTransform;
 	collectRangeModelCircle.mTransform.scale = { waxCollectDist,0.1f,waxCollectDist };
 
-	//大きさ分前に置く
-	Vector3 frontVec = GetFrontVec();
-	frontVec.y = 0;
-	collectRangeModel.mTransform.position += frontVec * waxCollectVertical * 0.5f;
+	//当たり判定で使うレイの設定
+	Vector3 dir = Camera::sNowCamera->mViewProjection.mTarget - Camera::sNowCamera->mViewProjection.mEye;
+	dir.y = 0;
+	collectCol.dir = dir.Normalize();
+	collectCol.start = GetFootPos();
+	collectCol.radius = waxCollectRange * 0.5f;
 
-	//xとz軸は回転してほしくないので無理やり0に
-	collectRangeModel.mTransform.rotation.x = 0;
-	collectRangeModel.mTransform.rotation.z = 0;
+	//大きさ分前に置く
+	collectRangeModel.mTransform.position += collectCol.dir * waxCollectVertical * 0.5f;
+
+	//回転
+	Quaternion lookat = Quaternion::LookAt(collectCol.dir);
+	collectRangeModel.mTransform.rotation = lookat.ToEuler();
 
 	//更新
 	collectRangeModel.mTransform.UpdateMatrix();
@@ -807,11 +812,6 @@ void Player::WaxCollect()
 
 	collectRangeModelCircle.mTransform.UpdateMatrix();
 	collectRangeModelCircle.TransferBuffer(Camera::sNowCamera->mViewProjection);
-
-	//当たり判定で使うレイの設定
-	collectCol.dir = GetFrontVec();
-	collectCol.start = GetFootPos();
-	collectCol.radius = waxCollectRange * 0.5f;
 
 	//当たり判定で使う球の設定
 	collectColFan.pos = GetFootPos();
