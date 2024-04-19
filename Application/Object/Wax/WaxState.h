@@ -47,10 +47,14 @@ private:
 class WaxCollect : public WaxState
 {
 public:
+	WaxCollect();
 	void Update(Wax* wax)override;
 
 private:
 	float accel = 0.f;			//回収の加速度
+	bool isStart = true;
+	float oldTimeRate = 0.0f;
+	Vector3 startPos;
 };
 
 class WaxCollectFan : public WaxState

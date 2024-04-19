@@ -117,21 +117,32 @@ void WaxExtinguish::Update(Wax* wax)
 	}
 }
 
+WaxCollect::WaxCollect()
+{
+	isStart = true;
+}
+
 void WaxCollect::Update(Wax* wax)
 {
+	oldTimeRate = wax->collectTimer.GetTimeRate();
+	wax->collectTimer.Update();
+	if (isStart) {
+		wax->collectTimer.Start();
+		isStart = false;
+		startPos = wax->obj.mTransform.position;
+	}
 	wax->SetStateStr("WaxCollect");
 
-	accel += WaxManager::GetInstance()->accelAmount;
-
-	Vector3 moveVec =
-		wax->collectPos - wax->obj.mTransform.position;
-	wax->obj.mTransform.position += moveVec.GetNormalize() * accel;
+	Vector3 now = OutQuadVec3(startPos, wax->collectPos, wax->collectTimer.GetTimeRate());
+	Vector3 old = OutQuadVec3(startPos, wax->collectPos, oldTimeRate);
+	//現在フレームの移動量の分だけをmoveVecに足す
+	wax->moveVec += now - old;
 
 	//色が変わる
 	wax->obj.mTuneMaterial.mColor = Color::kGreen;
 
 	//到達したら殺す
-	if (moveVec.Length() <= accel)
+	if (wax->collectTimer.GetEnd())
 	{
 		wax->DeadParticle();
 		wax->isAlive = false;

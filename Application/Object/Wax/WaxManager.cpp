@@ -252,8 +252,7 @@ void WaxManager::Draw()
 	}
 }
 
-void WaxManager::Create(Transform transform, uint32_t power, Vector3 vec,
-	float speed, float range, float size, float atkTime, float solidTime)
+void WaxManager::Create(Transform transform,Vector3 endPos,float height, float size, float atkTime, float solidTime)
 {
 	//生成時にグループ作成
 	waxGroups.emplace_back();
@@ -265,7 +264,7 @@ void WaxManager::Create(Transform transform, uint32_t power, Vector3 vec,
 	//指定された状態に
 	waxGroups.back()->waxs.back()->obj.mTransform = transform;
 	//情報を受け取って格納
-	waxGroups.back()->waxs.back()->Init(power, vec, speed, range, size, atkTime);
+	waxGroups.back()->waxs.back()->Init(transform, endPos, height, size, atkTime);
 	waxGroups.back()->solidTimer.maxTime_ = solidTime;
 }
 

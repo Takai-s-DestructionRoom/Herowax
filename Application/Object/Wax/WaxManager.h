@@ -53,10 +53,17 @@ public:
 	//描画
 	void Draw();
 
-	//生成
-	void Create(
-		Transform transform, uint32_t power, Vector3 vec,
-		float speed, float range, float size,float atkTime, float solidTime);
+	/// <summary>
+	/// 生成
+	/// </summary>
+	/// <param name="transform">生成座標、大きさなど</param>
+	/// <param name="vec">飛ばす方向</param>
+	/// <param name="targetPos"></param>
+	/// <param name="range"></param>
+	/// <param name="size">大きさ</param>
+	/// <param name="atkTime">攻撃が地面に落ちるまでの時間</param>
+	/// <param name="solidTime">固まるまでの時間</param>
+	void Create(Transform transform, Vector3 endPos, float height, float size, float atkTime, float solidTime);
 
 	//現在の温度ボーナスを返す(計算済み)
 	float GetCalcHeatBonus();

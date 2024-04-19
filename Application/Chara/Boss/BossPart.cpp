@@ -92,9 +92,11 @@ void Parts::Update()
 			waxScatterTimer.Start();
 			Transform spawnTrans = obj.mTransform;
 			spawnTrans.position.y -= spawnTrans.scale.y * 2;
-			WaxManager::GetInstance()->Create(
-				spawnTrans, atkPower, atkVec, atkSpeed,
-				atkRange, atkSize, atkTime, solidTime);
+			//仕様変更に伴いいったん削除
+			//どうせもうちょい広がる感じに作り直す予定なのでヨシ
+			/*WaxManager::GetInstance()->Create(
+				spawnTrans, atkVec, atkSpeed,
+				atkRange, atkSize, atkTime, solidTime);*/
 			//シェイク中に自分が出したロウに当たらないように無敵にする
 			mutekiTimer.Start();
 		}

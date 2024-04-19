@@ -260,11 +260,6 @@ void ProtoScene::Update()
 						knockVec.y = 0;
 						enemy->DealDamage(player.GetAttackPower(),
 							knockVec, &player.obj);
-
-						//お試し実装:自分が攻撃を当てた相手が自分を追いかけてくる
-						if (player.GetTauntMode()) {
-							enemy->SetTarget(&player.obj);
-						}
 					}
 					//地面の蝋とぶつかってたら足盗られに
 					else
