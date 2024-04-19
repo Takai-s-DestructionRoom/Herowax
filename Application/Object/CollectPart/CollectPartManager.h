@@ -4,6 +4,8 @@
 #include "CollectZone.h"
 #include <memory>
 
+class Player;
+
 class CollectPartManager : public Singleton
 {
 public:
@@ -11,6 +13,8 @@ public:
 	
 	static void LoadResouces();
 	
+	void SetPlayer(Player* player_) { player = player_; };
+
 	void Init();
 	void Update();
 	void Draw();
@@ -27,6 +31,8 @@ public:
 
 	int32_t GetCarryingNum();
 
+	void CreateReward();
+
 public:
 	std::vector<std::unique_ptr<CollectPart>> parts;
 
@@ -36,5 +42,7 @@ private:
 	int32_t maxCarryingNum = 1;
 
 	int32_t requireCreateNum = 10;
+
+	Player* player = nullptr;
 };
 

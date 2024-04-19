@@ -23,8 +23,8 @@ ProtoScene::ProtoScene()
 	TextureManager::Load("./Resources/Brush.png", "brush");
 	CollectPartManager::LoadResouces();
 
-	skydome = ModelObj(Model::Load("./Resources/Model/Skydome/Skydome.obj", "Skydome"));
-	skydome.mTransform.scale = { 5, 5, 5 };
+	skydome = ModelObj(Model::Load("./Resources/Model/bg/bg.obj", "bg"));
+	skydome.mTransform.scale = { 1.5f, 1.5f, 1.5f };
 	skydome.mTransform.UpdateMatrix();
 
 	//TemperatureUI::LoadResource();
@@ -74,6 +74,8 @@ void ProtoScene::Init()
 	CollectPartManager::GetInstance()->Init();
 	CollectPartManager::GetInstance()->zone.pos = { 100,0,100 };
 	CollectPartManager::GetInstance()->zone.scale = { 100,100 };
+
+	CollectPartManager::GetInstance()->SetPlayer(&player);
 }
 
 void ProtoScene::Update()
@@ -248,12 +250,14 @@ void ProtoScene::Update()
 			}
 		}
 		//攻撃中に本体同士がぶつかったらプレイヤーにダメージ
-		if (enemy->GetAttackState() == "NowAttack")
+		//(フラグ立っている場合は関係なくダメージ判定)
+		if (enemy->GetAttackState() == "<NowAttack" ||
+			EnemyManager::GetInstance()->GetIsContactDamage())
 		{
 			if (ColPrimitive3D::CheckSphereToSphere(enemy->collider, player.collider))
 			{
 				//1ダメージ(どっかに参照先作るべき)
-				player.DealDamage(1);
+				player.DealDamage(EnemyManager::GetInstance()->GetNormalAttackPower());
 			}
 		}
 		//回収ボタン押されたときに固まってるなら吸収

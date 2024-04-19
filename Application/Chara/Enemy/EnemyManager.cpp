@@ -38,6 +38,9 @@ EnemyManager::EnemyManager()
 	attackMove = Parameter::GetParam(extract,"突っ込んでくる距離", 100.f);
 	attackHitColliderSize = Parameter::GetParam(extract,"敵がプレイヤーと当たる判定の大きさ", 3.0f);
 	moveSpeed = Parameter::GetParam(extract,"移動速度", 0.1f);
+
+	normalAtkPower = Parameter::GetParam(extract,"敵の攻撃力", 1.f);
+	isContactDamage = Parameter::GetParam(extract,"接触ダメージをつけるか",0.0f);
 }
 
 void EnemyManager::SetTarget(ModelObj* target_)
@@ -61,7 +64,7 @@ void EnemyManager::Update()
 		enemy->SetKnockRange(knockRange);
 		enemy->SetKnockTime(knockTime);
 		enemy->SetMutekiTime(mutekiTime);
-			 
+
 		enemy->Update();
 	}
 
@@ -73,7 +76,7 @@ void EnemyManager::Update()
 	}
 
 	solidCombo = 0;	//同フレームで固まった敵のみカウントするので逐一0に戻す
-	
+
 #pragma region ImGui
 	ImGui::SetNextWindowSize({ 300, 150 }, ImGuiCond_FirstUseEver);
 
@@ -89,6 +92,12 @@ void EnemyManager::Update()
 	ImGui::Text("EnemyNum:%d", enemys.size());
 	ImGui::DragFloat3("敵の大きさ", &enemySize.x, 0.1f);
 	static bool hitChecker = false;
+	if (ImGui::TreeNode("攻撃系"))
+	{
+		ImGui::Checkbox("接触ダメージをつけるか", &isContactDamage);
+		ImGui::InputFloat("敵の攻撃力", &normalAtkPower, 1.f);
+		ImGui::TreePop();
+	}
 	if (ImGui::TreeNode("当たり判定"))
 	{
 		ImGui::Checkbox("当たり判定描画", &hitChecker);
@@ -165,6 +174,7 @@ void EnemyManager::Update()
 		Parameter::Save("敵がプレイヤーと当たる判定の大きさ", attackHitColliderSize);
 		Parameter::Save("突っ込んでくる距離", attackMove);
 		Parameter::Save("移動速度", moveSpeed);
+		Parameter::Save("敵の攻撃力", normalAtkPower);
 
 		Parameter::End();
 	}
