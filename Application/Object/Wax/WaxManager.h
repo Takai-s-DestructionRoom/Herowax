@@ -25,8 +25,9 @@ private:
 
 	std::string fileName = "Wax";
 
+	//調整項目
 	float slimeWaxSizeMag = 1.0f;	//ロウのサイズを全部統一で小さくする
-
+	
 public:
 	std::vector<float> waxTime;
 	//std::vector<std::unique_ptr<Wax>> waxs;	//蝋ども
@@ -39,6 +40,8 @@ public:
 
 	bool isCollected = true;	//回収し終えたか
 	float accelAmount = 0.1f;	//回収の加速度合い
+	
+	float collectTime = 1.0f;		//吸収されるまでの時間
 
 	SlimeWax slimeWax;
 

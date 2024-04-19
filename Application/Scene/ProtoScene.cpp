@@ -251,13 +251,19 @@ void ProtoScene::Update()
 		}
 		//攻撃中に本体同士がぶつかったらプレイヤーにダメージ
 		//(フラグ立っている場合は関係なくダメージ判定)
-		if (enemy->GetAttackState() == "<NowAttack" ||
-			EnemyManager::GetInstance()->GetIsContactDamage())
+		if (enemy->GetAttackState() == "NowAttack")
 		{
 			if (ColPrimitive3D::CheckSphereToSphere(enemy->collider, player.collider))
 			{
 				//1ダメージ(どっかに参照先作るべき)
 				player.DealDamage(EnemyManager::GetInstance()->GetNormalAttackPower());
+			}
+		}
+		if (EnemyManager::GetInstance()->GetIsContactDamage()) {
+			if (ColPrimitive3D::CheckSphereToSphere(enemy->collider, player.collider))
+			{
+				//1ダメージ(どっかに参照先作るべき)
+				player.DealDamage(EnemyManager::GetInstance()->GetContactAttackPower());
 			}
 		}
 		//回収ボタン押されたときに固まってるなら吸収

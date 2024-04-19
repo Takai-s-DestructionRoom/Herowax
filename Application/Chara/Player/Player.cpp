@@ -361,6 +361,7 @@ void Player::Update()
 		ImGui::SliderFloat("ロウ回収範囲(横幅)", &waxCollectRange, 0.f, 100.f);
 		ImGui::SliderFloat("範囲objの透明度", &collectRangeModel.mTuneMaterial.mColor.a, 0.f, 1.f);
 		ImGui::InputFloat("ロウ回収範囲(縦幅)", &waxCollectVertical, 1.f);
+		ImGui::InputFloat("ロウ回収の時間", &WaxManager::GetInstance()->collectTime, 1.f);
 		if (ImGui::TreeNode("扇"))
 		{
 			ImGui::SliderFloat("ロウ回収半径", &waxCollectDist, 0.f, 100.f);
