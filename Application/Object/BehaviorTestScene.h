@@ -15,6 +15,8 @@ public:
 	void Update();
 	void Draw();
 
+	void SetColor(Color color) { obj.mTuneMaterial.mColor = color; };
+
 	ModelObj* start = nullptr;
 	ModelObj* end = nullptr;
 
@@ -42,6 +44,7 @@ private:
 	
 	std::vector<ModelObj> objs;
 	std::vector<EasingCube> lineCube;
+	EasingCube returnCube;
 	DebugCamera camera = DebugCamera({ 0, 0, -5 });
 	LightGroup light;
 

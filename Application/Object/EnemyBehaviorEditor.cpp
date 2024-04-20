@@ -51,19 +51,19 @@ BehaviorData EnemyBehaviorEditor::Load(const std::string& filename)
 	std::string line = "";
 	while (getline(file, line)) {
 		std::istringstream line_stream(line);
-		
-		if (Util::ContainString(line, "start")) {
+		if (Util::ContainString(line, "point")) {
+			std::vector<std::string> strs = Util::StringSplit(line, ":");
+			result.points.push_back(GetVector3Data(strs[1]));
+		}
+		/*if (Util::ContainString(line, "start")) {
 			std::vector<std::string> strs = Util::StringSplit(line, ":");
 			result.start = GetVector3Data(strs[1]);
 		}
-		if (Util::ContainString(line, "inter")) {
-			std::vector<std::string> strs = Util::StringSplit(line, ":");
-			result.inters.push_back(GetVector3Data(strs[1]));
-		}
+		
 		if (Util::ContainString(line, "end")) {
 			std::vector<std::string> strs = Util::StringSplit(line, ":");
 			result.end = GetVector3Data(strs[1]);
-		}
+		}*/
 	}
 
 	return result;
@@ -78,16 +78,16 @@ void EnemyBehaviorEditor::Save(const BehaviorData& data, const std::string& save
 
 	writing_file.open(path, std::ios::out);
 
-	writing_file << "start:" << SaveVector3(data.start) << std::endl;
+	//writing_file << "start:" << SaveVector3(data.start) << std::endl;
 
 	int32_t count = 0;
-	for (auto& inter : data.inters)
+	for (auto& inter : data.points)
 	{
 		count++;
-		writing_file << "inter" << std::to_string(count) << ":" << SaveVector3(inter) << std::endl;
+		writing_file << "point" << std::to_string(count) << ":" << SaveVector3(inter) << std::endl;
 	}
 
-	writing_file << "end:" << SaveVector3(data.end) << std::endl;
+	//writing_file << "end:" << SaveVector3(data.end) << std::endl;
 	writing_file.close();
 }
 
@@ -98,38 +98,41 @@ Vector3 GetLerp(Vector3 start, Vector3 end, float timeRate)
 			 Easing::lerp(start.z,end.z, timeRate));
 }
 
-Vector3 BehaviorData::GetMoveVec()
+Vector3 BehaviorData::GetMoveVec(Vector3 basis)
 {
+	//1つしか入ってないならスキップ
+	if (points.size() < 2)return Vector3(0,0,0);
+
 	oldRate = timer.GetTimeRate();
-	timer.Update();
 
 	if (!timer.GetRun()) {
 		timer.Start();
 		progress++;
-		if (progress > inters.size() + 2) {
+		if (progress >= points.size()) {
 			progress = 0;
 		}
 	}
 
-	//最初なら
-	if (progress == 0){
-		Vector3 now = GetLerp(start, inters[0], timer.GetTimeRate());
-		Vector3 old = GetLerp(start, inters[0], oldRate);
-		
-		return Vector3(now - old);
-	}
-	//最後なら
-	else if (progress == inters.size() + 2) {
-		Vector3 now = GetLerp(inters.back(), end, timer.GetTimeRate());
-		Vector3 old = GetLerp(inters.back(), end, oldRate);
+	timer.Update();
 
-		return Vector3(now - old);
-	}
-	//途中なら
-	else {
-		Vector3 now = GetLerp(inters[progress - 1], inters[progress], timer.GetTimeRate());
-		Vector3 old = GetLerp(inters[progress - 1], inters[progress], oldRate);
+	Vector3 now = { 0,0,0 };
+	Vector3 old = { 0,0,0 };
 
-		return Vector3(now - old);
+	Vector3 result = { 0,0,0 };
+	
+	//終点まで到達したら最初の位置に戻る
+	if (progress >= points.size() - 1) {
+		//now = GetLerp(points[progress], points[0], timer.GetTimeRate());
+		//old = GetLerp(points[progress], points[0], oldRate);
+		result = GetLerp(basis + points[progress], basis + points[0], timer.GetTimeRate());
 	}
+	else
+	{
+		//now = GetLerp(points[progress], points[progress + 1], timer.GetTimeRate());
+		//old = GetLerp(points[progress], points[progress + 1], oldRate);
+		result = GetLerp(basis + points[progress], basis + points[progress + 1], timer.GetTimeRate());
+	}
+
+	//return Vector3(now - old);
+	return result;
 }

@@ -30,6 +30,7 @@ void BehaviorTestScene::Update()
 	{
 		cube.Update();
 	}
+	returnCube.Update();
 
 	skydome.TransferBuffer(camera.mViewProjection);
 
@@ -53,22 +54,12 @@ void BehaviorTestScene::Update()
 
 	if (ImGui::Button("セーブ")) {
 		int32_t i = 0;
-		data.inters.clear();
+		data.points.clear();
 		for (auto& obj : objs)
 		{
-			//最初の一つならスタートに
-			if (i == 0) {
-				data.start = obj.mTransform.position;
-			}
-			//最後の一つならエンドに入れてブレイク
-			else if (i == objs.size() - 1) {
-				data.end = obj.mTransform.position;
-				break;
-			}
-			//それ以外は全部interへ
-			else {
-				data.inters.push_back(obj.mTransform.position);
-			}
+			//最後は入れない
+			if (i == objs.size() - 1)break;
+			data.points.push_back(obj.mTransform.position);
 			i++;
 		}
 
@@ -91,6 +82,7 @@ void BehaviorTestScene::Draw()
 	{
 		cube.Draw();
 	}
+	returnCube.Draw();
 }
 
 void BehaviorTestScene::Finalize()
@@ -106,6 +98,10 @@ void BehaviorTestScene::CubeCreate(Vector3 pos)
 		lineCube.back().start = &objs.back();
 
 		objs.back().mTuneMaterial.mColor = { 1,1,1,1 };
+
+		returnCube.end = &objs.front();
+		returnCube.start = &objs.back();
+		returnCube.SetColor(Color::kLightblue);
 	}
 
 	objs.emplace_back();

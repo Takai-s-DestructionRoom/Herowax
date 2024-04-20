@@ -139,18 +139,6 @@ void EnemyManager::Update()
 	static Color changeColor = { 1,1,1,1 };
 	ImGui::ColorEdit4("ロウで固まってるときの色", &changeColor.r);
 
-	for (auto& enemy : enemys)
-	{
-		ImGui::Text("ステート:%s", enemy->GetState().c_str());
-		enemy->changeColor = changeColor;
-		enemy->colliderSize = collideSize;
-		enemy->obj.mTransform.scale = enemySize;
-		enemy->SetDrawCollider(hitChecker);
-		enemy->attackHitCollider.r = attackHitColliderSize;
-		enemy->attackMovePower = attackMove;
-		enemy->SetMoveSpeed(moveSpeed);
-	}
-
 	if (ImGui::Button("Reset")) {
 		enemys.clear();
 	}
@@ -177,6 +165,18 @@ void EnemyManager::Update()
 		Parameter::Save("敵の攻撃力", normalAtkPower);
 
 		Parameter::End();
+	}
+
+	for (auto& enemy : enemys)
+	{
+		ImGui::Text("移動量:x_%f y_%f z_%f", enemy->GetMoveVec().x, enemy->GetMoveVec().y, enemy->GetMoveVec().z);
+		enemy->changeColor = changeColor;
+		enemy->colliderSize = collideSize;
+		enemy->obj.mTransform.scale = enemySize;
+		enemy->SetDrawCollider(hitChecker);
+		enemy->attackHitCollider.r = attackHitColliderSize;
+		enemy->attackMovePower = attackMove;
+		enemy->SetMoveSpeed(moveSpeed);
 	}
 
 	ImGui::End();

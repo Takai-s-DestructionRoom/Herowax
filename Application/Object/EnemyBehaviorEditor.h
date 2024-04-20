@@ -8,17 +8,17 @@
 struct BehaviorData
 {
 public:
-	Vector3 start;	//始点
-	std::vector<Vector3> inters;	//中点
-	Vector3 end;	//終点
+	std::vector<Vector3> points;	//点を全て保存
+	Vector3 start;	//始点(front)
+	Vector3 end;	//終点(back)
 
 	std::string error = "";
 
 	//
-	Vector3 GetMoveVec();
+	Vector3 GetMoveVec(Vector3 basis);
 
 private:
-	int32_t progress = -1;
+	int32_t progress = 0;
 	Easing::EaseTimer timer;
 	float oldRate;
 };
