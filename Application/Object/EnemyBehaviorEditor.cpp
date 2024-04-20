@@ -98,7 +98,7 @@ Vector3 GetLerp(Vector3 start, Vector3 end, float timeRate)
 			 Easing::lerp(start.z,end.z, timeRate));
 }
 
-Vector3 BehaviorData::GetMoveVec(Vector3 basis)
+Vector3 BehaviorData::GetBehavior(Vector3 basis)
 {
 	//1つしか入ってないならスキップ
 	if (points.size() < 2)return Vector3(0,0,0);
@@ -115,24 +115,23 @@ Vector3 BehaviorData::GetMoveVec(Vector3 basis)
 
 	timer.Update();
 
-	Vector3 now = { 0,0,0 };
-	Vector3 old = { 0,0,0 };
-
 	Vector3 result = { 0,0,0 };
 	
 	//終点まで到達したら最初の位置に戻る
 	if (progress >= points.size() - 1) {
-		//now = GetLerp(points[progress], points[0], timer.GetTimeRate());
-		//old = GetLerp(points[progress], points[0], oldRate);
-		result = GetLerp(basis + points[progress], basis + points[0], timer.GetTimeRate());
+			result = GetLerp(basis + points[progress], basis + points[0], timer.GetTimeRate());
 	}
 	else
 	{
-		//now = GetLerp(points[progress], points[progress + 1], timer.GetTimeRate());
-		//old = GetLerp(points[progress], points[progress + 1], oldRate);
 		result = GetLerp(basis + points[progress], basis + points[progress + 1], timer.GetTimeRate());
 	}
 
-	//return Vector3(now - old);
 	return result;
+}
+
+void BehaviorData::Reset()
+{
+	progress = -1;
+	timer.Reset();
+	oldRate = 0.0f;
 }

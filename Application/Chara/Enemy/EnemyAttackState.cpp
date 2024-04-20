@@ -207,6 +207,40 @@ void EnemyEndAttackState::Update(Enemy* enemy)
 	
 	if (postureTimer.GetEnd()) {
 		//遷移命令
+		enemy->ChangeAttackState<EnemyBackOriginState>();
+	}
+}
+
+EnemyBackOriginState::EnemyBackOriginState()
+{
+	
+}
+
+void EnemyBackOriginState::Update(Enemy* enemy)
+{
+	Vector3 moveVec = enemy->GetOriginPos() - enemy->GetPos();
+	moveVec.Normalize();
+	moveVec.y = 0;
+	moveVec *= enemy->GetMoveSpeed();
+	enemy->MoveVecPlus(moveVec);
+
+	//ターゲットの方向を向いてくれる
+	Quaternion aLookat = Quaternion::LookAt(moveVec);
+
+	ColPrimitive3D::Sphere origin;
+	origin.pos = enemy->GetOriginPos();
+	origin.r = 5;
+	ColPrimitive3D::Sphere now;
+	now.pos = enemy->GetPos();
+	now.r = 5;
+
+	//適当な当たり判定を作り、当たっているなら終了
+	if (ColPrimitive3D::CheckSphereToSphere(origin, now)) {
+		//差を埋めて初期位置へ
+		enemy->SetPos(enemy->GetOriginPos());
+		enemy->BehaviorReset();
+
+		//遷移命令
 		enemy->ChangeAttackState<EnemyNonAttackState>();
 	}
 }

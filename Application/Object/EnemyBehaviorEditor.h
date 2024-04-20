@@ -9,16 +9,17 @@ struct BehaviorData
 {
 public:
 	std::vector<Vector3> points;	//点を全て保存
-	Vector3 start;	//始点(front)
-	Vector3 end;	//終点(back)
-
+	
 	std::string error = "";
 
-	//
-	Vector3 GetMoveVec(Vector3 basis);
+	//行動を取得(イージングで座標を返す)
+	Vector3 GetBehavior(Vector3 basis);
+
+	//タイマーと移動順をリセット
+	void Reset();
 
 private:
-	int32_t progress = 0;
+	int32_t progress = -1;
 	Easing::EaseTimer timer;
 	float oldRate;
 };

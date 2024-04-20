@@ -130,7 +130,7 @@ void Enemy::Update()
 	///-------------移動、回転の加算--------------///
 
 	//通常移動をオーダーをもとにやる
-	Vector3 pVec = loadData.GetMoveVec(basis);
+	Vector3 pVec = loadBehaviorData.GetBehavior(basis);
 	//pVec.Normalize();
 	//pVec.y = 0;
 
@@ -142,8 +142,7 @@ void Enemy::Update()
 
 	//攻撃準備に入ったらプレイヤーへ向けた移動をしない
 	//(ステート内に書いてもいいけどどこにあるかわからなくなりそうなのでここで)
-	if (GetAttackState() != "NowAttack" && 
-		GetAttackState() != "PreAttack")
+	if (GetAttackState() == "NonAttack")
 	{
 		//プレイヤーへ向けた移動をする
 		//moveVec += pVec * moveSpeed;
@@ -275,8 +274,11 @@ void Enemy::KnockRota()
 
 void Enemy::Rotation(const Vector3& pVec)
 {
+	Vector3 targetVec = pVec;
+	targetVec.Normalize();
+	targetVec.y = 0;
 	//普段はターゲットの方向を向く
-	Quaternion pLookat = Quaternion::LookAt(pVec);
+	Quaternion pLookat = Quaternion::LookAt(targetVec);
 	//euler軸へ変換
 	RotVecPlus(pLookat.ToEuler());
 }
@@ -308,6 +310,20 @@ void Enemy::SetIsEscape(bool flag)
 	{
 		obj.mTuneMaterial.mColor = Color::kWhite;
 	}
+}
+
+Vector3 Enemy::GetOriginPos()
+{
+	if (loadBehaviorData.points.size() > 0)
+	{
+		return basis + loadBehaviorData.points[0];
+	}
+	return basis;
+}
+
+void Enemy::BehaviorReset()
+{
+	loadBehaviorData.Reset();
 }
 
 void Enemy::DealDamage(uint32_t damage, const Vector3& dir, ModelObj* target_)
@@ -377,7 +393,8 @@ void Enemy::RotVecPlus(const Vector3& plusVec)
 void Enemy::SetBehaviorOrder(const std::string& order)
 {
 	loadFileName = order;
-	loadData = EnemyBehaviorEditor::Load(loadFileName);
+	loadBehaviorData = EnemyBehaviorEditor::Load(loadFileName);
+	loadBehaviorData.Reset();
 }
 
 void Enemy::UpdateAttackCollider()

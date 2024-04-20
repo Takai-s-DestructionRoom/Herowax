@@ -73,7 +73,7 @@ private:
 	
 	EnemyUI ui;	//HP表示
 
-	BehaviorData loadData;
+	BehaviorData loadBehaviorData;
 	std::string loadFileName = "";
 
 public:
@@ -120,6 +120,9 @@ public:
 
 	ModelObj* GetTarget();
 
+	//行動を初期化
+	void BehaviorReset();
+
 	/// <summary>
 	/// 状態変更
 	/// 内部で設定している優先度を見て、同値以上であれば遷移、未満であれば何もしない
@@ -160,6 +163,10 @@ public:
 	bool GetIsSolid();	
 	//移動量
 	Vector3 GetMoveVec() { return moveVec; };
+	//スポーン時の位置を取得
+	Vector3 GetOriginPos();
+	//移動速度を取得
+	float GetMoveSpeed() { return moveSpeed; };
 
 	// セッター //
 	//減速率設定
