@@ -204,33 +204,6 @@ void ProtoScene::Update()
 		}
 	}
 
-	//10個溜まったら(後で制作状態も作る)
-	if (CollectPartManager::GetInstance()->GetAllowCreate()) {
-
-		//範囲内に居て
-		if (ColPrimitive3D::CheckSphereToAABB(player.collider,
-			CollectPartManager::GetInstance()->zone.aabbCol))
-		{
-			//ボタンを押しているなら
-			if (RInput::GetKey(DIK_E) ||
-				RInput::GetPadButton(XINPUT_GAMEPAD_RIGHT_SHOULDER))
-			{
-				//制作
-				CollectPartManager::GetInstance()->zone.GodModeCreate();
-			}
-			else {
-				CollectPartManager::GetInstance()->zone.GodModeCreateStop();
-			}
-		}
-
-		//ゴッドモードへ
-		if (CollectPartManager::GetInstance()->zone.GodModeCreateEnd()) {
-			player.SetIsGodmode(true);
-
-			CollectPartManager::GetInstance()->CratePostDelete();
-		}
-	}
-
 	for (auto& enemy : EnemyManager::GetInstance()->enemys)
 	{
 		//タワーとの当たり判定

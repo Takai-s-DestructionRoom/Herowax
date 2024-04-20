@@ -440,6 +440,98 @@
         },
         {
             "type": "MESH",
+            "name": "敵",
+            "transform": {
+                "translation": [
+                    -7.983331680297852,
+                    -92.304931640625,
+                    0.10939884185791016
+                ],
+                "rotation": [
+                    0.0,
+                    -0.0,
+                    0.0
+                ],
+                "scaling": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            },
+            "setObject": "Enemy",
+            "behaviorOrder": "roop_line"
+        },
+        {
+            "type": "MESH",
+            "name": "敵.001",
+            "transform": {
+                "translation": [
+                    -31.04084014892578,
+                    -108.12886047363281,
+                    0.10939884185791016
+                ],
+                "rotation": [
+                    0.0,
+                    -0.0,
+                    0.0
+                ],
+                "scaling": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            },
+            "setObject": "Enemy",
+            "behaviorOrder": "roop_triangle"
+        },
+        {
+            "type": "MESH",
+            "name": "敵.002",
+            "transform": {
+                "translation": [
+                    0.8785524368286133,
+                    -106.3084716796875,
+                    0.10939884185791016
+                ],
+                "rotation": [
+                    0.0,
+                    -0.0,
+                    0.0
+                ],
+                "scaling": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            },
+            "setObject": "Enemy",
+            "behaviorOrder": "roop_line"
+        },
+        {
+            "type": "MESH",
+            "name": "敵.003",
+            "transform": {
+                "translation": [
+                    39.57362365722656,
+                    -115.60409545898438,
+                    0.10939884185791016
+                ],
+                "rotation": [
+                    0.0,
+                    -0.0,
+                    0.0
+                ],
+                "scaling": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            },
+            "setObject": "Enemy",
+            "behaviorOrder": "roop_triangle"
+        },
+        {
+            "type": "MESH",
             "name": "敵スポナー.003",
             "transform": {
                 "translation": [

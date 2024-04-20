@@ -58,6 +58,8 @@ Enemy::~Enemy()
 void Enemy::Init()
 {
 	hp = maxHP;
+
+	basis = obj.mTransform.position;
 }
 
 void Enemy::Reset()
@@ -127,12 +129,10 @@ void Enemy::Update()
 
 	///-------------移動、回転の加算--------------///
 
-	//プレイヤーに向かって移動するAI
-	//普段はプレイヤーにではなく、ランダムだったり特定方向へ進み続けて、
-	//ぶつかって初めてターゲットに入れるようにしたい
-	Vector3 pVec = target->mTransform.position - obj.mTransform.position;
-	pVec.Normalize();
-	pVec.y = 0;
+	//通常移動をオーダーをもとにやる
+	Vector3 pVec = loadData.GetMoveVec(basis);
+	//pVec.Normalize();
+	//pVec.y = 0;
 
 	//ノックバック中でないなら重力をかける
 	if (!knockbackTimer.GetRun()) {
@@ -146,7 +146,8 @@ void Enemy::Update()
 		GetAttackState() != "PreAttack")
 	{
 		//プレイヤーへ向けた移動をする
-		moveVec += pVec * moveSpeed;
+		//moveVec += pVec * moveSpeed;
+		obj.mTransform.position = pVec;
 	}
 
 	//ノックバックも攻撃準備に入ったら無効化する
@@ -371,6 +372,12 @@ void Enemy::MoveVecPlus(const Vector3& plusVec)
 void Enemy::RotVecPlus(const Vector3& plusVec)
 {
 	rotVec += plusVec;
+}
+
+void Enemy::SetBehaviorOrder(const std::string& order)
+{
+	loadFileName = order;
+	loadData = EnemyBehaviorEditor::Load(loadFileName);
 }
 
 void Enemy::UpdateAttackCollider()

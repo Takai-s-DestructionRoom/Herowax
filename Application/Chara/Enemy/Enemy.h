@@ -7,6 +7,7 @@
 #include "Quaternion.h"
 #include "Vector2.h"
 #include "EnemyAttackState.h"
+#include "EnemyBehaviorEditor.h"
 
 class Enemy : public GameObject
 {
@@ -18,6 +19,8 @@ private:
 	float slowCoatingMag;		//蝋かけられたときの減速率
 	bool isGraund;				//接地しているかフラグ
 	float gravity;				//重力
+
+	Vector3 basis;
 
 	//------------ 回転関連 ------------//
 	Vector3 rotVec;				//回転ベクトル
@@ -69,6 +72,9 @@ private:
 	std::string stateStr;			//状態を文字列で保存
 	
 	EnemyUI ui;	//HP表示
+
+	BehaviorData loadData;
+	std::string loadFileName = "";
 
 public:
 	Easing::EaseTimer solidTimer;	//動けなくなっている時間
@@ -150,8 +156,10 @@ public:
 	//HPの取得
 	float GetHP() { return hp; };
 	float GetMaxHP() { return maxHP; };
-
-	bool GetIsSolid();	//固まってるかどうか
+	//固まってるかどうか
+	bool GetIsSolid();	
+	//移動量
+	Vector3 GetMoveVec() { return moveVec; };
 
 	// セッター //
 	//減速率設定
@@ -179,6 +187,8 @@ public:
 	void SetMoveSpeed(float setSpeed) { moveSpeed = setSpeed; };
 	//強制的に死亡させる
 	void SetDeath();
+	//行動ファイルを設定、読み込み
+	void SetBehaviorOrder(const std::string& order);
 	//移動量に足す
 	void MoveVecPlus(const Vector3& plusVec);
 	//回転量に足す

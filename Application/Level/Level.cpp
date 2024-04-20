@@ -106,6 +106,14 @@ void Level::Extract(const std::string& handle)
 			ground.mTransform.scale = objectData->scaling;
 			ground.mTransform.rotation = objectData->rotation;
 		}
+		if (objectData->setObjectName == "Enemy")
+		{
+			EnemyManager::GetInstance()->CreateEnemy<Enemy>(
+				objectData->translation,
+				objectData->scaling,
+				objectData->rotation,
+				objectData->behaviorOrder);
+		}
 		if (objectData->setObjectName == "EnemySpawner")
 		{
 			spawnerManager->Create(objectData->translation,
