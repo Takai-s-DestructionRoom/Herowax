@@ -64,6 +64,7 @@ void EnemyManager::Update()
 		enemy->SetKnockRange(knockRange);
 		enemy->SetKnockTime(knockTime);
 		enemy->SetMutekiTime(mutekiTime);
+		enemy->SetTarget(target);
 
 		enemy->Update();
 	}
