@@ -170,7 +170,6 @@ void EnemyManager::Update()
 
 	for (auto& enemy : enemys)
 	{
-		ImGui::Text("移動量:x_%f y_%f z_%f", enemy->GetMoveVec().x, enemy->GetMoveVec().y, enemy->GetMoveVec().z);
 		enemy->changeColor = changeColor;
 		enemy->colliderSize = collideSize;
 		enemy->obj.mTransform.scale = enemySize;

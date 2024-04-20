@@ -76,6 +76,8 @@ private:
 	BehaviorData loadBehaviorData;
 	std::string loadFileName = "";
 
+	bool forceRot = false;
+
 public:
 	Easing::EaseTimer solidTimer;	//動けなくなっている時間
 
@@ -167,7 +169,7 @@ public:
 	Vector3 GetOriginPos();
 	//移動速度を取得
 	float GetMoveSpeed() { return moveSpeed; };
-
+	
 	// セッター //
 	//減速率設定
 	void SetSlowMag(float mag) { slowMag = mag; }
@@ -196,10 +198,13 @@ public:
 	void SetDeath();
 	//行動ファイルを設定、読み込み
 	void SetBehaviorOrder(const std::string& order);
+	//別の回転を使う場合に立てるフラグ
+	void SetForceRot(bool forceRot_) { forceRot = forceRot_; };
 	//移動量に足す
 	void MoveVecPlus(const Vector3& plusVec);
 	//回転量に足す
 	void RotVecPlus(const Vector3& plusVec);
+	
 private:
 	void UpdateAttackCollider();
 	void DrawAttackCollider();

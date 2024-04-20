@@ -73,6 +73,8 @@ void Enemy::Reset()
 	obj.mTransform.position -= shack;
 	//シェイクを元に戻す
 	shack = { 0,0,0 };
+
+	SetForceRot(false);
 }
 
 void Enemy::Update()
@@ -150,7 +152,6 @@ void Enemy::Update()
 	}
 
 	//ノックバックも攻撃準備に入ったら無効化する
-	//(条件式一緒だけど処理違うので段落分けてます)
 	if (GetAttackState() != "NowAttack" &&
 		GetAttackState() != "PreAttack")
 	{
@@ -175,10 +176,14 @@ void Enemy::Update()
 	}
 
 	//もし何も回転の加算がない場合、
-	if (rotVec.LengthSq() == 0) {
+	if (!forceRot) {
 		//固まっていなければ通常時の回転をする
 		if (!GetIsSolid() && !knockbackTimer.GetRun()) {
-			Rotation(pVec);
+			Vector3 tVec = loadBehaviorData.GetMoveDir();
+			tVec.Normalize();
+			tVec.y = 0;
+
+			Rotation(tVec);
 		}
 	}
 	//回転の適用
@@ -274,11 +279,8 @@ void Enemy::KnockRota()
 
 void Enemy::Rotation(const Vector3& pVec)
 {
-	Vector3 targetVec = pVec;
-	targetVec.Normalize();
-	targetVec.y = 0;
 	//普段はターゲットの方向を向く
-	Quaternion pLookat = Quaternion::LookAt(targetVec);
+	Quaternion pLookat = Quaternion::LookAt(pVec);
 	//euler軸へ変換
 	RotVecPlus(pLookat.ToEuler());
 }

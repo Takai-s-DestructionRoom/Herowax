@@ -14,6 +14,8 @@ public:
 
 	//行動を取得(イージングで座標を返す)
 	Vector3 GetBehavior(Vector3 basis);
+	//進行方向を取得
+	Vector3 GetMoveDir();
 
 	//タイマーと移動順をリセット
 	void Reset();

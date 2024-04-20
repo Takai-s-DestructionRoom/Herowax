@@ -115,6 +115,8 @@ void EnemyPreState::Update(Enemy* enemy)
 	enemy->RotVecPlus(aLookat.ToEuler());
 	enemy->RotVecPlus({ radX ,0,0});
 
+	enemy->SetForceRot(true);
+
 	//時間たったら次へ
 	if (lifeTimer.GetEnd()) {
 		//遷移命令
@@ -168,6 +170,7 @@ void EnemyNowAttackState::Update(Enemy* enemy)
 	//euler軸へ変換
 	enemy->RotVecPlus(aLookat.ToEuler());
 	enemy->RotVecPlus({ radX ,0,0 });
+	enemy->SetForceRot(true);
 
 	if (chargeTimer.GetEnd()) {
 		//遷移命令
@@ -204,7 +207,8 @@ void EnemyEndAttackState::Update(Enemy* enemy)
 	//euler軸へ変換
 	enemy->RotVecPlus(aLookat.ToEuler());
 	enemy->RotVecPlus({ radX ,0,0 });
-	
+	enemy->SetForceRot(true);
+
 	if (postureTimer.GetEnd()) {
 		//遷移命令
 		enemy->ChangeAttackState<EnemyBackOriginState>();

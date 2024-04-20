@@ -119,7 +119,7 @@ Vector3 BehaviorData::GetBehavior(Vector3 basis)
 	
 	//終点まで到達したら最初の位置に戻る
 	if (progress >= points.size() - 1) {
-			result = GetLerp(basis + points[progress], basis + points[0], timer.GetTimeRate());
+		result = GetLerp(basis + points[progress], basis + points[0], timer.GetTimeRate());
 	}
 	else
 	{
@@ -127,6 +127,17 @@ Vector3 BehaviorData::GetBehavior(Vector3 basis)
 	}
 
 	return result;
+}
+
+Vector3 BehaviorData::GetMoveDir()
+{
+	if (progress >= points.size() - 1) {
+		return  points[0] - points[progress];
+	}
+	else
+	{
+		return points[progress + 1] - points[progress];
+	}
 }
 
 void BehaviorData::Reset()
