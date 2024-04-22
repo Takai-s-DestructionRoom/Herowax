@@ -243,8 +243,12 @@ void ProtoScene::Update()
 		if (player.GetWaxCollectButtonDown() &&
 			enemy->GetIsSolid())
 		{
+			//回収状態に遷移
+			enemy->collectPos = player.GetPos();
+			enemy->ChangeState<EnemyCollect>();
+
 			//死ぬ
-			enemy->SetDeath();
+			//enemy->SetDeath();
 
 			player.waxCollectAmount++;
 		}
@@ -338,8 +342,12 @@ void ProtoScene::Update()
 						//このタイミングで固まった場合も溶ける
 						if (enemy->GetIsSolid())
 						{
-							//死ぬ
-							enemy->SetDeath();
+							//回収状態に遷移
+							enemy->collectPos = player.GetPos();
+							enemy->ChangeState<EnemyCollect>();
+
+							////死ぬ
+							//enemy->SetDeath();
 
 							player.waxCollectAmount++;
 						}

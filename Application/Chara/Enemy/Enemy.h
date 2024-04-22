@@ -94,6 +94,13 @@ public:
 
 	ColPrimitive3D::Sphere attackHitCollider;	//攻撃状態へ遷移する当たり判定
 
+	//コレクトステート内で使用するタイマー(調整できるようにwaxが持つ)
+	Easing::EaseTimer collectTimer;
+
+	Vector3 collectPos;			//回収される場所
+
+	bool isCollect;				//回収されてるか
+
 private:
 	//ノックバック処理をまとめた
 	void KnockBack();

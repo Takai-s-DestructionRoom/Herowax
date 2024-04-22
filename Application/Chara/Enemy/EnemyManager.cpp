@@ -90,6 +90,13 @@ void EnemyManager::Update()
 		}
 	}
 
+	if (ImGui::Button("敵を回収状態へ遷移")) {
+		for (auto& enemy : enemys)
+		{
+			enemy->ChangeState<EnemyCollect>();
+		}
+	}
+
 	ImGui::Text("EnemyNum:%d", enemys.size());
 	ImGui::DragFloat3("敵の大きさ", &enemySize.x, 0.1f);
 	static bool hitChecker = false;

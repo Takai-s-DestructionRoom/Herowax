@@ -138,9 +138,6 @@ void WaxCollect::Update(Wax* wax)
 	//現在フレームの移動量の分だけをmoveVecに足す
 	wax->moveVec += now - old;
 
-	//色が変わる
-	wax->obj.mTuneMaterial.mColor = Color::kGreen;
-
 	//到達したら殺す
 	if (wax->collectTimer.GetEnd())
 	{

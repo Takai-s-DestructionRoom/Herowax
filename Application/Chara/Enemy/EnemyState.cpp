@@ -135,3 +135,36 @@ int32_t EnemyState::GetPriority()
 {
 	return priority;
 }
+
+EnemyCollect::EnemyCollect()
+{
+	priority = 0;
+}
+
+void EnemyCollect::Update(Enemy* enemy)
+{
+	enemy->isCollect = true;
+
+	oldTimeRate = enemy->collectTimer.GetTimeRate();
+	enemy->collectTimer.Update();
+	if (isStart) {
+		enemy->collectTimer.Start();
+		isStart = false;
+		startPos = enemy->obj.mTransform.position;
+	}
+	enemy->SetStateStr("EnemyCollect");
+
+	Vector3 now = OutQuadVec3(startPos, enemy->collectPos, enemy->collectTimer.GetTimeRate());
+	Vector3 old = OutQuadVec3(startPos, enemy->collectPos, oldTimeRate);
+	//現在フレームの移動量の分だけをmoveVecに足す
+	enemy->MoveVecPlus(now - old);
+
+	//到達したら殺す
+	if (enemy->collectTimer.GetEnd())
+	{
+		enemy->isAlive = false;
+		accel = 0.f;
+
+		//enemyManager::GetInstance()->isCollected = true;
+	}
+}

@@ -91,11 +91,10 @@ void Enemy::Update()
 		waxShakeOffTimer = 0;
 	}
 
-	//固まっていなければする処理
-	if (!GetIsSolid()) {
+	////固まっていなければする処理
+	//if (!GetIsSolid()) {
 		//各ステート時の固有処理
 		state->Update(this);	//移動速度に関係するので移動の更新より前に置く
-
 
 		//前のステートと異なれば
 		if (changingState) {
@@ -116,10 +115,10 @@ void Enemy::Update()
 			changingAttackState = false;
 			nextAttackState = nullptr;
 		}
-	}
+	/*}*/
 	hp = Util::Clamp(hp, 0.f, maxHP);
 
-	if (hp <= 0) {
+	if (hp <= 0 && isCollect == false) {
 		//hpが0になったら、自身の状態を固まり状態へ遷移
 		ChangeState<EnemyAllStop>();
 	}

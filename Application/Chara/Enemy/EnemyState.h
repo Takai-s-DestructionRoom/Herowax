@@ -61,3 +61,17 @@ class EnemyPreAttack : public EnemyState
 public:
 
 };
+
+//回収中
+class EnemyCollect : public EnemyState
+{
+public:
+	EnemyCollect();
+	void Update(Enemy* enemy)override;
+
+private:
+	float accel = 0.f;			//回収の加速度
+	bool isStart = true;
+	float oldTimeRate = 0.0f;
+	Vector3 startPos;
+};
