@@ -61,6 +61,7 @@ void Enemy::Init()
 	hp = maxHP;
 
 	basis = obj.mTransform.position;
+	behaviorOrigen = obj.mTransform.position;
 }
 
 void Enemy::Reset()
@@ -94,7 +95,6 @@ void Enemy::Update()
 		waxShakeOffTimer = 0;
 	}
 
-
 	//各ステート時の固有処理
 	state->Update(this);	//移動速度に関係するので移動の更新より前に置く
 
@@ -120,16 +120,13 @@ void Enemy::Update()
 			changingAttackState = false;
 			nextAttackState = nullptr;
 		}
-
-		//通常移動をオーダーをもとにやる
-		Vector3 pVec = loadBehaviorData.GetBehavior(basis);
-
+		
 		//攻撃準備に入ったらプレイヤーへ向けた移動をしない
 		//(ステート内に書いてもいいけどどこにあるかわからなくなりそうなのでここで)
 		if (GetAttackState() == "NonAttack")
 		{
-			//プレイヤーへ向けた移動をする
-			obj.mTransform.position = pVec;
+			//通常移動をオーダーをもとにやる
+			obj.mTransform.position = loadBehaviorData.GetBehavior(behaviorOrigen);
 		}
 	}
 	hp = Util::Clamp(hp, 0.f, maxHP);
@@ -327,7 +324,10 @@ Vector3 Enemy::GetOriginPos()
 
 void Enemy::BehaviorReset()
 {
+	//タイマーなど初期化
 	loadBehaviorData.Reset();
+	//基準座標をリセット
+	BehaviorOrigenReset();
 }
 
 void Enemy::DealDamage(uint32_t damage, const Vector3& dir, ModelObj* target_)

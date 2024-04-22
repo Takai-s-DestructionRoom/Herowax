@@ -23,7 +23,7 @@ EnemyFindState::EnemyFindState()
 void EnemyFindState::Update(Enemy* enemy)
 {
 	enemy->SetAttackStateStr("FindAttack");
-
+	
 	if (isStart) {
 		position = enemy->obj.mTransform.position;
 		startY = position.y;
@@ -229,10 +229,10 @@ void EnemyBackOriginState::Update(Enemy* enemy)
 
 	ColPrimitive3D::Sphere origin;
 	origin.pos = enemy->GetOriginPos();
-	origin.r = 5;
+	origin.r = 2;
 	ColPrimitive3D::Sphere now;
 	now.pos = enemy->GetPos();
-	now.r = 5;
+	now.r = 2;
 
 	//適当な当たり判定を作り、当たっているなら終了
 	if (ColPrimitive3D::CheckSphereToSphere(origin, now)) {
