@@ -38,7 +38,7 @@ gravity(0.2f)
 	predictionLine.mTuneMaterial.mAmbient = Vector3::ONE * 100.f;
 	predictionLine.mTuneMaterial.mDiffuse = Vector3::ZERO;
 	predictionLine.mTuneMaterial.mSpecular = Vector3::ZERO;
-	
+
 	attackDrawerObj = ModelObj(Model::Load("./Resources/Model/Sphere.obj", "Sphere", true));
 }
 
@@ -52,7 +52,7 @@ Enemy::~Enemy()
 
 	//死んだときパーティクル出す
 	ParticleManager::GetInstance()->AddSimple(
-		obj.mTransform.position,"enemy_dead");
+		obj.mTransform.position, "enemy_dead");
 }
 
 void Enemy::Init()
@@ -93,30 +93,32 @@ void Enemy::Update()
 		waxShakeOffTimer = 0;
 	}
 
-	////固まっていなければする処理
-	//if (!GetIsSolid()) {
-		//各ステート時の固有処理
-		state->Update(this);	//移動速度に関係するので移動の更新より前に置く
 
-		//前のステートと異なれば
-		if (changingState) {
-			//ステートを変化させる
-			std::swap(state, nextState);
-			changingState = false;
-			nextState = nullptr;
-		}
+	//各ステート時の固有処理
+	state->Update(this);	//移動速度に関係するので移動の更新より前に置く
 
-		//ステートに入る前に、予測線は消しておきたいのでスケールを0に
-		predictionLine.mTransform.scale = { 0.f,0.f,0.f };
-		//予測線を使う場合はこの中で値を変える
-		attackState->Update(this);
-		//前のステートと異なれば
-		if (changingAttackState) {
-			//ステートを変化させる
-			std::swap(attackState, nextAttackState);
-			changingAttackState = false;
-			nextAttackState = nullptr;
-		}
+	//前のステートと異なれば
+	if (changingState) {
+		//ステートを変化させる
+		std::swap(state, nextState);
+		changingState = false;
+		nextState = nullptr;
+	}
+
+	//ステートに入る前に、予測線は消しておきたいのでスケールを0に
+	predictionLine.mTransform.scale = { 0.f,0.f,0.f };
+	//予測線を使う場合はこの中で値を変える
+	attackState->Update(this);
+	//前のステートと異なれば
+	if (changingAttackState) {
+		//ステートを変化させる
+		std::swap(attackState, nextAttackState);
+		changingAttackState = false;
+		nextAttackState = nullptr;
+	}
+
+	//固まっていなければする処理
+	if (!GetIsSolid()) {
 
 		//通常移動をオーダーをもとにやる
 		Vector3 pVec = loadBehaviorData.GetBehavior(basis);
@@ -157,7 +159,10 @@ void Enemy::Update()
 
 	//いろいろ足した後減速
 	//減速率は大きいほどスピード下がるから1.0から引くようにしてる
-	moveVec *= (1.f - slowMag) * (1.f - slowCoatingMag);
+	if (isCollect == false)
+	{
+		moveVec *= (1.f - slowMag) * (1.f - slowCoatingMag);
+	}
 
 	//シェイクの値
 	moveVec += shack;
@@ -217,9 +222,9 @@ void Enemy::Draw()
 	{
 		BrightDraw();
 		//obj.Draw();
-		
+
 		ui.Draw();
-		
+
 		predictionLine.Draw();
 
 		DrawCollider();
@@ -248,7 +253,7 @@ void Enemy::KnockBack()
 void Enemy::KnockRota()
 {
 	//攻撃されたら
-	if (attackTarget) 
+	if (attackTarget)
 	{
 		//プレイヤーに向かって移動するAI
 		Vector3 aVec = attackTarget->mTransform.position - obj.mTransform.position;
