@@ -491,7 +491,7 @@ void ProtoScene::Update()
 
 	light.Update();
 
-	skydome.TransferBuffer(gameCamera.camera.mViewProjection);
+	skydome.TransferBuffer(Camera::sNowCamera->mViewProjection);
 
 	//F6かメニューボタン押されたらリザルトシーンへ
 	if (RInput::GetInstance()->GetKeyDown(DIK_F6) ||
