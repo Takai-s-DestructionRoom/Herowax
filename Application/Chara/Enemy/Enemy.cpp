@@ -392,6 +392,7 @@ void Enemy::MoveVecPlus(const Vector3& plusVec)
 void Enemy::RotVecPlus(const Vector3& plusVec)
 {
 	rotVec += plusVec;
+	SetForceRot(true);
 }
 
 void Enemy::SetBehaviorOrder(const std::string& order)
