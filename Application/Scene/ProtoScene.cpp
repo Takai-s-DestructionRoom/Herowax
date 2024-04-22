@@ -245,6 +245,7 @@ void ProtoScene::Update()
 		{
 			//回収状態に遷移
 			enemy->collectPos = player.GetPos();
+			enemy->isCollect = true;
 			enemy->ChangeState<EnemyCollect>();
 
 			//死ぬ
@@ -344,6 +345,7 @@ void ProtoScene::Update()
 						{
 							//回収状態に遷移
 							enemy->collectPos = player.GetPos();
+							enemy->isCollect = true;
 							enemy->ChangeState<EnemyCollect>();
 
 							////死ぬ
