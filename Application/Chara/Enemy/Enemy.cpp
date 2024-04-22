@@ -31,7 +31,8 @@ gravity(0.2f)
 
 	mutekiTimer.maxTime_ = Parameter::GetParam(extract, "無敵時間さん", 0.1f);
 
-	obj.mTransform.scale = { 3,3,3 };
+	oriScale = { 3,3,3 };
+	obj.mTransform.scale = oriScale;
 
 	predictionLine = ModelObj(Model::Load("./Resources/Model/Cube.obj", "Cube"));
 	//影をなくす

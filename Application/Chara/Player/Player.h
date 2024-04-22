@@ -109,6 +109,7 @@ public:
 	std::unique_ptr<PlayerState> attackState;
 	std::unique_ptr<PlayerState> nextState;
 	bool changingState = false;
+	Vector3 cameraDir;				//カメラの向いてる方向
 
 	ColPrimitive3D::Sphere attackHitCollider;	//敵が攻撃状態へ遷移する当たり判定
 	

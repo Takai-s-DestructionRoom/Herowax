@@ -133,6 +133,11 @@ void Player::Update()
 	damageCoolTimer.Update();
 	godmodeTimer.Update();
 
+	//カメラの向いてる方向算出
+	cameraDir = Camera::sNowCamera->mViewProjection.mTarget - Camera::sNowCamera->mViewProjection.mEye;
+	cameraDir.Normalize();
+	cameraDir.y = 0;
+
 	//ダメージ時点滅
 	//DamageBlink();
 
@@ -712,8 +717,7 @@ void Player::PabloAttack()
 
 	Vector3 pabloVec = { 0,0,0 };
 	//入力があるならそっちへ
-	pabloVec = GetFrontVec();
-	pabloVec.y = 0;
+	pabloVec = cameraDir;
 
 	atkVec = pabloVec;
 
@@ -794,10 +798,7 @@ void Player::WaxCollect()
 	collectRangeModelCircle.mTransform = obj.mTransform;
 	collectRangeModelCircle.mTransform.scale = { waxCollectDist,0.1f,waxCollectDist };
 
-	//当たり判定で使うレイの設定
-	Vector3 dir = Camera::sNowCamera->mViewProjection.mTarget - Camera::sNowCamera->mViewProjection.mEye;
-	dir.y = 0;
-	collectCol.dir = dir.Normalize();
+	collectCol.dir = cameraDir;
 	collectCol.start = GetFootPos();
 	collectCol.radius = waxCollectRange * 0.5f;
 

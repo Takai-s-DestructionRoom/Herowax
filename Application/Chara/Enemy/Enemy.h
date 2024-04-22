@@ -100,8 +100,8 @@ public:
 	Easing::EaseTimer collectTimer;
 
 	Vector3 collectPos;			//回収される場所
-
 	bool isCollect;				//回収されてるか
+	Vector3 oriScale;			//元の大きさ
 
 private:
 	//ノックバック処理をまとめた

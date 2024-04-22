@@ -65,12 +65,12 @@ void EnemyAllStop::Update(Enemy* enemy)
 		enemy->ChangeState<EnemyNormal>();
 	}*/
 
-	if (enemy->solidTimer.GetTimeRate() > 0.5f && 
+	if (enemy->solidTimer.GetTimeRate() > 0.5f &&
 		enemy->solidTimer.GetRun()) {
-		
+
 		//シェイクを算出
 		enemy->shack = Util::GetRandVector3(enemy->obj.mTransform.position, -1.f, 1.f, { 1,0,1 });
-		
+
 		//この値を移動値に足したいので、移動した分の値だけを算出
 		enemy->shack -= enemy->obj.mTransform.position;
 	}
@@ -160,6 +160,9 @@ void EnemyCollect::Update(Enemy* enemy)
 	old.y = 0;
 	//現在フレームの移動量の分だけをmoveVecに足す
 	enemy->MoveVecPlus(now - old);
+
+	//徐々にちっちゃくなる(ロウとまぎれてよくわかんなくなるから消してる)
+	//enemy->obj.mTransform.scale = OutQuadVec3(enemy->oriScale, Vector3::ZERO, enemy->collectTimer.GetTimeRate());
 
 	//到達したら殺す
 	if (enemy->collectTimer.GetEnd())
