@@ -294,19 +294,11 @@ void ProtoScene::Update()
 	//蝋と敵の当たり判定
 	for (auto& group : WaxManager::GetInstance()->waxGroups)
 	{
-		std::vector<Enemy*> trapEnemys;
 		//蝋一つ一つとの判定
 		for (auto& wax : group->waxs) {
 			for (auto& enemy : EnemyManager::GetInstance()->enemys)
 			{
 				bool isCollision = ColPrimitive3D::CheckSphereToSphere(enemy->collider, wax->collider);
-
-				//グループとの判定
-				//今のフレームにロウが固まったならロウを足止めする
-				if (isCollision && group->GetNowIsSolid())
-				{
-					trapEnemys.push_back(enemy.get());
-				}
 
 				if (isCollision && wax->isSolid == false) {
 					//投げられてる蝋に当たった時はダメージと蝋蓄積
@@ -323,11 +315,6 @@ void ProtoScene::Update()
 						enemy->ChangeState<EnemySlow>();
 					}
 				}
-
-				////燃えてるロウと当たったら燃えてる状態に遷移
-				//if (isCollision && wax->GetState() == "WaxBurning") {
-				//	enemy->ChangeState<EnemyBurning>();
-				//}
 
 				//回収中ものと通常の状態なら
 				if (isCollision && wax->stateStr == "WaxCollect")
@@ -357,35 +344,6 @@ void ProtoScene::Update()
 				}
 			}
 		}
-
-		////敵を一体でも巻き込んでいたらロウが壊れるように
-		//if (group->GetNowIsSolid() && trapEnemys.size() > 0)
-		//{
-		//	//1~9までの場合を入れる
-		//	float time = 0.0f;
-
-		//	for (int i = 0; i < 10; i++)
-		//	{
-		//		if (trapEnemys.size() - 1 == i) {
-		//			time = WaxManager::GetInstance()->waxTime[i];
-		//			break;
-		//		}
-		//	}
-		//	//10以上の場合を入れる
-		//	if (trapEnemys.size() - 1 >= 10) {
-		//		time = WaxManager::GetInstance()->waxTime[9];
-		//	}
-
-		//	//ロウが壊れる時間とエネミーが死ぬ時間を合わせる
-		//	group->breakTimer = time;
-		//	group->breakTimer.Start();
-		//	for (auto& tEnemy : trapEnemys)
-		//	{
-		//		tEnemy->solidTimer = time;
-		//		tEnemy->ChangeState<EnemyAllStop>();
-		//	}
-		//	trapEnemys.clear();
-		//}
 	}
 
 	//蝋とプレイヤーの当たり判定
@@ -409,78 +367,92 @@ void ProtoScene::Update()
 		}
 	}
 
-	/*for (auto& fire : FireManager::GetInstance()->fires)
-	{
-		for (auto& group : WaxManager::GetInstance()->waxGroups)
-		{
-			for (auto& wax : group->waxs) {
-				if (ColPrimitive3D::CheckSphereToSphere(wax->collider, fire.collider) && wax->isGround) {
-					fire.SetIsAlive(false);
-					wax->ChangeState<WaxIgnite>();
-				}
-			}
-		}
-	}*/
-
 	player.Update();
 	boss.Update();
 	Level::Get()->Update();
 
-	//敵がロウを壊してから連鎖で壊れるため、敵の処理をしてからこの処理を行う
-#pragma region ロウ同士の当たり判定
-	std::list<std::unique_ptr<WaxGroup>>* wGroups = &WaxManager::GetInstance()->waxGroups;
-
-	//同一グループ内のロウが当たった時の処理
-	for (auto& group1 : *wGroups)
+	for (auto& enemy1 : EnemyManager::GetInstance()->enemys)
 	{
-		for (auto& group2 : *wGroups)
+		for (auto& enemy2 : EnemyManager::GetInstance()->enemys)
 		{
-			for (auto& wax1 : group1->waxs) {
-				for (auto& wax2 : group2->waxs)
-				{
-					//同じ部分を指しているポインタなら同じものなのでスキップ
-					if (wax1 == wax2)continue;
+			if (enemy1 == enemy2)continue;
 
-					bool isCollision = ColPrimitive3D::CheckSphereToSphere(wax1->collider, wax2->collider);
+			if (ColPrimitive3D::CheckSphereToSphere(enemy1->collider, enemy2->collider)) {
+				Vector3 e1RepulsionVec = enemy1->GetPos() - enemy2->GetPos();
+				e1RepulsionVec.Normalize();
+				e1RepulsionVec *= 3;
+				Vector3 e2RepulsionVec = enemy2->GetPos() - enemy1->GetPos();
+				e2RepulsionVec.Normalize();
+				e2RepulsionVec *= 3;
 
-					//ぶつかっていて
-					if (isCollision)
-					{
-						////燃えているものと通常の状態なら
-						//if (wax1->IsBurning() && wax2->IsNormal())
-						//{
-						//	//燃えている状態へ遷移
-						//	wax2->ChangeState<WaxIgnite>();
-						//}
-					}
-				}
+				//一旦これだけ無理やり足す
+				enemy1->obj.mTransform.position += e1RepulsionVec;
+				enemy2->obj.mTransform.position += e2RepulsionVec;
+
+				//コライダーがもう一度当たらないようにコライダー更新
+				enemy1->UpdateCollider();
+				enemy2->UpdateCollider();
 			}
 		}
 	}
 
-	//別グループ内のロウが当たった時の処理
-	for (auto itr = wGroups->begin(); itr != wGroups->end(); itr++)
-	{
-		for (auto itr2 = itr; itr2 != wGroups->end();)
-		{
-			if (itr == itr2) {
-				itr2++;
-				continue;
-			}
-			if (WaxManager::GetInstance()->CheckHitWaxGroups((*itr), (*itr2)))
-			{
-				//どれか一つがぶつかったなら、グループすべてが移動する
-				(*itr)->waxs.splice((*itr)->waxs.end(), std::move((*itr2)->waxs));
-				(*itr)->SetSameSolidTime();
-				itr2 = wGroups->erase(itr2);
-			}
-			else {
-				itr2++;
-			}
-		}
-	}
+	//ロウグループ周りの話は無くなったはずなのでコメントアウト
+//	//敵がロウを壊してから連鎖で壊れるため、敵の処理をしてからこの処理を行う
+//#pragma region ロウ同士の当たり判定
+//	std::list<std::unique_ptr<WaxGroup>>* wGroups = &WaxManager::GetInstance()->waxGroups;
+//
+//	//同一グループ内のロウが当たった時の処理
+//	for (auto& group1 : *wGroups)
+//	{
+//		for (auto& group2 : *wGroups)
+//		{
+//			for (auto& wax1 : group1->waxs) {
+//				for (auto& wax2 : group2->waxs)
+//				{
+//					//同じ部分を指しているポインタなら同じものなのでスキップ
+//					if (wax1 == wax2)continue;
+//
+//					bool isCollision = ColPrimitive3D::CheckSphereToSphere(wax1->collider, wax2->collider);
+//
+//					//ぶつかっていて
+//					if (isCollision)
+//					{
+//						////燃えているものと通常の状態なら
+//						//if (wax1->IsBurning() && wax2->IsNormal())
+//						//{
+//						//	//燃えている状態へ遷移
+//						//	wax2->ChangeState<WaxIgnite>();
+//						//}
+//					}
+//				}
+//			}
+//		}
+//	}
+//
+//	//別グループ内のロウが当たった時の処理
+//	for (auto itr = wGroups->begin(); itr != wGroups->end(); itr++)
+//	{
+//		for (auto itr2 = itr; itr2 != wGroups->end();)
+//		{
+//			if (itr == itr2) {
+//				itr2++;
+//				continue;
+//			}
+//			if (WaxManager::GetInstance()->CheckHitWaxGroups((*itr), (*itr2)))
+//			{
+//				//どれか一つがぶつかったなら、グループすべてが移動する
+//				(*itr)->waxs.splice((*itr)->waxs.end(), std::move((*itr2)->waxs));
+//				(*itr)->SetSameSolidTime();
+//				itr2 = wGroups->erase(itr2);
+//			}
+//			else {
+//				itr2++;
+//			}
+//		}
+//	}
+//
+//#pragma endregion
 
-#pragma endregion
 	ParticleManager::GetInstance()->SetPlayerPos(player.GetCenterPos());
 	ParticleManager::GetInstance()->Update();
 

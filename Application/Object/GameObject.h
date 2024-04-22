@@ -82,11 +82,12 @@ public:
 	//コライダーの大きさ設定(元の大きさからの比率)
 	void SetColSize(float size) { colliderSize = size; }
 
-protected:
-	void InitCollider();
 	//当たり判定の更新
 	void UpdateCollider();
 
+protected:
+	void InitCollider();
+	
 private:
 	RootSignature* GetRootSig();
 
