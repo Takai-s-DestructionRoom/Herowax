@@ -73,6 +73,8 @@ void Enemy::Reset()
 	obj.mTransform.position -= shack;
 	//シェイクを元に戻す
 	shack = { 0,0,0 };
+
+	SetForceRot(false);
 }
 
 void Enemy::Update()
@@ -115,7 +117,18 @@ void Enemy::Update()
 			changingAttackState = false;
 			nextAttackState = nullptr;
 		}
-	/*}*/
+
+		//通常移動をオーダーをもとにやる
+		Vector3 pVec = loadBehaviorData.GetBehavior(basis);
+
+		//攻撃準備に入ったらプレイヤーへ向けた移動をしない
+		//(ステート内に書いてもいいけどどこにあるかわからなくなりそうなのでここで)
+		if (GetAttackState() == "NonAttack")
+		{
+			//プレイヤーへ向けた移動をする
+			obj.mTransform.position = pVec;
+		}
+	}
 	hp = Util::Clamp(hp, 0.f, maxHP);
 
 	if (hp <= 0 && isCollect == false) {
@@ -128,28 +141,13 @@ void Enemy::Update()
 
 	///-------------移動、回転の加算--------------///
 
-	//通常移動をオーダーをもとにやる
-	Vector3 pVec = loadBehaviorData.GetBehavior(basis);
-	//pVec.Normalize();
-	//pVec.y = 0;
-
 	//ノックバック中でないなら重力をかける
 	if (!knockbackTimer.GetRun()) {
 		//重力をかける
 		moveVec.y -= gravity;
 	}
 
-	//攻撃準備に入ったらプレイヤーへ向けた移動をしない
-	//(ステート内に書いてもいいけどどこにあるかわからなくなりそうなのでここで)
-	if (GetAttackState() == "NonAttack")
-	{
-		//プレイヤーへ向けた移動をする
-		//moveVec += pVec * moveSpeed;
-		obj.mTransform.position = pVec;
-	}
-
 	//ノックバックも攻撃準備に入ったら無効化する
-	//(条件式一緒だけど処理違うので段落分けてます)
 	if (GetAttackState() != "NowAttack" &&
 		GetAttackState() != "PreAttack")
 	{
@@ -174,10 +172,14 @@ void Enemy::Update()
 	}
 
 	//もし何も回転の加算がない場合、
-	if (rotVec.LengthSq() == 0) {
+	if (!forceRot) {
 		//固まっていなければ通常時の回転をする
 		if (!GetIsSolid() && !knockbackTimer.GetRun()) {
-			Rotation(pVec);
+			Vector3 tVec = loadBehaviorData.GetMoveDir();
+			tVec.Normalize();
+			tVec.y = 0;
+
+			Rotation(tVec);
 		}
 	}
 	//回転の適用
@@ -273,11 +275,8 @@ void Enemy::KnockRota()
 
 void Enemy::Rotation(const Vector3& pVec)
 {
-	Vector3 targetVec = pVec;
-	targetVec.Normalize();
-	targetVec.y = 0;
 	//普段はターゲットの方向を向く
-	Quaternion pLookat = Quaternion::LookAt(targetVec);
+	Quaternion pLookat = Quaternion::LookAt(pVec);
 	//euler軸へ変換
 	RotVecPlus(pLookat.ToEuler());
 }
