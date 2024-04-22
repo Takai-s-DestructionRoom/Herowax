@@ -164,6 +164,8 @@ void EnemyCollect::Update(Enemy* enemy)
 	//徐々にちっちゃくなる(ロウとまぎれてよくわかんなくなるから消してる)
 	//enemy->obj.mTransform.scale = OutQuadVec3(enemy->oriScale, Vector3::ZERO, enemy->collectTimer.GetTimeRate());
 
+	enemy->RotVecPlus({ 0,enemy->collectTimer.GetTimeRate() - oldTimeRate,0 });
+
 	//到達したら殺す
 	if (enemy->collectTimer.GetEnd())
 	{
