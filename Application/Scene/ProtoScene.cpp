@@ -380,18 +380,35 @@ void ProtoScene::Update()
 			if (ColPrimitive3D::CheckSphereToSphere(enemy1->collider, enemy2->collider)) {
 				Vector3 e1RepulsionVec = enemy1->GetPos() - enemy2->GetPos();
 				e1RepulsionVec.Normalize();
-				e1RepulsionVec *= 3;
+				e1RepulsionVec.y = 0;
 				Vector3 e2RepulsionVec = enemy2->GetPos() - enemy1->GetPos();
 				e2RepulsionVec.Normalize();
-				e2RepulsionVec *= 3;
+				e2RepulsionVec.y = 0;
 
 				//一旦これだけ無理やり足す
 				enemy1->obj.mTransform.position += e1RepulsionVec;
 				enemy2->obj.mTransform.position += e2RepulsionVec;
+				
+				//プレイヤーを探している状態(攻撃状態でない時)に他の敵にぶつかった場合
+				//周回座標の基準をずらす
+				if (enemy1->GetAttackState() == "NonAttack")
+				{
+					enemy1->BehaviorOrigenPosPlus(e1RepulsionVec);
+				}
+				if (enemy1->GetAttackState() == "NonAttack")
+				{
+					enemy2->BehaviorOrigenPosPlus(e2RepulsionVec);
+				}
 
 				//コライダーがもう一度当たらないようにコライダー更新
 				enemy1->UpdateCollider();
 				enemy2->UpdateCollider();
+
+				/*enemy1->obj.mTransform.UpdateMatrix();
+				enemy1->BrightTransferBuffer(Camera::sNowCamera->mViewProjection);
+
+				enemy2->obj.mTransform.UpdateMatrix();
+				enemy2->BrightTransferBuffer(Camera::sNowCamera->mViewProjection);*/
 			}
 		}
 	}

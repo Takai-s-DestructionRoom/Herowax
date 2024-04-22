@@ -21,6 +21,7 @@ private:
 	float gravity;				//重力
 
 	Vector3 basis;
+	Vector3 behaviorOrigen;
 
 	//------------ 回転関連 ------------//
 	Vector3 rotVec;				//回転ベクトル
@@ -211,7 +212,10 @@ public:
 	void MoveVecPlus(const Vector3& plusVec);
 	//回転量に足す
 	void RotVecPlus(const Vector3& plusVec);
-	
+	//
+	void BehaviorOrigenPosPlus(const Vector3& plusVec) { behaviorOrigen += plusVec; };
+	void BehaviorOrigenReset() { behaviorOrigen = basis; };
+
 private:
 	void UpdateAttackCollider();
 	void DrawAttackCollider();
