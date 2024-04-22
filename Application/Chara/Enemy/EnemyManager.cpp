@@ -103,7 +103,14 @@ void EnemyManager::Update()
 	if (ImGui::TreeNode("攻撃系"))
 	{
 		ImGui::Checkbox("接触ダメージをつけるか", &isContactDamage);
-		ImGui::InputFloat("敵の攻撃力", &normalAtkPower, 1.f);
+		ImGui::InputFloat("敵の攻撃力(突進時)", &normalAtkPower, 1.f);
+		if (isContactDamage) {
+			ImGui::InputFloat("敵の攻撃力(接触時)", &contactAtkPower, 1.f);
+		}
+		else {
+			ImGui::Text("接触時の敵攻撃力の調整項目は、");
+			ImGui::Text("接触ダメージをつけるフラグが立っている場合のみ表示されます");
+		}
 		ImGui::TreePop();
 	}
 	if (ImGui::TreeNode("当たり判定"))
