@@ -21,7 +21,7 @@
 Player::Player() :GameObject(),
 moveSpeed(1.f), moveAccelAmount(0.05f), isGround(true), hp(0), maxHP(10.f),
 isJumping(false), jumpTimer(0.2f), jumpHeight(0.f), maxJumpHeight(5.f), jumpPower(2.f), jumpSpeed(0.f),
-isAttack(false),atkSize(3.f), atkPower(1),
+isAttack(false), atkSize(3.f), atkPower(1),
 atkCoolTimer(0.3f), atkTimer(0.5f), atkHeight(1.f), solidTimer(5.f),
 isFireStock(false), isWaxStock(true), isCollectFan(false), maxWaxStock(20)
 {
@@ -71,9 +71,9 @@ isFireStock(false), isWaxStock(true), isCollectFan(false), maxWaxStock(20)
 	attackDrawerObj = ModelObj(Model::Load("./Resources/Model/Sphere.obj", "Sphere", true));
 
 	godmodeTimer.maxTime_ = Parameter::GetParam(extract, "無敵時間", 10.f);
-	maxHP = Parameter::GetParam(extract,"最大HP", 10.0f);
+	maxHP = Parameter::GetParam(extract, "最大HP", 10.0f);
 
-	minRange = Parameter::GetParam(extract,"攻撃範囲_最小", minRange);
+	minRange = Parameter::GetParam(extract, "攻撃範囲_最小", minRange);
 	maxRange = Parameter::GetParam(extract, "攻撃範囲_最大", maxRange);
 }
 
@@ -234,39 +234,10 @@ void Player::Update()
 	//回転を適用
 	obj.mTransform.rotation = rotVec;
 
-	/*bool isCollision = false;
+	bool isCollision = false;
 	uint32_t colCount = 0;
-	Vector3 plusVec{};*/
+	Vector3 plusVec{};
 
-	//移動制限(フェンス準拠)
-	/*for (auto& wall : Level::Get()->wallCol)
-	{
-		if (ColPrimitive3D::CheckSphereToPlane(collider, wall))
-		{
-			float len = wall.distance - Vector2(obj.mTransform.position.x, obj.mTransform.position.z).Length();
-			if (len < collider.r)
-			{
-				plusVec += wall.normal * len;
-			}
-
-			colCount++;
-		}
-	}
-
-	if (colCount > 0)
-	{
-		isCollision = true;
-		obj.mTransform.position += plusVec;
-	}
-
-	if (isCollision)
-	{
-		obj.mTuneMaterial.mColor = Color::kPink;
-	}
-	else
-	{
-		obj.mTuneMaterial.mColor = Color::kWhite;
-	}*/
 
 
 	//無敵モードなら
@@ -290,35 +261,84 @@ void Player::Update()
 		godmodeTimer.Reset();
 	}
 
-	//移動範囲設定
-	for (auto& wall : Level::Get()->wall)
-	{
-		if (Level::Get()->moveLimitMax.x < wall.mTransform.position.x) {
-			Level::Get()->moveLimitMax.x = wall.mTransform.position.x;
-		}
-		if (Level::Get()->moveLimitMax.y < wall.mTransform.position.z) {
-			Level::Get()->moveLimitMax.y = wall.mTransform.position.z;
-		}
-		if (Level::Get()->moveLimitMin.x > wall.mTransform.position.x) {
-			Level::Get()->moveLimitMin.x = wall.mTransform.position.x;
-		}
-		if (Level::Get()->moveLimitMin.y > wall.mTransform.position.z) {
-			Level::Get()->moveLimitMin.y = wall.mTransform.position.z;
-		}
-	}
+	////移動範囲設定
+	//for (auto& wall : Level::Get()->wall)
+	//{
+	//	if (Level::Get()->moveLimitMax.x < wall.mTransform.position.x) {
+	//		Level::Get()->moveLimitMax.x = wall.mTransform.position.x;
+	//	}
+	//	if (Level::Get()->moveLimitMax.y < wall.mTransform.position.z) {
+	//		Level::Get()->moveLimitMax.y = wall.mTransform.position.z;
+	//	}
+	//	if (Level::Get()->moveLimitMin.x > wall.mTransform.position.x) {
+	//		Level::Get()->moveLimitMin.x = wall.mTransform.position.x;
+	//	}
+	//	if (Level::Get()->moveLimitMin.y > wall.mTransform.position.z) {
+	//		Level::Get()->moveLimitMin.y = wall.mTransform.position.z;
+	//	}
+	//}
 
-	//移動制限
-	obj.mTransform.position.x =
-		Util::Clamp(obj.mTransform.position.x,
-			Level::Get()->moveLimitMin.x - obj.mTransform.scale.x,
-			Level::Get()->moveLimitMax.x + obj.mTransform.scale.x);
-	obj.mTransform.position.z =
-		Util::Clamp(obj.mTransform.position.z,
-			Level::Get()->moveLimitMin.y - obj.mTransform.scale.z,
-			Level::Get()->moveLimitMax.y + obj.mTransform.scale.z);
+	////移動制限
+	//obj.mTransform.position.x =
+	//	Util::Clamp(obj.mTransform.position.x,
+	//		Level::Get()->moveLimitMin.x - obj.mTransform.scale.x,
+	//		Level::Get()->moveLimitMax.x + obj.mTransform.scale.x);
+	//obj.mTransform.position.z =
+	//	Util::Clamp(obj.mTransform.position.z,
+	//		Level::Get()->moveLimitMin.y - obj.mTransform.scale.z,
+	//		Level::Get()->moveLimitMax.y + obj.mTransform.scale.z);
+
+	moveVec *=
+		moveSpeed * moveAccel *
+		WaxManager::GetInstance()->isCollected;				//移動速度をかけ合わせたら完成(回収中は動けない)
+	obj.mTransform.position += moveVec;						//完成したものを座標に足し合わせる
 
 	UpdateCollider();
 	UpdateAttackCollider();
+
+	//移動制限(フェンス準拠)
+	for (auto& wall : Level::Get()->wallCol)
+	{
+		if (ColPrimitive3D::CheckSphereToPlane(collider, wall))
+		{
+			/*float len = wall.distance - Vector2(obj.mTransform.position.x, obj.mTransform.position.z).Length();
+			while (len < collider.r)
+			{
+				plusVec += -wall.normal * (collider.r - len);
+				len = wall.distance - Vector2(obj.mTransform.position.x + plusVec.x, obj.mTransform.position.z + plusVec.z).Length();
+			}*/
+
+			// 壁に当たったら壁に遮られない移動成分分だけ移動する
+			Vector3 slideVec;	// プレイヤーをスライドさせるベクトル
+
+			// 進行方向ベクトルと壁ポリゴンの法線ベクトルに垂直なベクトルを算出
+			slideVec = moveVec.Cross(-wall.normal);
+			// 算出したベクトルと壁ポリゴンの法線ベクトルに垂直なベクトルを算出、これが
+			// 元の移動成分から壁方向の移動成分を抜いたベクトル
+			slideVec = -wall.normal.Cross(slideVec);
+
+			// それを移動前の座標に足したものを新たな座標とする
+			plusVec += slideVec * moveSpeed;
+
+			colCount++;
+		}
+	}
+
+	if (colCount > 0)
+	{
+		isCollision = true;
+	}
+
+	if (isCollision)
+	{
+		moveVec = -moveVec;
+		obj.mTransform.position += moveVec + plusVec;
+		obj.mTuneMaterial.mColor = Color::kPink;
+	}
+	else
+	{
+		obj.mTuneMaterial.mColor = Color::kWhite;
+	}
 
 	//更新してからバッファに送る
 	obj.mTransform.UpdateMatrix();
@@ -528,10 +548,6 @@ void Player::MovePad()
 	}
 
 	moveAccel = Util::Clamp(moveAccel, 0.f, 1.f);			//無限に増減しないよう抑える
-	moveVec *=
-		moveSpeed * moveAccel *
-		WaxManager::GetInstance()->isCollected;				//移動速度をかけ合わせたら完成(回収中は動けない)
-	obj.mTransform.position += moveVec;						//完成したものを座標に足し合わせる
 
 	//接地してて回収中じゃない時にAボタン押すと
 	if (isGround && RInput::GetInstance()->GetPadButtonDown(XINPUT_GAMEPAD_A) &&
@@ -606,10 +622,6 @@ void Player::MoveKey()
 	}
 
 	moveAccel = Util::Clamp(moveAccel, 0.f, moveVec.LengthSq());
-	moveVec *=
-		moveSpeed * moveAccel *
-		WaxManager::GetInstance()->isCollected;				//移動速度をかけ合わせたら完成(回収中は動けない)
-	obj.mTransform.position += moveVec;						//完成したものを座標に足し合わせる
 
 	//接地時で回収中じゃない時にスペース押すと
 	if (isGround && RInput::GetInstance()->GetKeyDown(DIK_SPACE) &&
