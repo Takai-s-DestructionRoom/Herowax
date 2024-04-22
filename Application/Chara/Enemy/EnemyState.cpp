@@ -156,6 +156,8 @@ void EnemyCollect::Update(Enemy* enemy)
 
 	Vector3 now = OutQuadVec3(startPos, enemy->collectPos, enemy->collectTimer.GetTimeRate());
 	Vector3 old = OutQuadVec3(startPos, enemy->collectPos, oldTimeRate);
+	now.y = 0;
+	old.y = 0;
 	//現在フレームの移動量の分だけをmoveVecに足す
 	enemy->MoveVecPlus(now - old);
 
