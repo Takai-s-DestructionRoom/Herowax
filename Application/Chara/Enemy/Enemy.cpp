@@ -105,20 +105,20 @@ void Enemy::Update()
 		nextState = nullptr;
 	}
 
-	//ステートに入る前に、予測線は消しておきたいのでスケールを0に
-	predictionLine.mTransform.scale = { 0.f,0.f,0.f };
-	//予測線を使う場合はこの中で値を変える
-	attackState->Update(this);
-	//前のステートと異なれば
-	if (changingAttackState) {
-		//ステートを変化させる
-		std::swap(attackState, nextAttackState);
-		changingAttackState = false;
-		nextAttackState = nullptr;
-	}
-
 	//固まっていなければする処理
 	if (!GetIsSolid()) {
+
+		//ステートに入る前に、予測線は消しておきたいのでスケールを0に
+		predictionLine.mTransform.scale = { 0.f,0.f,0.f };
+		//予測線を使う場合はこの中で値を変える
+		attackState->Update(this);
+		//前のステートと異なれば
+		if (changingAttackState) {
+			//ステートを変化させる
+			std::swap(attackState, nextAttackState);
+			changingAttackState = false;
+			nextAttackState = nullptr;
+		}
 
 		//通常移動をオーダーをもとにやる
 		Vector3 pVec = loadBehaviorData.GetBehavior(basis);

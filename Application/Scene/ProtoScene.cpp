@@ -356,34 +356,34 @@ void ProtoScene::Update()
 			}
 		}
 
-		//敵を一体でも巻き込んでいたらロウが壊れるように
-		if (group->GetNowIsSolid() && trapEnemys.size() > 0)
-		{
-			//1~9までの場合を入れる
-			float time = 0.0f;
+		////敵を一体でも巻き込んでいたらロウが壊れるように
+		//if (group->GetNowIsSolid() && trapEnemys.size() > 0)
+		//{
+		//	//1~9までの場合を入れる
+		//	float time = 0.0f;
 
-			for (int i = 0; i < 10; i++)
-			{
-				if (trapEnemys.size() - 1 == i) {
-					time = WaxManager::GetInstance()->waxTime[i];
-					break;
-				}
-			}
-			//10以上の場合を入れる
-			if (trapEnemys.size() - 1 >= 10) {
-				time = WaxManager::GetInstance()->waxTime[9];
-			}
+		//	for (int i = 0; i < 10; i++)
+		//	{
+		//		if (trapEnemys.size() - 1 == i) {
+		//			time = WaxManager::GetInstance()->waxTime[i];
+		//			break;
+		//		}
+		//	}
+		//	//10以上の場合を入れる
+		//	if (trapEnemys.size() - 1 >= 10) {
+		//		time = WaxManager::GetInstance()->waxTime[9];
+		//	}
 
-			//ロウが壊れる時間とエネミーが死ぬ時間を合わせる
-			group->breakTimer = time;
-			group->breakTimer.Start();
-			for (auto& tEnemy : trapEnemys)
-			{
-				tEnemy->solidTimer = time;
-				tEnemy->ChangeState<EnemyAllStop>();
-			}
-			trapEnemys.clear();
-		}
+		//	//ロウが壊れる時間とエネミーが死ぬ時間を合わせる
+		//	group->breakTimer = time;
+		//	group->breakTimer.Start();
+		//	for (auto& tEnemy : trapEnemys)
+		//	{
+		//		tEnemy->solidTimer = time;
+		//		tEnemy->ChangeState<EnemyAllStop>();
+		//	}
+		//	trapEnemys.clear();
+		//}
 	}
 
 	//蝋とプレイヤーの当たり判定

@@ -177,6 +177,8 @@ void EnemyManager::Update()
 
 	for (auto& enemy : enemys)
 	{
+		ImGui::Text("ステート:%s", enemy->GetState().c_str());
+
 		enemy->changeColor = changeColor;
 		enemy->colliderSize = collideSize;
 		enemy->obj.mTransform.scale = enemySize;
