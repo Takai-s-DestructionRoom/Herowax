@@ -118,6 +118,17 @@ void Enemy::Update()
 			changingAttackState = false;
 			nextAttackState = nullptr;
 		}
+
+		//通常移動をオーダーをもとにやる
+		Vector3 pVec = loadBehaviorData.GetBehavior(basis);
+
+		//攻撃準備に入ったらプレイヤーへ向けた移動をしない
+		//(ステート内に書いてもいいけどどこにあるかわからなくなりそうなのでここで)
+		if (GetAttackState() == "NonAttack")
+		{
+			//プレイヤーへ向けた移動をする
+			obj.mTransform.position = pVec;
+		}
 	}
 	hp = Util::Clamp(hp, 0.f, maxHP);
 
@@ -131,24 +142,10 @@ void Enemy::Update()
 
 	///-------------移動、回転の加算--------------///
 
-	//通常移動をオーダーをもとにやる
-	Vector3 pVec = loadBehaviorData.GetBehavior(basis);
-	//pVec.Normalize();
-	//pVec.y = 0;
-
 	//ノックバック中でないなら重力をかける
 	if (!knockbackTimer.GetRun()) {
 		//重力をかける
 		moveVec.y -= gravity;
-	}
-
-	//攻撃準備に入ったらプレイヤーへ向けた移動をしない
-	//(ステート内に書いてもいいけどどこにあるかわからなくなりそうなのでここで)
-	if (GetAttackState() == "NonAttack")
-	{
-		//プレイヤーへ向けた移動をする
-		//moveVec += pVec * moveSpeed;
-		obj.mTransform.position = pVec;
 	}
 
 	//ノックバックも攻撃準備に入ったら無効化する
