@@ -38,7 +38,7 @@ void EnemySlow::Update(Enemy* enemy)
 
 EnemyAllStop::EnemyAllStop()
 {
-	priority = 0;
+	priority = 1;
 }
 
 void EnemyAllStop::Update(Enemy* enemy)
@@ -60,10 +60,10 @@ void EnemyAllStop::Update(Enemy* enemy)
 	//enemy->obj.mTuneMaterial.mColor = Wax::waxOriginColor;
 
 	//脱出タイマーが終わったら通常の状態へ戻す
-	if (enemy->solidTimer.GetEnd()) {
+	/*if (enemy->solidTimer.GetEnd()) {
 		enemy->solidTimer.Reset();
 		enemy->ChangeState<EnemyNormal>();
-	}
+	}*/
 
 	if (enemy->solidTimer.GetTimeRate() > 0.5f && 
 		enemy->solidTimer.GetRun()) {
@@ -138,7 +138,7 @@ int32_t EnemyState::GetPriority()
 
 EnemyCollect::EnemyCollect()
 {
-	priority = 0;
+	priority = 2;
 }
 
 void EnemyCollect::Update(Enemy* enemy)

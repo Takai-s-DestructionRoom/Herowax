@@ -10,6 +10,7 @@ public:
 	virtual void Update(Enemy* enemy) = 0;
 	virtual ~EnemyState() {};
 	int32_t GetPriority();
+
 public:
 	int32_t priority = -1;	//優先度 
 	//ステートが変化する際、変化先の優先度を参照し、
