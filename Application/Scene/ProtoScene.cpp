@@ -223,19 +223,19 @@ void ProtoScene::Update()
 			}
 		}
 		//攻撃中に本体同士がぶつかったらプレイヤーにダメージ
-		//(フラグ立っている場合は関係なくダメージ判定)
 		if (enemy->GetAttackState() == "NowAttack")
 		{
 			if (ColPrimitive3D::CheckSphereToSphere(enemy->collider, player.collider))
 			{
-				//1ダメージ(どっかに参照先作るべき)
+				//ダメージ
 				player.DealDamage(EnemyManager::GetInstance()->GetNormalAttackPower());
 			}
 		}
+		//接触ダメージあり設定の場合、接触時にダメージ
 		if (EnemyManager::GetInstance()->GetIsContactDamage()) {
 			if (ColPrimitive3D::CheckSphereToSphere(enemy->collider, player.collider))
 			{
-				//1ダメージ(どっかに参照先作るべき)
+				//ダメージ
 				player.DealDamage(EnemyManager::GetInstance()->GetContactAttackPower());
 			}
 		}
