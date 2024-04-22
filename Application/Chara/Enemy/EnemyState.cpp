@@ -166,6 +166,13 @@ void EnemyCollect::Update(Enemy* enemy)
 
 	enemy->RotVecPlus({ 0,enemy->collectTimer.GetTimeRate() - oldTimeRate,0 });
 
+	Vector3 startRota = {0,0,0};
+	Vector3 endRota = {0,Util::AngleToRadian(360.f),0};
+
+	//euler軸へ変換
+	//回転は代入
+	enemy->RotVecPlus(InQuadVec3(startRota, endRota, enemy->collectTimer.GetTimeRate()));
+
 	//到達したら殺す
 	if (enemy->collectTimer.GetEnd())
 	{

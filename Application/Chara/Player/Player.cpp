@@ -759,9 +759,9 @@ void Player::PabloAttack()
 		spawnTrans.position.z += Util::GetRand(sideRandMin.z, sideRandMax.z);
 
 		//最低値と最大値を元に終点を決定
-		Vector3 minPos = spawnTrans.position + rotaVec *minRange;
+		Vector3 minPos = spawnTrans.position + pabloVec * minRange;
 		//Vector3 minPos = obj.mTransform.position + pabloVec * minRange;
-		Vector3 maxPos = spawnTrans.position + rotaVec * maxRange;
+		Vector3 maxPos = spawnTrans.position + pabloVec * maxRange;
 		//Vector3 maxPos = obj.mTransform.position + pabloVec * maxRange;
 
 		Vector3 endpos;
@@ -769,8 +769,8 @@ void Player::PabloAttack()
 		endpos.y = 0;	//yは地面座標(今は決め打ち0)
 		endpos.z = Util::GetRand(minPos.z, maxPos.z);
 
-		WaxManager::GetInstance()->Create(spawnTrans,endpos,atkHeight,
-			atkSize,atkTimer.maxTime_, solidTimer.maxTime_);
+		WaxManager::GetInstance()->Create(spawnTrans, endpos, atkHeight,
+			atkSize, atkTimer.maxTime_, solidTimer.maxTime_);
 	}
 }
 
