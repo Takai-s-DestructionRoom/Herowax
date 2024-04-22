@@ -440,6 +440,29 @@
         },
         {
             "type": "MESH",
+            "name": "敵",
+            "transform": {
+                "translation": [
+                    -14.954322814941406,
+                    -95.37942504882812,
+                    0.10939884185791016
+                ],
+                "rotation": [
+                    0.0,
+                    -0.0,
+                    0.0
+                ],
+                "scaling": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            },
+            "setObject": "Enemy",
+            "behaviorOrder": "roop_line"
+        },
+        {
+            "type": "MESH",
             "name": "敵.001",
             "transform": {
                 "translation": [
@@ -460,6 +483,121 @@
             },
             "setObject": "Enemy",
             "behaviorOrder": "roop_triangle"
+        },
+        {
+            "type": "MESH",
+            "name": "敵.002",
+            "transform": {
+                "translation": [
+                    0.8785524368286133,
+                    -106.3084716796875,
+                    0.10939884185791016
+                ],
+                "rotation": [
+                    0.0,
+                    -0.0,
+                    0.0
+                ],
+                "scaling": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            },
+            "setObject": "Enemy",
+            "behaviorOrder": "roop_line"
+        },
+        {
+            "type": "MESH",
+            "name": "敵.003",
+            "transform": {
+                "translation": [
+                    39.57362365722656,
+                    -115.60409545898438,
+                    0.10939884185791016
+                ],
+                "rotation": [
+                    0.0,
+                    -0.0,
+                    0.0
+                ],
+                "scaling": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            },
+            "setObject": "Enemy",
+            "behaviorOrder": "roop_triangle"
+        },
+        {
+            "type": "MESH",
+            "name": "敵スポナー.003",
+            "transform": {
+                "translation": [
+                    -53.939552307128906,
+                    2.730928421020508,
+                    -0.07788103818893433
+                ],
+                "rotation": [
+                    0.0,
+                    89.95437622070312,
+                    0.0
+                ],
+                "scaling": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            },
+            "setObject": "EnemySpawner",
+            "spawnerOrder": "test"
+        },
+        {
+            "type": "MESH",
+            "name": "敵スポナー.002",
+            "transform": {
+                "translation": [
+                    52.89118194580078,
+                    -33.95451354980469,
+                    0.21527099609375
+                ],
+                "rotation": [
+                    0.0,
+                    89.95437622070312,
+                    0.0
+                ],
+                "scaling": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            },
+            "setObject": "EnemySpawner",
+            "spawnerOrder": "03262"
+        },
+        {
+            "type": "MESH",
+            "name": "敵スポナー.004",
+            "transform": {
+                "translation": [
+                    41.581790924072266,
+                    33.68138885498047,
+                    0.22136688232421875
+                ],
+                "rotation": [
+                    0.0,
+                    89.95437622070312,
+                    0.0
+                ],
+                "scaling": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            },
+            "setObject": "EnemySpawner",
+            "spawnerOrder": "0326"
         }
     ]
 }

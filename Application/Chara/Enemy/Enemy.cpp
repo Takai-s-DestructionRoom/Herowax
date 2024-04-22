@@ -219,9 +219,9 @@ void Enemy::Update()
 
 void Enemy::Draw()
 {
+	BrightDraw();
 	if (isAlive)
 	{
-		BrightDraw();
 		//obj.Draw();
 
 		ui.Draw();
