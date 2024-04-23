@@ -4,6 +4,9 @@
 #include <PathUtil.h>
 #include <Util.h>
 
+#include "RInput.h"
+
+bool RImGui::showImGui = true;
 
 RImGui* RImGui::GetInstance()
 {
@@ -25,6 +28,12 @@ void RImGui::NewFrame()
 
 void RImGui::Render()
 {
+    if (RInput::GetKeyDown(DIK_F7)) {
+        showImGui = !showImGui;
+    }
+
+    if (!showImGui)return;
+
     RImGui* instance = GetInstance();
     ImGui::Render();
     RDirectX::GetCommandList()->SetDescriptorHeaps(1, &instance->mSrvHeapPtr);

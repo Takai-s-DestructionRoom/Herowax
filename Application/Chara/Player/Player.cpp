@@ -75,11 +75,22 @@ isFireStock(false), isWaxStock(true), isCollectFan(false), maxWaxStock(20)
 
 	minRange = Parameter::GetParam(extract, "攻撃範囲_最小", minRange);
 	maxRange = Parameter::GetParam(extract, "攻撃範囲_最大", maxRange);
+
+	Model::Load("./Resources/Model/collect/collect.obj", "collect", true);
+	Model::Load("./Resources/Model/playerHuman/playerHuman.obj", "playerHuman", true);
+	Model::Load("./Resources/Model/playerBag/playerBag.obj", "playerBag", true);
+
+	bagScale = Parameter::GetParam(extract, "風船の大きさ", 1.0f);
+	humanOffset = Parameter::GetParam(extract,"人の位置Y", humanOffset);
+	humanScale = Parameter::GetParam(extract,"人の大きさ", humanScale);
+	collectScale = Parameter::GetParam(extract,"回収中の大きさ", collectScale);
 }
 
 void Player::Init()
 {
-	obj = PaintableModelObj(Model::Load("./Resources/Model/player/player_bird.obj", "player_bird", true));
+	obj = PaintableModelObj("playerBag");
+
+	humanObj = ModelObj("playerHuman");
 
 	std::map<std::string, std::string> extract = Parameter::Extract("Player");
 	defColor.r = Parameter::GetParam(extract, "プレイヤーの色R", 1);
@@ -171,6 +182,10 @@ void Player::Update()
 		}
 	}
 
+	//攻撃ボタン入力中で、実際にロウが出せたら攻撃フラグを立てる
+	isAttack = (RInput::GetInstance()->GetRTrigger() || RInput::GetKey(DIK_P)) && 
+		(waxStock > 0);
+
 	//-----------クールタイム管理-----------//
 	atkTimer.Update();
 	atkCoolTimer.Update();
@@ -185,9 +200,26 @@ void Player::Update()
 	//クールタイム終わったら攻撃再びできるように
 	if (atkCoolTimer.GetEnd())
 	{
-		isAttack = false;
 		atkCoolTimer.Reset();
 	}
+
+	//---ロウ回収処理周り---///
+	//回収処理
+	WaxCollect();
+
+	//回収が終わったらモデルを戻す
+	if (WaxManager::GetInstance()->isCollected && modelChange) {
+		obj.mModel = ModelManager::Get("playerBag");
+		modelChange = false;
+	}
+
+	if (isWaxStock == false)
+	{
+		waxStock = maxWaxStock;
+	}
+	//ストックがおかしな値にならないように
+	waxStock = Util::Clamp(waxStock, 0, maxWaxStock);
+
 
 	//地面に埋ってたら
 	if (obj.mTransform.position.y - obj.mTransform.scale.y < Level::Get()->ground.mTransform.position.y)
@@ -233,12 +265,12 @@ void Player::Update()
 
 	//回転を適用
 	obj.mTransform.rotation = rotVec;
+	//風船のモデルを180度回転(元の向きが正面のため)
+	obj.mTransform.rotation.y += Util::AngleToRadian(180.f);
 
 	bool isCollision = false;
 	uint32_t colCount = 0;
 	Vector3 plusVec{};
-
-
 
 	//無敵モードなら
 	if (isGodmode)
@@ -293,6 +325,35 @@ void Player::Update()
 		WaxManager::GetInstance()->isCollected;				//移動速度をかけ合わせたら完成(回収中は動けない)
 	obj.mTransform.position += moveVec;						//完成したものを座標に足し合わせる
 
+	//回収中なら回収中モデルのスケールを入れる
+	if (!WaxManager::GetInstance()->isCollected)
+	{
+		obj.mTransform.scale = Vector3::ONE * collectScale;
+	}
+	else
+	{
+		obj.mTransform.scale = Vector3::ONE * bagScale;
+	}
+
+	//攻撃中と回収中なら正面へ、それ以外なら後ろへ
+	if (isAttack || !WaxManager::GetInstance()->isCollected) {
+		Vector3 tVec = collectRangeModel.mTransform.position - collectCol.start;
+		tVec.y = 0;
+		tVec.Normalize();
+		obj.mTransform.rotation = Quaternion::LookAt(tVec).ToEuler();
+	}
+
+	//上に乗ってる人型の位置を合わせる
+	humanObj.mTransform = obj.mTransform;
+	humanObj.mTransform.position.y += humanOffset;
+
+	//向きを合わせる
+	humanObj.mTransform.rotation = obj.mTransform.rotation;
+	humanObj.mTransform.rotation.y -= Util::AngleToRadian(180.f);
+
+	//大きさを適用
+	humanObj.mTransform.scale = Vector3::ONE * humanScale;
+
 	UpdateCollider();
 	UpdateAttackCollider();
 
@@ -344,20 +405,10 @@ void Player::Update()
 	obj.mTransform.UpdateMatrix();
 	BrightTransferBuffer(Camera::sNowCamera->mViewProjection);
 
+	humanObj.mTransform.UpdateMatrix();
+	humanObj.TransferBuffer(Camera::sNowCamera->mViewProjection);
+
 	ui.Update(this);
-
-	WaxCollect();
-
-	if (isWaxStock == false)
-	{
-		waxStock = maxWaxStock;
-	}
-	//ストックがおかしな値にならないように
-	waxStock = Util::Clamp(waxStock, 0, maxWaxStock);
-
-	/*fireUnit.SetTransform(obj.mTransform);
-	fireUnit.SetIsFireStock(isFireStock);
-	fireUnit.Update();*/
 
 #pragma region ImGui
 	ImGui::SetNextWindowSize({ 600, 250 }, ImGuiCond_FirstUseEver);
@@ -369,20 +420,13 @@ void Player::Update()
 	ImGui::Text("Lスティック移動、Aボタンジャンプ、Rで攻撃,Lでロウ回収");
 	ImGui::Text("WASD移動、スペースジャンプ、右クリで攻撃,Pでパブロ攻撃,Qでロウ回収");
 
-	ImGui::ColorEdit4("プレイヤーの色", &obj.mTuneMaterial.mColor.r);
+	if (ImGui::TreeNode("Transform系")) {
 
-	if (ImGui::TreeNode("移動系"))
-	{
-		ImGui::Text("座標:%f,%f,%f", GetPos().x, GetPos().y, GetPos().z);
-		ImGui::Text("動く方向:%f,%f,%f", moveVec.x, moveVec.y, moveVec.z);
-		//ImGui::Text("正面ベクトル:%f,%f,%f", frontVec.x, frontVec.y, frontVec.z);
-		ImGui::Text("ジャンプの高さ:%f", jumpHeight);
-		ImGui::Text("ジャンプ速度:%f", jumpSpeed);
-		ImGui::Text("加速度:%f", moveAccel);
-		ImGui::SliderFloat("移動速度:%f", &moveSpeed, 0.f, 5.f);
-		ImGui::SliderFloat("移動加速度:%f", &moveAccelAmount, 0.f, 0.1f);
-		ImGui::SliderFloat("重力:%f", &gravity, 0.f, 0.2f);
-		ImGui::SliderFloat("ジャンプ力:%f", &jumpPower, 0.f, 5.f);
+		ImGui::DragFloat("人の位置Y", &humanOffset);
+		ImGui::DragFloat("人の大きさ", &humanScale);
+		ImGui::DragFloat("風船の大きさ", &bagScale);
+		ImGui::DragFloat("回収中の大きさ", &collectScale);
+		ImGui::ColorEdit4("プレイヤーの色", &obj.mTuneMaterial.mColor.r);
 
 		if (ImGui::TreeNode("初期状態設定"))
 		{
@@ -395,6 +439,20 @@ void Player::Update()
 
 			ImGui::TreePop();
 		}
+
+		ImGui::TreePop();
+	}
+	if (ImGui::TreeNode("移動系"))
+	{
+		ImGui::Text("座標:%f,%f,%f", GetPos().x, GetPos().y, GetPos().z);
+		ImGui::Text("動く方向:%f,%f,%f", moveVec.x, moveVec.y, moveVec.z);
+		ImGui::Text("ジャンプの高さ:%f", jumpHeight);
+		ImGui::Text("ジャンプ速度:%f", jumpSpeed);
+		ImGui::Text("加速度:%f", moveAccel);
+		ImGui::SliderFloat("移動速度:%f", &moveSpeed, 0.f, 5.f);
+		ImGui::SliderFloat("移動加速度:%f", &moveAccelAmount, 0.f, 0.1f);
+		ImGui::SliderFloat("重力:%f", &gravity, 0.f, 0.2f);
+		ImGui::SliderFloat("ジャンプ力:%f", &jumpPower, 0.f, 5.f);
 
 		ImGui::TreePop();
 	}
@@ -482,6 +540,10 @@ void Player::Update()
 		Parameter::Save("最大HP", maxHP);
 		Parameter::Save("攻撃範囲_最小", minRange);
 		Parameter::Save("攻撃範囲_最大", maxRange);
+		Parameter::Save("人の位置Y", humanOffset);
+		Parameter::Save("人の大きさ", humanScale);
+		Parameter::Save("風船の大きさ",bagScale);
+		Parameter::Save("回収中の大きさ", collectScale);
 
 		Parameter::End();
 	}
@@ -495,6 +557,12 @@ void Player::Draw()
 	if (isAlive || Util::debugBool)
 	{
 		BrightDraw();
+
+		//回収中は別モデルに置き換えるので描画しない
+		if (WaxManager::GetInstance()->isCollected) {
+			humanObj.Draw();
+		}
+
 		if (isCollectFan)
 		{
 			collectRangeModelCircle.Draw();
@@ -723,13 +791,16 @@ void Player::Rotation()
 
 void Player::PabloAttack()
 {
+
 	//攻撃中かストックないなら次の攻撃が出せない
 	if (atkCoolTimer.GetRun() || waxStock <= 0)return;
 	atkCoolTimer.Start();
-
+	
 	Vector3 pabloVec = { 0,0,0 };
 	//入力があるならそっちへ
-	pabloVec = cameraDir;
+	pabloVec = collectRangeModel.mTransform.position - collectCol.start;
+	pabloVec.y = 0;
+	pabloVec.Normalize();
 
 	atkVec = pabloVec;
 
@@ -790,9 +861,7 @@ void Player::WaxCollect()
 	collectRangeModelRayRight.mTransform.scale = { 0.1f,0.1f,waxCollectDist * 2.f };
 	collectRangeModelRayLeft.mTransform.rotation.y += Util::AngleToRadian(-waxCollectAngle * 0.5f);
 	collectRangeModelRayRight.mTransform.rotation.y += Util::AngleToRadian(waxCollectAngle * 0.5f);
-	/*collectRangeModelRayLeft.mTransform.position += GetFrontVec() * waxCollectDist * 0.5f;
-	collectRangeModelRayRight.mTransform.position += GetFrontVec() * waxCollectDist * 0.5f;*/
-
+	
 	collectRangeModelRayLeft.mTransform.UpdateMatrix();
 	collectRangeModelRayLeft.TransferBuffer(Camera::sNowCamera->mViewProjection);
 	collectRangeModelRayRight.mTransform.UpdateMatrix();
@@ -805,7 +874,12 @@ void Player::WaxCollect()
 	collectRangeModelCircle.mTransform = obj.mTransform;
 	collectRangeModelCircle.mTransform.scale = { waxCollectDist,0.1f,waxCollectDist };
 
-	collectCol.dir = cameraDir;
+	//当たり判定で使うレイの設定
+	//当たり判定で使うレイの設定
+	Vector3 dir = Camera::sNowCamera->mViewProjection.mTarget - Camera::sNowCamera->mViewProjection.mEye;
+	dir.y = 0;
+	collectCol.dir = dir.Normalize();
+	
 	collectCol.start = GetFootPos();
 	collectCol.radius = waxCollectRange * 0.5f;
 
@@ -855,9 +929,12 @@ void Player::WaxCollect()
 		//回収ボタンポチーw
 		if (GetWaxCollectButtonDown())
 		{
+			bool isCollectSuccess = false;;
 			//ロウがストック性かつ地面についてて回収できる状態なら
 			if (isWaxStock && isGround && WaxManager::GetInstance()->isCollected)
 			{
+				isCollectSuccess = true;
+
 				if (isCollectFan)
 				{
 					//ロウ回収
@@ -873,6 +950,8 @@ void Player::WaxCollect()
 			if (boss->parts[(int32_t)PartsNum::LeftHand].isCollected) {
 				if (RayToSphereCol(collectCol, boss->parts[(int32_t)PartsNum::LeftHand].collider))
 				{
+					isCollectSuccess = true;
+
 					//今のロウとの距離
 					float len = (collectCol.start -
 						boss->parts[(int32_t)PartsNum::LeftHand].GetPos()).Length();
@@ -895,6 +974,8 @@ void Player::WaxCollect()
 
 					//見たロウが範囲外ならスキップ
 					if (waxCollectVertical >= len) {
+						isCollectSuccess = true;
+
 						//とりあえず壊しちゃう
 						boss->parts[(int32_t)PartsNum::RightHand].collectPos = collectCol.start;
 						boss->parts[(int32_t)PartsNum::RightHand].ChangeState<BossPartCollect>();
@@ -908,6 +989,8 @@ void Player::WaxCollect()
 			if (boss->GetStateStr() == "Collected") {
 				if (RayToSphereCol(collectCol, boss->collider))
 				{
+					isCollectSuccess = true;
+
 					//今のロウとの距離
 					float len = (collectCol.start -
 						boss->GetPos()).Length();
@@ -919,6 +1002,11 @@ void Player::WaxCollect()
 						waxCollectAmount += 1;
 					}
 				}
+			}
+
+			if (isCollectSuccess) {
+				obj.mModel = ModelManager::Get("collect");
+				modelChange = true;
 			}
 		}
 	}

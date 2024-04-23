@@ -36,6 +36,8 @@ private:
 
 	std::string mConfigPath;
 
+	static bool showImGui;
+
 	void InitInternal();
 	void FinalInternal();
 
