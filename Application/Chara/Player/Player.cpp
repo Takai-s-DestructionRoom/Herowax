@@ -234,12 +234,6 @@ void Player::Update()
 	//回転を適用
 	obj.mTransform.rotation = rotVec;
 
-	bool isCollision = false;
-	uint32_t colCount = 0;
-	Vector3 plusVec{};
-
-
-
 	//無敵モードなら
 	if (isGodmode)
 	{
@@ -296,43 +290,58 @@ void Player::Update()
 	UpdateCollider();
 	UpdateAttackCollider();
 
+	bool isCollision = false;
+	float len = 0;
+
 	//移動制限(フェンス準拠)
 	for (auto& wall : Level::Get()->wallCol)
 	{
 		if (ColPrimitive3D::CheckSphereToPlane(collider, wall))
 		{
-			/*float len = wall.distance - Vector2(obj.mTransform.position.x, obj.mTransform.position.z).Length();
-			while (len < collider.r)
-			{
-				plusVec += -wall.normal * (collider.r - len);
-				len = wall.distance - Vector2(obj.mTransform.position.x + plusVec.x, obj.mTransform.position.z + plusVec.z).Length();
-			}*/
-
-			// 壁に当たったら壁に遮られない移動成分分だけ移動する
-			Vector3 slideVec;	// プレイヤーをスライドさせるベクトル
+			Vector3 vec;
 
 			// 進行方向ベクトルと壁ポリゴンの法線ベクトルに垂直なベクトルを算出
-			slideVec = moveVec.Cross(-wall.normal);
+			vec = moveVec.Cross(-wall.normal);
 			// 算出したベクトルと壁ポリゴンの法線ベクトルに垂直なベクトルを算出、これが
 			// 元の移動成分から壁方向の移動成分を抜いたベクトル
-			slideVec = -wall.normal.Cross(slideVec);
+			vec = -wall.normal.Cross(vec);
 
 			// それを移動前の座標に足したものを新たな座標とする
-			plusVec += slideVec * moveSpeed;
+			vec *= moveVec.Length();
 
-			colCount++;
+			if (isCollision)
+			{
+				len = abs(wall.distance - Vector2(obj.mTransform.position.x, obj.mTransform.position.z).Length());
+				if (len >= toWallLen)
+				{
+					slideVec = vec;
+					//toWallLen = len;
+				}
+			}
+			else
+			{
+				toWallLen = abs(wall.distance - Vector2(obj.mTransform.position.x - vec.x, obj.mTransform.position.z - vec.z).Length());
+				slideVec = vec;
+				isCollision = true;
+			}
 		}
 	}
 
-	if (colCount > 0)
-	{
-		isCollision = true;
-	}
+	ImGui::SetNextWindowSize({ 600, 250 }, ImGuiCond_FirstUseEver);
+
+	ImGui::Begin("移動制限");
+	ImGui::Text("残った方向:%f,%f,%f", slideVec.x, slideVec.y, slideVec.z);
+	ImGui::Text("壁との距離:%f", toWallLen);
+	ImGui::Text("2枚目壁との距離:%f", len);
+
+	ImGui::End();
+
+	toWallLen = 0;
 
 	if (isCollision)
 	{
 		moveVec = -moveVec;
-		obj.mTransform.position += moveVec + plusVec;
+		obj.mTransform.position += moveVec + slideVec;
 		obj.mTuneMaterial.mColor = Color::kPink;
 	}
 	else

@@ -32,6 +32,8 @@ public:
 	Vector3 initPos = { 0,0,0 };	//初期位置
 	Vector3 initRot = { 0,0,0 };	//初期向き
 	bool isMove;					//行動可能かフラグ
+	Vector3 slideVec;				//壁に当たった時スライドさせるベクトル
+	float toWallLen;				//壁との距離
 
 	//------------ 回転関連 ------------//
 	Vector3 rotVec;				//回転ベクトル
