@@ -128,14 +128,16 @@ private:
 
 	Color defColor;
 
+	//上に配置してる人型オブジェクト系
 	ModelObj humanObj;
 	float humanOffset = 0.f;
 	float humanScale = 0.0f;
+	//モデル変更時に使うやつら
 	float bagScale = 0.0f;
-
+	float collectScale = 0.0f;
 	bool modelChange = false;
 
-	float collectScale = 0.0f;
+	Vector3 modelOffset;//描画位置をずらす
 
 public:
 	Player();

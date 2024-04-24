@@ -223,25 +223,27 @@ void Player::Update()
 	//ストックがおかしな値にならないように
 	waxStock = Util::Clamp(waxStock, 0, maxWaxStock);
 
+	//ジャンプなくなったので、地面座標にピッタリくっつける
+	obj.mTransform.position.y = Level::Get()->ground.mTransform.position.y;
 
 	//地面に埋ってたら
-	if (obj.mTransform.position.y - obj.mTransform.scale.y < Level::Get()->ground.mTransform.position.y)
-	{
-		//地面に触れるとこまで移動
-		obj.mTransform.position.y = Level::Get()->ground.mTransform.position.y + obj.mTransform.scale.y;
+	//if (obj.mTransform.position.y < Level::Get()->ground.mTransform.position.y)
+	//{
+	//	//地面に触れるとこまで移動
+	//	obj.mTransform.position.y = Level::Get()->ground.mTransform.position.y;
 
-		if (isGround == false)
-		{
-			isGround = true;
+	//	if (isGround == false)
+	//	{
+	//		isGround = true;
 
-			//エミッターの座標はプレイヤーの座標からY座標だけにスケール分ずらしたもの
-			Vector3 emitterPos = GetCenterPos();
+	//		//エミッターの座標はプレイヤーの座標からY座標だけにスケール分ずらしたもの
+	//		Vector3 emitterPos = GetCenterPos();
 
-			ParticleManager::GetInstance()->AddRing(
-				emitterPos, "player_landing_ring");
-		}
-		isJumping = false;
-	}
+	//		ParticleManager::GetInstance()->AddRing(
+	//			emitterPos, "player_landing_ring");
+	//	}
+	//	isJumping = false;
+	//}
 
 	//HP0になったら死ぬ
 	if (hp <= 0)
@@ -277,7 +279,7 @@ void Player::Update()
 		if (godmodeTimer.GetStarted() == false)
 		{
 			godmodeTimer.Start();
-		}
+		} 
 
 		//ゲーミング色に
 		obj.mTuneMaterial.mColor = GamingColorUpdate();
@@ -441,6 +443,7 @@ void Player::Update()
 		ImGui::DragFloat("風船の大きさ", &bagScale);
 		ImGui::DragFloat("回収中の大きさ", &collectScale);
 		ImGui::ColorEdit4("プレイヤーの色", &obj.mTuneMaterial.mColor.r);
+		ImGui::DragFloat("モデルをずらすY", &modelOffset.y,0.1f);
 
 		if (ImGui::TreeNode("初期状態設定"))
 		{
@@ -662,7 +665,7 @@ void Player::MovePad()
 	//}
 
 	//「ジャンプの高さ」+「プレイヤーの大きさ」を反映
-	obj.mTransform.position.y = jumpHeight + obj.mTransform.scale.y;
+	//obj.mTransform.position.y = jumpHeight + obj.mTransform.scale.y;
 }
 
 void Player::MoveKey()
@@ -737,7 +740,7 @@ void Player::MoveKey()
 	}
 
 	//「ジャンプの高さ」+「プレイヤーの大きさ」を反映
-	obj.mTransform.position.y = jumpHeight + obj.mTransform.scale.y;
+	//obj.mTransform.position.y = jumpHeight + obj.mTransform.scale.y;
 }
 
 void Player::Rotation()
