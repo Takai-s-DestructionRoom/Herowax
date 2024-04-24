@@ -1,6 +1,7 @@
 #include "BossPunch.h"
 #include "Boss.h"
 #include "ParticleManager.h"
+#include <RAudio.h>
 
 BossPunch::BossPunch(bool isLeft)
 {
@@ -37,6 +38,8 @@ void BossPunch::Update(Boss* boss)
 
 		//スプラインの終点に攻撃マーク表示
 		boss->targetCircle.mTransform.position = splinePoints.back();
+		RAudio::Play("Attention");
+
 		//ちょい浮かせる
 		boss->targetCircle.mTransform.rotation.y = 0.02f;
 
@@ -80,6 +83,8 @@ void BossPunch::Update(Boss* boss)
 
 	if (boss->punchTimer.GetEnd() && boss->punchStayTimer.GetStarted() == false)
 	{
+		RAudio::Play("Punch");
+
 		boss->punchStayTimer.Start();
 
 		//エミッターの座標はプレイヤーの座標からY座標だけにスケール分ずらしたもの

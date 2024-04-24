@@ -86,7 +86,10 @@ isFireStock(false), isWaxStock(true), isCollectFan(false), maxWaxStock(20)
 	humanScale = Parameter::GetParam(extract,"人の大きさ", humanScale);
 	collectScale = Parameter::GetParam(extract,"回収中の大きさ", collectScale);
 
-	RAudio::Load("Resources/Sound/shot.wav", "shot");
+	RAudio::Load("Resources/Sounds/SE/P_attack.wav", "Attack");
+	RAudio::Load("Resources/Sounds/SE/P_attackHit.wav", "Hit");
+	
+	RAudio::Load("Resources/Sounds/SE/P_enemyCollect.wav", "eCollect");
 }
 
 void Player::Init()
@@ -851,7 +854,7 @@ void Player::PabloAttack()
 	}
 
 	//音鳴らす
-	RAudio::Play("shot");
+	RAudio::Play("Attack");
 }
 
 void Player::WaxCollect()
@@ -916,12 +919,16 @@ void Player::WaxCollect()
 			{
 				waxStock += waxCollectAmount;
 				waxCollectAmount = 0;
+				//音鳴らす
+				RAudio::Play("eCollect");
 			}
 
 			//最大量を超えて回収してたら最大量を増やす
 			if (waxStock > maxWaxStock)
 			{
 				maxWaxStock = waxStock;
+				//音鳴らす
+				RAudio::Play("eCollect");
 			}
 		}
 	}
