@@ -43,7 +43,7 @@ void ProtoScene::Init()
 {
 	eventScene = std::make_unique<BossAppearanceScene>();
 
-	Camera::sMinimapCamera = &minimapCamera;
+	//Camera::sMinimapCamera = &minimapCamera;
 
 	gameCamera.Init();
 
@@ -66,7 +66,7 @@ void ProtoScene::Init()
 
 	EnemyManager::GetInstance()->SetTarget(&player.obj);
 
-	Minimap::GetInstance()->Init();
+	//Minimap::GetInstance()->Init();
 
 	RAudio::Stop("Normal");
 	RAudio::Stop("Boss");
@@ -179,7 +179,7 @@ void ProtoScene::Update()
 	}
 
 	gameCamera.Update();
-	MinimapCameraUpdate();
+	//MinimapCameraUpdate();
 
 	//ここに無限に当たり判定増やしていくの嫌なのであとで何か作ります
 	//クソ手抜き当たり判定
@@ -499,7 +499,7 @@ void ProtoScene::Update()
 	WaxManager::GetInstance()->Update();
 	CollectPartManager::GetInstance()->Update();
 
-	Minimap::GetInstance()->Update();
+	//Minimap::GetInstance()->Update();
 
 	light.Update();
 
@@ -537,7 +537,7 @@ void ProtoScene::Update()
 
 void ProtoScene::Draw()
 {
-	Minimap::GetInstance()->Draw();
+	//Minimap::GetInstance()->Draw();
 	ParticleManager::GetInstance()->Draw();
 	skydome.Draw();
 	WaxManager::GetInstance()->Draw();

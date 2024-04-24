@@ -61,9 +61,9 @@ void Wax::Init(Transform transform, Vector3 endPos_, float height, float size, f
 	atkTimer = atkTime;
 	atkTimer.Start();
 
-	iconSize = { 0.5f,0.5f };
+	/*iconSize = { 0.5f,0.5f };
 	minimapIcon.SetTexture(TextureManager::Load("./Resources/circle.png", "circle"));
-	minimapIcon.mMaterial.mColor = waxOriginColor;
+	minimapIcon.mMaterial.mColor = waxOriginColor;*/
 }
 
 void Wax::Update()
@@ -109,19 +109,19 @@ void Wax::Update()
 
 	mDisolveBuff->disolveValue = disolveValue;
 
-	//スクリーン座標を求める
-	screenPos = Minimap::GetInstance()->GetScreenPos(obj.mTransform.position);
-	minimapIcon.mTransform.position = { screenPos.x,screenPos.y,0.f };
+	////スクリーン座標を求める
+	//screenPos = Minimap::GetInstance()->GetScreenPos(obj.mTransform.position);
+	//minimapIcon.mTransform.position = { screenPos.x,screenPos.y,0.f };
 
-	//決めたサイズに
-	iconSize = 
-	{ obj.mTransform.scale.x * 0.5f * WaxManager::GetInstance()->GetSlimeWaxSizeMag(),
-		obj.mTransform.scale.z * 0.5f * WaxManager::GetInstance()->GetSlimeWaxSizeMag() };
-	minimapIcon.mTransform.scale = Vector3(iconSize.x,iconSize.y,1.f) * Minimap::GetInstance()->iconSize;
+	////決めたサイズに
+	//iconSize = 
+	//{ obj.mTransform.scale.x * 0.5f * WaxManager::GetInstance()->GetSlimeWaxSizeMag(),
+	//	obj.mTransform.scale.z * 0.5f * WaxManager::GetInstance()->GetSlimeWaxSizeMag() };
+	//minimapIcon.mTransform.scale = Vector3(iconSize.x,iconSize.y,1.f) * Minimap::GetInstance()->iconSize;
 
-	//更新忘れずに
-	minimapIcon.mTransform.UpdateMatrix();
-	minimapIcon.TransferBuffer();
+	////更新忘れずに
+	//minimapIcon.mTransform.UpdateMatrix();
+	//minimapIcon.TransferBuffer();
 
 	obj.mTransform.UpdateMatrix();
 	obj.TransferBuffer(Camera::sNowCamera->mViewProjection);
@@ -161,12 +161,12 @@ void Wax::Draw()
 
 void Wax::DrawUI()
 {
-	//描画範囲制限
-	Renderer::SetScissorRects({ Minimap::GetInstance()->rect });
-	minimapIcon.Draw();
+	////描画範囲制限
+	//Renderer::SetScissorRects({ Minimap::GetInstance()->rect });
+	//minimapIcon.Draw();
 
-	//元の範囲に戻してあげる
-	Renderer::SetScissorRects({ Minimap::GetInstance()->defaultRect });
+	////元の範囲に戻してあげる
+	//Renderer::SetScissorRects({ Minimap::GetInstance()->defaultRect });
 }
 
 bool Wax::IsBurning()
