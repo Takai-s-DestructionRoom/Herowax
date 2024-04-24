@@ -14,6 +14,8 @@ public:
 	bool isCollected = false;
 	Vector3 collectPos = {0,0,0};
 
+	Easing::EaseTimer collectTimer;	//回収されるまでの時間(参照できるように外で管理)
+
 private:
 	//------------ HP関連 ------------//
 	float hp = 0.0f;				//現在のヒットポイント
