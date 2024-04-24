@@ -14,6 +14,7 @@
 #include "BossCollectStandState.h"
 #include "EventCaller.h"
 #include "BossDeadScene.h"
+#include "BossAppearanceScene.h"
 
 Boss::Boss() : GameObject(),
 moveSpeed(0.1f), hp(0), maxHP(10.f)
@@ -57,6 +58,8 @@ moveSpeed(0.1f), hp(0), maxHP(10.f)
 	punchTimer = Parameter::GetParam(extract,"パンチにかかる時間", 0.7f);
 	punchStayTimer = Parameter::GetParam(extract,"パンチ後留まる時間", 1.5f);
 
+	bossSpawnTimer = Parameter::GetParam(extract, "ボスが出現するまでの時間", 60.0f);
+
 	extract = Parameter::Extract("Player");
 	solidTime = Parameter::GetParam(extract, "固まるまでの時間", 5.f);
 	atkPower = (int32_t)Parameter::GetParam(extract, "敵に与えるダメージ", 10.0f);
@@ -73,7 +76,8 @@ Boss::~Boss()
 void Boss::Init()
 {
 	hp = maxHP;
-	isAlive = true;
+	isAlive = false;
+	bossSpawnTimer.Start();
 	
 	mutekiTimer.Reset();
 
@@ -228,6 +232,81 @@ void Boss::AllStateUpdate()
 
 void Boss::Update()
 {
+	//タイマーが終わったらボスを出現させる
+	bossSpawnTimer.Update();
+	if (bossSpawnTimer.GetNowEnd()) {
+		EventCaller::EventCall(BossAppearanceScene::GetEventCallStr());
+	}
+
+#pragma region ImGui
+	ImGui::SetNextWindowSize({ 300, 250 }, ImGuiCond_FirstUseEver);
+
+	ImGui::Begin("Boss");
+	ImGui::Text("ボスが出現するまでの時間:%f", bossSpawnTimer.nowTime_);
+
+	ImGui::Text("ボス本体");
+	ImGui::Text("1:待機\n2:左パンチ\n3:右パンチ");
+	ImGui::Checkbox("オブジェクト描画", &isDrawObj);
+	ImGui::Checkbox("当たり判定描画", &isDrawCollider);
+
+	if (ImGui::TreeNode("調整項目_ボス")) {
+		ImGui::DragFloat("ボスが出現するまでの時間(最大)", &bossSpawnTimer.maxTime_,0.1f);
+		if (ImGui::Button("出現タイマーリセット")) {
+			bossSpawnTimer.Start();
+		}
+		ImGui::DragFloat3("スケール", &obj.mTransform.scale.x, 0.1f);
+		ImGui::DragFloat("当たり判定", &colliderSize, 0.1f);
+		ImGui::InputFloat("無敵時間", &mutekiTimer.maxTime_, 0.1f);
+		ImGui::InputFloat("モーション待機時間", &standTimer.maxTime_, 0.1f);
+		ImGui::InputFloat("パンチにかかる時間", &punchTimer.maxTime_, 0.1f);
+		ImGui::InputFloat("パンチ後留まる時間", &punchStayTimer.maxTime_, 0.1f);
+		ImGui::TreePop();
+	}
+
+	ImGui::Text("------------------------");
+	ImGui::Text("手");
+	ImGui::Text("手のコライダー座標\nx:%f\ny:%f\nz:%f",
+		parts[0].collider.pos.x, parts[0].collider.pos.y, parts[0].collider.pos.z);
+	ImGui::Text("手のコライダーサイズ:%f", parts[0].collider.r);
+	ImGui::Text("手のコライダー描画フラグ:%d", parts[0].GetIsDrawCollider());
+	ImGui::Text("lefthandWaxSolid:%d", parts[(int32_t)PartsNum::LeftHand].GetWaxSolidCount());
+	ImGui::Text("righthandWaxSolid:%d", parts[(int32_t)PartsNum::RightHand].GetWaxSolidCount());
+	if (ImGui::TreeNode("調整項目_手")) {
+		ImGui::DragFloat3("右手スケール", &parts[(int32_t)PartsNum::LeftHand].obj.mTransform.scale.x, 0.1f);
+		ImGui::DragFloat3("左手スケール", &parts[(int32_t)PartsNum::RightHand].obj.mTransform.scale.x, 0.1f);
+		ImGui::TreePop();
+	}
+
+	if (ImGui::Button("Reset")) {
+		Init();
+	}
+	if (ImGui::Button("セーブ")) {
+		Parameter::Begin("Boss");
+		Parameter::Save("ボス本体のスケールX", obj.mTransform.scale.x);
+		Parameter::Save("ボス本体のスケールY", obj.mTransform.scale.y);
+		Parameter::Save("ボス本体のスケールZ", obj.mTransform.scale.z);
+		Parameter::Save("ボス本体の当たり判定", colliderSize);
+		Parameter::Save("無敵時間", mutekiTimer.maxTime_);
+		Parameter::Save("左手スケールX", parts[(int32_t)PartsNum::LeftHand].obj.mTransform.scale.x);
+		Parameter::Save("左手スケールY", parts[(int32_t)PartsNum::LeftHand].obj.mTransform.scale.y);
+		Parameter::Save("左手スケールZ", parts[(int32_t)PartsNum::LeftHand].obj.mTransform.scale.z);
+		Parameter::Save("右手スケールX", parts[(int32_t)PartsNum::RightHand].obj.mTransform.scale.x);
+		Parameter::Save("右手スケールY", parts[(int32_t)PartsNum::RightHand].obj.mTransform.scale.y);
+		Parameter::Save("右手スケールZ", parts[(int32_t)PartsNum::RightHand].obj.mTransform.scale.z);
+		Parameter::Save("モーション待機時間", standTimer.maxTime_);
+		Parameter::Save("パンチにかかる時間", punchTimer.maxTime_);
+		Parameter::Save("パンチ後留まる時間", punchStayTimer.maxTime_);
+		Parameter::Save("ボスが出現するまでの時間", bossSpawnTimer.GetTimeRate());
+
+		Parameter::End();
+	}
+
+	ImGui::End();
+#pragma endregion
+
+	//ImGuiと出現呼び出し以外は、ボスの出現後に呼び出すため、isAliveがtrueでなければ通さない
+	if (!isAlive)return;
+
 	isOldBodySolid = GetIsSolid(PartsNum::Max);
 
 	ai.Update(this);
@@ -282,92 +361,33 @@ void Boss::Update()
 
 	targetCircle.mTransform.UpdateMatrix();
 	targetCircle.TransferBuffer(Camera::sNowCamera->mViewProjection);
-
-#pragma region ImGui
-	ImGui::SetNextWindowSize({ 300, 250 }, ImGuiCond_FirstUseEver);
-
-	ImGui::Begin("Boss");
-
-	ImGui::Text("ボス本体");
-	ImGui::Text("1:待機\n2:左パンチ\n3:右パンチ");
-	ImGui::Checkbox("オブジェクト描画", &isDrawObj);
-	ImGui::Checkbox("当たり判定描画", &isDrawCollider);
-
-	if (ImGui::TreeNode("調整項目_ボス")) {
-		ImGui::DragFloat3("スケール", &obj.mTransform.scale.x, 0.1f);
-		ImGui::DragFloat("当たり判定", &colliderSize, 0.1f);
-		ImGui::InputFloat("無敵時間", &mutekiTimer.maxTime_, 0.1f);
-		ImGui::InputFloat("モーション待機時間", &standTimer.maxTime_, 0.1f);
-		ImGui::InputFloat("パンチにかかる時間", &punchTimer.maxTime_, 0.1f);
-		ImGui::InputFloat("パンチ後留まる時間", &punchStayTimer.maxTime_, 0.1f);
-		ImGui::TreePop();
-	}
-
-	ImGui::Text("------------------------");
-	ImGui::Text("手");
-	ImGui::Text("手のコライダー座標\nx:%f\ny:%f\nz:%f",
-		parts[0].collider.pos.x, parts[0].collider.pos.y, parts[0].collider.pos.z);
-	ImGui::Text("手のコライダーサイズ:%f", parts[0].collider.r);
-	ImGui::Text("手のコライダー描画フラグ:%d", parts[0].GetIsDrawCollider());
-	ImGui::Text("lefthandWaxSolid:%d", parts[(int32_t)PartsNum::LeftHand].GetWaxSolidCount());
-	ImGui::Text("righthandWaxSolid:%d", parts[(int32_t)PartsNum::RightHand].GetWaxSolidCount());
-	if (ImGui::TreeNode("調整項目_手")) {
-		ImGui::DragFloat3("右手スケール", &parts[(int32_t)PartsNum::LeftHand].obj.mTransform.scale.x, 0.1f);
-		ImGui::DragFloat3("左手スケール", &parts[(int32_t)PartsNum::RightHand].obj.mTransform.scale.x, 0.1f);
-		ImGui::TreePop();
-	}
-
-	if (ImGui::Button("Reset")) {
-		Init();
-	}
-	if (ImGui::Button("セーブ")) {
-		Parameter::Begin("Boss");
-		Parameter::Save("ボス本体のスケールX", obj.mTransform.scale.x);
-		Parameter::Save("ボス本体のスケールY", obj.mTransform.scale.y);
-		Parameter::Save("ボス本体のスケールZ", obj.mTransform.scale.z);
-		Parameter::Save("ボス本体の当たり判定", colliderSize);
-		Parameter::Save("無敵時間", mutekiTimer.maxTime_);
-		Parameter::Save("左手スケールX", parts[(int32_t)PartsNum::LeftHand].obj.mTransform.scale.x);
-		Parameter::Save("左手スケールY", parts[(int32_t)PartsNum::LeftHand].obj.mTransform.scale.y);
-		Parameter::Save("左手スケールZ", parts[(int32_t)PartsNum::LeftHand].obj.mTransform.scale.z);
-		Parameter::Save("右手スケールX", parts[(int32_t)PartsNum::RightHand].obj.mTransform.scale.x);
-		Parameter::Save("右手スケールY", parts[(int32_t)PartsNum::RightHand].obj.mTransform.scale.y);
-		Parameter::Save("右手スケールZ", parts[(int32_t)PartsNum::RightHand].obj.mTransform.scale.z);
-		Parameter::Save("モーション待機時間", standTimer.maxTime_);
-		Parameter::Save("パンチにかかる時間", punchTimer.maxTime_);
-		Parameter::Save("パンチ後留まる時間", punchStayTimer.maxTime_);
-		Parameter::End();
-	}
-
-	ImGui::End();
 }
 
 void Boss::Draw()
 {
-	if (isAlive)
-	{
-		if (isDrawObj) {
-			BrightDraw();
-			for (size_t i = 0; i < parts.size(); i++)
-			{
-				parts[i].Draw();
-			}
-		}
-
-		DrawCollider();
+	if (!isAlive)return;
+	
+	if (isDrawObj) {
+		BrightDraw();
 		for (size_t i = 0; i < parts.size(); i++)
 		{
-			parts[i].DrawCollider();
+			parts[i].Draw();
 		}
-
-		//パンチ中のみ描画
-		if (punchTimer.GetRun())
-		{
-			targetCircle.Draw();
-		}
-
-		ui.Draw();
 	}
+
+	DrawCollider();
+	for (size_t i = 0; i < parts.size(); i++)
+	{
+		parts[i].DrawCollider();
+	}
+
+	//パンチ中のみ描画
+	if (punchTimer.GetRun())
+	{
+		targetCircle.Draw();
+	}
+
+	ui.Draw();
 }
 
 bool Boss::GetIsSolid(PartsNum num)
