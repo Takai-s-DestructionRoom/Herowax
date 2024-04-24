@@ -18,6 +18,7 @@
 #include "EventCaller.h"
 #include "TitleScene.h"
 #include "SimpleSceneTransition.h"
+#include <RAudio.h>
 
 ProtoScene::ProtoScene()
 {
@@ -32,6 +33,9 @@ ProtoScene::ProtoScene()
 	InstantDrawer::PreCreate();
 
 	Level::Get()->Load();
+
+	RAudio::Load("Resources/Sounds/BGM/Ingame.wav", "Normal");
+	RAudio::Load("Resources/Sounds/BGM/Boss.wav", "Boss");
 }
 
 void ProtoScene::Init()
@@ -63,6 +67,11 @@ void ProtoScene::Init()
 	EnemyManager::GetInstance()->SetTarget(&player.obj);
 
 	Minimap::GetInstance()->Init();
+
+	RAudio::Stop("Normal");
+	RAudio::Stop("Boss");
+
+	RAudio::Play("Normal", 0.5f, 1.0f, true);
 
 	std::map<std::string, std::string> extract = Parameter::Extract("DebugBool");
 	Util::debugBool = Parameter::GetParam(extract, "debugBool", false);
@@ -105,6 +114,8 @@ void ProtoScene::Update()
 		eventScene = std::make_unique<BossDeadScene>();
 		eventScene->Init(boss.GetCenterPos() + Vector3::UP * 20.f);
 
+		RAudio::Stop("Boss");
+
 		player.isMove = false;
 		boss.isDead = true;
 		EnemyManager::GetInstance()->isStop = true;
@@ -119,6 +130,9 @@ void ProtoScene::Update()
 	{
 		eventScene = std::make_unique<BossAppearanceScene>();
 		eventScene->Init(boss.GetCenterPos() + Vector3::UP * 20.f);
+
+		RAudio::Stop("Normal");
+		RAudio::Play("Boss", 0.5f, 1.0f, true);
 
 		player.isMove = false;
 		boss.isAppearance = true;

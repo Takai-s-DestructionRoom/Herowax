@@ -4,6 +4,7 @@
 #include "SceneManager.h"
 #include "InstantDrawer.h"
 #include "SimpleSceneTransition.h"
+#include <RAudio.h>
 
 TitleScene::TitleScene()
 {
@@ -29,6 +30,8 @@ TitleScene::TitleScene()
 	titleLogoPos = { RWindow::GetWidth() * 0.5f,RWindow::GetHeight() * 0.5f - 100.f };
 	buttonUIPos = titleLogoPos;
 	buttonUIPos.y += 300.f;
+
+	RAudio::Load("Resources/Sounds/SE/A_select.wav", "Select");
 }
 
 void TitleScene::Init()
@@ -71,6 +74,7 @@ void TitleScene::Update()
 		RInput::GetInstance()->GetKeyDown(DIK_SPACE) ||
 		RInput::GetInstance()->GetPadButtonDown(XINPUT_GAMEPAD_A))
 	{
+		RAudio::Play("Select");
 		SceneManager::GetInstance()->Change<ProtoScene, SimpleSceneTransition>();
 	}
 

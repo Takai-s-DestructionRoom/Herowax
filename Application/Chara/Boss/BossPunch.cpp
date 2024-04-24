@@ -5,12 +5,14 @@
 
 BossPunch::BossPunch()
 {
-	RAudio::Load("Resources/Sounds/SE/E_punch.wav", "Punch");
-	RAudio::Load("Resources/Sounds/SE/E_attention.wav", "Attention");
+	
 }
 
 BossPunch::BossPunch(bool isLeft)
 {
+	RAudio::Load("Resources/Sounds/SE/E_punch.wav", "Punch");
+	RAudio::Load("Resources/Sounds/SE/E_attention.wav", "Attention");
+
 	isFinished = false;
 
 	isLeft_ = isLeft;
