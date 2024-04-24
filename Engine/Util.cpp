@@ -172,7 +172,7 @@ void Util::CalcElapsedTimeEnd(std::string name, bool consecutive) {
 	double elapsedMicro = static_cast<double>(std::chrono::duration_cast<std::chrono::microseconds>(nowTimePoint - memTimePoint).count());
 	if (consecutive) elapsedMicro -= memElapsedTime;
 	double elapsedMili = elapsedMicro / 1000;
-	
+
 	OutputDebugStringA((name + ": " + StringFormat("%.3f", elapsedMili) + "ms / " + StringFormat("%.0f", elapsedMicro) + "us\n").c_str());
 	memElapsedTime += elapsedMicro;
 }
@@ -244,4 +244,14 @@ Vector3 Util::Spline(const std::vector<Vector3>& points, float t)
 bool Util::ContainString(const std::string& str, const std::string& check)
 {
 	return str.find(check) != std::string::npos;
+}
+
+Vector2 Util::CircleMotion(Vector2 CenterPoint, float radius, float angle)
+{
+	Vector2 position;
+
+	position.x = CenterPoint.x + radius * cosf(angle);
+	position.y = CenterPoint.y + radius * sinf(angle);
+
+	return position;
 }

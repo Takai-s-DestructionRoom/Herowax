@@ -8,6 +8,7 @@
 #include "LightGroup.h"
 #include "Camera.h"
 #include "ModelObj.h"
+#include "Boss.h"
 #include "Sprite.h"
 
 class TitleScene : public IScene
@@ -26,5 +27,10 @@ private:
 	Vector2 mAngle = { 0, 0 };
 	LightGroup light;
 
-	Sprite titleLogo;	//タイトル
+	Vector2 titleLogoPos;	//タイトルの座標
+	Easing::EaseTimer floatingTimer;	//ふよふよタイマー
+
+	float cameraDist;		//カメラの距離
+	float cameraRot;		//カメラ回転情報
+	Easing::EaseTimer cameraRotTimer;	//カメラ回転用タイマー
 };

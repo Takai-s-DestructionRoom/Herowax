@@ -364,28 +364,28 @@ void Player::Update()
 	{
 		if (ColPrimitive3D::CheckSphereToPlane(collider, wall))
 		{
-			Vector3 vec;
+			Vector3 vec;	//壁にぶつかった際に移動させるベクトル
 
-			// 進行方向ベクトルと壁ポリゴンの法線ベクトルに垂直なベクトルを算出
+			// 進行方向ベクトルと壁の法線ベクトルに垂直なベクトルを算出
 			vec = moveVec.Cross(-wall.normal);
-			// 算出したベクトルと壁ポリゴンの法線ベクトルに垂直なベクトルを算出、これが
+
+			// 算出したベクトルと壁の法線ベクトルに垂直なベクトルを算出、これが
 			// 元の移動成分から壁方向の移動成分を抜いたベクトル
 			vec = -wall.normal.Cross(vec);
 
-			// それを移動前の座標に足したものを新たな座標とする
-			vec *= moveVec.Length();
-
 			if (isCollision)
-			{
+			{	
+				//2個目の壁なら移動前の壁の距離を一旦取り、
 				len = abs(wall.distance - Vector2(obj.mTransform.position.x, obj.mTransform.position.z).Length());
+				//「移動前の2個目の壁との距離」の方が「移動後の1個目の壁との距離」より遠ければ2個目の壁基準で動かす
 				if (len >= toWallLen)
 				{
 					slideVec = vec;
-					//toWallLen = len;
 				}
 			}
 			else
 			{
+				//1個目の壁なら仮に動いた後の壁との距離を保存する
 				toWallLen = abs(wall.distance - Vector2(obj.mTransform.position.x - vec.x, obj.mTransform.position.z - vec.z).Length());
 				slideVec = vec;
 				isCollision = true;
