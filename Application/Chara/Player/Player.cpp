@@ -19,6 +19,7 @@
 #include "SimpleSceneTransition.h"
 #include "RAudio.h"
 #include "EnemyManager.h"
+#include "EventCaller.h"
 
 Player::Player() :GameObject(),
 moveSpeed(1.f), moveAccelAmount(0.05f), isGround(true), hp(0), maxHP(10.f),
@@ -911,13 +912,9 @@ void Player::WaxCollect()
 	collectColFan.pos = GetFootPos();
 	collectColFan.r = waxCollectDist;
 
-	//回収したロウに応じてストック増やす
-	if (isCollectFan)
-	{
-
-	}
-	else
-	{
+	//イベント中でなければ入る
+	if (EventCaller::GetNowEventStr() == "") {
+		//回収したロウに応じてストック増やす
 		if (isWaxStock && WaxManager::GetInstance()->isCollected)
 		{
 			if (waxCollectAmount > 0)
