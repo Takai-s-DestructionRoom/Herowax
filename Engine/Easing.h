@@ -109,9 +109,9 @@ namespace Easing
 		void ReStart();
 		//経過時間を更新
 		void Update(const float elapseTimer = 1.0f);
-		//タイマー更新+無限ループ
+		//タイマー更新+無限ループ(0.0~1.0->初期化->0.0~1.0...)
 		void Roop(const float elapseTimer = 1.0f);
-		//タイマー更新+無限ループ(0.0~1.0f~0.0f~1.0f~...)
+		//タイマー更新+無限ループ(0.0~1.0~0.0~1.0~...)
 		void RoopReverse(const float elapseTimer = 1.0f);
 
 		//現在が最大秒数のうちどの割合かを(0.0f～1.0f)の値で返す

@@ -741,9 +741,6 @@
     <ClCompile Include="Application\Scene\SceneTrance.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Application\EventScene\BossDeadScene.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
     <ClCompile Include="Application\Object\EnemyBehaviorEditor.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
@@ -759,8 +756,11 @@
     <ClCompile Include="Application\BossDeadState.cpp">
       <Filter>ソース ファイル\Application\Object\Chara\Boss</Filter>
     </ClCompile>
-    <ClCompile Include="DeadScene.cpp">
-      <Filter>ソース ファイル\Application\Scene</Filter>
+    <ClCompile Include="Application\EventCaller.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Application\EventScene\BossDeadScene.cpp">
+      <Filter>ソース ファイル\Application\EventScene</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -1376,19 +1376,10 @@
     <ClInclude Include="Application\Chara\Boss\BossAppearance.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Application\BossDeadState.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
     <ClInclude Include="Application\BossCollectStandState.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
     <ClInclude Include="Application\Scene\SceneTrance.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Application\Chara\Boss\BossDead.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Application\EventScene\BossDeadScene.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
     <ClInclude Include="Application\Object\BehaviorTestScene.h">
@@ -1397,8 +1388,17 @@
     <ClInclude Include="Application\Object\EnemyBehaviorEditor.h">
       <Filter>ヘッダー ファイル\Application\Scene</Filter>
     </ClInclude>
-    <ClInclude Include="DeadScene.h">
-      <Filter>ヘッダー ファイル\Application\Scene</Filter>
+    <ClInclude Include="Application\EventCaller.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Application\EventScene\BossDeadScene.h">
+      <Filter>ヘッダー ファイル\Application\EventScene</Filter>
+    </ClInclude>
+    <ClInclude Include="Application\BossDeadState.h">
+      <Filter>ヘッダー ファイル\Application\Object\Chara\Boss</Filter>
+    </ClInclude>
+    <ClInclude Include="Application\Chara\Boss\BossDead.h">
+      <Filter>ヘッダー ファイル\Application\Object\Chara\Boss</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

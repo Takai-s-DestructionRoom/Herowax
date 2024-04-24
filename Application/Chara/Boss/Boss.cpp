@@ -12,6 +12,8 @@
 #include "GameCamera.h"
 #include "WaxManager.h"
 #include "BossCollectStandState.h"
+#include "EventCaller.h"
+#include "BossDeadScene.h"
 
 Boss::Boss() : GameObject(),
 moveSpeed(0.1f), hp(0), maxHP(10.f)
@@ -100,6 +102,8 @@ void Boss::Init()
 	{
 		parts[i].Init();
 	}
+
+	deadEventCall = false;
 }
 
 void Boss::AllStateUpdate()
@@ -181,12 +185,12 @@ void Boss::AllStateUpdate()
 	{
 		ai.SetSituation(BossSituation::NoArms);
 	}
-	////本体が固まった瞬間なら
-	//if (GetIsSolid(PartsNum::Max) && !isOldBodySolid)
-	//{
-	//	//ステートをコレクト待機へ
-	//	ChangeState<BossCollectStandState>();
-	//}
+
+	//本体が固まったら撃破演出を呼び出し
+	if (GetStateStr() == "Collected" && !deadEventCall) {
+		EventCaller::EventCall(BossDeadScene::GetEventCallStr());
+		deadEventCall = true;
+	}
 
 	//白を加算
 	if (whiteTimer.GetStarted()) {
@@ -235,19 +239,21 @@ void Boss::Update()
 	AllStateUpdate();
 
 	// モーションの変更(デバッグ用)
-	if (RInput::GetInstance()->GetKeyDown(DIK_1))
-	{
-		ChangeState<BossNormal>();
-	}
-	else if (RInput::GetInstance()->GetKeyDown(DIK_2))
-	{
-		nextState = std::make_unique<BossPunch>(true);
-		changingState = true;
-	}
-	else if (RInput::GetInstance()->GetKeyDown(DIK_3))
-	{
-		nextState = std::make_unique<BossPunch>(false);
-		changingState = true;
+	if (Util::debugBool) {
+		if (RInput::GetInstance()->GetKeyDown(DIK_1))
+		{
+			ChangeState<BossNormal>();
+		}
+		else if (RInput::GetInstance()->GetKeyDown(DIK_2))
+		{
+			nextState = std::make_unique<BossPunch>(true);
+			changingState = true;
+		}
+		else if (RInput::GetInstance()->GetKeyDown(DIK_3))
+		{
+			nextState = std::make_unique<BossPunch>(false);
+			changingState = true;
+		}
 	}
 
 	//出現中なのに出現ステートになってないなら

@@ -1,5 +1,6 @@
 #include "BossDeadScene.h"
 #include "SceneTrance.h"
+#include "InstantDrawer.h"
 
 BossDeadScene::BossDeadScene()
 {
@@ -10,6 +11,9 @@ BossDeadScene::BossDeadScene()
 	cameraChangeTimer[0] = 0.5f;
 	cameraChangeTimer[1] = 0.5f;
 	cameraChangeTimer[2] = 0.7f;
+
+	TextureManager::Load("./Resources/clear.png", "clear");
+	clearStrPos = { RWindow::GetWidth() * 0.5f,- 300.f };
 }
 
 BossDeadScene::~BossDeadScene()
@@ -24,24 +28,37 @@ void BossDeadScene::Init(const Vector3 target)
 
 	Camera::sNowCamera = &camera;
 
-	eventTimer = 4.f;
+	clearStrTimer = 0.5f;
+	eventTimer = 5.0f;
+	floatingTimer = 1.0f;
 	waitTimer = 0.3f;
-
+	
 	eventTimer.Start();
 	waitTimer.Start();
-
+	clearStrTimer.Reset();
+	floatingTimer.Reset();
+	
 	for (size_t i = 0; i < cameraChangeTimer.size(); i++)
 	{
 		cameraChangeTimer[i].Reset();
 	}
 
 	isActive = true;
+	callStr = false;
 }
 
 void BossDeadScene::Update()
 {
 	eventTimer.Update();
 	waitTimer.Update();
+	clearStrTimer.Update();
+	
+	//タイマーが終わったらループ
+	if (clearStrTimer.GetEnd()) {
+		floatingTimer.RoopReverse();
+	}
+	clearStrPos.y = Easing::OutQuad(-500.f, RWindow::GetHeight() * 0.5f, clearStrTimer.GetTimeRate());
+
 	for (size_t i = 0; i < cameraChangeTimer.size(); i++)
 	{
 		cameraChangeTimer[i].Update();
@@ -62,7 +79,14 @@ void BossDeadScene::Update()
 		}
 	}
 
-	//イベントシーン終わったらシーン遷移開始
+	//爆発するタイミングに当たりをつけてクリア文字列を呼ぶ
+	if (eventTimer.GetTimeRate() > 0.7f && !callStr)
+	{
+		clearStrTimer.Start();
+		callStr = true;
+	}
+
+	//イベントシーン終わったらシーン遷移開始(待機を追加)
 	if (eventTimer.GetEnd())
 	{
 		SceneTrance::GetInstance()->Start();
@@ -82,4 +106,8 @@ void BossDeadScene::Update()
 
 void BossDeadScene::Draw()
 {
+	InstantDrawer::DrawGraph(
+		clearStrPos.x,
+		clearStrPos.y + Easing::InQuad(floatingTimer.GetTimeRate()) * 15.f,
+		1.f, 1.f, 0.f, "clear");
 }

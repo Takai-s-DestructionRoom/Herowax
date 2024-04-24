@@ -8,8 +8,6 @@
 #include <Quaternion.h>
 #include "ColPrimitive3D.h"
 #include "InstantDrawer.h"
-//#include "Temperature.h"
-//#include "FireManager.h"
 #include "Parameter.h"
 #include "SpawnOrderData.h"
 #include "Minimap.h"
@@ -17,6 +15,9 @@
 #include "BossAppearanceScene.h"
 #include "BossDeadScene.h"
 #include "SceneTrance.h"
+#include "EventCaller.h"
+#include "TitleScene.h"
+#include "SimpleSceneTransition.h"
 
 ProtoScene::ProtoScene()
 {
@@ -85,43 +86,48 @@ void ProtoScene::Update()
 	WaxManager::GetInstance()->slimeWax.Reset();
 
 	//ボス撃破シーンに切り替え
-	if (RInput::GetInstance()->GetKeyDown(DIK_B))
-	{
-		SceneTrance::GetInstance()->Start();
-		player.isMove = false;
-		isBossDead = true;
-	}
+	if (Util::debugBool) {
+		if (RInput::GetInstance()->GetKeyDown(DIK_B))
+		{
+			EventCaller::EventCall(BossDeadScene::GetEventCallStr());
+			player.isMove = false;
+		}
 
-	//ボス登場シーンに切り替え
-	if (RInput::GetInstance()->GetKeyDown(DIK_T))
-	{
-		SceneTrance::GetInstance()->Start();
-		player.isMove = false;
-		isBossAppearance = true;
+		//ボス登場シーンに切り替え
+		if (RInput::GetInstance()->GetKeyDown(DIK_T))
+		{
+			EventCaller::EventCall(BossAppearanceScene::GetEventCallStr());
+			player.isMove = false;
+		}
 	}
 
 	SceneTrance::GetInstance()->Update();
 
 	//ボス撃破シーンに遷移
-	if (isBossDead && SceneTrance::GetInstance()->GetIsChange())
+	if ((EventCaller::GetEventCallStr() == BossDeadScene::GetEventCallStr()) &&
+		SceneTrance::GetInstance()->GetIsChange())
 	{
 		eventScene = std::make_unique<BossDeadScene>();
 		eventScene->Init(boss.GetCenterPos() + Vector3::UP * 20.f);
 
-		SceneTrance::GetInstance()->SetIsChange(false);	//忘れずに
+		player.isMove = false;
 		boss.isDead = true;
-		isBossDead = false;
+
+		SceneTrance::GetInstance()->SetIsChange(false);	//忘れずに
+		EventCaller::EventCallStrReset();
 	}
 
 	//ボス登場シーンに遷移
-	if (isBossAppearance && SceneTrance::GetInstance()->GetIsChange())
+	if ((EventCaller::GetEventCallStr() == BossAppearanceScene::GetEventCallStr()) &&
+		SceneTrance::GetInstance()->GetIsChange())
 	{
 		eventScene = std::make_unique<BossAppearanceScene>();
 		eventScene->Init(boss.GetCenterPos() + Vector3::UP * 20.f);
 
+		player.isMove = false;
+		
 		SceneTrance::GetInstance()->SetIsChange(false);	//忘れずに
-		boss.isAppearance = true;
-		isBossAppearance = false;
+		EventCaller::EventCallStrReset();
 	}
 
 	//イベントシーン中なら
@@ -146,6 +152,14 @@ void ProtoScene::Update()
 		boss.isAppearance = false;
 
 		player.isMove = true;
+
+		//死亡シーンの呼び出しが終わったならタイトルに戻す
+		if (EventCaller::GetNowEventStr() ==
+			BossDeadScene::GetEventCallStr()) {
+			SceneManager::GetInstance()->Change<TitleScene,SimpleSceneTransition>();
+		}
+
+		EventCaller::NowEventStrReset();
 	}
 
 	gameCamera.Update();

@@ -161,7 +161,6 @@
     <ClCompile Include="Application\EventScene\BossDeadScene.cpp" />
     <ClCompile Include="Application\Object\BehaviorTestScene.cpp" />
     <ClCompile Include="Application\Object\EnemyBehaviorEditor.cpp" />
-    <ClCompile Include="DeadScene.cpp" />
     <ClCompile Include="Engine\Collision\AABBCollider.cpp" />
     <ClCompile Include="Application\Chara\Enemy\EnemySpawner.cpp" />
     <ClCompile Include="Application\InstantDrawer.cpp" />
@@ -218,6 +217,7 @@
     <ClCompile Include="Engine\Particle\HomingParticle.cpp" />
     <ClCompile Include="Application\GameCamera.cpp" />
     <ClCompile Include="Application\EventScene\IEventScene.cpp" />
+    <ClCompile Include="Application\EventCaller.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Engine\Base\Material.cpp" />
     <ClCompile Include="Engine\Math\Matrix4.cpp" />
@@ -773,7 +773,6 @@
     <ClInclude Include="Application\EventScene\BossDeadScene.h" />
     <ClInclude Include="Application\Object\BehaviorTestScene.h" />
     <ClInclude Include="Application\Object\EnemyBehaviorEditor.h" />
-    <ClInclude Include="DeadScene.h" />
     <ClInclude Include="Engine\Collision\AABBCollider.h" />
     <ClInclude Include="Application\Chara\Enemy\EnemySpawner.h" />
     <ClInclude Include="Application\InstantDrawer.h" />
@@ -907,6 +906,7 @@
     <ClInclude Include="Application\EventScene\IEventScene.h" />
     <ClInclude Include="Application\Object\CollectPart\CollectPart.h" />
     <ClInclude Include="Application\Scene\SceneTrance.h" />
+    <ClInclude Include="Application\EventCaller.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Shader\GameObject\GameObject.hlsli" />
