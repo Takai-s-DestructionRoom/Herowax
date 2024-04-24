@@ -5,7 +5,6 @@
 class BossPunch : public BossState
 {
 public:
-	BossPunch();
 	BossPunch(bool isLeft);
 	void Update(Boss* boss)override;
 

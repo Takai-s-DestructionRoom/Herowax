@@ -8,6 +8,7 @@
 void BossAI::Init()
 {
 	isStart = true;
+	situation = BossSituation::All;
 }
 
 void BossAI::Update(Boss* boss)

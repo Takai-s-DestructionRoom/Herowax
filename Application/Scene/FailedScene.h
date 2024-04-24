@@ -1,6 +1,6 @@
 /*
-* @file TitleScene.h
-* @brief タイトルシーン
+* @file FailedScene.h
+* @brief 失敗シーン
 */
 
 #pragma once
@@ -10,23 +10,24 @@
 #include "ModelObj.h"
 #include "Easing.h"
 
-class TitleScene : public IScene
+class FailedScene : public IScene
 {
 public:
-	TitleScene();
+	FailedScene();
 
 	void Init() override;
 	void Update() override;
 	void Draw() override;
 
 private:
-	ModelObj skydome;	//天球
+	ModelObj skydome;		//天球
+	ModelObj bossTarget;	//ボスの狙うもの(描画はしない)
 
 	Camera camera = Camera();
 	Vector2 mAngle = { 0, 0 };
 	LightGroup light;
 
-	Vector2 titleLogoPos;				//タイトルの座標
+	Vector2 failedPos;					//FAILED画像の座標
 	Easing::EaseTimer floatingTimer;	//ふよふよタイマー
 
 	Vector2 buttonUIPos;				//ボタンUIの座標

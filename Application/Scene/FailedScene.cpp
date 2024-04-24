@@ -1,14 +1,16 @@
+#include "FailedScene.h"
 #include "TitleScene.h"
 #include "ProtoScene.h"
 #include "RInput.h"
 #include "SceneManager.h"
 #include "InstantDrawer.h"
 #include "SimpleSceneTransition.h"
-#include <RAudio.h>
+#include "Boss.h"
+#include "Level.h"
 
-TitleScene::TitleScene()
+FailedScene::FailedScene()
 {
-	TextureManager::Load("./Resources/hi-rou_logo_eye.png", "title");
+	TextureManager::Load("./Resources/failed.png", "failed");
 	TextureManager::Load("./Resources/Abutton_UI_normal.png", "Abutton");
 	TextureManager::Load("./Resources/Abutton_UI_push.png", "AbuttonPush");
 
@@ -16,42 +18,40 @@ TitleScene::TitleScene()
 	skydome.mTransform.scale = { 1.5f, 1.5f, 1.5f };
 	skydome.mTransform.UpdateMatrix();
 
-	InstantDrawer::PreCreate();
+	bossTarget = ModelObj(Model::Load("./Resources/Model/hoge.obj", "hoge"));
+	bossTarget.mTransform.position = { 100.f,0.f,-150.f };
+	bossTarget.mTransform.UpdateMatrix();
 
-	Level::Get()->Load();
+	InstantDrawer::PreCreate();
 
 	floatingTimer = 1.f;
 	flashingTimer = 1.f;
 
-	cameraDist = 100.f;
+	cameraDist = 130.f;
 	cameraRot = 0.f;
-	cameraRotTimer = 10.f;
+	cameraRotTimer = 15.f;
 
-	titleLogoPos = { RWindow::GetWidth() * 0.5f,RWindow::GetHeight() * 0.5f - 100.f };
-	buttonUIPos = titleLogoPos;
-	buttonUIPos.y += 300.f;
-
-	RAudio::Load("Resources/Sounds/SE/A_select.wav", "Select");
+	failedPos = { RWindow::GetWidth() * 0.5f,RWindow::GetHeight() * 0.5f - 150.f };
+	buttonUIPos = failedPos;
+	buttonUIPos.y += 400.f;
 }
 
-void TitleScene::Init()
+void FailedScene::Init()
 {
-	camera.mViewProjection.mEye = { 0, 30, -cameraDist };
-	camera.mViewProjection.mTarget = { 0, 10, 0 };
+	camera.mViewProjection.mEye = { 0, 60, -cameraDist };
+	camera.mViewProjection.mTarget = { 0, 30, 0 };
 	camera.mViewProjection.UpdateMatrix();
 
 	Camera::sNowCamera = &camera;
 	LightGroup::sNowLight = &light;
 
-	//とりあえず最初のステージを設定しておく
-	Level::Get()->Extract("test");
-
 	floatingTimer.Reset();
 	flashingTimer.Reset();
-	cameraRotTimer.Reset();
+
+	Boss::GetInstance()->SetTarget(&bossTarget);
 }
 
-void TitleScene::Update()
+void FailedScene::Update()
 {
 	InstantDrawer::DrawInit();
 	floatingTimer.RoopReverse();
@@ -65,17 +65,17 @@ void TitleScene::Update()
 		camera.mViewProjection.mTarget.z },
 		cameraDist,
 		cameraRotTimer.GetTimeRate() * Util::PI2);
-	camera.mViewProjection.mEye = { vec2.x,30.f,vec2.y };
+	camera.mViewProjection.mEye = { vec2.x,60.f,vec2.y };
 
+	Boss::GetInstance()->Update();
 	Level::Get()->Update();
 
-	//F6かメニューボタン押されたらプロトシーンへ
+	//F6かメニューボタン押されたらタイトルシーンへ
 	if (RInput::GetInstance()->GetKeyDown(DIK_F6) ||
 		RInput::GetInstance()->GetKeyDown(DIK_SPACE) ||
 		RInput::GetInstance()->GetPadButtonDown(XINPUT_GAMEPAD_A))
 	{
-		RAudio::Play("Select");
-		SceneManager::GetInstance()->Change<ProtoScene, SimpleSceneTransition>();
+		SceneManager::GetInstance()->Change<TitleScene, SimpleSceneTransition>();
 	}
 
 	camera.mViewProjection.UpdateMatrix();
@@ -83,18 +83,20 @@ void TitleScene::Update()
 	light.Update();
 
 	skydome.TransferBuffer(Camera::sNowCamera->mViewProjection);
+	bossTarget.TransferBuffer(Camera::sNowCamera->mViewProjection);
 }
 
-void TitleScene::Draw()
+void FailedScene::Draw()
 {
 	skydome.Draw();
 
 	Level::Get()->Draw();
+	Boss::GetInstance()->Draw();
 
 	InstantDrawer::DrawGraph(
-		titleLogoPos.x,
-		titleLogoPos.y + Easing::InQuad(floatingTimer.GetTimeRate()) * 15.f,
-		1.f, 1.f, 0.f, "title");
+		failedPos.x,
+		failedPos.y + Easing::InQuad(floatingTimer.GetTimeRate()) * 15.f,
+		1.f, 1.f, 0.f, "failed");
 
 	if (floatingTimer.GetTimeRate() > 0.8f)
 	{
