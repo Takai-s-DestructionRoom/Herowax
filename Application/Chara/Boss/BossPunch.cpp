@@ -9,6 +9,9 @@ BossPunch::BossPunch(bool isLeft)
 
 	isLeft_ = isLeft;
 	isStart = true;
+
+	RAudio::Load("Resources/Sounds/SE/E_punch.wav", "Punch");
+	RAudio::Load("Resources/Sounds/SE/E_attention.wav", "Attention");
 }
 
 void BossPunch::Update(Boss* boss)
