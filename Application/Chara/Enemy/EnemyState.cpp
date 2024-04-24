@@ -164,8 +164,6 @@ void EnemyCollect::Update(Enemy* enemy)
 	//徐々にちっちゃくなる(ロウとまぎれてよくわかんなくなるから消してる)
 	//enemy->obj.mTransform.scale = OutQuadVec3(enemy->oriScale, Vector3::ZERO, enemy->collectTimer.GetTimeRate());
 
-	enemy->RotVecPlus({ 0,enemy->collectTimer.GetTimeRate() - oldTimeRate,0 });
-
 	Vector3 startRota = {0,0,0};
 	Vector3 endRota = {0,Util::AngleToRadian(360.f),0};
 

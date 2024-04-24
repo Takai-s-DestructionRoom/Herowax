@@ -236,47 +236,6 @@ void ProtoScene::Update()
 
 	bool isHitSound = false;
 
-	for (auto& enemy : EnemyManager::GetInstance()->enemys)
-	{
-		//プレイヤーとの当たり判定
-		//特定範囲内に入ったら敵を攻撃状態へ遷移
-		if (enemy->GetAttackState() == "NonAttack")
-		{
-			if (ColPrimitive3D::CheckSphereToSphere(enemy->attackHitCollider, player.attackHitCollider))
-			{
-				enemy->ChangeAttackState<EnemyFindState>();
-			}
-		}
-		//攻撃中に本体同士がぶつかったらプレイヤーにダメージ
-		if (enemy->GetAttackState() == "NowAttack")
-		{
-			if (ColPrimitive3D::CheckSphereToSphere(enemy->collider, player.collider))
-			{
-				//ダメージ
-				player.DealDamage(EnemyManager::GetInstance()->GetNormalAttackPower());
-			}
-		}
-		//接触ダメージあり設定の場合、接触時にダメージ
-		if (EnemyManager::GetInstance()->GetIsContactDamage()) {
-			if (ColPrimitive3D::CheckSphereToSphere(enemy->collider, player.collider))
-			{
-				//ダメージ
-				player.DealDamage(EnemyManager::GetInstance()->GetContactAttackPower());
-			}
-		}
-		//回収ボタン押されたときに固まってるなら吸収
-		if (player.GetWaxCollectButtonDown() &&
-			enemy->GetIsSolid())
-		{
-			//回収状態に遷移
-			enemy->collectPos = player.GetPos();
-			enemy->isCollect = true;
-			enemy->ChangeState<EnemyCollect>();
-
-			player.waxCollectAmount++;
-		}
-	}
-
 	//蝋とボスの当たり判定
 	for (auto& group : WaxManager::GetInstance()->waxGroups)
 	{
@@ -365,6 +324,50 @@ void ProtoScene::Update()
 					}
 				}
 			}
+		}
+	}
+
+	//吸収ボタンを押して、吸収状態の敵が一匹もいないなら吸収できる
+	bool isCollected2 = player.GetWaxCollectButtonDown() && !EnemyManager::GetInstance()->GetNowCollectEnemy();
+
+	for (auto& enemy : EnemyManager::GetInstance()->enemys)
+	{
+		//プレイヤーとの当たり判定
+		//特定範囲内に入ったら敵を攻撃状態へ遷移
+		if (enemy->GetAttackState() == "NonAttack")
+		{
+			if (ColPrimitive3D::CheckSphereToSphere(enemy->attackHitCollider, player.attackHitCollider))
+			{
+				enemy->ChangeAttackState<EnemyFindState>();
+			}
+		}
+		//攻撃中に本体同士がぶつかったらプレイヤーにダメージ
+		if (enemy->GetAttackState() == "NowAttack")
+		{
+			if (ColPrimitive3D::CheckSphereToSphere(enemy->collider, player.collider))
+			{
+				//ダメージ
+				player.DealDamage(EnemyManager::GetInstance()->GetNormalAttackPower());
+			}
+		}
+		//接触ダメージあり設定の場合、接触時にダメージ
+		if (EnemyManager::GetInstance()->GetIsContactDamage()) {
+			if (ColPrimitive3D::CheckSphereToSphere(enemy->collider, player.collider))
+			{
+				//ダメージ
+				player.DealDamage(EnemyManager::GetInstance()->GetContactAttackPower());
+			}
+		}
+		//回収ボタン押されたときに固まってるなら吸収
+		//今は範囲外でも吸収できちゃってる
+		if (isCollected2 && enemy->GetIsSolid())
+		{
+			//回収状態に遷移
+			enemy->collectPos = player.GetPos();
+			enemy->isCollect = true;
+			enemy->ChangeState<EnemyCollect>();
+
+			player.waxCollectAmount++;
 		}
 	}
 

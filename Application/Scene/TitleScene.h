@@ -35,4 +35,6 @@ private:
 	float cameraDist;		//カメラの距離
 	float cameraRot;		//カメラ回転情報
 	Easing::EaseTimer cameraRotTimer;	//カメラ回転用タイマー
+
+	bool sceneChange = false;
 };
