@@ -6,7 +6,9 @@
 
 TitleScene::TitleScene()
 {
-	TextureManager::Load("./Resources/title.png", "title");
+	TextureManager::Load("./Resources/hi-rou_logo_eye.png", "title");
+	TextureManager::Load("./Resources/Abutton_UI_normal.png", "Abutton");
+	TextureManager::Load("./Resources/Abutton_UI_push.png", "AbuttonPush");
 
 	skydome = ModelObj(Model::Load("./Resources/Model/bg/bg.obj", "bg"));
 	skydome.mTransform.scale = { 1.5f, 1.5f, 1.5f };
@@ -17,12 +19,15 @@ TitleScene::TitleScene()
 	Level::Get()->Load();
 
 	floatingTimer = 1.f;
+	flashingTimer = 1.f;
 
 	cameraDist = 100.f;
 	cameraRot = 0.f;
 	cameraRotTimer = 10.f;
 
-	titleLogoPos = { RWindow::GetWidth() * 0.5f,RWindow::GetHeight() * 0.5f };
+	titleLogoPos = { RWindow::GetWidth() * 0.5f,RWindow::GetHeight() * 0.5f - 100.f };
+	buttonUIPos = titleLogoPos;
+	buttonUIPos.y += 300.f;
 }
 
 void TitleScene::Init()
@@ -38,6 +43,7 @@ void TitleScene::Init()
 	Level::Get()->Extract("test");
 
 	floatingTimer.Reset();
+	flashingTimer.Reset();
 	cameraRotTimer.Reset();
 }
 
@@ -45,6 +51,7 @@ void TitleScene::Update()
 {
 	InstantDrawer::DrawInit();
 	floatingTimer.RoopReverse();
+	flashingTimer.Roop();
 	cameraRotTimer.Roop();
 
 	Vector2 vec2;	//カメラに足すベクトル
@@ -62,7 +69,8 @@ void TitleScene::Update()
 
 	//F6かメニューボタン押されたらプロトシーンへ
 	if (RInput::GetInstance()->GetKeyDown(DIK_F6) ||
-		RInput::GetInstance()->GetPadButtonDown(XINPUT_GAMEPAD_START))
+		RInput::GetInstance()->GetKeyDown(DIK_SPACE) ||
+		RInput::GetInstance()->GetPadButtonDown(XINPUT_GAMEPAD_A))
 	{
 		SceneManager::GetInstance()->Change<ProtoScene>();
 	}
@@ -84,6 +92,19 @@ void TitleScene::Draw()
 		titleLogoPos.x,
 		titleLogoPos.y + Easing::InQuad(floatingTimer.GetTimeRate()) * 15.f,
 		1.f, 1.f, 0.f, "title");
+
+	if (floatingTimer.GetTimeRate() > 0.8f)
+	{
+		InstantDrawer::DrawGraph(
+			buttonUIPos.x, buttonUIPos.y,
+			0.8f, 0.8f, 0.f, "AbuttonPush");
+	}
+	else
+	{
+		InstantDrawer::DrawGraph(
+			buttonUIPos.x, buttonUIPos.y,
+			0.8f, 0.8f, 0.f, "Abutton");
+	}
 
 	//更新
 	InstantDrawer::AllUpdate();
