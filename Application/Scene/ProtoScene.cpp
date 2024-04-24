@@ -34,6 +34,9 @@ ProtoScene::ProtoScene()
 	InstantDrawer::PreCreate();
 
 	Level::Get()->Load();
+
+	RAudio::Load("Resources/Sounds/BGM/Ingame.wav", "Normal");
+	RAudio::Load("Resources/Sounds/BGM/Boss.wav", "Boss");
 }
 
 void ProtoScene::Init()
@@ -64,6 +67,11 @@ void ProtoScene::Init()
 	EnemyManager::GetInstance()->SetTarget(&player.obj);
 
 	Minimap::GetInstance()->Init();
+
+	RAudio::Stop("Normal");
+	RAudio::Stop("Boss");
+
+	RAudio::Play("Normal", 0.5f, 1.0f, true);
 
 	std::map<std::string, std::string> extract = Parameter::Extract("DebugBool");
 	Util::debugBool = Parameter::GetParam(extract, "debugBool", false);
@@ -106,6 +114,8 @@ void ProtoScene::Update()
 		eventScene = std::make_unique<BossDeadScene>();
 		eventScene->Init(Boss::GetInstance()->GetCenterPos() + Vector3::UP * 20.f);
 
+		RAudio::Stop("Boss");
+
 		player.isMove = false;
 		Boss::GetInstance()->isDead = true;
 
@@ -119,6 +129,9 @@ void ProtoScene::Update()
 	{
 		eventScene = std::make_unique<BossAppearanceScene>();
 		eventScene->Init(Boss::GetInstance()->GetCenterPos() + Vector3::UP * 20.f);
+
+		RAudio::Stop("Normal");
+		RAudio::Play("Boss", 0.5f, 1.0f, true);
 
 		player.isMove = false;
 		Boss::GetInstance()->isAppearance = true;
@@ -260,9 +273,6 @@ void ProtoScene::Update()
 			enemy->isCollect = true;
 			enemy->ChangeState<EnemyCollect>();
 
-			//死ぬ
-			//enemy->SetDeath();
-
 			player.waxCollectAmount++;
 		}
 	}
@@ -350,9 +360,6 @@ void ProtoScene::Update()
 							enemy->isCollect = true;
 							enemy->ChangeState<EnemyCollect>();
 
-							////死ぬ
-							//enemy->SetDeath();
-
 							player.waxCollectAmount++;
 						}
 					}
@@ -425,12 +432,6 @@ void ProtoScene::Update()
 				//コライダーがもう一度当たらないようにコライダー更新
 				enemy1->UpdateCollider();
 				enemy2->UpdateCollider();
-
-				/*enemy1->obj.mTransform.UpdateMatrix();
-				enemy1->BrightTransferBuffer(Camera::sNowCamera->mViewProjection);
-
-				enemy2->obj.mTransform.UpdateMatrix();
-				enemy2->BrightTransferBuffer(Camera::sNowCamera->mViewProjection);*/
 			}
 		}
 	}
