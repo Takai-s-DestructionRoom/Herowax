@@ -38,11 +38,11 @@ void BossAppearance::Update(Boss* boss)
 			Vector3 sideVec{};
 			if (i == 0)
 			{
-				sideVec = boss->GetFrontVec().Cross(Vector3(0, 1, 0));
+				sideVec = boss->GetFrontVec().Cross(Vector3(0, -1, 0));
 			}
 			else
 			{
-				sideVec = boss->GetFrontVec().Cross(Vector3(0, -1, 0));
+				sideVec = boss->GetFrontVec().Cross(Vector3(0, 1, 0));
 			}
 
 			splinePoints[i] = {

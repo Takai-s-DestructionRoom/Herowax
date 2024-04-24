@@ -29,8 +29,8 @@ moveSpeed(0.1f), hp(0), maxHP(10.f)
 	parts[(int32_t)PartsNum::RightHand].obj = PaintableModelObj(Model::Load("./Resources/Model/leftArm/leftArm.obj", "leftArm", true));
 	parts[(int32_t)PartsNum::LeftHand].obj = PaintableModelObj(Model::Load("./Resources/Model/rightArm/rightArm.obj", "rightArm", true));
 
-	parts[(size_t)PartsNum::LeftHand].oriPos = { -50.f,20.f,0.f };
-	parts[(size_t)PartsNum::RightHand].oriPos = { 50.f,20.f,0.f };
+	parts[(size_t)PartsNum::LeftHand].oriPos = { 50.f,20.f,0.f };
+	parts[(size_t)PartsNum::RightHand].oriPos = { -50.f,20.f,0.f };
 
 	for (size_t i = 0; i < parts.size(); i++)
 	{
