@@ -759,6 +759,9 @@
     <ClCompile Include="Application\BossDeadState.cpp">
       <Filter>ソース ファイル\Application\Object\Chara\Boss</Filter>
     </ClCompile>
+    <ClCompile Include="DeadScene.cpp">
+      <Filter>ソース ファイル\Application\Scene</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Shader\Basic\BasicPS.hlsl">
@@ -1392,6 +1395,9 @@
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
     <ClInclude Include="Application\Object\EnemyBehaviorEditor.h">
+      <Filter>ヘッダー ファイル\Application\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="DeadScene.h">
       <Filter>ヘッダー ファイル\Application\Scene</Filter>
     </ClInclude>
   </ItemGroup>

@@ -17,6 +17,7 @@
 #include "TitleScene.h"
 #include "SceneManager.h"
 #include "SimpleSceneTransition.h"
+#include "RAudio.h"
 
 Player::Player() :GameObject(),
 moveSpeed(1.f), moveAccelAmount(0.05f), isGround(true), hp(0), maxHP(10.f),
@@ -84,6 +85,8 @@ isFireStock(false), isWaxStock(true), isCollectFan(false), maxWaxStock(20)
 	humanOffset = Parameter::GetParam(extract,"人の位置Y", humanOffset);
 	humanScale = Parameter::GetParam(extract,"人の大きさ", humanScale);
 	collectScale = Parameter::GetParam(extract,"回収中の大きさ", collectScale);
+
+	RAudio::Load("Resources/Sound/shot.wav", "shot");
 }
 
 void Player::Init()
@@ -628,46 +631,35 @@ void Player::MovePad()
 
 	moveAccel = Util::Clamp(moveAccel, 0.f, 1.f);			//無限に増減しないよう抑える
 
-	//接地してて回収中じゃない時にAボタン押すと
-	if (isGround && RInput::GetInstance()->GetPadButtonDown(XINPUT_GAMEPAD_A) &&
-		WaxManager::GetInstance()->isCollected)
-	{
-		isJumping = true;
-		isGround = false;
-		jumpSpeed = jumpPower;	//速度に初速を代入
-		jumpTimer.Start();
+	////接地してて回収中じゃない時にAボタン押すと
+	//if (isGround && RInput::GetInstance()->GetPadButtonDown(XINPUT_GAMEPAD_A) &&
+	//	WaxManager::GetInstance()->isCollected)
+	//{
+	//	isJumping = true;
+	//	isGround = false;
+	//	jumpSpeed = jumpPower;	//速度に初速を代入
+	//	jumpTimer.Start();
 
-		//エミッターの座標はプレイヤーの座標からY座標だけにスケール分ずらしたもの
-		Vector3 emitterPos = GetCenterPos();
+	//	//エミッターの座標はプレイヤーの座標からY座標だけにスケール分ずらしたもの
+	//	Vector3 emitterPos = GetCenterPos();
 
-		ParticleManager::GetInstance()->AddRing(
-			emitterPos, "player_jump_ring");
-	}
+	//	ParticleManager::GetInstance()->AddRing(
+	//		emitterPos, "player_jump_ring");
+	//}
 
-	//ジャンプ中は
-	if (isJumping) {
-		jumpTimer.Update();
-		//速度に対して重力をかけ続けて減速
-		jumpSpeed -= gravity;
-		//高さに対して速度を足し続ける
-		jumpHeight += jumpSpeed;
-
-		//途中でAボタン離されたら
-		//if ((!RInput::GetInstance()->GetPadButton(XINPUT_GAMEPAD_A)))
-		//{
-		//	//ジャンプ系統で使ってたものリセット
-		//	jumpTimer.Reset();
-		//	if (jumpSpeed > 0.f)
-		//	{
-		//		jumpSpeed = 0.f;
-		//	}
-		//}
-	}
-	else
-	{
-		//ジャンプしてないときはジャンプの高さを0に
-		jumpHeight = 0.f;
-	}
+	////ジャンプ中は
+	//if (isJumping) {
+	//	jumpTimer.Update();
+	//	//速度に対して重力をかけ続けて減速
+	//	jumpSpeed -= gravity;
+	//	//高さに対して速度を足し続ける
+	//	jumpHeight += jumpSpeed;
+	//}
+	//else
+	//{
+	//	//ジャンプしてないときはジャンプの高さを0に
+	//	jumpHeight = 0.f;
+	//}
 
 	//「ジャンプの高さ」+「プレイヤーの大きさ」を反映
 	obj.mTransform.position.y = jumpHeight + obj.mTransform.scale.y;
@@ -702,35 +694,35 @@ void Player::MoveKey()
 
 	moveAccel = Util::Clamp(moveAccel, 0.f, moveVec.LengthSq());
 
-	//接地時で回収中じゃない時にスペース押すと
-	if (isGround && RInput::GetInstance()->GetKeyDown(DIK_SPACE) &&
-		WaxManager::GetInstance()->isCollected)
-	{
-		isJumping = true;
-		isGround = false;
-		jumpSpeed = jumpPower;	//速度に初速を代入
-		jumpTimer.Start();
+	////接地時で回収中じゃない時にスペース押すと
+	//if (isGround && RInput::GetInstance()->GetKeyDown(DIK_SPACE) &&
+	//	WaxManager::GetInstance()->isCollected)
+	//{
+	//	isJumping = true;
+	//	isGround = false;
+	//	jumpSpeed = jumpPower;	//速度に初速を代入
+	//	jumpTimer.Start();
 
-		//エミッターの座標はプレイヤーの座標からY座標だけにスケール分ずらしたもの
-		Vector3 emitterPos = GetCenterPos();
+	//	//エミッターの座標はプレイヤーの座標からY座標だけにスケール分ずらしたもの
+	//	Vector3 emitterPos = GetCenterPos();
 
-		ParticleManager::GetInstance()->AddRing(
-			emitterPos, "player_jump_ring");
-	}
+	//	ParticleManager::GetInstance()->AddRing(
+	//		emitterPos, "player_jump_ring");
+	//}
 
-	//ジャンプ中は
-	if (isJumping) {
-		jumpTimer.Update();
-		//速度に対して重力をかけ続けて減速
-		jumpSpeed -= gravity;
-		//高さに対して速度を足し続ける
-		jumpHeight += jumpSpeed;
-	}
-	else
-	{
-		//ジャンプしてないときはジャンプの高さを0に
-		jumpHeight = 0.f;
-	}
+	////ジャンプ中は
+	//if (isJumping) {
+	//	jumpTimer.Update();
+	//	//速度に対して重力をかけ続けて減速
+	//	jumpSpeed -= gravity;
+	//	//高さに対して速度を足し続ける
+	//	jumpHeight += jumpSpeed;
+	//}
+	//else
+	//{
+	//	//ジャンプしてないときはジャンプの高さを0に
+	//	jumpHeight = 0.f;
+	//}
 
 	if (keyVec.LengthSq() > 0.f || isJumping) {
 		//エミッターの座標はプレイヤーの座標から移動方向の逆側にスケール分ずらしたもの
@@ -802,7 +794,6 @@ void Player::Rotation()
 
 void Player::PabloAttack()
 {
-
 	//攻撃中かストックないなら次の攻撃が出せない
 	if (atkCoolTimer.GetRun() || waxStock <= 0)return;
 	atkCoolTimer.Start();
@@ -861,6 +852,9 @@ void Player::PabloAttack()
 		WaxManager::GetInstance()->Create(spawnTrans, endpos, atkHeight,
 			atkSize, atkTimer.maxTime_, solidTimer.maxTime_);
 	}
+
+	//音鳴らす
+	RAudio::Play("shot");
 }
 
 void Player::WaxCollect()
