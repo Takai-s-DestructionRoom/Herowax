@@ -37,6 +37,7 @@ ProtoScene::ProtoScene()
 
 	RAudio::Load("Resources/Sounds/BGM/Ingame.wav", "Normal");
 	RAudio::Load("Resources/Sounds/BGM/Boss.wav", "Boss");
+	RAudio::Load("Resources/Sounds/SE/P_attackHit.wav", "Hit");
 }
 
 void ProtoScene::Init()
@@ -394,7 +395,7 @@ void ProtoScene::Update()
 
 	if (isHitSound && !player.soundFlag) {
 		//ここで攻撃のヒット音を鳴らす
-		
+		RAudio::Play("Hit");
 		//フラグを立てる
 		player.soundFlag = true;
 	}
