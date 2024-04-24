@@ -29,11 +29,26 @@ Parts::~Parts()
 
 void Parts::Init()
 {
-	hp = maxHP;
+	isAlive = true;
+
+	isCollected = false;
+	mutekiTimer.Reset();
+
+	waxShakeOffTimer.Reset();
+
+	shake = Vector3::ZERO;
+	shakeTimer.Reset();
+	waxScatterTimer.Reset();
+
+	waxSolidCount = 0;
 
 	obj.mPaintDissolveMapTex = TextureManager::Load("./Resources/DissolveMap.png", "DissolveMapTex");
 
 	state = std::make_unique<BossPartNormal>();
+	changingState = false;
+
+	obj.mTransform.UpdateMatrix();
+	BrightTransferBuffer(Camera::sNowCamera->mViewProjection);
 }
 
 void Parts::Update()
@@ -121,6 +136,11 @@ void Parts::Draw()
 	}
 }
 
+bool Parts::GetIsSolid()
+{
+	return waxSolidCount >= requireWaxSolidCount;
+}
+
 void Parts::DealDamage(int32_t damage)
 {
 	//無敵時間さん中ならスキップ
@@ -140,7 +160,4 @@ void Parts::DealDamage(int32_t damage)
 	waxShakeOffTimer.Start();
 
 	waxScatterTimer.Reset();
-
-	//一応HPにダメージ(使うか不明)
-	hp -= damage;
 }

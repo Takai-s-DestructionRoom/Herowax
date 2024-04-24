@@ -4,6 +4,8 @@
 #include "Parameter.h"
 #include "Quaternion.h"
 #include "RImGui.h"
+#include "WaxManager.h"
+#include "EnemyManager.h"
 
 void GameCamera::Init()
 {
@@ -30,14 +32,19 @@ void GameCamera::Update()
 	Vector2 stick = RInput::GetInstance()->GetRStick(false, true);
 
 	if (stick.LengthSq() > 0.0f) {
-		if (abs(stick.x) > 0.3f) {
-			cameraAngle.y += cameraSpeed.x * inverse.x * -stick.x;
+		if (WaxManager::GetInstance()->isCollected && 
+			!EnemyManager::GetInstance()->GetNowCollectEnemy())
+		{
+			if (abs(stick.x) > 0.3f) {
+				cameraAngle.y += cameraSpeed.x * inverse.x * -stick.x;
+			}
 		}
 		if (abs(stick.y) > 0.3f) {
 			cameraAngle.x += cameraSpeed.y * inverse.y * stick.y;
 		}
 	}
-	cameraAngle.x = Util::Clamp(cameraAngle.x, 0.f, Util::AngleToRadian(89.f));
+	//カメラの上限設定
+	cameraAngle.x = Util::Clamp(cameraAngle.x, Util::AngleToRadian(15.f), Util::AngleToRadian(89.f));
 
 	Vector3 cameraVec = { 0, 0, 1 };
 	//カメラアングル適応

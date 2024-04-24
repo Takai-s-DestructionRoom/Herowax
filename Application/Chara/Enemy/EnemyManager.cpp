@@ -15,6 +15,18 @@ EnemyManager* EnemyManager::GetInstance()
 	return &instance;
 }
 
+bool EnemyManager::GetNowCollectEnemy()
+{
+	for (auto& enemy : enemys)
+	{
+		if (enemy->GetState() == "EnemyCollect") {
+			return true;
+		}
+	}
+	
+	return false;
+}
+
 EnemyManager::EnemyManager()
 {
 	std::map<std::string, std::string> extract = Parameter::Extract("Enemy");
@@ -57,16 +69,24 @@ void EnemyManager::Update()
 {
 	Delete();
 
+	if (!isStop) {
+
+		for (auto& enemy : enemys)
+		{
+			enemy->SetSlowMag(slowMag);	//減速率まとめて変更
+			enemy->SetSlowCoatingMag(slowCoatingMag);	//蝋かかかった時の減速率まとめて変更
+			enemy->SetKnockRange(knockRange);
+			enemy->SetKnockTime(knockTime);
+			enemy->SetMutekiTime(mutekiTime);
+			enemy->SetTarget(target);
+
+			enemy->Update();
+		}
+	}
+
 	for (auto& enemy : enemys)
 	{
-		enemy->SetSlowMag(slowMag);	//減速率まとめて変更
-		enemy->SetSlowCoatingMag(slowCoatingMag);	//蝋かかかった時の減速率まとめて変更
-		enemy->SetKnockRange(knockRange);
-		enemy->SetKnockTime(knockTime);
-		enemy->SetMutekiTime(mutekiTime);
-		enemy->SetTarget(target);
-
-		enemy->Update();
+		enemy->TransfarBuffer();
 	}
 
 	burningComboTimer.Update();
@@ -116,8 +136,8 @@ void EnemyManager::Update()
 	if (ImGui::TreeNode("当たり判定"))
 	{
 		ImGui::Checkbox("当たり判定描画", &hitChecker);
-		
-		ImGui::InputFloat("敵の当たり判定の大きさ", &collideSize,0.1f);
+
+		ImGui::InputFloat("敵の当たり判定の大きさ", &collideSize, 0.1f);
 		ImGui::InputFloat("敵が自分と当たる当たり判定の大きさ", &attackHitColliderSize, 1.0f);
 		ImGui::InputFloat("突っ込んでくる距離", &attackMove, 1.0f);
 		ImGui::TreePop();
@@ -132,7 +152,7 @@ void EnemyManager::Update()
 	if (ImGui::TreeNode("速度系"))
 	{
 		ImGui::PushItemWidth(100);
-		ImGui::InputFloat("移動速度", &moveSpeed,0.1f);
+		ImGui::InputFloat("移動速度", &moveSpeed, 0.1f);
 		ImGui::SliderFloat("減速率", &slowMag, 0.f, 1.f);
 		ImGui::SliderFloat("ろうまみれ減速率", &slowCoatingMag, 0.f, 1.f);
 		ImGui::PopItemWidth();
@@ -150,7 +170,7 @@ void EnemyManager::Update()
 		ImGui::SliderFloat("knockRandZE", &knockRandZE, -Util::PI, Util::PI);
 		ImGui::TreePop();
 	}
-	ImGui::SliderFloat("無敵時間さん", &mutekiTime, 0.0f,1.0f);
+	ImGui::SliderFloat("無敵時間さん", &mutekiTime, 0.0f, 1.0f);
 	static Color changeColor = { 1,1,1,1 };
 	ImGui::ColorEdit4("ロウで固まってるときの色", &changeColor.r);
 
@@ -185,9 +205,9 @@ void EnemyManager::Update()
 	for (auto& enemy : enemys)
 	{
 		ImGui::Text("ステート:%s", enemy->GetState().c_str());
-		ImGui::Text("回転 x:%f y:%f z:%f", 
+		ImGui::Text("回転 x:%f y:%f z:%f",
 			enemy->obj.mTransform.rotation.x,
-			enemy->obj.mTransform.rotation.y, 
+			enemy->obj.mTransform.rotation.y,
 			enemy->obj.mTransform.rotation.z);
 
 		enemy->changeColor = changeColor;
@@ -201,6 +221,7 @@ void EnemyManager::Update()
 
 	ImGui::End();
 #pragma endregion
+
 }
 
 void EnemyManager::Draw()

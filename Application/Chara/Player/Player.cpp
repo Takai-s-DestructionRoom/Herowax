@@ -17,6 +17,9 @@
 #include "TitleScene.h"
 #include "SceneManager.h"
 #include "SimpleSceneTransition.h"
+#include "RAudio.h"
+#include "EnemyManager.h"
+#include "EventCaller.h"
 
 Player::Player() :GameObject(),
 moveSpeed(1.f), moveAccelAmount(0.05f), isGround(true), hp(0), maxHP(10.f),
@@ -84,13 +87,24 @@ isFireStock(false), isWaxStock(true), isCollectFan(false), maxWaxStock(20)
 	humanOffset = Parameter::GetParam(extract,"人の位置Y", humanOffset);
 	humanScale = Parameter::GetParam(extract,"人の大きさ", humanScale);
 	collectScale = Parameter::GetParam(extract,"回収中の大きさ", collectScale);
+
+	RAudio::Load("Resources/Sounds/SE/P_attack.wav", "Attack");
+	
+	
+	RAudio::Load("Resources/Sounds/SE/P_enemyCollect.wav", "eCollect");
 }
 
 void Player::Init()
 {
 	obj = PaintableModelObj("playerBag");
+	obj.mPaintDissolveMapTex = TextureManager::Load("./Resources/DissolveMap.png",
+		"DissolveMap");
 
 	humanObj = ModelObj("playerHuman");
+
+	waxTankObj = PaintableModelObj(Model::Load("./Resources/Model/sphere.obj", "sphere", true));
+	waxTankObj.mPaintDissolveMapTex = TextureManager::Load("./Resources/deleteDesolveTex.png",
+		"deleteDesolveTex");
 
 	std::map<std::string, std::string> extract = Parameter::Extract("Player");
 	defColor.r = Parameter::GetParam(extract, "プレイヤーの色R", 1);
@@ -183,8 +197,7 @@ void Player::Update()
 	}
 
 	//攻撃ボタン入力中で、実際にロウが出せたら攻撃フラグを立てる
-	isAttack = (RInput::GetInstance()->GetRTrigger() || RInput::GetKey(DIK_P)) && 
-		(waxStock > 0);
+	isAttack = (RInput::GetInstance()->GetRTrigger() || RInput::GetKey(DIK_SPACE)) && (waxStock > 0);
 
 	//-----------クールタイム管理-----------//
 	atkTimer.Update();
@@ -220,25 +233,27 @@ void Player::Update()
 	//ストックがおかしな値にならないように
 	waxStock = Util::Clamp(waxStock, 0, maxWaxStock);
 
+	//ジャンプなくなったので、地面座標にピッタリくっつける
+	obj.mTransform.position.y = Level::Get()->ground.mTransform.position.y;
 
 	//地面に埋ってたら
-	if (obj.mTransform.position.y - obj.mTransform.scale.y < Level::Get()->ground.mTransform.position.y)
-	{
-		//地面に触れるとこまで移動
-		obj.mTransform.position.y = Level::Get()->ground.mTransform.position.y + obj.mTransform.scale.y;
+	//if (obj.mTransform.position.y < Level::Get()->ground.mTransform.position.y)
+	//{
+	//	//地面に触れるとこまで移動
+	//	obj.mTransform.position.y = Level::Get()->ground.mTransform.position.y;
 
-		if (isGround == false)
-		{
-			isGround = true;
+	//	if (isGround == false)
+	//	{
+	//		isGround = true;
 
-			//エミッターの座標はプレイヤーの座標からY座標だけにスケール分ずらしたもの
-			Vector3 emitterPos = GetCenterPos();
+	//		//エミッターの座標はプレイヤーの座標からY座標だけにスケール分ずらしたもの
+	//		Vector3 emitterPos = GetCenterPos();
 
-			ParticleManager::GetInstance()->AddRing(
-				emitterPos, "player_landing_ring");
-		}
-		isJumping = false;
-	}
+	//		ParticleManager::GetInstance()->AddRing(
+	//			emitterPos, "player_landing_ring");
+	//	}
+	//	isJumping = false;
+	//}
 
 	//HP0になったら死ぬ
 	if (hp <= 0)
@@ -274,7 +289,7 @@ void Player::Update()
 		if (godmodeTimer.GetStarted() == false)
 		{
 			godmodeTimer.Start();
-		}
+		} 
 
 		//ゲーミング色に
 		obj.mTuneMaterial.mColor = GamingColorUpdate();
@@ -289,36 +304,12 @@ void Player::Update()
 		godmodeTimer.Reset();
 	}
 
-	////移動範囲設定
-	//for (auto& wall : Level::Get()->wall)
-	//{
-	//	if (Level::Get()->moveLimitMax.x < wall.mTransform.position.x) {
-	//		Level::Get()->moveLimitMax.x = wall.mTransform.position.x;
-	//	}
-	//	if (Level::Get()->moveLimitMax.y < wall.mTransform.position.z) {
-	//		Level::Get()->moveLimitMax.y = wall.mTransform.position.z;
-	//	}
-	//	if (Level::Get()->moveLimitMin.x > wall.mTransform.position.x) {
-	//		Level::Get()->moveLimitMin.x = wall.mTransform.position.x;
-	//	}
-	//	if (Level::Get()->moveLimitMin.y > wall.mTransform.position.z) {
-	//		Level::Get()->moveLimitMin.y = wall.mTransform.position.z;
-	//	}
-	//}
-
-	////移動制限
-	//obj.mTransform.position.x =
-	//	Util::Clamp(obj.mTransform.position.x,
-	//		Level::Get()->moveLimitMin.x - obj.mTransform.scale.x,
-	//		Level::Get()->moveLimitMax.x + obj.mTransform.scale.x);
-	//obj.mTransform.position.z =
-	//	Util::Clamp(obj.mTransform.position.z,
-	//		Level::Get()->moveLimitMin.y - obj.mTransform.scale.z,
-	//		Level::Get()->moveLimitMax.y + obj.mTransform.scale.z);
+	bool nowCollected = WaxManager::GetInstance()->isCollected && 
+		!EnemyManager::GetInstance()->GetNowCollectEnemy();
 
 	moveVec *=
 		moveSpeed * moveAccel *
-		WaxManager::GetInstance()->isCollected;				//移動速度をかけ合わせたら完成(回収中は動けない)
+		nowCollected;				//移動速度をかけ合わせたら完成(回収中は動けない)
 	obj.mTransform.position += moveVec;						//完成したものを座標に足し合わせる
 
 	//回収中なら回収中モデルのスケールを入れる
@@ -332,7 +323,7 @@ void Player::Update()
 	}
 
 	//攻撃中と回収中なら正面へ、それ以外なら後ろへ
-	if (isAttack || !WaxManager::GetInstance()->isCollected) {
+	if (isAttack || !nowCollected) {
 		Vector3 tVec = collectRangeModel.mTransform.position - collectCol.start;
 		tVec.y = 0;
 		tVec.Normalize();
@@ -350,6 +341,11 @@ void Player::Update()
 	//大きさを適用
 	humanObj.mTransform.scale = Vector3::ONE * humanScale;
 
+	//
+	waxTankObj.mTransform = obj.mTransform;
+	waxTankObj.mTransform.scale = (Vector3::ONE * bagScale) * 0.7f;
+	waxTankObj.mTransform.position.y = obj.mTransform.position.y + (bagScale * 0.75f);
+
 	UpdateCollider();
 	UpdateAttackCollider();
 
@@ -361,28 +357,28 @@ void Player::Update()
 	{
 		if (ColPrimitive3D::CheckSphereToPlane(collider, wall))
 		{
-			Vector3 vec;
+			Vector3 vec;	//壁にぶつかった際に移動させるベクトル
 
-			// 進行方向ベクトルと壁ポリゴンの法線ベクトルに垂直なベクトルを算出
+			// 進行方向ベクトルと壁の法線ベクトルに垂直なベクトルを算出
 			vec = moveVec.Cross(-wall.normal);
-			// 算出したベクトルと壁ポリゴンの法線ベクトルに垂直なベクトルを算出、これが
+
+			// 算出したベクトルと壁の法線ベクトルに垂直なベクトルを算出、これが
 			// 元の移動成分から壁方向の移動成分を抜いたベクトル
 			vec = -wall.normal.Cross(vec);
 
-			// それを移動前の座標に足したものを新たな座標とする
-			vec *= moveVec.Length();
-
 			if (isCollision)
-			{
+			{	
+				//2個目の壁なら移動前の壁の距離を一旦取り、
 				len = abs(wall.distance - Vector2(obj.mTransform.position.x, obj.mTransform.position.z).Length());
+				//「移動前の2個目の壁との距離」の方が「移動後の1個目の壁との距離」より遠ければ2個目の壁基準で動かす
 				if (len >= toWallLen)
 				{
 					slideVec = vec;
-					//toWallLen = len;
 				}
 			}
 			else
 			{
+				//1個目の壁なら仮に動いた後の壁との距離を保存する
 				toWallLen = abs(wall.distance - Vector2(obj.mTransform.position.x - vec.x, obj.mTransform.position.z - vec.z).Length());
 				slideVec = vec;
 				isCollision = true;
@@ -414,10 +410,19 @@ void Player::Update()
 
 	//更新してからバッファに送る
 	obj.mTransform.UpdateMatrix();
+	obj.mPaintDataBuff->dissolveVal = (float)waxStock / (float)maxWaxStock;;
+	obj.mPaintDataBuff->color = Color(0.8f, 0.6f, 0.35f, 1.0f);
+	obj.mPaintDataBuff->slide += TimeManager::deltaTime;
 	BrightTransferBuffer(Camera::sNowCamera->mViewProjection);
 
 	humanObj.mTransform.UpdateMatrix();
 	humanObj.TransferBuffer(Camera::sNowCamera->mViewProjection);
+
+	waxTankObj.mTransform.UpdateMatrix();
+	waxTankObj.mPaintDataBuff->dissolveVal = (float)waxStock / (float)maxWaxStock;;
+	waxTankObj.mPaintDataBuff->color = Color(0.8f, 0.6f, 0.35f, 1.0f);
+	waxTankObj.mPaintDataBuff->slide += TimeManager::deltaTime;
+	waxTankObj.TransferBuffer(Camera::sNowCamera->mViewProjection);
 
 	ui.Update(this);
 
@@ -438,6 +443,7 @@ void Player::Update()
 		ImGui::DragFloat("風船の大きさ", &bagScale);
 		ImGui::DragFloat("回収中の大きさ", &collectScale);
 		ImGui::ColorEdit4("プレイヤーの色", &obj.mTuneMaterial.mColor.r);
+		ImGui::DragFloat("モデルをずらすY", &modelOffset.y,0.1f);
 
 		if (ImGui::TreeNode("初期状態設定"))
 		{
@@ -567,8 +573,10 @@ void Player::Draw()
 {
 	if (isAlive || Util::debugBool)
 	{
-		BrightDraw();
+		//waxTankObj.Draw();
 
+		BrightDraw();
+		
 		//回収中は別モデルに置き換えるので描画しない
 		if (WaxManager::GetInstance()->isCollected) {
 			humanObj.Draw();
@@ -628,49 +636,38 @@ void Player::MovePad()
 
 	moveAccel = Util::Clamp(moveAccel, 0.f, 1.f);			//無限に増減しないよう抑える
 
-	//接地してて回収中じゃない時にAボタン押すと
-	if (isGround && RInput::GetInstance()->GetPadButtonDown(XINPUT_GAMEPAD_A) &&
-		WaxManager::GetInstance()->isCollected)
-	{
-		isJumping = true;
-		isGround = false;
-		jumpSpeed = jumpPower;	//速度に初速を代入
-		jumpTimer.Start();
+	////接地してて回収中じゃない時にAボタン押すと
+	//if (isGround && RInput::GetInstance()->GetPadButtonDown(XINPUT_GAMEPAD_A) &&
+	//	WaxManager::GetInstance()->isCollected)
+	//{
+	//	isJumping = true;
+	//	isGround = false;
+	//	jumpSpeed = jumpPower;	//速度に初速を代入
+	//	jumpTimer.Start();
 
-		//エミッターの座標はプレイヤーの座標からY座標だけにスケール分ずらしたもの
-		Vector3 emitterPos = GetCenterPos();
+	//	//エミッターの座標はプレイヤーの座標からY座標だけにスケール分ずらしたもの
+	//	Vector3 emitterPos = GetCenterPos();
 
-		ParticleManager::GetInstance()->AddRing(
-			emitterPos, "player_jump_ring");
-	}
+	//	ParticleManager::GetInstance()->AddRing(
+	//		emitterPos, "player_jump_ring");
+	//}
 
-	//ジャンプ中は
-	if (isJumping) {
-		jumpTimer.Update();
-		//速度に対して重力をかけ続けて減速
-		jumpSpeed -= gravity;
-		//高さに対して速度を足し続ける
-		jumpHeight += jumpSpeed;
-
-		//途中でAボタン離されたら
-		//if ((!RInput::GetInstance()->GetPadButton(XINPUT_GAMEPAD_A)))
-		//{
-		//	//ジャンプ系統で使ってたものリセット
-		//	jumpTimer.Reset();
-		//	if (jumpSpeed > 0.f)
-		//	{
-		//		jumpSpeed = 0.f;
-		//	}
-		//}
-	}
-	else
-	{
-		//ジャンプしてないときはジャンプの高さを0に
-		jumpHeight = 0.f;
-	}
+	////ジャンプ中は
+	//if (isJumping) {
+	//	jumpTimer.Update();
+	//	//速度に対して重力をかけ続けて減速
+	//	jumpSpeed -= gravity;
+	//	//高さに対して速度を足し続ける
+	//	jumpHeight += jumpSpeed;
+	//}
+	//else
+	//{
+	//	//ジャンプしてないときはジャンプの高さを0に
+	//	jumpHeight = 0.f;
+	//}
 
 	//「ジャンプの高さ」+「プレイヤーの大きさ」を反映
-	obj.mTransform.position.y = jumpHeight + obj.mTransform.scale.y;
+	//obj.mTransform.position.y = jumpHeight + obj.mTransform.scale.y;
 }
 
 void Player::MoveKey()
@@ -702,35 +699,35 @@ void Player::MoveKey()
 
 	moveAccel = Util::Clamp(moveAccel, 0.f, moveVec.LengthSq());
 
-	//接地時で回収中じゃない時にスペース押すと
-	if (isGround && RInput::GetInstance()->GetKeyDown(DIK_SPACE) &&
-		WaxManager::GetInstance()->isCollected)
-	{
-		isJumping = true;
-		isGround = false;
-		jumpSpeed = jumpPower;	//速度に初速を代入
-		jumpTimer.Start();
+	////接地時で回収中じゃない時にスペース押すと
+	//if (isGround && RInput::GetInstance()->GetKeyDown(DIK_SPACE) &&
+	//	WaxManager::GetInstance()->isCollected)
+	//{
+	//	isJumping = true;
+	//	isGround = false;
+	//	jumpSpeed = jumpPower;	//速度に初速を代入
+	//	jumpTimer.Start();
 
-		//エミッターの座標はプレイヤーの座標からY座標だけにスケール分ずらしたもの
-		Vector3 emitterPos = GetCenterPos();
+	//	//エミッターの座標はプレイヤーの座標からY座標だけにスケール分ずらしたもの
+	//	Vector3 emitterPos = GetCenterPos();
 
-		ParticleManager::GetInstance()->AddRing(
-			emitterPos, "player_jump_ring");
-	}
+	//	ParticleManager::GetInstance()->AddRing(
+	//		emitterPos, "player_jump_ring");
+	//}
 
-	//ジャンプ中は
-	if (isJumping) {
-		jumpTimer.Update();
-		//速度に対して重力をかけ続けて減速
-		jumpSpeed -= gravity;
-		//高さに対して速度を足し続ける
-		jumpHeight += jumpSpeed;
-	}
-	else
-	{
-		//ジャンプしてないときはジャンプの高さを0に
-		jumpHeight = 0.f;
-	}
+	////ジャンプ中は
+	//if (isJumping) {
+	//	jumpTimer.Update();
+	//	//速度に対して重力をかけ続けて減速
+	//	jumpSpeed -= gravity;
+	//	//高さに対して速度を足し続ける
+	//	jumpHeight += jumpSpeed;
+	//}
+	//else
+	//{
+	//	//ジャンプしてないときはジャンプの高さを0に
+	//	jumpHeight = 0.f;
+	//}
 
 	if (keyVec.LengthSq() > 0.f || isJumping) {
 		//エミッターの座標はプレイヤーの座標から移動方向の逆側にスケール分ずらしたもの
@@ -745,7 +742,7 @@ void Player::MoveKey()
 	}
 
 	//「ジャンプの高さ」+「プレイヤーの大きさ」を反映
-	obj.mTransform.position.y = jumpHeight + obj.mTransform.scale.y;
+	//obj.mTransform.position.y = jumpHeight + obj.mTransform.scale.y;
 }
 
 void Player::Rotation()
@@ -802,10 +799,10 @@ void Player::Rotation()
 
 void Player::PabloAttack()
 {
-
 	//攻撃中かストックないなら次の攻撃が出せない
 	if (atkCoolTimer.GetRun() || waxStock <= 0)return;
 	atkCoolTimer.Start();
+	soundFlag = false;
 	
 	Vector3 pabloVec = { 0,0,0 };
 	//入力があるならそっちへ
@@ -861,6 +858,9 @@ void Player::PabloAttack()
 		WaxManager::GetInstance()->Create(spawnTrans, endpos, atkHeight,
 			atkSize, atkTimer.maxTime_, solidTimer.maxTime_);
 	}
+
+	//音鳴らす
+	RAudio::Play("Attack");
 }
 
 void Player::WaxCollect()
@@ -912,25 +912,25 @@ void Player::WaxCollect()
 	collectColFan.pos = GetFootPos();
 	collectColFan.r = waxCollectDist;
 
-	//回収したロウに応じてストック増やす
-	if (isCollectFan)
-	{
-
-	}
-	else
-	{
+	//イベント中でなければ入る
+	if (EventCaller::GetNowEventStr() == "") {
+		//回収したロウに応じてストック増やす
 		if (isWaxStock && WaxManager::GetInstance()->isCollected)
 		{
 			if (waxCollectAmount > 0)
 			{
 				waxStock += waxCollectAmount;
 				waxCollectAmount = 0;
+				//音鳴らす
+				RAudio::Play("eCollect");
 			}
 
 			//最大量を超えて回収してたら最大量を増やす
 			if (waxStock > maxWaxStock)
 			{
 				maxWaxStock = waxStock;
+				//音鳴らす
+				RAudio::Play("eCollect");
 			}
 		}
 	}
@@ -958,7 +958,8 @@ void Player::WaxCollect()
 				}
 			}
 			//腕吸収
-			if (boss->parts[(int32_t)PartsNum::LeftHand].isCollected) {
+			if (boss->parts[(int32_t)PartsNum::LeftHand].isCollected && 
+				!boss->parts[(int32_t)PartsNum::LeftHand].collectTimer.GetStarted()) {
 				if (RayToSphereCol(collectCol, boss->parts[(int32_t)PartsNum::LeftHand].collider))
 				{
 					isCollectSuccess = true;
@@ -976,7 +977,8 @@ void Player::WaxCollect()
 					}
 				}
 			}
-			if (boss->parts[(int32_t)PartsNum::RightHand].isCollected) {
+			if (boss->parts[(int32_t)PartsNum::RightHand].isCollected &&
+				!boss->parts[(int32_t)PartsNum::RightHand].collectTimer.GetStarted()) {
 				if (ColPrimitive3D::RayToSphereCol(collectCol, boss->parts[(int32_t)PartsNum::RightHand].collider))
 				{
 					//今のロウとの距離
@@ -997,23 +999,24 @@ void Player::WaxCollect()
 			}
 
 			//本体吸収
-			if (boss->GetStateStr() == "Collected") {
-				if (RayToSphereCol(collectCol, boss->collider))
-				{
-					isCollectSuccess = true;
+			//演出の都合上、いったん消す
+			//if (boss->GetStateStr() == "Collected") {
+			//	if (RayToSphereCol(collectCol, boss->collider))
+			//	{
+			//		isCollectSuccess = true;
 
-					//今のロウとの距離
-					float len = (collectCol.start -
-						boss->GetPos()).Length();
+			//		//今のロウとの距離
+			//		float len = (collectCol.start -
+			//			boss->GetPos()).Length();
 
-					//見たロウが範囲外ならスキップ
-					if (waxCollectVertical >= len) {
-						boss->collectPos = collectCol.start;
-						boss->ChangeState<BossDeadState>();
-						waxCollectAmount += 1;
-					}
-				}
-			}
+			//		//見たロウが範囲外ならスキップ
+			//		if (waxCollectVertical >= len) {
+			//			boss->collectPos = collectCol.start;
+			//			boss->ChangeState<BossDeadState>();
+			//			waxCollectAmount += 1;
+			//		}
+			//	}
+			//}
 
 			if (isCollectSuccess) {
 				obj.mModel = ModelManager::Get("collect");

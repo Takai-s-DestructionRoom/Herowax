@@ -561,9 +561,6 @@
     <ClCompile Include="Engine\Easing.cpp">
       <Filter>ソース ファイル\Engine</Filter>
     </ClCompile>
-    <ClCompile Include="Application\Object\Tower\Tower.cpp">
-      <Filter>ソース ファイル\Application\Object\Tower</Filter>
-    </ClCompile>
     <ClCompile Include="Application\Chara\Enemy\Enemy.cpp">
       <Filter>ソース ファイル\Application\Object\Chara\Enemy</Filter>
     </ClCompile>
@@ -741,9 +738,6 @@
     <ClCompile Include="Application\Scene\SceneTrance.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Application\EventScene\BossDeadScene.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
     <ClCompile Include="Application\Object\EnemyBehaviorEditor.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
@@ -758,6 +752,15 @@
     </ClCompile>
     <ClCompile Include="Application\BossDeadState.cpp">
       <Filter>ソース ファイル\Application\Object\Chara\Boss</Filter>
+    </ClCompile>
+    <ClCompile Include="Application\EventCaller.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Application\EventScene\BossDeadScene.cpp">
+      <Filter>ソース ファイル\Application\EventScene</Filter>
+    </ClCompile>
+    <ClCompile Include="Application\Scene\FailedScene.cpp">
+      <Filter>ソース ファイル</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -1196,9 +1199,6 @@
     <ClInclude Include="Engine\Easing.h">
       <Filter>ヘッダー ファイル\Engine</Filter>
     </ClInclude>
-    <ClInclude Include="Application\Object\Tower\Tower.h">
-      <Filter>ヘッダー ファイル\Application\Object\Tower</Filter>
-    </ClInclude>
     <ClInclude Include="Application\Chara\Enemy\Enemy.h">
       <Filter>ヘッダー ファイル\Application\Object\Chara\Enemy</Filter>
     </ClInclude>
@@ -1373,19 +1373,10 @@
     <ClInclude Include="Application\Chara\Boss\BossAppearance.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Application\BossDeadState.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
     <ClInclude Include="Application\BossCollectStandState.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
     <ClInclude Include="Application\Scene\SceneTrance.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Application\Chara\Boss\BossDead.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Application\EventScene\BossDeadScene.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
     <ClInclude Include="Application\Object\BehaviorTestScene.h">
@@ -1393,6 +1384,21 @@
     </ClInclude>
     <ClInclude Include="Application\Object\EnemyBehaviorEditor.h">
       <Filter>ヘッダー ファイル\Application\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="Application\EventCaller.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Application\EventScene\BossDeadScene.h">
+      <Filter>ヘッダー ファイル\Application\EventScene</Filter>
+    </ClInclude>
+    <ClInclude Include="Application\BossDeadState.h">
+      <Filter>ヘッダー ファイル\Application\Object\Chara\Boss</Filter>
+    </ClInclude>
+    <ClInclude Include="Application\Chara\Boss\BossDead.h">
+      <Filter>ヘッダー ファイル\Application\Object\Chara\Boss</Filter>
+    </ClInclude>
+    <ClInclude Include="Application\Scene\FailedScene.h">
+      <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

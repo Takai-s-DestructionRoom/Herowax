@@ -1,17 +1,20 @@
 #include "BossPunch.h"
 #include "Boss.h"
 #include "ParticleManager.h"
-
-BossPunch::BossPunch()
-{
-}
+#include <RAudio.h>
 
 BossPunch::BossPunch(bool isLeft)
 {
+	RAudio::Load("Resources/Sounds/SE/E_punch.wav", "Punch");
+	RAudio::Load("Resources/Sounds/SE/E_attention.wav", "Attention");
+
 	isFinished = false;
 
 	isLeft_ = isLeft;
 	isStart = true;
+
+	RAudio::Load("Resources/Sounds/SE/E_punch.wav", "Punch");
+	RAudio::Load("Resources/Sounds/SE/E_attention.wav", "Attention");
 }
 
 void BossPunch::Update(Boss* boss)
@@ -41,6 +44,8 @@ void BossPunch::Update(Boss* boss)
 
 		//スプラインの終点に攻撃マーク表示
 		boss->targetCircle.mTransform.position = splinePoints.back();
+		RAudio::Play("Attention");
+
 		//ちょい浮かせる
 		boss->targetCircle.mTransform.rotation.y = 0.02f;
 
@@ -84,6 +89,8 @@ void BossPunch::Update(Boss* boss)
 
 	if (boss->punchTimer.GetEnd() && boss->punchStayTimer.GetStarted() == false)
 	{
+		RAudio::Play("Punch");
+
 		boss->punchStayTimer.Start();
 
 		//エミッターの座標はプレイヤーの座標からY座標だけにスケール分ずらしたもの
@@ -95,8 +102,8 @@ void BossPunch::Update(Boss* boss)
 	}
 
 	//どっちかの手が固まってるなら
-	if ((boss->parts[0].GetWaxSolidCount() >= 10 && boss->parts[0].GetIsAlive()) ||
-		(boss->parts[1].GetWaxSolidCount() >= 10 && boss->parts[1].GetIsAlive()))
+	if ((boss->parts[0].GetIsSolid() && boss->parts[0].GetIsAlive()) ||
+		(boss->parts[1].GetIsSolid() && boss->parts[1].GetIsAlive()))
 	{
 		//ステート変化を通らなくさせる
 		return;

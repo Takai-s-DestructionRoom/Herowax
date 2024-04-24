@@ -10,7 +10,6 @@
 #include "ModelObj.h"
 #include "Sprite.h"
 #include "Player.h"
-#include "Tower.h"
 #include "EnemyManager.h"
 #include "EnemySpawner.h"
 #include "Boss.h"
@@ -35,8 +34,6 @@ public:
 private:
 	ModelObj skydome;	//天球
 	Player player;
-	Wave wave;
-	Boss boss;
 	std::unique_ptr<IEventScene> eventScene;
 
 	Camera minimapCamera = Camera();	//ミニマップ用の仮想カメラ
@@ -51,7 +48,4 @@ private:
 
 	float rot[3] = { 0, 0, 0 };
 	float scale[3] = { 1, 1, 1 };
-
-	bool isBossAppearance = false;
-	bool isBossDead = false;
 };

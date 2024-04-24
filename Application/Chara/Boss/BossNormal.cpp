@@ -23,7 +23,16 @@ void BossNormal::Update(Boss* boss)
 	Quaternion aLookat = Quaternion::LookAt(aVec);
 
 	// 補間の処理 //
-	interpolationTimer.Update();
+	//どっちかの手が固まってるなら補間はスルー
+	if ((boss->parts[0].GetIsSolid() && boss->parts[0].GetIsAlive()) ||
+		(boss->parts[1].GetIsSolid() && boss->parts[1].GetIsAlive()))
+	{
+	}
+	//どちらの手も固まってないなら補間
+	else
+	{
+		interpolationTimer.Update();
+	}
 
 	if (interpolationTimer.GetStarted() == false)
 	{
@@ -49,9 +58,9 @@ void BossNormal::Update(Boss* boss)
 		{
 			Vector3 oriPos = boss->parts[i].oriPos * Matrix4::RotationY(aLookat.ToEuler().y);
 
-			boss->parts[i].obj.mTransform.position = 
-				InBackVec3(startPos[i],oriPos, interpolationTimer.GetTimeRate());
-			boss->parts[i].obj.mTransform.rotation = 
+			boss->parts[i].obj.mTransform.position =
+				InBackVec3(startPos[i], oriPos, interpolationTimer.GetTimeRate());
+			boss->parts[i].obj.mTransform.rotation =
 				InBackVec3(startRot[i], aLookat.ToEuler(), interpolationTimer.GetTimeRate());
 		}
 	}

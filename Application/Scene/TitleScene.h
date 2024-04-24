@@ -8,7 +8,7 @@
 #include "LightGroup.h"
 #include "Camera.h"
 #include "ModelObj.h"
-#include "Sprite.h"
+#include "Easing.h"
 
 class TitleScene : public IScene
 {
@@ -26,5 +26,15 @@ private:
 	Vector2 mAngle = { 0, 0 };
 	LightGroup light;
 
-	Sprite titleLogo;	//タイトル
+	Vector2 titleLogoPos;				//タイトルの座標
+	Easing::EaseTimer floatingTimer;	//ふよふよタイマー
+
+	Vector2 buttonUIPos;				//ボタンUIの座標
+	Easing::EaseTimer flashingTimer;	//点滅タイマー
+
+	float cameraDist;		//カメラの距離
+	float cameraRot;		//カメラ回転情報
+	Easing::EaseTimer cameraRotTimer;	//カメラ回転用タイマー
+
+	bool sceneChange = false;
 };

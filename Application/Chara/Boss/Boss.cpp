@@ -12,6 +12,9 @@
 #include "GameCamera.h"
 #include "WaxManager.h"
 #include "BossCollectStandState.h"
+#include "EventCaller.h"
+#include "BossDeadScene.h"
+#include "BossAppearanceScene.h"
 
 Boss::Boss() : GameObject(),
 moveSpeed(0.1f), hp(0), maxHP(10.f)
@@ -22,17 +25,8 @@ moveSpeed(0.1f), hp(0), maxHP(10.f)
 	obj.mPaintDissolveMapTex = TextureManager::Load("./Resources/DissolveMap.png", "DissolveMapTex");
 	obj.mTransform.scale = Vector3::ONE * 8.f;
 
-	//モデル設定
-	parts[(int32_t)PartsNum::RightHand].obj = PaintableModelObj(Model::Load("./Resources/Model/leftArm/leftArm.obj", "leftArm", true));
-	parts[(int32_t)PartsNum::LeftHand].obj = PaintableModelObj(Model::Load("./Resources/Model/rightArm/rightArm.obj", "rightArm", true));
-
-	parts[(size_t)PartsNum::LeftHand].oriPos = { -50.f,20.f,0.f };
-	parts[(size_t)PartsNum::RightHand].oriPos = { 50.f,20.f,0.f };
-
-	for (size_t i = 0; i < parts.size(); i++)
-	{
-		parts[i].Init();
-	}
+	parts[(size_t)PartsNum::LeftHand].oriPos = { 50.f,20.f,0.f };
+	parts[(size_t)PartsNum::RightHand].oriPos = { -50.f,20.f,0.f };
 
 	targetCircle = ModelObj(Model::Load("./Resources/Model/targetMark/targetMark.obj", "targetMark", true));
 
@@ -45,15 +39,11 @@ moveSpeed(0.1f), hp(0), maxHP(10.f)
 	colliderSize = Parameter::GetParam(extract,"ボス本体の当たり判定", colliderSize);
 	mutekiTimer.maxTime_ = Parameter::GetParam(extract,"無敵時間", mutekiTimer.maxTime_);
 	
-	parts[(int32_t)PartsNum::LeftHand].obj.mTransform.scale.x = Parameter::GetParam(extract,"左手スケールX", parts[(int32_t)PartsNum::LeftHand].obj.mTransform.scale.x);
-	parts[(int32_t)PartsNum::LeftHand].obj.mTransform.scale.y = Parameter::GetParam(extract,"左手スケールY", parts[(int32_t)PartsNum::LeftHand].obj.mTransform.scale.y);
-	parts[(int32_t)PartsNum::LeftHand].obj.mTransform.scale.z = Parameter::GetParam(extract,"左手スケールZ", parts[(int32_t)PartsNum::LeftHand].obj.mTransform.scale.z);
-	parts[(int32_t)PartsNum::RightHand].obj.mTransform.scale.x = Parameter::GetParam(extract,"右手スケールX", parts[(int32_t)PartsNum::RightHand].obj.mTransform.scale.x);
-	parts[(int32_t)PartsNum::RightHand].obj.mTransform.scale.y = Parameter::GetParam(extract,"右手スケールY", parts[(int32_t)PartsNum::RightHand].obj.mTransform.scale.y);
-	parts[(int32_t)PartsNum::RightHand].obj.mTransform.scale.z = Parameter::GetParam(extract,"右手スケールZ", parts[(int32_t)PartsNum::RightHand].obj.mTransform.scale.z);
 	standTimer = Parameter::GetParam(extract,"モーション待機時間", 3.f);
 	punchTimer = Parameter::GetParam(extract,"パンチにかかる時間", 0.7f);
 	punchStayTimer = Parameter::GetParam(extract,"パンチ後留まる時間", 1.5f);
+
+	bossSpawnTimer = Parameter::GetParam(extract, "ボスが出現するまでの時間", 60.0f);
 
 	extract = Parameter::Extract("Player");
 	solidTime = Parameter::GetParam(extract, "固まるまでの時間", 5.f);
@@ -71,7 +61,8 @@ Boss::~Boss()
 void Boss::Init()
 {
 	hp = maxHP;
-	isAlive = true;
+	isAlive = false;
+	bossSpawnTimer.Start();
 	
 	mutekiTimer.Reset();
 
@@ -92,14 +83,40 @@ void Boss::Init()
 
 	isOldBodySolid = false;
 
-	ChangeState<BossNormal>();
+	state = std::make_unique<BossNormal>();
+	nextState = nullptr;
+
+	changingState = false;
+
+	isOldBodySolid = false;
+
+	waxSolidCount = 0;
+	waxShakeOffTimer.Reset();
+
+	shakeTimer.Reset();
+	waxScatterTimer.Reset();
+	shake = Vector3::ZERO;
 
 	ai.Init();
+
+	//モデル設定
+	parts[(int32_t)PartsNum::RightHand].obj = PaintableModelObj(Model::Load("./Resources/Model/leftArm/leftArm.obj", "leftArm", true));
+	parts[(int32_t)PartsNum::LeftHand].obj = PaintableModelObj(Model::Load("./Resources/Model/rightArm/rightArm.obj", "rightArm", true));
+
+	std::map<std::string, std::string> extract = Parameter::Extract("Boss");
+	parts[(int32_t)PartsNum::LeftHand].obj.mTransform.scale.x = Parameter::GetParam(extract, "左手スケールX", parts[(int32_t)PartsNum::LeftHand].obj.mTransform.scale.x);
+	parts[(int32_t)PartsNum::LeftHand].obj.mTransform.scale.y = Parameter::GetParam(extract, "左手スケールY", parts[(int32_t)PartsNum::LeftHand].obj.mTransform.scale.y);
+	parts[(int32_t)PartsNum::LeftHand].obj.mTransform.scale.z = Parameter::GetParam(extract, "左手スケールZ", parts[(int32_t)PartsNum::LeftHand].obj.mTransform.scale.z);
+	parts[(int32_t)PartsNum::RightHand].obj.mTransform.scale.x = Parameter::GetParam(extract, "右手スケールX", parts[(int32_t)PartsNum::RightHand].obj.mTransform.scale.x);
+	parts[(int32_t)PartsNum::RightHand].obj.mTransform.scale.y = Parameter::GetParam(extract, "右手スケールY", parts[(int32_t)PartsNum::RightHand].obj.mTransform.scale.y);
+	parts[(int32_t)PartsNum::RightHand].obj.mTransform.scale.z = Parameter::GetParam(extract, "右手スケールZ", parts[(int32_t)PartsNum::RightHand].obj.mTransform.scale.z);
 
 	for (size_t i = 0; i < parts.size(); i++)
 	{
 		parts[i].Init();
 	}
+
+	deadEventCall = false;
 }
 
 void Boss::AllStateUpdate()
@@ -181,12 +198,12 @@ void Boss::AllStateUpdate()
 	{
 		ai.SetSituation(BossSituation::NoArms);
 	}
-	////本体が固まった瞬間なら
-	//if (GetIsSolid(PartsNum::Max) && !isOldBodySolid)
-	//{
-	//	//ステートをコレクト待機へ
-	//	ChangeState<BossCollectStandState>();
-	//}
+
+	//本体が固まったら撃破演出を呼び出し
+	if (GetStateStr() == "Collected" && !deadEventCall) {
+		EventCaller::EventCall(BossDeadScene::GetEventCallStr());
+		deadEventCall = true;
+	}
 
 	//白を加算
 	if (whiteTimer.GetStarted()) {
@@ -224,63 +241,17 @@ void Boss::AllStateUpdate()
 
 void Boss::Update()
 {
-	isOldBodySolid = GetIsSolid(PartsNum::Max);
-
-	ai.Update(this);
-
-	//各ステート時の固有処理
-	state->Update(this);
-
-	//全ステートの共通処理
-	AllStateUpdate();
-
-	// モーションの変更(デバッグ用)
-	if (RInput::GetInstance()->GetKeyDown(DIK_1))
-	{
-		ChangeState<BossNormal>();
+	//タイマーが終わったらボスを出現させる
+	bossSpawnTimer.Update();
+	if (bossSpawnTimer.GetNowEnd()) {
+		EventCaller::EventCall(BossAppearanceScene::GetEventCallStr());
 	}
-	else if (RInput::GetInstance()->GetKeyDown(DIK_2))
-	{
-		nextState = std::make_unique<BossPunch>(true);
-		changingState = true;
-	}
-	else if (RInput::GetInstance()->GetKeyDown(DIK_3))
-	{
-		nextState = std::make_unique<BossPunch>(false);
-		changingState = true;
-	}
-
-	//出現中なのに出現ステートになってないなら
-	if (isAppearance && stateStr != "Appearance")
-	{
-		ChangeState<BossAppearance>();
-	}
-	//逆に出現中じゃないのに出現ステートになってたら
-	else if (isAppearance == false && stateStr == "Appearance")
-	{
-		ChangeState<BossNormal>();
-	}
-
-	//撃破演出中なのに撃破演出ステートになってないなら
-	if (isDead && stateStr != "Dead")
-	{
-		ChangeState<BossDead>();
-	}
-
-	if (changingState) {
-		//ステートを変化させる
-		std::swap(state, nextState);
-		changingState = false;
-		nextState = nullptr;
-	}
-
-	targetCircle.mTransform.UpdateMatrix();
-	targetCircle.TransferBuffer(Camera::sNowCamera->mViewProjection);
 
 #pragma region ImGui
 	ImGui::SetNextWindowSize({ 300, 250 }, ImGuiCond_FirstUseEver);
 
 	ImGui::Begin("Boss");
+	ImGui::Text("ボスが出現するまでの時間:%f", bossSpawnTimer.nowTime_);
 
 	ImGui::Text("ボス本体");
 	ImGui::Text("1:待機\n2:左パンチ\n3:右パンチ");
@@ -288,6 +259,10 @@ void Boss::Update()
 	ImGui::Checkbox("当たり判定描画", &isDrawCollider);
 
 	if (ImGui::TreeNode("調整項目_ボス")) {
+		ImGui::DragFloat("ボスが出現するまでの時間(最大)", &bossSpawnTimer.maxTime_,0.1f);
+		if (ImGui::Button("出現タイマーリセット")) {
+			bossSpawnTimer.Start();
+		}
 		ImGui::DragFloat3("スケール", &obj.mTransform.scale.x, 0.1f);
 		ImGui::DragFloat("当たり判定", &colliderSize, 0.1f);
 		ImGui::InputFloat("無敵時間", &mutekiTimer.maxTime_, 0.1f);
@@ -330,38 +305,98 @@ void Boss::Update()
 		Parameter::Save("モーション待機時間", standTimer.maxTime_);
 		Parameter::Save("パンチにかかる時間", punchTimer.maxTime_);
 		Parameter::Save("パンチ後留まる時間", punchStayTimer.maxTime_);
+		Parameter::Save("ボスが出現するまでの時間", bossSpawnTimer.GetTimeRate());
+
 		Parameter::End();
 	}
 
 	ImGui::End();
+#pragma endregion
+
+	//ImGuiと出現呼び出し以外は、ボスの出現後に呼び出すため、isAliveがtrueでなければ通さない
+	if (!isAlive)return;
+
+	isOldBodySolid = GetIsSolid(PartsNum::Max);
+
+	ai.Update(this);
+
+	//各ステート時の固有処理
+	state->Update(this);
+
+	//全ステートの共通処理
+	AllStateUpdate();
+
+	// モーションの変更(デバッグ用)
+	if (Util::debugBool) {
+		if (RInput::GetInstance()->GetKeyDown(DIK_1))
+		{
+			ChangeState<BossNormal>();
+		}
+		else if (RInput::GetInstance()->GetKeyDown(DIK_2))
+		{
+			nextState = std::make_unique<BossPunch>(true);
+			changingState = true;
+		}
+		else if (RInput::GetInstance()->GetKeyDown(DIK_3))
+		{
+			nextState = std::make_unique<BossPunch>(false);
+			changingState = true;
+		}
+	}
+
+	//出現中なのに出現ステートになってないなら
+	if (isAppearance && stateStr != "Appearance")
+	{
+		ChangeState<BossAppearance>();
+	}
+	//逆に出現中じゃないのに出現ステートになってたら
+	else if (isAppearance == false && stateStr == "Appearance")
+	{
+		ChangeState<BossNormal>();
+	}
+
+	//撃破演出中なのに撃破演出ステートになってないなら
+	if (isDead && stateStr != "Dead")
+	{
+		ChangeState<BossDead>();
+	}
+
+	if (changingState) {
+		//ステートを変化させる
+		std::swap(state, nextState);
+		changingState = false;
+		nextState = nullptr;
+	}
+
+	targetCircle.mTransform.UpdateMatrix();
+	targetCircle.TransferBuffer(Camera::sNowCamera->mViewProjection);
 }
 
 void Boss::Draw()
 {
-	if (isAlive)
-	{
-		if (isDrawObj) {
-			BrightDraw();
-			for (size_t i = 0; i < parts.size(); i++)
-			{
-				parts[i].Draw();
-			}
-		}
-
-		DrawCollider();
+	if (!isAlive)return;
+	
+	if (isDrawObj) {
+		BrightDraw();
 		for (size_t i = 0; i < parts.size(); i++)
 		{
-			parts[i].DrawCollider();
+			parts[i].Draw();
 		}
-
-		//パンチ中のみ描画
-		if (punchTimer.GetRun())
-		{
-			targetCircle.Draw();
-		}
-
-		ui.Draw();
 	}
+
+	DrawCollider();
+	for (size_t i = 0; i < parts.size(); i++)
+	{
+		parts[i].DrawCollider();
+	}
+
+	//パンチ中のみ描画
+	if (punchTimer.GetRun())
+	{
+		targetCircle.Draw();
+	}
+
+	ui.Draw();
 }
 
 bool Boss::GetIsSolid(PartsNum num)
@@ -369,12 +404,10 @@ bool Boss::GetIsSolid(PartsNum num)
 	switch (num)
 	{
 	case PartsNum::RightHand:
-		return parts[(int32_t)PartsNum::RightHand].GetWaxSolidCount() >= 
-			parts[(int32_t)PartsNum::RightHand].requireWaxSolidCount;
+		return parts[(int32_t)PartsNum::RightHand].GetIsSolid();
 		break;
 	case PartsNum::LeftHand:
-		return  parts[(int32_t)PartsNum::LeftHand].GetWaxSolidCount() >=
-			parts[(int32_t)PartsNum::LeftHand].requireWaxSolidCount;
+		return  parts[(int32_t)PartsNum::LeftHand].GetIsSolid();
 		break;
 	default:
 		return waxSolidCount >= requireWaxSolidCount;
@@ -385,6 +418,12 @@ bool Boss::GetIsSolid(PartsNum num)
 bool Boss::GetIsOnlyBody()
 {
 	return GetIsSolid(PartsNum::RightHand) && GetIsSolid(PartsNum::LeftHand);
+}
+
+Boss* Boss::GetInstance()
+{
+	static Boss instance;
+	return &instance;
 }
 
 void Boss::DealDamage(int32_t damage)

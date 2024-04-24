@@ -117,6 +117,8 @@ public:
 	
 	PlayerUI ui;
 
+	bool soundFlag = false;
+
 private:
 	ModelObj attackDrawerObj;			//上記の当たり判定描画オブジェクト
 
@@ -128,14 +130,19 @@ private:
 
 	Color defColor;
 
+	//上に配置してる人型オブジェクト系
 	ModelObj humanObj;
 	float humanOffset = 0.f;
 	float humanScale = 0.0f;
+	//モデル変更時に使うやつら
 	float bagScale = 0.0f;
-
+	float collectScale = 0.0f;
 	bool modelChange = false;
 
-	float collectScale = 0.0f;
+	Vector3 modelOffset;//描画位置をずらす
+
+	//---------ロウの総量描画オブジェクト---------//
+	PaintableModelObj waxTankObj;
 
 public:
 	Player();
