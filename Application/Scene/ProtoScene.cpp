@@ -361,7 +361,9 @@ void ProtoScene::Update()
 		}
 		//回収ボタン押されたときに固まってるなら吸収
 		//今は範囲外でも吸収できちゃってる
-		if (isCollected2 && enemy->GetIsSolid())
+		//ここもプレイヤーの中に入れちゃう
+		if (isCollected2 && enemy->GetIsSolid() &&
+			ColPrimitive3D::RayToSphereCol(player.collectCol, enemy->collider))
 		{
 			//回収状態に遷移
 			enemy->collectPos = player.GetPos();
@@ -369,27 +371,6 @@ void ProtoScene::Update()
 			enemy->ChangeState<EnemyCollect>();
 
 			player.waxCollectAmount++;
-		}
-	}
-
-	//蝋とプレイヤーの当たり判定
-	player.isCollect = true;
-	for (auto& group : WaxManager::GetInstance()->waxGroups)
-	{
-		//蝋一つ一つとの判定
-		for (auto& wax : group->waxs)
-		{
-			if (wax->GetState() == "WaxCollectFan")
-			{
-				bool isCollision = ColPrimitive3D::CheckSphereToSphere(player.collider, wax->collider);
-				player.isCollect = false;	//一個でも回収中のロウあると回収できなくする
-
-				if (isCollision)
-				{
-					wax->isAlive = false;
-					player.waxCollectAmount++;
-				}
-			}
 		}
 	}
 

@@ -19,6 +19,7 @@
 #include "SimpleSceneTransition.h"
 #include "RAudio.h"
 #include "EnemyManager.h"
+#include "EventCaller.h"
 
 Player::Player() :GameObject(),
 moveSpeed(1.f), moveAccelAmount(0.05f), isGround(true), hp(0), maxHP(10.f),
@@ -911,13 +912,9 @@ void Player::WaxCollect()
 	collectColFan.pos = GetFootPos();
 	collectColFan.r = waxCollectDist;
 
-	//回収したロウに応じてストック増やす
-	if (isCollectFan)
-	{
-
-	}
-	else
-	{
+	//イベント中でなければ入る
+	if (EventCaller::GetNowEventStr() == "") {
+		//回収したロウに応じてストック増やす
 		if (isWaxStock && WaxManager::GetInstance()->isCollected)
 		{
 			if (waxCollectAmount > 0)
@@ -961,7 +958,8 @@ void Player::WaxCollect()
 				}
 			}
 			//腕吸収
-			if (boss->parts[(int32_t)PartsNum::LeftHand].isCollected) {
+			if (boss->parts[(int32_t)PartsNum::LeftHand].isCollected && 
+				!boss->parts[(int32_t)PartsNum::LeftHand].collectTimer.GetStarted()) {
 				if (RayToSphereCol(collectCol, boss->parts[(int32_t)PartsNum::LeftHand].collider))
 				{
 					isCollectSuccess = true;
@@ -979,7 +977,8 @@ void Player::WaxCollect()
 					}
 				}
 			}
-			if (boss->parts[(int32_t)PartsNum::RightHand].isCollected) {
+			if (boss->parts[(int32_t)PartsNum::RightHand].isCollected &&
+				!boss->parts[(int32_t)PartsNum::RightHand].collectTimer.GetStarted()) {
 				if (ColPrimitive3D::RayToSphereCol(collectCol, boss->parts[(int32_t)PartsNum::RightHand].collider))
 				{
 					//今のロウとの距離
@@ -1000,23 +999,24 @@ void Player::WaxCollect()
 			}
 
 			//本体吸収
-			if (boss->GetStateStr() == "Collected") {
-				if (RayToSphereCol(collectCol, boss->collider))
-				{
-					isCollectSuccess = true;
+			//演出の都合上、いったん消す
+			//if (boss->GetStateStr() == "Collected") {
+			//	if (RayToSphereCol(collectCol, boss->collider))
+			//	{
+			//		isCollectSuccess = true;
 
-					//今のロウとの距離
-					float len = (collectCol.start -
-						boss->GetPos()).Length();
+			//		//今のロウとの距離
+			//		float len = (collectCol.start -
+			//			boss->GetPos()).Length();
 
-					//見たロウが範囲外ならスキップ
-					if (waxCollectVertical >= len) {
-						boss->collectPos = collectCol.start;
-						boss->ChangeState<BossDeadState>();
-						waxCollectAmount += 1;
-					}
-				}
-			}
+			//		//見たロウが範囲外ならスキップ
+			//		if (waxCollectVertical >= len) {
+			//			boss->collectPos = collectCol.start;
+			//			boss->ChangeState<BossDeadState>();
+			//			waxCollectAmount += 1;
+			//		}
+			//	}
+			//}
 
 			if (isCollectSuccess) {
 				obj.mModel = ModelManager::Get("collect");

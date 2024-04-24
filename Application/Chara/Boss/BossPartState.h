@@ -23,7 +23,7 @@ public:
 	BossPartCollect();
 	void Update(Parts* part)override;
 private:
-	Easing::EaseTimer lifeTimer;
+	
 	Vector3 startPos;
 	Vector3 startScale;
 	Vector3 startRota;
