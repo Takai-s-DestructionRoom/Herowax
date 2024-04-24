@@ -1,5 +1,5 @@
 #include "ProtoScene.h"
-#include "ResultScene.h"
+#include "FailedScene.h"
 #include "SceneManager.h"
 #include "WaxManager.h"
 #include "ParticleManager.h"
@@ -19,6 +19,7 @@
 #include "TitleScene.h"
 #include "SimpleSceneTransition.h"
 #include "RAudio.h"
+#include "Boss.h"
 
 ProtoScene::ProtoScene()
 {
@@ -33,6 +34,9 @@ ProtoScene::ProtoScene()
 	InstantDrawer::PreCreate();
 
 	Level::Get()->Load();
+
+	RAudio::Load("Resources/Sounds/BGM/Ingame.wav", "Normal");
+	RAudio::Load("Resources/Sounds/BGM/Boss.wav", "Boss");
 }
 
 void ProtoScene::Init()
@@ -46,12 +50,11 @@ void ProtoScene::Init()
 	LightGroup::sNowLight = &light;
 
 	player.Init();
-	
-	boss.Init();
+	Boss::GetInstance()->Init();
 
 	//色々入れる
-	player.SetBoss(&boss);
-	boss.SetTarget(&player.obj);
+	player.SetBoss(Boss::GetInstance());
+	Boss::GetInstance()->SetTarget(&player.obj);
 	gameCamera.SetTarget(&player.obj);
 
 	ParticleManager::GetInstance()->Init();
@@ -64,6 +67,11 @@ void ProtoScene::Init()
 	EnemyManager::GetInstance()->SetTarget(&player.obj);
 
 	Minimap::GetInstance()->Init();
+
+	RAudio::Stop("Normal");
+	RAudio::Stop("Boss");
+
+	RAudio::Play("Normal", 0.5f, 1.0f, true);
 
 	std::map<std::string, std::string> extract = Parameter::Extract("DebugBool");
 	Util::debugBool = Parameter::GetParam(extract, "debugBool", false);
@@ -104,11 +112,12 @@ void ProtoScene::Update()
 		SceneTrance::GetInstance()->GetIsChange())
 	{
 		eventScene = std::make_unique<BossDeadScene>();
-		eventScene->Init(boss.GetCenterPos() + Vector3::UP * 20.f);
+		eventScene->Init(Boss::GetInstance()->GetCenterPos() + Vector3::UP * 20.f);
+
+		RAudio::Stop("Boss");
 
 		player.isMove = false;
-		boss.isDead = true;
-		EnemyManager::GetInstance()->isStop = true;
+		Boss::GetInstance()->isDead = true;
 
 		SceneTrance::GetInstance()->SetIsChange(false);	//忘れずに
 		EventCaller::EventCallStrReset();
@@ -119,11 +128,14 @@ void ProtoScene::Update()
 		SceneTrance::GetInstance()->GetIsChange())
 	{
 		eventScene = std::make_unique<BossAppearanceScene>();
-		eventScene->Init(boss.GetCenterPos() + Vector3::UP * 20.f);
+		eventScene->Init(Boss::GetInstance()->GetCenterPos() + Vector3::UP * 20.f);
+
+		RAudio::Stop("Normal");
+		RAudio::Play("Boss", 0.5f, 1.0f, true);
 
 		player.isMove = false;
-		boss.isAppearance = true;
-		boss.isAlive = true;
+		Boss::GetInstance()->isAppearance = true;
+		Boss::GetInstance()->isAlive = true;
 		EnemyManager::GetInstance()->isStop = true;
 
 		SceneTrance::GetInstance()->SetIsChange(false);	//忘れずに
@@ -135,13 +147,13 @@ void ProtoScene::Update()
 	{
 		eventScene->Update();
 
-		if (boss.isDead && eventScene->eventTimer.GetTimeRate() > 0.7f)
+		if (Boss::GetInstance()->isDead && eventScene->eventTimer.GetTimeRate() > 0.7f)
 		{
-			if (boss.isAlive)
+			if (Boss::GetInstance()->isAlive)
 			{
-				ParticleManager::GetInstance()->AddSimple(boss.GetPos() + Vector3::UP * 20.f, "boss_dead");
+				ParticleManager::GetInstance()->AddSimple(Boss::GetInstance()->GetPos() + Vector3::UP * 20.f, "boss_dead");
 			}
-			boss.isAlive = false;
+			Boss::GetInstance()->isAlive = false;
 		}
 	}
 
@@ -155,7 +167,7 @@ void ProtoScene::Update()
 		//今後まとめるときは、End()みたいな項目でこれらを呼べるようにしたい
 		//登場演出なら、ボスの登場演出モードを解除
 		if (EventCaller::GetNowEventStr() == BossAppearanceScene::GetEventCallStr()) {
-			boss.isAppearance = false;
+			Boss::GetInstance()->isAppearance = false;
 		}
 
 		//死亡シーンの呼び出しが終わったならタイトルに戻す
@@ -173,13 +185,13 @@ void ProtoScene::Update()
 	//クソ手抜き当たり判定
 
 	//ボスの腕との判定
-	for (size_t i = 0; i < boss.parts.size(); i++)
+	for (size_t i = 0; i < Boss::GetInstance()->parts.size(); i++)
 	{
-		if (ColPrimitive3D::CheckSphereToSphere(boss.parts[i].collider,
+		if (ColPrimitive3D::CheckSphereToSphere(Boss::GetInstance()->parts[i].collider,
 			player.collider))
 		{
 			//パンチタイマー進行中のみダメージ
-			if (boss.punchTimer.GetRun())
+			if (Boss::GetInstance()->punchTimer.GetRun())
 			{
 				//1ダメージ(どっかに参照先作るべき)
 				player.DealDamage(1);
@@ -226,13 +238,6 @@ void ProtoScene::Update()
 
 	for (auto& enemy : EnemyManager::GetInstance()->enemys)
 	{
-		//タワーとの当たり判定
-		/*if (ColPrimitive3D::CheckSphereToSphere(enemy->collider,
-			Level::Get()->tower.collider)) {
-			enemy->SetDeath();
-			Vector3 vec = Level::Get()->tower.GetPos() - enemy->GetPos();
-			Level::Get()->tower.Damage(1.f, vec);
-		}*/
 		//プレイヤーとの当たり判定
 		//特定範囲内に入ったら敵を攻撃状態へ遷移
 		if (enemy->GetAttackState() == "NonAttack")
@@ -278,24 +283,24 @@ void ProtoScene::Update()
 		for (auto& wax : group->waxs)
 		{
 			//ボス本体との判定
-			bool isCollision = ColPrimitive3D::CheckSphereToSphere(boss.collider, wax->collider);
+			bool isCollision = ColPrimitive3D::CheckSphereToSphere(Boss::GetInstance()->collider, wax->collider);
 
 			//投げられてる蝋に当たった時はダメージと蝋蓄積
 			if (isCollision && wax->isSolid == false && wax->isGround == false)
 			{
 				//一応1ダメージ(ダメージ量に応じてロウのかかり具合も進行)
-				boss.DealDamage(player.GetAttackPower());
+				Boss::GetInstance()->DealDamage(player.GetAttackPower());
 				isHitSound = true;
 			}
 
-			for (size_t i = 0; i < boss.parts.size(); i++)
+			for (size_t i = 0; i < Boss::GetInstance()->parts.size(); i++)
 			{
 				//腕との判定
-				isCollision = ColPrimitive3D::CheckSphereToSphere(boss.parts[i].collider, wax->collider);
+				isCollision = ColPrimitive3D::CheckSphereToSphere(Boss::GetInstance()->parts[i].collider, wax->collider);
 				if (isCollision && wax->isSolid == false && wax->isGround == false)
 				{
 					//一応1ダメージ(ダメージ量に応じてロウのかかり具合も進行)
-					boss.parts[i].DealDamage(player.GetAttackPower());
+					Boss::GetInstance()->parts[i].DealDamage(player.GetAttackPower());
 					isHitSound = true;
 				}
 			}
@@ -392,7 +397,7 @@ void ProtoScene::Update()
 	}
 
 	player.Update();
-	boss.Update();
+	Boss::GetInstance()->Update();
 	Level::Get()->Update();
 
 	for (auto& enemy1 : EnemyManager::GetInstance()->enemys)
@@ -504,7 +509,7 @@ void ProtoScene::Update()
 	if (RInput::GetInstance()->GetKeyDown(DIK_F6) ||
 		RInput::GetInstance()->GetPadButtonDown(XINPUT_GAMEPAD_START))
 	{
-		SceneManager::GetInstance()->Change<ResultScene,SimpleSceneTransition>();
+		SceneManager::GetInstance()->Change<FailedScene,SimpleSceneTransition>();
 	}
 
 #pragma region ImGui
@@ -544,7 +549,7 @@ void ProtoScene::Draw()
 	//nest.Draw();
 
 	Level::Get()->Draw();
-	boss.Draw();
+	Boss::GetInstance()->Draw();
 	player.Draw();
 
 	if (eventScene->isActive)

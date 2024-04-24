@@ -92,6 +92,8 @@ private:
 	void AllStateUpdate();
 
 public:
+	static Boss* GetInstance();
+
 	Boss();
 	virtual ~Boss();
 	void Init() override;

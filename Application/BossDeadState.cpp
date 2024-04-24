@@ -2,7 +2,7 @@
 #include "Boss.h"
 #include "SceneManager.h"
 #include "SimpleSceneTransition.h"
-#include "ResultScene.h"
+#include "FailedScene.h"
 #include "EventCaller.h"
 #include "BossDeadScene.h"
 
@@ -35,6 +35,6 @@ void BossDeadState::Update(Boss* boss)
 		//死亡
 		boss->isAlive = false;
 		//シーン切り替え
-		//SceneManager::GetInstance()->Change<ResultScene>();
+		//SceneManager::GetInstance()->Change<FailedScene>();
 	}
 }

@@ -8,8 +8,7 @@
 #include "LightGroup.h"
 #include "Camera.h"
 #include "ModelObj.h"
-#include "Boss.h"
-#include "Sprite.h"
+#include "Easing.h"
 
 class TitleScene : public IScene
 {
