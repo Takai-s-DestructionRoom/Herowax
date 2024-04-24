@@ -268,9 +268,6 @@ void ProtoScene::Update()
 			enemy->isCollect = true;
 			enemy->ChangeState<EnemyCollect>();
 
-			//死ぬ
-			//enemy->SetDeath();
-
 			player.waxCollectAmount++;
 		}
 	}
@@ -358,9 +355,6 @@ void ProtoScene::Update()
 							enemy->isCollect = true;
 							enemy->ChangeState<EnemyCollect>();
 
-							////死ぬ
-							//enemy->SetDeath();
-
 							player.waxCollectAmount++;
 						}
 					}
@@ -433,12 +427,6 @@ void ProtoScene::Update()
 				//コライダーがもう一度当たらないようにコライダー更新
 				enemy1->UpdateCollider();
 				enemy2->UpdateCollider();
-
-				/*enemy1->obj.mTransform.UpdateMatrix();
-				enemy1->BrightTransferBuffer(Camera::sNowCamera->mViewProjection);
-
-				enemy2->obj.mTransform.UpdateMatrix();
-				enemy2->BrightTransferBuffer(Camera::sNowCamera->mViewProjection);*/
 			}
 		}
 	}

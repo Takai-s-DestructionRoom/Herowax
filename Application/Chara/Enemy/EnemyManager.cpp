@@ -15,6 +15,18 @@ EnemyManager* EnemyManager::GetInstance()
 	return &instance;
 }
 
+bool EnemyManager::GetNowCollectEnemy()
+{
+	for (auto& enemy : enemys)
+	{
+		if (enemy->GetState() == "EnemyCollect") {
+			return true;
+		}
+	}
+	
+	return false;
+}
+
 EnemyManager::EnemyManager()
 {
 	std::map<std::string, std::string> extract = Parameter::Extract("Enemy");
