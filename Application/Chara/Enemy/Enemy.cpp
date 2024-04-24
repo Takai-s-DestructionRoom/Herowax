@@ -8,7 +8,7 @@
 #include "RImGui.h"
 #include "Renderer.h"
 #include <TimeManager.h>
-#include "CollectPartManager.h"
+//#include "CollectPartManager.h"
 
 Enemy::Enemy(ModelObj* target_) : GameObject(),
 moveSpeed(0.1f), slowMag(0.8f),
@@ -45,11 +45,11 @@ gravity(0.2f)
 
 Enemy::~Enemy()
 {
-	//50%の確率でドロップ
-	int32_t rand = Util::GetRand(0, 1);
-	if (rand == 1) {
-		CollectPartManager::GetInstance()->Craete(obj.mTransform.position);
-	}
+	////50%の確率でドロップ
+	//int32_t rand = Util::GetRand(0, 1);
+	//if (rand == 1) {
+	//	CollectPartManager::GetInstance()->Craete(obj.mTransform.position);
+	//}
 
 	//死んだときパーティクル出す
 	ParticleManager::GetInstance()->AddSimple(
