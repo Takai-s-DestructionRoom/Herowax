@@ -5,6 +5,7 @@
 #include "Parameter.h"
 #include "ColPrimitive3D.h"
 #include "Quaternion.h"
+#include <RAudio.h>
 
 WaxManager* WaxManager::GetInstance()
 {
@@ -137,6 +138,8 @@ WaxManager::WaxManager() :
 
 	//ディゾルブで使うパイプラインを生成する
 	CreateDisolvePipeLine();
+
+	RAudio::Load("Resources/Sounds/SE/P_collect.wav", "Collect");
 }
 
 void WaxManager::Init()
@@ -323,6 +326,7 @@ bool WaxManager::Collect(ColPrimitive3D::Ray collider)
 int32_t WaxManager::Collect(ColPrimitive3D::Ray collider, float waxCollectVertical)
 {
 	int32_t getNum = 0;
+	bool isCollect = false;
 	for (auto& group : waxGroups)
 	{
 		for (auto& wax : group->waxs)
@@ -338,6 +342,7 @@ int32_t WaxManager::Collect(ColPrimitive3D::Ray collider, float waxCollectVertic
 				}
 
 				//回収モードにする
+				isCollect = true;
 				wax.get()->collectPos = collider.start;
 				wax.get()->ChangeState<WaxCollect>();
 				getNum++;
@@ -347,6 +352,11 @@ int32_t WaxManager::Collect(ColPrimitive3D::Ray collider, float waxCollectVertic
 		}
 	}
 
+	if (isCollect == true)
+	{
+		RAudio::Play("Collect");
+	}
+	
 	return getNum;
 }
 

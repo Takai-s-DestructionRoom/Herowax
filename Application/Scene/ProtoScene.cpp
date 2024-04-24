@@ -18,6 +18,7 @@
 #include "EventCaller.h"
 #include "TitleScene.h"
 #include "SimpleSceneTransition.h"
+#include "RAudio.h"
 #include "Boss.h"
 
 ProtoScene::ProtoScene()
@@ -220,6 +221,8 @@ void ProtoScene::Update()
 		}
 	}
 
+	bool isHitSound = false;
+
 	for (auto& enemy : EnemyManager::GetInstance()->enemys)
 	{
 		//プレイヤーとの当たり判定
@@ -276,7 +279,8 @@ void ProtoScene::Update()
 			if (isCollision && wax->isSolid == false && wax->isGround == false)
 			{
 				//一応1ダメージ(ダメージ量に応じてロウのかかり具合も進行)
-				Boss::GetInstance()->DealDamage(player.GetAttackPower());
+				boss.DealDamage(player.GetAttackPower());
+				isHitSound = true;
 			}
 
 			for (size_t i = 0; i < Boss::GetInstance()->parts.size(); i++)
@@ -286,7 +290,8 @@ void ProtoScene::Update()
 				if (isCollision && wax->isSolid == false && wax->isGround == false)
 				{
 					//一応1ダメージ(ダメージ量に応じてロウのかかり具合も進行)
-					Boss::GetInstance()->parts[i].DealDamage(player.GetAttackPower());
+					boss.parts[i].DealDamage(player.GetAttackPower());
+					isHitSound = true;
 				}
 			}
 		}
@@ -317,6 +322,7 @@ void ProtoScene::Update()
 						knockVec.y = 0;
 						enemy->DealDamage(player.GetAttackPower(),
 							knockVec, &player.obj);
+						isHitSound = true;
 					}
 					//地面の蝋とぶつかってたら足盗られに
 					else
@@ -374,6 +380,13 @@ void ProtoScene::Update()
 				}
 			}
 		}
+	}
+
+	if (isHitSound && !player.soundFlag) {
+		//ここで攻撃のヒット音を鳴らす
+		
+		//フラグを立てる
+		player.soundFlag = true;
 	}
 
 	player.Update();
