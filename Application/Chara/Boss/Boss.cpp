@@ -393,6 +393,12 @@ bool Boss::GetIsOnlyBody()
 	return GetIsSolid(PartsNum::RightHand) && GetIsSolid(PartsNum::LeftHand);
 }
 
+Boss* Boss::GetInstance()
+{
+	static Boss instance;
+	return &instance;
+}
+
 void Boss::DealDamage(int32_t damage)
 {
 	//無敵時間さん中ならスキップ

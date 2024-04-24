@@ -1,5 +1,5 @@
 #include "ProtoScene.h"
-#include "ResultScene.h"
+#include "FailedScene.h"
 #include "SceneManager.h"
 #include "WaxManager.h"
 #include "ParticleManager.h"
@@ -49,11 +49,11 @@ void ProtoScene::Init()
 	LightGroup::sNowLight = &light;
 
 	player.Init();
-	boss.Init();
+	Boss::GetInstance()->Init();
 
 	//色々入れる
-	player.SetBoss(&boss);
-	boss.SetTarget(&player.obj);
+	player.SetBoss(Boss::GetInstance());
+	Boss::GetInstance()->SetTarget(&player.obj);
 	gameCamera.SetTarget(&player.obj);
 
 	ParticleManager::GetInstance()->Init();
@@ -108,10 +108,10 @@ void ProtoScene::Update()
 		SceneTrance::GetInstance()->GetIsChange())
 	{
 		eventScene = std::make_unique<BossDeadScene>();
-		eventScene->Init(boss.GetCenterPos() + Vector3::UP * 20.f);
+		eventScene->Init(Boss::GetInstance()->GetCenterPos() + Vector3::UP * 20.f);
 
 		player.isMove = false;
-		boss.isDead = true;
+		Boss::GetInstance()->isDead = true;
 
 		SceneTrance::GetInstance()->SetIsChange(false);	//忘れずに
 		EventCaller::EventCallStrReset();
@@ -122,7 +122,7 @@ void ProtoScene::Update()
 		SceneTrance::GetInstance()->GetIsChange())
 	{
 		eventScene = std::make_unique<BossAppearanceScene>();
-		eventScene->Init(boss.GetCenterPos() + Vector3::UP * 20.f);
+		eventScene->Init(Boss::GetInstance()->GetCenterPos() + Vector3::UP * 20.f);
 
 		player.isMove = false;
 		
@@ -135,13 +135,13 @@ void ProtoScene::Update()
 	{
 		eventScene->Update();
 
-		if (boss.isDead && eventScene->eventTimer.GetTimeRate() > 0.7f)
+		if (Boss::GetInstance()->isDead && eventScene->eventTimer.GetTimeRate() > 0.7f)
 		{
-			if (boss.isAlive)
+			if (Boss::GetInstance()->isAlive)
 			{
-				ParticleManager::GetInstance()->AddSimple(boss.GetPos() + Vector3::UP * 20.f, "boss_dead");
+				ParticleManager::GetInstance()->AddSimple(Boss::GetInstance()->GetPos() + Vector3::UP * 20.f, "boss_dead");
 			}
-			boss.isAlive = false;
+			Boss::GetInstance()->isAlive = false;
 		}
 	}
 
@@ -149,7 +149,7 @@ void ProtoScene::Update()
 	if (Camera::sNowCamera == nullptr)
 	{
 		gameCamera.Init();	//カメラ入れる
-		boss.isAppearance = false;
+		Boss::GetInstance()->isAppearance = false;
 
 		player.isMove = true;
 
@@ -169,13 +169,13 @@ void ProtoScene::Update()
 	//クソ手抜き当たり判定
 
 	//ボスの腕との判定
-	for (size_t i = 0; i < boss.parts.size(); i++)
+	for (size_t i = 0; i < Boss::GetInstance()->parts.size(); i++)
 	{
-		if (ColPrimitive3D::CheckSphereToSphere(boss.parts[i].collider,
+		if (ColPrimitive3D::CheckSphereToSphere(Boss::GetInstance()->parts[i].collider,
 			player.collider))
 		{
 			//パンチタイマー進行中のみダメージ
-			if (boss.punchTimer.GetRun())
+			if (Boss::GetInstance()->punchTimer.GetRun())
 			{
 				//1ダメージ(どっかに参照先作るべき)
 				player.DealDamage(1);
@@ -275,23 +275,23 @@ void ProtoScene::Update()
 		for (auto& wax : group->waxs)
 		{
 			//ボス本体との判定
-			bool isCollision = ColPrimitive3D::CheckSphereToSphere(boss.collider, wax->collider);
+			bool isCollision = ColPrimitive3D::CheckSphereToSphere(Boss::GetInstance()->collider, wax->collider);
 
 			//投げられてる蝋に当たった時はダメージと蝋蓄積
 			if (isCollision && wax->isSolid == false && wax->isGround == false)
 			{
 				//一応1ダメージ(ダメージ量に応じてロウのかかり具合も進行)
-				boss.DealDamage(player.GetAttackPower());
+				Boss::GetInstance()->DealDamage(player.GetAttackPower());
 			}
 
-			for (size_t i = 0; i < boss.parts.size(); i++)
+			for (size_t i = 0; i < Boss::GetInstance()->parts.size(); i++)
 			{
 				//腕との判定
-				isCollision = ColPrimitive3D::CheckSphereToSphere(boss.parts[i].collider, wax->collider);
+				isCollision = ColPrimitive3D::CheckSphereToSphere(Boss::GetInstance()->parts[i].collider, wax->collider);
 				if (isCollision && wax->isSolid == false && wax->isGround == false)
 				{
 					//一応1ダメージ(ダメージ量に応じてロウのかかり具合も進行)
-					boss.parts[i].DealDamage(player.GetAttackPower());
+					Boss::GetInstance()->parts[i].DealDamage(player.GetAttackPower());
 				}
 			}
 		}
@@ -382,7 +382,7 @@ void ProtoScene::Update()
 	}
 
 	player.Update();
-	boss.Update();
+	Boss::GetInstance()->Update();
 	Level::Get()->Update();
 
 	for (auto& enemy1 : EnemyManager::GetInstance()->enemys)
@@ -500,7 +500,7 @@ void ProtoScene::Update()
 	if (RInput::GetInstance()->GetKeyDown(DIK_F6) ||
 		RInput::GetInstance()->GetPadButtonDown(XINPUT_GAMEPAD_START))
 	{
-		SceneManager::GetInstance()->Change<ResultScene,SimpleSceneTransition>();
+		SceneManager::GetInstance()->Change<FailedScene,SimpleSceneTransition>();
 	}
 
 #pragma region ImGui
@@ -540,7 +540,7 @@ void ProtoScene::Draw()
 	//nest.Draw();
 
 	Level::Get()->Draw();
-	boss.Draw();
+	Boss::GetInstance()->Draw();
 	player.Draw();
 
 	if (eventScene->isActive)

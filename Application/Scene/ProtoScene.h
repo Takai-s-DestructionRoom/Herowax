@@ -36,7 +36,6 @@ private:
 	ModelObj skydome;	//天球
 	Player player;
 	Wave wave;
-	Boss boss;
 	std::unique_ptr<IEventScene> eventScene;
 
 	Camera minimapCamera = Camera();	//ミニマップ用の仮想カメラ
