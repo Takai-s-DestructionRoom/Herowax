@@ -797,6 +797,7 @@ void Player::PabloAttack()
 	//攻撃中かストックないなら次の攻撃が出せない
 	if (atkCoolTimer.GetRun() || waxStock <= 0)return;
 	atkCoolTimer.Start();
+	soundFlag = false;
 	
 	Vector3 pabloVec = { 0,0,0 };
 	//入力があるならそっちへ

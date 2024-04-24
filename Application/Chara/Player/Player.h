@@ -142,7 +142,9 @@ private:
 	//---------ロウの総量描画オブジェクト---------//
 	PaintableModelObj waxTankObj;
 
+
 public:
+	bool soundFlag = false;
 	Player();
 
 	void Init()override;

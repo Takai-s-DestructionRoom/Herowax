@@ -18,6 +18,7 @@
 #include "EventCaller.h"
 #include "TitleScene.h"
 #include "SimpleSceneTransition.h"
+#include "RAudio.h"
 
 ProtoScene::ProtoScene()
 {
@@ -221,15 +222,17 @@ void ProtoScene::Update()
 		}
 	}
 
+	bool isHitSound = false;
+
 	for (auto& enemy : EnemyManager::GetInstance()->enemys)
 	{
 		//タワーとの当たり判定
-		if (ColPrimitive3D::CheckSphereToSphere(enemy->collider,
+		/*if (ColPrimitive3D::CheckSphereToSphere(enemy->collider,
 			Level::Get()->tower.collider)) {
 			enemy->SetDeath();
 			Vector3 vec = Level::Get()->tower.GetPos() - enemy->GetPos();
 			Level::Get()->tower.Damage(1.f, vec);
-		}
+		}*/
 		//プレイヤーとの当たり判定
 		//特定範囲内に入ったら敵を攻撃状態へ遷移
 		if (enemy->GetAttackState() == "NonAttack")
@@ -285,6 +288,7 @@ void ProtoScene::Update()
 			{
 				//一応1ダメージ(ダメージ量に応じてロウのかかり具合も進行)
 				boss.DealDamage(player.GetAttackPower());
+				isHitSound = true;
 			}
 
 			for (size_t i = 0; i < boss.parts.size(); i++)
@@ -295,6 +299,7 @@ void ProtoScene::Update()
 				{
 					//一応1ダメージ(ダメージ量に応じてロウのかかり具合も進行)
 					boss.parts[i].DealDamage(player.GetAttackPower());
+					isHitSound = true;
 				}
 			}
 		}
@@ -325,6 +330,7 @@ void ProtoScene::Update()
 						knockVec.y = 0;
 						enemy->DealDamage(player.GetAttackPower(),
 							knockVec, &player.obj);
+						isHitSound = true;
 					}
 					//地面の蝋とぶつかってたら足盗られに
 					else
@@ -382,6 +388,13 @@ void ProtoScene::Update()
 				}
 			}
 		}
+	}
+
+	if (isHitSound && !player.soundFlag) {
+		//ここで攻撃のヒット音を鳴らす
+		
+		//フラグを立てる
+		player.soundFlag = true;
 	}
 
 	player.Update();
