@@ -2,6 +2,7 @@
 #include "TitleScene.h"
 #include "RInput.h"
 #include "SceneManager.h"
+#include "SimpleSceneTransition.h"
 
 ResultScene::ResultScene()
 {
@@ -22,7 +23,7 @@ void ResultScene::Update()
 	if (RInput::GetInstance()->GetKeyDown(DIK_F6) ||
 		RInput::GetInstance()->GetPadButtonDown(XINPUT_GAMEPAD_START))
 	{
-		SceneManager::GetInstance()->Change<TitleScene>();
+		SceneManager::GetInstance()->Change<TitleScene, SimpleSceneTransition>();
 	}
 
 	ResultLogo.mTransform.UpdateMatrix();

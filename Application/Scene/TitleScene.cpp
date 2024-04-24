@@ -3,6 +3,7 @@
 #include "RInput.h"
 #include "SceneManager.h"
 #include "InstantDrawer.h"
+#include "SimpleSceneTransition.h"
 
 TitleScene::TitleScene()
 {
@@ -65,14 +66,12 @@ void TitleScene::Update()
 
 	Level::Get()->Update();
 
-	titleLogoPos;
-
 	//F6かメニューボタン押されたらプロトシーンへ
 	if (RInput::GetInstance()->GetKeyDown(DIK_F6) ||
 		RInput::GetInstance()->GetKeyDown(DIK_SPACE) ||
 		RInput::GetInstance()->GetPadButtonDown(XINPUT_GAMEPAD_A))
 	{
-		SceneManager::GetInstance()->Change<ProtoScene>();
+		SceneManager::GetInstance()->Change<ProtoScene, SimpleSceneTransition>();
 	}
 
 	camera.mViewProjection.UpdateMatrix();

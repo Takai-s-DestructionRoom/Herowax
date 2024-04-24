@@ -500,7 +500,7 @@ void ProtoScene::Update()
 	if (RInput::GetInstance()->GetKeyDown(DIK_F6) ||
 		RInput::GetInstance()->GetPadButtonDown(XINPUT_GAMEPAD_START))
 	{
-		SceneManager::GetInstance()->Change<ResultScene>();
+		SceneManager::GetInstance()->Change<ResultScene,SimpleSceneTransition>();
 	}
 
 #pragma region ImGui
