@@ -11,7 +11,7 @@
 #include "Parameter.h"
 #include "SpawnOrderData.h"
 #include "Minimap.h"
-#include "CollectPartManager.h"
+//#include "CollectPartManager.h"
 #include "BossAppearanceScene.h"
 #include "BossDeadScene.h"
 #include "SceneTrance.h"
@@ -24,7 +24,7 @@
 ProtoScene::ProtoScene()
 {
 	TextureManager::Load("./Resources/Brush.png", "brush");
-	CollectPartManager::LoadResouces();
+	//CollectPartManager::LoadResouces();
 
 	skydome = ModelObj(Model::Load("./Resources/Model/bg/bg.obj", "bg"));
 	skydome.mTransform.scale = { 1.5f, 1.5f, 1.5f };
@@ -77,11 +77,11 @@ void ProtoScene::Init()
 	std::map<std::string, std::string> extract = Parameter::Extract("DebugBool");
 	Util::debugBool = Parameter::GetParam(extract, "debugBool", false);
 
-	CollectPartManager::GetInstance()->Init();
+	/*CollectPartManager::GetInstance()->Init();
 	CollectPartManager::GetInstance()->zone.pos = { 100,0,100 };
 	CollectPartManager::GetInstance()->zone.scale = { 100,100 };
 
-	CollectPartManager::GetInstance()->SetPlayer(&player);
+	CollectPartManager::GetInstance()->SetPlayer(&player);*/
 }
 
 void ProtoScene::Update()
@@ -200,29 +200,29 @@ void ProtoScene::Update()
 		}
 	}
 
-	//パーツとの判定
-	for (auto& part : CollectPartManager::GetInstance()->parts)
-	{
-		if ((int32_t)player.carryingParts.size() <
-			CollectPartManager::GetInstance()->GetMaxCarryingNum()) {
-			if (ColPrimitive3D::CheckSphereToSphere(part->collider, player.collider)) {
-				//一旦複数持てる
-				//後でプレイヤー側でフラグ立てて個数制限する
-				part->Carrying(&player);
-			}
-		}
+	////パーツとの判定
+	//for (auto& part : CollectPartManager::GetInstance()->parts)
+	//{
+	//	if ((int32_t)player.carryingParts.size() <
+	//		CollectPartManager::GetInstance()->GetMaxCarryingNum()) {
+	//		if (ColPrimitive3D::CheckSphereToSphere(part->collider, player.collider)) {
+	//			//一旦複数持てる
+	//			//後でプレイヤー側でフラグ立てて個数制限する
+	//			part->Carrying(&player);
+	//		}
+	//	}
 
-		//プレイヤーが持っているなら
-		if (part->IsCarrying()) {
-			//当たり判定する
-			if (ColPrimitive3D::CheckSphereToAABB(player.collider,
-				CollectPartManager::GetInstance()->zone.aabbCol)) {
-				part->Collect();
-				part->SetIsAlive(false);
-				CollectPartManager::GetInstance()->zone.Create(*part);
-			}
-		}
-	}
+	//	//プレイヤーが持っているなら
+	//	if (part->IsCarrying()) {
+	//		//当たり判定する
+	//		if (ColPrimitive3D::CheckSphereToAABB(player.collider,
+	//			CollectPartManager::GetInstance()->zone.aabbCol)) {
+	//			part->Collect();
+	//			part->SetIsAlive(false);
+	//			CollectPartManager::GetInstance()->zone.Create(*part);
+	//		}
+	//	}
+	//}
 
 	for (auto itr = player.carryingParts.begin(); itr != player.carryingParts.end();)
 	{
@@ -482,7 +482,7 @@ void ProtoScene::Update()
 	ParticleManager::GetInstance()->Update();
 
 	WaxManager::GetInstance()->Update();
-	CollectPartManager::GetInstance()->Update();
+	//CollectPartManager::GetInstance()->Update();
 
 	//Minimap::GetInstance()->Update();
 
@@ -526,7 +526,7 @@ void ProtoScene::Draw()
 	ParticleManager::GetInstance()->Draw();
 	skydome.Draw();
 	WaxManager::GetInstance()->Draw();
-	CollectPartManager::GetInstance()->Draw();
+	//CollectPartManager::GetInstance()->Draw();
 
 	//FireManager::GetInstance()->Draw();
 	//TemperatureManager::GetInstance()->Draw();

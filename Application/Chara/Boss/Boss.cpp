@@ -25,17 +25,8 @@ moveSpeed(0.1f), hp(0), maxHP(10.f)
 	obj.mPaintDissolveMapTex = TextureManager::Load("./Resources/DissolveMap.png", "DissolveMapTex");
 	obj.mTransform.scale = Vector3::ONE * 8.f;
 
-	//モデル設定
-	parts[(int32_t)PartsNum::RightHand].obj = PaintableModelObj(Model::Load("./Resources/Model/leftArm/leftArm.obj", "leftArm", true));
-	parts[(int32_t)PartsNum::LeftHand].obj = PaintableModelObj(Model::Load("./Resources/Model/rightArm/rightArm.obj", "rightArm", true));
-
 	parts[(size_t)PartsNum::LeftHand].oriPos = { 50.f,20.f,0.f };
 	parts[(size_t)PartsNum::RightHand].oriPos = { -50.f,20.f,0.f };
-
-	for (size_t i = 0; i < parts.size(); i++)
-	{
-		parts[i].Init();
-	}
 
 	targetCircle = ModelObj(Model::Load("./Resources/Model/targetMark/targetMark.obj", "targetMark", true));
 
@@ -48,12 +39,6 @@ moveSpeed(0.1f), hp(0), maxHP(10.f)
 	colliderSize = Parameter::GetParam(extract,"ボス本体の当たり判定", colliderSize);
 	mutekiTimer.maxTime_ = Parameter::GetParam(extract,"無敵時間", mutekiTimer.maxTime_);
 	
-	parts[(int32_t)PartsNum::LeftHand].obj.mTransform.scale.x = Parameter::GetParam(extract,"左手スケールX", parts[(int32_t)PartsNum::LeftHand].obj.mTransform.scale.x);
-	parts[(int32_t)PartsNum::LeftHand].obj.mTransform.scale.y = Parameter::GetParam(extract,"左手スケールY", parts[(int32_t)PartsNum::LeftHand].obj.mTransform.scale.y);
-	parts[(int32_t)PartsNum::LeftHand].obj.mTransform.scale.z = Parameter::GetParam(extract,"左手スケールZ", parts[(int32_t)PartsNum::LeftHand].obj.mTransform.scale.z);
-	parts[(int32_t)PartsNum::RightHand].obj.mTransform.scale.x = Parameter::GetParam(extract,"右手スケールX", parts[(int32_t)PartsNum::RightHand].obj.mTransform.scale.x);
-	parts[(int32_t)PartsNum::RightHand].obj.mTransform.scale.y = Parameter::GetParam(extract,"右手スケールY", parts[(int32_t)PartsNum::RightHand].obj.mTransform.scale.y);
-	parts[(int32_t)PartsNum::RightHand].obj.mTransform.scale.z = Parameter::GetParam(extract,"右手スケールZ", parts[(int32_t)PartsNum::RightHand].obj.mTransform.scale.z);
 	standTimer = Parameter::GetParam(extract,"モーション待機時間", 3.f);
 	punchTimer = Parameter::GetParam(extract,"パンチにかかる時間", 0.7f);
 	punchStayTimer = Parameter::GetParam(extract,"パンチ後留まる時間", 1.5f);
@@ -114,14 +99,22 @@ void Boss::Init()
 
 	ai.Init();
 
-	////モデル設定
-	//parts[(int32_t)PartsNum::RightHand].obj = PaintableModelObj(Model::Load("./Resources/Model/leftArm/leftArm.obj", "leftArm", true));
-	//parts[(int32_t)PartsNum::LeftHand].obj = PaintableModelObj(Model::Load("./Resources/Model/rightArm/rightArm.obj", "rightArm", true));
+	//モデル設定
+	parts[(int32_t)PartsNum::RightHand].obj = PaintableModelObj(Model::Load("./Resources/Model/leftArm/leftArm.obj", "leftArm", true));
+	parts[(int32_t)PartsNum::LeftHand].obj = PaintableModelObj(Model::Load("./Resources/Model/rightArm/rightArm.obj", "rightArm", true));
 
-	//for (size_t i = 0; i < parts.size(); i++)
-	//{
-	//	parts[i].Init();
-	//}
+	std::map<std::string, std::string> extract = Parameter::Extract("Boss");
+	parts[(int32_t)PartsNum::LeftHand].obj.mTransform.scale.x = Parameter::GetParam(extract, "左手スケールX", parts[(int32_t)PartsNum::LeftHand].obj.mTransform.scale.x);
+	parts[(int32_t)PartsNum::LeftHand].obj.mTransform.scale.y = Parameter::GetParam(extract, "左手スケールY", parts[(int32_t)PartsNum::LeftHand].obj.mTransform.scale.y);
+	parts[(int32_t)PartsNum::LeftHand].obj.mTransform.scale.z = Parameter::GetParam(extract, "左手スケールZ", parts[(int32_t)PartsNum::LeftHand].obj.mTransform.scale.z);
+	parts[(int32_t)PartsNum::RightHand].obj.mTransform.scale.x = Parameter::GetParam(extract, "右手スケールX", parts[(int32_t)PartsNum::RightHand].obj.mTransform.scale.x);
+	parts[(int32_t)PartsNum::RightHand].obj.mTransform.scale.y = Parameter::GetParam(extract, "右手スケールY", parts[(int32_t)PartsNum::RightHand].obj.mTransform.scale.y);
+	parts[(int32_t)PartsNum::RightHand].obj.mTransform.scale.z = Parameter::GetParam(extract, "右手スケールZ", parts[(int32_t)PartsNum::RightHand].obj.mTransform.scale.z);
+
+	for (size_t i = 0; i < parts.size(); i++)
+	{
+		parts[i].Init();
+	}
 
 	deadEventCall = false;
 }
