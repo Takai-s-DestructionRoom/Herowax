@@ -279,7 +279,7 @@ void ProtoScene::Update()
 			if (isCollision && wax->isSolid == false && wax->isGround == false)
 			{
 				//一応1ダメージ(ダメージ量に応じてロウのかかり具合も進行)
-				boss.DealDamage(player.GetAttackPower());
+				Boss::GetInstance()->DealDamage(player.GetAttackPower());
 				isHitSound = true;
 			}
 
@@ -290,7 +290,7 @@ void ProtoScene::Update()
 				if (isCollision && wax->isSolid == false && wax->isGround == false)
 				{
 					//一応1ダメージ(ダメージ量に応じてロウのかかり具合も進行)
-					boss.parts[i].DealDamage(player.GetAttackPower());
+					Boss::GetInstance()->parts[i].DealDamage(player.GetAttackPower());
 					isHitSound = true;
 				}
 			}
