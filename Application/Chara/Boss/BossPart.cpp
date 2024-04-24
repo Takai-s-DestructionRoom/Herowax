@@ -29,7 +29,6 @@ Parts::~Parts()
 
 void Parts::Init()
 {
-	hp = maxHP;
 	isAlive = true;
 
 	isCollected = false;
@@ -137,6 +136,11 @@ void Parts::Draw()
 	}
 }
 
+bool Parts::GetIsSolid()
+{
+	return waxSolidCount >= requireWaxSolidCount;
+}
+
 void Parts::DealDamage(int32_t damage)
 {
 	//無敵時間さん中ならスキップ
@@ -156,7 +160,4 @@ void Parts::DealDamage(int32_t damage)
 	waxShakeOffTimer.Start();
 
 	waxScatterTimer.Reset();
-
-	//一応HPにダメージ(使うか不明)
-	hp -= damage;
 }

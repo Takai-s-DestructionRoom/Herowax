@@ -16,8 +16,6 @@ public:
 
 private:
 	//------------ HP関連 ------------//
-	float hp = 0.0f;				//現在のヒットポイント
-	float maxHP = 10.0f;			//最大HP
 	Easing::EaseTimer mutekiTimer;			//無敵時間さん
 
 	//---------被弾時表現関連------------//
@@ -54,6 +52,8 @@ public:
 
 	//---ゲッター系---//
 	int32_t GetWaxSolidCount() {return waxSolidCount;}
+	//固まってるかどうか
+	bool GetIsSolid();
 
 	//---セッター系---//
 	//無敵時間設定

@@ -102,8 +102,8 @@ void BossPunch::Update(Boss* boss)
 	}
 
 	//どっちかの手が固まってるなら
-	if ((boss->parts[0].GetWaxSolidCount() >= 10 && boss->parts[0].GetIsAlive()) ||
-		(boss->parts[1].GetWaxSolidCount() >= 10 && boss->parts[1].GetIsAlive()))
+	if ((boss->parts[0].GetIsSolid() && boss->parts[0].GetIsAlive()) ||
+		(boss->parts[1].GetIsSolid() && boss->parts[1].GetIsAlive()))
 	{
 		//ステート変化を通らなくさせる
 		return;

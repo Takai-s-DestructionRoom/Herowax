@@ -404,12 +404,10 @@ bool Boss::GetIsSolid(PartsNum num)
 	switch (num)
 	{
 	case PartsNum::RightHand:
-		return parts[(int32_t)PartsNum::RightHand].GetWaxSolidCount() >= 
-			parts[(int32_t)PartsNum::RightHand].requireWaxSolidCount;
+		return parts[(int32_t)PartsNum::RightHand].GetIsSolid();
 		break;
 	case PartsNum::LeftHand:
-		return  parts[(int32_t)PartsNum::LeftHand].GetWaxSolidCount() >=
-			parts[(int32_t)PartsNum::LeftHand].requireWaxSolidCount;
+		return  parts[(int32_t)PartsNum::LeftHand].GetIsSolid();
 		break;
 	default:
 		return waxSolidCount >= requireWaxSolidCount;
