@@ -14,6 +14,7 @@
 #include <random>
 #include <chrono>
 #include <windows.h>
+#include "Vector2.h"
 #include "Vector3.h"
 #pragma warning(pop)
 
@@ -179,4 +180,7 @@ namespace Util {
 
     //文字列に指定した文字列が含まれていればtrue
     bool ContainString(const std::string& str,const std::string& check);
+
+    //円運動
+    Vector2 CircleMotion(Vector2 CenterPoint, float radius, float angle);
 }
