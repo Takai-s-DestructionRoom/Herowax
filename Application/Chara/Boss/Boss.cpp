@@ -98,14 +98,30 @@ void Boss::Init()
 
 	isOldBodySolid = false;
 
-	ChangeState<BossNormal>();
+	state = std::make_unique<BossNormal>();
+	nextState = nullptr;
+
+	changingState = false;
+
+	isOldBodySolid = false;
+
+	waxSolidCount = 0;
+	waxShakeOffTimer.Reset();
+
+	shakeTimer.Reset();
+	waxScatterTimer.Reset();
+	shake = Vector3::ZERO;
 
 	ai.Init();
 
-	for (size_t i = 0; i < parts.size(); i++)
-	{
-		parts[i].Init();
-	}
+	////モデル設定
+	//parts[(int32_t)PartsNum::RightHand].obj = PaintableModelObj(Model::Load("./Resources/Model/leftArm/leftArm.obj", "leftArm", true));
+	//parts[(int32_t)PartsNum::LeftHand].obj = PaintableModelObj(Model::Load("./Resources/Model/rightArm/rightArm.obj", "rightArm", true));
+
+	//for (size_t i = 0; i < parts.size(); i++)
+	//{
+	//	parts[i].Init();
+	//}
 
 	deadEventCall = false;
 }
