@@ -28,14 +28,10 @@ ProtoScene::ProtoScene()
 	skydome.mTransform.scale = { 1.5f, 1.5f, 1.5f };
 	skydome.mTransform.UpdateMatrix();
 
-	//TemperatureUI::LoadResource();
 	EnemyManager::LoadResource();
 	InstantDrawer::PreCreate();
 
 	Level::Get()->Load();
-
-	wave.Load();
-	//EggUI::LoadResource();
 }
 
 void ProtoScene::Init()
@@ -59,8 +55,6 @@ void ProtoScene::Init()
 	ParticleManager::GetInstance()->Init();
 
 	WaxManager::GetInstance()->Init();
-	//FireManager::GetInstance()->Init();
-	//TemperatureManager::GetInstance()->Init();
 
 	//とりあえず最初のステージを設定しておく
 	Level::Get()->Extract("test");
@@ -111,7 +105,7 @@ void ProtoScene::Update()
 		eventScene->Init(Boss::GetInstance()->GetCenterPos() + Vector3::UP * 20.f);
 
 		player.isMove = false;
-		Boss::GetInstance()->isDead = true;
+		boss.isDead = true;
 
 		SceneTrance::GetInstance()->SetIsChange(false);	//忘れずに
 		EventCaller::EventCallStrReset();
@@ -125,7 +119,10 @@ void ProtoScene::Update()
 		eventScene->Init(Boss::GetInstance()->GetCenterPos() + Vector3::UP * 20.f);
 
 		player.isMove = false;
-		
+		boss.isAppearance = true;
+		boss.isAlive = true;
+		EnemyManager::GetInstance()->isStop = true;
+
 		SceneTrance::GetInstance()->SetIsChange(false);	//忘れずに
 		EventCaller::EventCallStrReset();
 	}
@@ -149,13 +146,17 @@ void ProtoScene::Update()
 	if (Camera::sNowCamera == nullptr)
 	{
 		gameCamera.Init();	//カメラ入れる
-		Boss::GetInstance()->isAppearance = false;
-
 		player.isMove = true;
+		EnemyManager::GetInstance()->isStop = false;
+
+		//今後まとめるときは、End()みたいな項目でこれらを呼べるようにしたい
+		//登場演出なら、ボスの登場演出モードを解除
+		if (EventCaller::GetNowEventStr() == BossAppearanceScene::GetEventCallStr()) {
+			boss.isAppearance = false;
+		}
 
 		//死亡シーンの呼び出しが終わったならタイトルに戻す
-		if (EventCaller::GetNowEventStr() ==
-			BossDeadScene::GetEventCallStr()) {
+		if (EventCaller::GetNowEventStr() == BossDeadScene::GetEventCallStr()) {
 			SceneManager::GetInstance()->Change<TitleScene,SimpleSceneTransition>();
 		}
 

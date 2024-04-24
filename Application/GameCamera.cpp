@@ -37,7 +37,8 @@ void GameCamera::Update()
 			cameraAngle.x += cameraSpeed.y * inverse.y * stick.y;
 		}
 	}
-	cameraAngle.x = Util::Clamp(cameraAngle.x, 0.f, Util::AngleToRadian(89.f));
+	//カメラの上限設定
+	cameraAngle.x = Util::Clamp(cameraAngle.x, Util::AngleToRadian(15.f), Util::AngleToRadian(89.f));
 
 	Vector3 cameraVec = { 0, 0, 1 };
 	//カメラアングル適応

@@ -43,8 +43,12 @@ private:
 
 	float phaseTimer;	//フェーズ移行に使うタイマー
 
+	//------------- イベントシーン関連 -----------//
+	Easing::EaseTimer bossSpawnTimer;
 	//撃破演出呼び出し用フラグ
 	bool deadEventCall = false;
+
+	bool isOldBodySolid = false;//前フレームで本体が固まっているか
 
 	//---------被弾時表現関連------------//
 	Easing::EaseTimer whiteTimer;	//被弾時に白く光るのを管理する
@@ -80,11 +84,9 @@ public:
 	Easing::EaseTimer punchStayTimer;	//パンチ終わってからモーション終了までの時間
 	bool isAppearance = false;			//出現中かフラグ
 	bool isDead = false;				//撃破演出中かフラグ
-
+	//------------ 吸収対象の位置 ------//
 	Vector3 collectPos{};
 	
-	bool isOldBodySolid = false;//前フレームで本体が固まっているか
-
 private:
 	//すべてのステートでの共通処理
 	void AllStateUpdate();
