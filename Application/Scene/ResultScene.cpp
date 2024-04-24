@@ -5,7 +5,7 @@
 
 ResultScene::ResultScene()
 {
-	ResultLogo.SetTexture(TextureManager::Load("./Resources/clear.png", "clear"));
+	ResultLogo.SetTexture(TextureManager::Load("./Resources/UI/clear.png", "clear"));
 }
 
 void ResultScene::Init()

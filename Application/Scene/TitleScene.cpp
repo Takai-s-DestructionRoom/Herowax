@@ -5,7 +5,7 @@
 
 TitleScene::TitleScene()
 {
-	titleLogo.SetTexture(TextureManager::Load("./Resources/title.png", "title"));
+	titleLogo.SetTexture(TextureManager::Load("./Resources/UI/title.png", "title"));
 }
 
 void TitleScene::Init()

@@ -4,7 +4,7 @@
 
 BossAppearanceScene::BossAppearanceScene()
 {
-	TextureManager::Load("./Resources/boss.png", "boss");
+	TextureManager::Load("./Resources/UI/boss.png", "boss");
 }
 
 BossAppearanceScene::~BossAppearanceScene()
