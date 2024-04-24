@@ -48,7 +48,7 @@ private:
 	//撃破演出呼び出し用フラグ
 	bool deadEventCall = false;
 
-	bool isOldBodySolid = false;//前フレームで本体が固まっているか
+	bool isOldBodySolid = false;	//前フレームで本体が固まっているか
 
 	//---------被弾時表現関連------------//
 	Easing::EaseTimer whiteTimer;	//被弾時に白く光るのを管理する
