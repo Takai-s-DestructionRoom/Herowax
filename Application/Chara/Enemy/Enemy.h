@@ -120,6 +120,7 @@ public:
 	virtual ~Enemy();
 	void Init() override;
 	void Update() override;
+	void TransfarBuffer();
 	void Draw() override;
 
 	//引数があればノックバックもする(その方向を向かせるために攻撃対象も入れる)

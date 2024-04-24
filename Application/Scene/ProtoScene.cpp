@@ -107,6 +107,7 @@ void ProtoScene::Update()
 
 		player.isMove = false;
 		boss.isDead = true;
+		EnemyManager::GetInstance()->isStop = true;
 
 		SceneTrance::GetInstance()->SetIsChange(false);	//忘れずに
 		EventCaller::EventCallStrReset();
@@ -122,7 +123,8 @@ void ProtoScene::Update()
 		player.isMove = false;
 		boss.isAppearance = true;
 		boss.isAlive = true;
-		
+		EnemyManager::GetInstance()->isStop = true;
+
 		SceneTrance::GetInstance()->SetIsChange(false);	//忘れずに
 		EventCaller::EventCallStrReset();
 	}
@@ -147,6 +149,7 @@ void ProtoScene::Update()
 	{
 		gameCamera.Init();	//カメラ入れる
 		player.isMove = true;
+		EnemyManager::GetInstance()->isStop = false;
 
 		//今後まとめるときは、End()みたいな項目でこれらを呼べるようにしたい
 		//登場演出なら、ボスの登場演出モードを解除

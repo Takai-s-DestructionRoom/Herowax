@@ -197,7 +197,10 @@ void Enemy::Update()
 	brightColor.b = Easing::OutQuad(1, 0, whiteTimer.GetTimeRate());
 	brightColor.a = Easing::OutQuad(1, 0, whiteTimer.GetTimeRate());
 	if (!whiteTimer.GetStarted())brightColor = { 0,0,0,0 };
+}
 
+void Enemy::TransfarBuffer()
+{
 	UpdateCollider();
 	UpdateAttackCollider();
 
