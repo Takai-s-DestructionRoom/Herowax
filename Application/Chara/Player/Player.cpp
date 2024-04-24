@@ -88,7 +88,7 @@ isFireStock(false), isWaxStock(true), isCollectFan(false), maxWaxStock(20)
 	collectScale = Parameter::GetParam(extract,"回収中の大きさ", collectScale);
 
 	RAudio::Load("Resources/Sounds/SE/P_attack.wav", "Attack");
-	RAudio::Load("Resources/Sounds/SE/P_attackHit.wav", "Hit");
+	
 	
 	RAudio::Load("Resources/Sounds/SE/P_enemyCollect.wav", "eCollect");
 }

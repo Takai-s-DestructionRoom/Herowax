@@ -68,10 +68,12 @@ void TitleScene::Update()
 	Level::Get()->Update();
 
 	//F6かメニューボタン押されたらプロトシーンへ
-	if (RInput::GetInstance()->GetKeyDown(DIK_F6) ||
+	bool button = RInput::GetInstance()->GetKeyDown(DIK_F6) ||
 		RInput::GetInstance()->GetKeyDown(DIK_SPACE) ||
-		RInput::GetInstance()->GetPadButtonDown(XINPUT_GAMEPAD_A))
+		RInput::GetInstance()->GetPadButtonDown(XINPUT_GAMEPAD_A);
+	if (button && !sceneChange)
 	{
+		sceneChange = true;
 		RAudio::Play("Select");
 		SceneManager::GetInstance()->Change<ProtoScene, SimpleSceneTransition>();
 	}
