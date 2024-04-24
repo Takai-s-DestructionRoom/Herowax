@@ -263,7 +263,6 @@
     <ClCompile Include="Application\Scene\ProtoScene.cpp" />
     <ClCompile Include="Application\Scene\ResultScene.cpp" />
     <ClCompile Include="Application\Scene\TitleScene.cpp" />
-    <ClCompile Include="Application\Object\Tower\Tower.cpp" />
     <ClCompile Include="Application\Object\Wax\Wax.cpp" />
     <ClCompile Include="Application\Object\Wax\WaxManager.cpp" />
     <ClCompile Include="Engine\Particle\Particle3D.cpp" />
@@ -871,7 +870,6 @@
     <ClInclude Include="Application\Scene\ProtoScene.h" />
     <ClInclude Include="Application\Scene\ResultScene.h" />
     <ClInclude Include="Application\Scene\TitleScene.h" />
-    <ClInclude Include="Application\Object\Tower\Tower.h" />
     <ClInclude Include="Application\Object\Wax\Wax.h" />
     <ClInclude Include="Application\Object\Wax\WaxManager.h" />
     <ClInclude Include="Engine\Particle\Particle3D.h" />

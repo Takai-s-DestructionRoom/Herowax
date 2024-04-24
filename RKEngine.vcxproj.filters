@@ -561,9 +561,6 @@
     <ClCompile Include="Engine\Easing.cpp">
       <Filter>ソース ファイル\Engine</Filter>
     </ClCompile>
-    <ClCompile Include="Application\Object\Tower\Tower.cpp">
-      <Filter>ソース ファイル\Application\Object\Tower</Filter>
-    </ClCompile>
     <ClCompile Include="Application\Chara\Enemy\Enemy.cpp">
       <Filter>ソース ファイル\Application\Object\Chara\Enemy</Filter>
     </ClCompile>
@@ -1201,9 +1198,6 @@
     </ClInclude>
     <ClInclude Include="Engine\Easing.h">
       <Filter>ヘッダー ファイル\Engine</Filter>
-    </ClInclude>
-    <ClInclude Include="Application\Object\Tower\Tower.h">
-      <Filter>ヘッダー ファイル\Application\Object\Tower</Filter>
     </ClInclude>
     <ClInclude Include="Application\Chara\Enemy\Enemy.h">
       <Filter>ヘッダー ファイル\Application\Object\Chara\Enemy</Filter>

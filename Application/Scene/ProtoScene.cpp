@@ -18,6 +18,7 @@
 #include "EventCaller.h"
 #include "TitleScene.h"
 #include "SimpleSceneTransition.h"
+#include "Boss.h"
 
 ProtoScene::ProtoScene()
 {
@@ -105,7 +106,7 @@ void ProtoScene::Update()
 		eventScene->Init(Boss::GetInstance()->GetCenterPos() + Vector3::UP * 20.f);
 
 		player.isMove = false;
-		boss.isDead = true;
+		Boss::GetInstance()->isDead = true;
 
 		SceneTrance::GetInstance()->SetIsChange(false);	//忘れずに
 		EventCaller::EventCallStrReset();
@@ -119,8 +120,8 @@ void ProtoScene::Update()
 		eventScene->Init(Boss::GetInstance()->GetCenterPos() + Vector3::UP * 20.f);
 
 		player.isMove = false;
-		boss.isAppearance = true;
-		boss.isAlive = true;
+		Boss::GetInstance()->isAppearance = true;
+		Boss::GetInstance()->isAlive = true;
 		EnemyManager::GetInstance()->isStop = true;
 
 		SceneTrance::GetInstance()->SetIsChange(false);	//忘れずに
@@ -152,7 +153,7 @@ void ProtoScene::Update()
 		//今後まとめるときは、End()みたいな項目でこれらを呼べるようにしたい
 		//登場演出なら、ボスの登場演出モードを解除
 		if (EventCaller::GetNowEventStr() == BossAppearanceScene::GetEventCallStr()) {
-			boss.isAppearance = false;
+			Boss::GetInstance()->isAppearance = false;
 		}
 
 		//死亡シーンの呼び出しが終わったならタイトルに戻す
@@ -221,13 +222,6 @@ void ProtoScene::Update()
 
 	for (auto& enemy : EnemyManager::GetInstance()->enemys)
 	{
-		//タワーとの当たり判定
-		if (ColPrimitive3D::CheckSphereToSphere(enemy->collider,
-			Level::Get()->tower.collider)) {
-			enemy->SetDeath();
-			Vector3 vec = Level::Get()->tower.GetPos() - enemy->GetPos();
-			Level::Get()->tower.Damage(1.f, vec);
-		}
 		//プレイヤーとの当たり判定
 		//特定範囲内に入ったら敵を攻撃状態へ遷移
 		if (enemy->GetAttackState() == "NonAttack")

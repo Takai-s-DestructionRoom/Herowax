@@ -19,7 +19,6 @@ void Level::Load()
 void Level::Reset()
 {
 	spawnerManager->Init();
-	tower.Init();
 	EnemyManager::GetInstance()->Init();
 	//EnemyManager::GetInstance()->SetTarget(&tower.obj);
 	objects.clear();
@@ -59,8 +58,6 @@ void Level::Update()
 	ground.mTransform.UpdateMatrix();
 	ground.TransferBuffer(Camera::sNowCamera->mViewProjection);
 
-	tower.Update();
-
 	for (auto& tempWall : Level::Get()->wall)
 	{
 		tempWall.mTransform.UpdateMatrix();
@@ -73,7 +70,6 @@ void Level::Draw()
 	spawnerManager->Draw();
 	EnemyManager::GetInstance()->Draw();
 	ground.Draw();
-	tower.Draw();
 
 	for (auto& tempWall : Level::Get()->wall)
 	{
@@ -123,14 +119,6 @@ void Level::Extract(const std::string& handle)
 
 			SpawnOrderData temp = SpawnDataLoader::Load(objectData->spawnerOrder);
 			saveStartTiming.push_back(temp.startTiming);
-		}
-		if (objectData->setObjectName == "Tower")
-		{
-			tower.Init();
-			//座標を設定
-			tower.SetPos(objectData->translation);
-			tower.SetScale(objectData->scaling);
-			tower.SetRota(objectData->rotation);
 		}
 		if (objectData->setObjectName == "Wall")
 		{

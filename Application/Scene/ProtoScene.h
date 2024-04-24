@@ -10,7 +10,6 @@
 #include "ModelObj.h"
 #include "Sprite.h"
 #include "Player.h"
-#include "Tower.h"
 #include "EnemyManager.h"
 #include "EnemySpawner.h"
 #include "Boss.h"
