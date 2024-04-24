@@ -10,6 +10,7 @@ public:
 	Vector2 textOriSize;
 	Vector2 textSize;
 
+
 public:
 	BossAppearanceScene();
 	~BossAppearanceScene();
@@ -17,4 +18,6 @@ public:
 	void Init(const Vector3 target) override;
 	void Update() override;
 	void Draw() override;
+
+	static std::string GetEventCallStr() { return "BossAppearanceScene"; };
 };

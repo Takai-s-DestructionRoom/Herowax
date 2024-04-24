@@ -17,4 +17,6 @@ public:
 	void Init(const Vector3 target) override;
 	void Update() override;
 	void Draw() override;
+
+	static std::string GetEventCallStr() {return "BossDeadScene";};
 };

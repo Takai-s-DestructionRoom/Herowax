@@ -12,11 +12,6 @@ void BossAI::Init()
 
 void BossAI::Update(Boss* boss)
 {
-	if (boss->GetStateStr() == "Dead" || 
-		boss->GetStateStr() == "Collected") {
-	
-	}
-
 	bool changeAct = false;
 	bool isStand = false;
 
