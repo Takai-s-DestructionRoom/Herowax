@@ -25,10 +25,12 @@ void InstantDrawer::DrawInit()
 	}
 }
 
-void InstantDrawer::DrawGraph(const float& x, const float& y, 
+void InstantDrawer::DrawGraph(const float& x, const float& y,
 	float sizerateX, float sizerateY, float angle,
 	const std::string& handle, const Color& color,
-	const Anchor& anchor)
+	const Anchor& anchor/*,
+	const float& rectX, const float& rectY,
+	const float& rectWidth, const float& rectHeight*/)
 {
 	//ハンドルが空なら描画をキャンセル
 	if (handle == "")return;
@@ -43,6 +45,11 @@ void InstantDrawer::DrawGraph(const float& x, const float& y,
 			instant.mTransform.rotation = { 0,0,Util::AngleToRadian(angle) };
 			instant.mTransform.scale = { sizerateX,sizerateY,0 };
 			instant.mMaterial.mColor = color;
+			/*instant.SetTexRect(
+				int32_t(rectX),
+				int32_t(rectHeight),
+				int32_t(rectWidth),
+				int32_t(rectHeight));*/
 			switch (anchor)
 			{
 			case InstantDrawer::Anchor::LEFT:
@@ -66,7 +73,7 @@ void InstantDrawer::DrawGraph(const float& x, const float& y,
 	}
 }
 
-void InstantDrawer::DrawGraph3D(const Vector3& pos, float width, float height, 
+void InstantDrawer::DrawGraph3D(const Vector3& pos, float width, float height,
 	const std::string& handle, const Color& color)
 {
 	//ハンドルが空なら描画をキャンセル
@@ -112,7 +119,7 @@ void InstantDrawer::AllDraw2D()
 {
 	std::list<InstantSprite>* hoge = &Get()->sSprites;
 
-	for (auto &sprite : *hoge)
+	for (auto& sprite : *hoge)
 	{
 		if (sprite.isUse)
 		{

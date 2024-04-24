@@ -27,8 +27,11 @@ private:
 	Vector2 mAngle = { 0, 0 };
 	LightGroup light;
 
-	Vector2 titleLogoPos;	//タイトルの座標
+	Vector2 titleLogoPos;				//タイトルの座標
 	Easing::EaseTimer floatingTimer;	//ふよふよタイマー
+
+	Vector2 buttonUIPos;				//ボタンUIの座標
+	Easing::EaseTimer flashingTimer;	//点滅タイマー
 
 	float cameraDist;		//カメラの距離
 	float cameraRot;		//カメラ回転情報
