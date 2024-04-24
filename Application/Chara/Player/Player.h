@@ -139,6 +139,9 @@ private:
 
 	Vector3 modelOffset;//描画位置をずらす
 
+	//---------ロウの総量描画オブジェクト---------//
+	PaintableModelObj waxTankObj;
+
 public:
 	Player();
 

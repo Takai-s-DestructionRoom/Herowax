@@ -92,8 +92,14 @@ isFireStock(false), isWaxStock(true), isCollectFan(false), maxWaxStock(20)
 void Player::Init()
 {
 	obj = PaintableModelObj("playerBag");
+	obj.mPaintDissolveMapTex = TextureManager::Load("./Resources/DissolveMap.png",
+		"DissolveMap");
 
 	humanObj = ModelObj("playerHuman");
+
+	waxTankObj = PaintableModelObj(Model::Load("./Resources/Model/sphere.obj", "sphere", true));
+	waxTankObj.mPaintDissolveMapTex = TextureManager::Load("./Resources/deleteDesolveTex.png",
+		"deleteDesolveTex");
 
 	std::map<std::string, std::string> extract = Parameter::Extract("Player");
 	defColor.r = Parameter::GetParam(extract, "プレイヤーの色R", 1);
@@ -186,8 +192,7 @@ void Player::Update()
 	}
 
 	//攻撃ボタン入力中で、実際にロウが出せたら攻撃フラグを立てる
-	isAttack = (RInput::GetInstance()->GetRTrigger() || RInput::GetKey(DIK_P)) && 
-		(waxStock > 0);
+	isAttack = (RInput::GetInstance()->GetRTrigger() || RInput::GetKey(DIK_SPACE)) && (waxStock > 0);
 
 	//-----------クールタイム管理-----------//
 	atkTimer.Update();
@@ -294,33 +299,6 @@ void Player::Update()
 		godmodeTimer.Reset();
 	}
 
-	////移動範囲設定
-	//for (auto& wall : Level::Get()->wall)
-	//{
-	//	if (Level::Get()->moveLimitMax.x < wall.mTransform.position.x) {
-	//		Level::Get()->moveLimitMax.x = wall.mTransform.position.x;
-	//	}
-	//	if (Level::Get()->moveLimitMax.y < wall.mTransform.position.z) {
-	//		Level::Get()->moveLimitMax.y = wall.mTransform.position.z;
-	//	}
-	//	if (Level::Get()->moveLimitMin.x > wall.mTransform.position.x) {
-	//		Level::Get()->moveLimitMin.x = wall.mTransform.position.x;
-	//	}
-	//	if (Level::Get()->moveLimitMin.y > wall.mTransform.position.z) {
-	//		Level::Get()->moveLimitMin.y = wall.mTransform.position.z;
-	//	}
-	//}
-
-	////移動制限
-	//obj.mTransform.position.x =
-	//	Util::Clamp(obj.mTransform.position.x,
-	//		Level::Get()->moveLimitMin.x - obj.mTransform.scale.x,
-	//		Level::Get()->moveLimitMax.x + obj.mTransform.scale.x);
-	//obj.mTransform.position.z =
-	//	Util::Clamp(obj.mTransform.position.z,
-	//		Level::Get()->moveLimitMin.y - obj.mTransform.scale.z,
-	//		Level::Get()->moveLimitMax.y + obj.mTransform.scale.z);
-
 	moveVec *=
 		moveSpeed * moveAccel *
 		WaxManager::GetInstance()->isCollected;				//移動速度をかけ合わせたら完成(回収中は動けない)
@@ -354,6 +332,11 @@ void Player::Update()
 
 	//大きさを適用
 	humanObj.mTransform.scale = Vector3::ONE * humanScale;
+
+	//
+	waxTankObj.mTransform = obj.mTransform;
+	waxTankObj.mTransform.scale = (Vector3::ONE * bagScale) * 0.7f;
+	waxTankObj.mTransform.position.y = obj.mTransform.position.y + (bagScale * 0.75f);
 
 	UpdateCollider();
 	UpdateAttackCollider();
@@ -419,10 +402,19 @@ void Player::Update()
 
 	//更新してからバッファに送る
 	obj.mTransform.UpdateMatrix();
+	obj.mPaintDataBuff->dissolveVal = (float)waxStock / (float)maxWaxStock;;
+	obj.mPaintDataBuff->color = Color(0.8f, 0.6f, 0.35f, 1.0f);
+	obj.mPaintDataBuff->slide += TimeManager::deltaTime;
 	BrightTransferBuffer(Camera::sNowCamera->mViewProjection);
 
 	humanObj.mTransform.UpdateMatrix();
 	humanObj.TransferBuffer(Camera::sNowCamera->mViewProjection);
+
+	waxTankObj.mTransform.UpdateMatrix();
+	waxTankObj.mPaintDataBuff->dissolveVal = (float)waxStock / (float)maxWaxStock;;
+	waxTankObj.mPaintDataBuff->color = Color(0.8f, 0.6f, 0.35f, 1.0f);
+	waxTankObj.mPaintDataBuff->slide += TimeManager::deltaTime;
+	waxTankObj.TransferBuffer(Camera::sNowCamera->mViewProjection);
 
 	ui.Update(this);
 
@@ -573,8 +565,10 @@ void Player::Draw()
 {
 	if (isAlive || Util::debugBool)
 	{
-		BrightDraw();
+		//waxTankObj.Draw();
 
+		BrightDraw();
+		
 		//回収中は別モデルに置き換えるので描画しない
 		if (WaxManager::GetInstance()->isCollected) {
 			humanObj.Draw();

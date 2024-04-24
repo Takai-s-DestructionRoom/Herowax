@@ -2,10 +2,6 @@
 #include "Boss.h"
 #include "ParticleManager.h"
 
-BossPunch::BossPunch()
-{
-}
-
 BossPunch::BossPunch(bool isLeft)
 {
 	isFinished = false;

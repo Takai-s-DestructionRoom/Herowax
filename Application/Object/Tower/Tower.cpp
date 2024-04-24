@@ -55,7 +55,7 @@ void Tower::Update()
 			//デバッグ中なら遷移しない
 			if (!Util::debugBool) {
 				//死んだらシーン遷移
-				SceneManager::GetInstance()->Change<ResultScene, SimpleSceneTransition>();
+				//SceneManager::GetInstance()->Change<ResultScene, SimpleSceneTransition>();
 			}
 		}
 		isAlive = false;
