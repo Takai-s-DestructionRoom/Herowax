@@ -10,6 +10,7 @@ public:
 	virtual void Update(Enemy* enemy) = 0;
 	virtual ~EnemyState() {};
 	int32_t GetPriority();
+
 public:
 	int32_t priority = -1;	//優先度 
 	//ステートが変化する際、変化先の優先度を参照し、
@@ -60,4 +61,18 @@ class EnemyPreAttack : public EnemyState
 {
 public:
 
+};
+
+//回収中
+class EnemyCollect : public EnemyState
+{
+public:
+	EnemyCollect();
+	void Update(Enemy* enemy)override;
+
+private:
+	float accel = 0.f;			//回収の加速度
+	bool isStart = true;
+	float oldTimeRate = 0.0f;
+	Vector3 startPos;
 };

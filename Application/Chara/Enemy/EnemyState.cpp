@@ -38,7 +38,7 @@ void EnemySlow::Update(Enemy* enemy)
 
 EnemyAllStop::EnemyAllStop()
 {
-	priority = 0;
+	priority = 1;
 }
 
 void EnemyAllStop::Update(Enemy* enemy)
@@ -60,17 +60,17 @@ void EnemyAllStop::Update(Enemy* enemy)
 	//enemy->obj.mTuneMaterial.mColor = Wax::waxOriginColor;
 
 	//脱出タイマーが終わったら通常の状態へ戻す
-	if (enemy->solidTimer.GetEnd()) {
+	/*if (enemy->solidTimer.GetEnd()) {
 		enemy->solidTimer.Reset();
 		enemy->ChangeState<EnemyNormal>();
-	}
+	}*/
 
-	if (enemy->solidTimer.GetTimeRate() > 0.5f && 
+	if (enemy->solidTimer.GetTimeRate() > 0.5f &&
 		enemy->solidTimer.GetRun()) {
-		
+
 		//シェイクを算出
 		enemy->shack = Util::GetRandVector3(enemy->obj.mTransform.position, -1.f, 1.f, { 1,0,1 });
-		
+
 		//この値を移動値に足したいので、移動した分の値だけを算出
 		enemy->shack -= enemy->obj.mTransform.position;
 	}
@@ -134,4 +134,51 @@ void EnemyBurning::Update(Enemy* enemy)
 int32_t EnemyState::GetPriority()
 {
 	return priority;
+}
+
+EnemyCollect::EnemyCollect()
+{
+	priority = 2;
+}
+
+void EnemyCollect::Update(Enemy* enemy)
+{
+	enemy->isCollect = true;
+
+	oldTimeRate = enemy->collectTimer.GetTimeRate();
+	enemy->collectTimer.Update();
+	if (isStart) {
+		enemy->collectTimer.Start();
+		isStart = false;
+		startPos = enemy->obj.mTransform.position;
+	}
+	enemy->SetStateStr("EnemyCollect");
+
+	Vector3 now = OutQuadVec3(startPos, enemy->collectPos, enemy->collectTimer.GetTimeRate());
+	Vector3 old = OutQuadVec3(startPos, enemy->collectPos, oldTimeRate);
+	now.y = 0;
+	old.y = 0;
+	//現在フレームの移動量の分だけをmoveVecに足す
+	enemy->MoveVecPlus(now - old);
+
+	//徐々にちっちゃくなる(ロウとまぎれてよくわかんなくなるから消してる)
+	//enemy->obj.mTransform.scale = OutQuadVec3(enemy->oriScale, Vector3::ZERO, enemy->collectTimer.GetTimeRate());
+
+	enemy->RotVecPlus({ 0,enemy->collectTimer.GetTimeRate() - oldTimeRate,0 });
+
+	Vector3 startRota = {0,0,0};
+	Vector3 endRota = {0,Util::AngleToRadian(360.f),0};
+
+	//euler軸へ変換
+	//回転は代入
+	enemy->RotVecPlus(InQuadVec3(startRota, endRota, enemy->collectTimer.GetTimeRate()));
+
+	//到達したら殺す
+	if (enemy->collectTimer.GetEnd())
+	{
+		enemy->isAlive = false;
+		accel = 0.f;
+
+		//enemyManager::GetInstance()->isCollected = true;
+	}
 }

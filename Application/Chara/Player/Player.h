@@ -32,6 +32,8 @@ public:
 	Vector3 initPos = { 0,0,0 };	//初期位置
 	Vector3 initRot = { 0,0,0 };	//初期向き
 	bool isMove;					//行動可能かフラグ
+	Vector3 slideVec;				//壁に当たった時スライドさせるベクトル
+	float toWallLen;				//壁との距離
 
 	//------------ 回転関連 ------------//
 	Vector3 rotVec;				//回転ベクトル
@@ -109,6 +111,7 @@ public:
 	std::unique_ptr<PlayerState> attackState;
 	std::unique_ptr<PlayerState> nextState;
 	bool changingState = false;
+	Vector3 cameraDir;				//カメラの向いてる方向
 
 	ColPrimitive3D::Sphere attackHitCollider;	//敵が攻撃状態へ遷移する当たり判定
 	
@@ -124,6 +127,15 @@ private:
 	Boss* boss = nullptr;
 
 	Color defColor;
+
+	ModelObj humanObj;
+	float humanOffset = 0.f;
+	float humanScale = 0.0f;
+	float bagScale = 0.0f;
+
+	bool modelChange = false;
+
+	float collectScale = 0.0f;
 
 public:
 	Player();

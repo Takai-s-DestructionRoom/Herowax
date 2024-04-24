@@ -55,11 +55,15 @@ public:
 
 	//指定した座標に敵を生成
 	template <typename TEnemy>
-	void CreateEnemy(const Vector3 position)
+	void CreateEnemy(const Vector3& position,const Vector3& scale,const Vector3& rotation,
+		const std::string& behaviorOrder)
 	{
 		enemys.emplace_back();
 		enemys.back() = std::make_unique<TEnemy>(target);
 		enemys.back()->SetPos(position);
+		enemys.back()->SetScale(scale);
+		enemys.back()->SetRota(rotation);
+		enemys.back()->SetBehaviorOrder(behaviorOrder);
 		enemys.back()->Init();
 	}
 

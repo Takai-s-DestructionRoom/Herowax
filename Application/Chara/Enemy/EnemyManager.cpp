@@ -64,6 +64,7 @@ void EnemyManager::Update()
 		enemy->SetKnockRange(knockRange);
 		enemy->SetKnockTime(knockTime);
 		enemy->SetMutekiTime(mutekiTime);
+		enemy->SetTarget(target);
 
 		enemy->Update();
 	}
@@ -89,13 +90,27 @@ void EnemyManager::Update()
 		}
 	}
 
+	if (ImGui::Button("敵を回収状態へ遷移")) {
+		for (auto& enemy : enemys)
+		{
+			enemy->ChangeState<EnemyCollect>();
+		}
+	}
+
 	ImGui::Text("EnemyNum:%d", enemys.size());
 	ImGui::DragFloat3("敵の大きさ", &enemySize.x, 0.1f);
 	static bool hitChecker = false;
 	if (ImGui::TreeNode("攻撃系"))
 	{
 		ImGui::Checkbox("接触ダメージをつけるか", &isContactDamage);
-		ImGui::InputFloat("敵の攻撃力", &normalAtkPower, 1.f);
+		ImGui::InputFloat("敵の攻撃力(突進時)", &normalAtkPower, 1.f);
+		if (isContactDamage) {
+			ImGui::InputFloat("敵の攻撃力(接触時)", &contactAtkPower, 1.f);
+		}
+		else {
+			ImGui::Text("接触時の敵攻撃力の調整項目は、");
+			ImGui::Text("接触ダメージをつけるフラグが立っている場合のみ表示されます");
+		}
 		ImGui::TreePop();
 	}
 	if (ImGui::TreeNode("当たり判定"))
@@ -139,18 +154,6 @@ void EnemyManager::Update()
 	static Color changeColor = { 1,1,1,1 };
 	ImGui::ColorEdit4("ロウで固まってるときの色", &changeColor.r);
 
-	for (auto& enemy : enemys)
-	{
-		ImGui::Text("ステート:%s", enemy->GetState().c_str());
-		enemy->changeColor = changeColor;
-		enemy->colliderSize = collideSize;
-		enemy->obj.mTransform.scale = enemySize;
-		enemy->SetDrawCollider(hitChecker);
-		enemy->attackHitCollider.r = attackHitColliderSize;
-		enemy->attackMovePower = attackMove;
-		enemy->SetMoveSpeed(moveSpeed);
-	}
-
 	if (ImGui::Button("Reset")) {
 		enemys.clear();
 	}
@@ -177,6 +180,23 @@ void EnemyManager::Update()
 		Parameter::Save("敵の攻撃力", normalAtkPower);
 
 		Parameter::End();
+	}
+
+	for (auto& enemy : enemys)
+	{
+		ImGui::Text("ステート:%s", enemy->GetState().c_str());
+		ImGui::Text("回転 x:%f y:%f z:%f", 
+			enemy->obj.mTransform.rotation.x,
+			enemy->obj.mTransform.rotation.y, 
+			enemy->obj.mTransform.rotation.z);
+
+		enemy->changeColor = changeColor;
+		enemy->colliderSize = collideSize;
+		enemy->obj.mTransform.scale = enemySize;
+		enemy->SetDrawCollider(hitChecker);
+		enemy->attackHitCollider.r = attackHitColliderSize;
+		enemy->attackMovePower = attackMove;
+		enemy->SetMoveSpeed(moveSpeed);
 	}
 
 	ImGui::End();

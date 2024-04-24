@@ -31,14 +31,15 @@ gravity(0.2f)
 
 	mutekiTimer.maxTime_ = Parameter::GetParam(extract, "無敵時間さん", 0.1f);
 
-	obj.mTransform.scale = { 3,3,3 };
+	oriScale = { 3,3,3 };
+	obj.mTransform.scale = oriScale;
 
 	predictionLine = ModelObj(Model::Load("./Resources/Model/Cube.obj", "Cube"));
 	//影をなくす
 	predictionLine.mTuneMaterial.mAmbient = Vector3::ONE * 100.f;
 	predictionLine.mTuneMaterial.mDiffuse = Vector3::ZERO;
 	predictionLine.mTuneMaterial.mSpecular = Vector3::ZERO;
-	
+
 	attackDrawerObj = ModelObj(Model::Load("./Resources/Model/Sphere.obj", "Sphere", true));
 }
 
@@ -52,12 +53,15 @@ Enemy::~Enemy()
 
 	//死んだときパーティクル出す
 	ParticleManager::GetInstance()->AddSimple(
-		obj.mTransform.position,"enemy_dead");
+		obj.mTransform.position, "enemy_dead");
 }
 
 void Enemy::Init()
 {
 	hp = maxHP;
+
+	basis = obj.mTransform.position;
+	behaviorOrigen = obj.mTransform.position;
 }
 
 void Enemy::Reset()
@@ -71,6 +75,8 @@ void Enemy::Reset()
 	obj.mTransform.position -= shack;
 	//シェイクを元に戻す
 	shack = { 0,0,0 };
+
+	SetForceRot(false);
 }
 
 void Enemy::Update()
@@ -89,19 +95,19 @@ void Enemy::Update()
 		waxShakeOffTimer = 0;
 	}
 
+	//各ステート時の固有処理
+	state->Update(this);	//移動速度に関係するので移動の更新より前に置く
+
+	//前のステートと異なれば
+	if (changingState) {
+		//ステートを変化させる
+		std::swap(state, nextState);
+		changingState = false;
+		nextState = nullptr;
+	}
+
 	//固まっていなければする処理
 	if (!GetIsSolid()) {
-		//各ステート時の固有処理
-		state->Update(this);	//移動速度に関係するので移動の更新より前に置く
-
-
-		//前のステートと異なれば
-		if (changingState) {
-			//ステートを変化させる
-			std::swap(state, nextState);
-			changingState = false;
-			nextState = nullptr;
-		}
 
 		//ステートに入る前に、予測線は消しておきたいのでスケールを0に
 		predictionLine.mTransform.scale = { 0.f,0.f,0.f };
@@ -114,10 +120,18 @@ void Enemy::Update()
 			changingAttackState = false;
 			nextAttackState = nullptr;
 		}
+		
+		//攻撃準備に入ったらプレイヤーへ向けた移動をしない
+		//(ステート内に書いてもいいけどどこにあるかわからなくなりそうなのでここで)
+		if (GetAttackState() == "NonAttack")
+		{
+			//通常移動をオーダーをもとにやる
+			obj.mTransform.position = loadBehaviorData.GetBehavior(behaviorOrigen);
+		}
 	}
 	hp = Util::Clamp(hp, 0.f, maxHP);
 
-	if (hp <= 0) {
+	if (hp <= 0 && isCollect == false) {
 		//hpが0になったら、自身の状態を固まり状態へ遷移
 		ChangeState<EnemyAllStop>();
 	}
@@ -127,30 +141,13 @@ void Enemy::Update()
 
 	///-------------移動、回転の加算--------------///
 
-	//プレイヤーに向かって移動するAI
-	//普段はプレイヤーにではなく、ランダムだったり特定方向へ進み続けて、
-	//ぶつかって初めてターゲットに入れるようにしたい
-	Vector3 pVec = target->mTransform.position - obj.mTransform.position;
-	pVec.Normalize();
-	pVec.y = 0;
-
 	//ノックバック中でないなら重力をかける
 	if (!knockbackTimer.GetRun()) {
 		//重力をかける
 		moveVec.y -= gravity;
 	}
 
-	//攻撃準備に入ったらプレイヤーへ向けた移動をしない
-	//(ステート内に書いてもいいけどどこにあるかわからなくなりそうなのでここで)
-	if (GetAttackState() != "NowAttack" && 
-		GetAttackState() != "PreAttack")
-	{
-		//プレイヤーへ向けた移動をする
-		moveVec += pVec * moveSpeed;
-	}
-
 	//ノックバックも攻撃準備に入ったら無効化する
-	//(条件式一緒だけど処理違うので段落分けてます)
 	if (GetAttackState() != "NowAttack" &&
 		GetAttackState() != "PreAttack")
 	{
@@ -160,7 +157,10 @@ void Enemy::Update()
 
 	//いろいろ足した後減速
 	//減速率は大きいほどスピード下がるから1.0から引くようにしてる
-	moveVec *= (1.f - slowMag) * (1.f - slowCoatingMag);
+	if (isCollect == false)
+	{
+		moveVec *= (1.f - slowMag) * (1.f - slowCoatingMag);
+	}
 
 	//シェイクの値
 	moveVec += shack;
@@ -175,10 +175,14 @@ void Enemy::Update()
 	}
 
 	//もし何も回転の加算がない場合、
-	if (rotVec.LengthSq() == 0) {
+	if (!forceRot) {
 		//固まっていなければ通常時の回転をする
 		if (!GetIsSolid() && !knockbackTimer.GetRun()) {
-			Rotation(pVec);
+			Vector3 tVec = loadBehaviorData.GetMoveDir();
+			tVec.Normalize();
+			tVec.y = 0;
+
+			Rotation(tVec);
 		}
 	}
 	//回転の適用
@@ -212,13 +216,13 @@ void Enemy::Update()
 
 void Enemy::Draw()
 {
+	BrightDraw();
 	if (isAlive)
 	{
-		BrightDraw();
 		//obj.Draw();
-		
+
 		ui.Draw();
-		
+
 		predictionLine.Draw();
 
 		DrawCollider();
@@ -247,7 +251,7 @@ void Enemy::KnockBack()
 void Enemy::KnockRota()
 {
 	//攻撃されたら
-	if (attackTarget) 
+	if (attackTarget)
 	{
 		//プレイヤーに向かって移動するAI
 		Vector3 aVec = attackTarget->mTransform.position - obj.mTransform.position;
@@ -307,6 +311,23 @@ void Enemy::SetIsEscape(bool flag)
 	{
 		obj.mTuneMaterial.mColor = Color::kWhite;
 	}
+}
+
+Vector3 Enemy::GetOriginPos()
+{
+	if (loadBehaviorData.points.size() > 0)
+	{
+		return basis + loadBehaviorData.points[0];
+	}
+	return basis;
+}
+
+void Enemy::BehaviorReset()
+{
+	//タイマーなど初期化
+	loadBehaviorData.Reset();
+	//基準座標をリセット
+	BehaviorOrigenReset();
 }
 
 void Enemy::DealDamage(uint32_t damage, const Vector3& dir, ModelObj* target_)
@@ -371,6 +392,14 @@ void Enemy::MoveVecPlus(const Vector3& plusVec)
 void Enemy::RotVecPlus(const Vector3& plusVec)
 {
 	rotVec += plusVec;
+	SetForceRot(true);
+}
+
+void Enemy::SetBehaviorOrder(const std::string& order)
+{
+	loadFileName = order;
+	loadBehaviorData = EnemyBehaviorEditor::Load(loadFileName);
+	loadBehaviorData.Reset();
 }
 
 void Enemy::UpdateAttackCollider()

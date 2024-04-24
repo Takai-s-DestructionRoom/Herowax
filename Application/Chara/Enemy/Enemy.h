@@ -7,6 +7,7 @@
 #include "Quaternion.h"
 #include "Vector2.h"
 #include "EnemyAttackState.h"
+#include "EnemyBehaviorEditor.h"
 
 class Enemy : public GameObject
 {
@@ -18,6 +19,9 @@ private:
 	float slowCoatingMag;		//蝋かけられたときの減速率
 	bool isGraund;				//接地しているかフラグ
 	float gravity;				//重力
+
+	Vector3 basis;
+	Vector3 behaviorOrigen;
 
 	//------------ 回転関連 ------------//
 	Vector3 rotVec;				//回転ベクトル
@@ -70,6 +74,11 @@ private:
 	
 	EnemyUI ui;	//HP表示
 
+	BehaviorData loadBehaviorData;
+	std::string loadFileName = "";
+
+	bool forceRot = false;
+
 public:
 	Easing::EaseTimer solidTimer;	//動けなくなっている時間
 
@@ -87,6 +96,13 @@ public:
 	ModelObj predictionLine;	//予測線
 
 	ColPrimitive3D::Sphere attackHitCollider;	//攻撃状態へ遷移する当たり判定
+
+	//コレクトステート内で使用するタイマー(調整できるようにwaxが持つ)
+	Easing::EaseTimer collectTimer;
+
+	Vector3 collectPos;			//回収される場所
+	bool isCollect;				//回収されてるか
+	Vector3 oriScale;			//元の大きさ
 
 private:
 	//ノックバック処理をまとめた
@@ -113,6 +129,9 @@ public:
 	void SetTarget(ModelObj* target_);
 
 	ModelObj* GetTarget();
+
+	//行動を初期化
+	void BehaviorReset();
 
 	/// <summary>
 	/// 状態変更
@@ -150,9 +169,15 @@ public:
 	//HPの取得
 	float GetHP() { return hp; };
 	float GetMaxHP() { return maxHP; };
-
-	bool GetIsSolid();	//固まってるかどうか
-
+	//固まってるかどうか
+	bool GetIsSolid();	
+	//移動量
+	Vector3 GetMoveVec() { return moveVec; };
+	//スポーン時の位置を取得
+	Vector3 GetOriginPos();
+	//移動速度を取得
+	float GetMoveSpeed() { return moveSpeed; };
+	
 	// セッター //
 	//減速率設定
 	void SetSlowMag(float mag) { slowMag = mag; }
@@ -179,10 +204,18 @@ public:
 	void SetMoveSpeed(float setSpeed) { moveSpeed = setSpeed; };
 	//強制的に死亡させる
 	void SetDeath();
+	//行動ファイルを設定、読み込み
+	void SetBehaviorOrder(const std::string& order);
+	//別の回転を使う場合に立てるフラグ
+	void SetForceRot(bool forceRot_) { forceRot = forceRot_; };
 	//移動量に足す
 	void MoveVecPlus(const Vector3& plusVec);
 	//回転量に足す
 	void RotVecPlus(const Vector3& plusVec);
+	//
+	void BehaviorOrigenPosPlus(const Vector3& plusVec) { behaviorOrigen += plusVec; };
+	void BehaviorOrigenReset() { behaviorOrigen = basis; };
+
 private:
 	void UpdateAttackCollider();
 	void DrawAttackCollider();

@@ -67,3 +67,10 @@ public:
 private:
 	Easing::EaseTimer postureTimer;	//姿勢タイマー
 };
+
+class EnemyBackOriginState : public EnemyAttackState
+{
+public:
+	EnemyBackOriginState();
+	void Update(Enemy* enemy);
+};

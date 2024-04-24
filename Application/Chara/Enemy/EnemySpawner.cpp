@@ -88,10 +88,18 @@ void EnemySpawner::PopEnemy(const Vector3 position, const SpawnOrderOnce& order)
 		spawnPos.z += Util::GetRand(-spawnRandomPos, spawnRandomPos);
 		//ここで文字列に応じてクラスごとに敵を出現させる
 		if (order.enemyClassName == "enemy") {
-			EnemyManager::GetInstance()->CreateEnemy<Enemy>(spawnPos);
+			EnemyManager::GetInstance()->CreateEnemy<Enemy>(
+				spawnPos,
+				Vector3(1,1,1),
+				Vector3(0,0,0),
+				"test");
 		}
 		if (order.enemyClassName == "bombsolider") {
-			EnemyManager::GetInstance()->CreateEnemy<BombSolider>(spawnPos);
+			EnemyManager::GetInstance()->CreateEnemy<BombSolider>(
+				spawnPos,
+				Vector3(1, 1, 1),
+				Vector3(0, 0, 0), 
+				"test");
 		}
 	}
 }

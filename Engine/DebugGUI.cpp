@@ -13,6 +13,7 @@
 #include <PaintScene.h>
 #include <ParticleEditorScene.h>
 #include <ProtoScene.h>
+#include <BehaviorTestScene.h>
 
 void DebugGUI::Show()
 {
@@ -23,7 +24,8 @@ void DebugGUI::Show()
 
 	ImGui::Text("SceneManager");
 	static int32_t sceneNum = 0;
-	const char* scenes[] = { "MainTest", "ControllerTest", "Sprite", "SoundTest","PaintTest","ProtoScene","ParticleEditorScene"};
+	const char* scenes[] = { "MainTest", "ControllerTest", "Sprite", "SoundTest","PaintTest",
+		"ProtoScene","ParticleEditorScene","BehaviorTestScene"};
 	ImGui::Combo("##SceneNumCombo", &sceneNum, scenes, IM_ARRAYSIZE(scenes));
 	ImGui::SameLine();
 	if (ImGui::Button("Go!!!")) {
@@ -49,6 +51,9 @@ void DebugGUI::Show()
 				break;
 			case 6:
 				SceneManager::Change<ParticleEditorScene, SimpleSceneTransition>();
+				break;
+			case 7:
+				SceneManager::Change<BehaviorTestScene, SimpleSceneTransition>();
 				break;
 			}
 		}
