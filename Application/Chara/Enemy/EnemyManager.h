@@ -97,6 +97,8 @@ public:
 	//攻撃していない時に敵と当たった場合でもダメージを入れる
 	bool GetIsContactDamage() {return isContactDamage;};
 
+	bool GetNowCollectEnemy();
+
 	// セッター //
 	//連続で固まった敵の数カウント増やす
 	void IncrementSolidCombo() { solidCombo++; }

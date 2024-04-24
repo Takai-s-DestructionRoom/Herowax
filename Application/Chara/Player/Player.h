@@ -117,6 +117,8 @@ public:
 	
 	PlayerUI ui;
 
+	bool soundFlag = false;
+
 private:
 	ModelObj attackDrawerObj;			//上記の当たり判定描画オブジェクト
 
@@ -142,9 +144,7 @@ private:
 	//---------ロウの総量描画オブジェクト---------//
 	PaintableModelObj waxTankObj;
 
-
 public:
-	bool soundFlag = false;
 	Player();
 
 	void Init()override;

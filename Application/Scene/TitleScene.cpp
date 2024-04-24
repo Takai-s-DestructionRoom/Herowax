@@ -9,8 +9,6 @@
 TitleScene::TitleScene()
 {
 	TextureManager::Load("./Resources/hi-rou_logo_eye.png", "title");
-	TextureManager::Load("./Resources/Abutton_UI_normal.png", "Abutton");
-	TextureManager::Load("./Resources/Abutton_UI_push.png", "AbuttonPush");
 
 	skydome = ModelObj(Model::Load("./Resources/Model/bg/bg.obj", "bg"));
 	skydome.mTransform.scale = { 1.5f, 1.5f, 1.5f };
@@ -70,10 +68,12 @@ void TitleScene::Update()
 	Level::Get()->Update();
 
 	//F6かメニューボタン押されたらプロトシーンへ
-	if (RInput::GetInstance()->GetKeyDown(DIK_F6) ||
+	bool button = RInput::GetInstance()->GetKeyDown(DIK_F6) ||
 		RInput::GetInstance()->GetKeyDown(DIK_SPACE) ||
-		RInput::GetInstance()->GetPadButtonDown(XINPUT_GAMEPAD_A))
+		RInput::GetInstance()->GetPadButtonDown(XINPUT_GAMEPAD_A);
+	if (button && !sceneChange)
 	{
+		sceneChange = true;
 		RAudio::Play("Select");
 		SceneManager::GetInstance()->Change<ProtoScene, SimpleSceneTransition>();
 	}
@@ -96,17 +96,17 @@ void TitleScene::Draw()
 		titleLogoPos.y + Easing::InQuad(floatingTimer.GetTimeRate()) * 15.f,
 		1.f, 1.f, 0.f, "title");
 
-	if (floatingTimer.GetTimeRate() > 0.8f)
+	if (flashingTimer.GetTimeRate() > 0.8f)
 	{
 		InstantDrawer::DrawGraph(
 			buttonUIPos.x, buttonUIPos.y,
-			0.8f, 0.8f, 0.f, "AbuttonPush");
+			0.8f, 0.8f, 0.f, TextureManager::Load("./Resources/Abutton_UI_push.png", "AbuttonPush"));
 	}
 	else
 	{
 		InstantDrawer::DrawGraph(
 			buttonUIPos.x, buttonUIPos.y,
-			0.8f, 0.8f, 0.f, "Abutton");
+			0.8f, 0.8f, 0.f, TextureManager::Load("./Resources/Abutton_UI_normal.png", "Abutton"));
 	}
 
 	//更新

@@ -18,6 +18,7 @@
 #include "SceneManager.h"
 #include "SimpleSceneTransition.h"
 #include "RAudio.h"
+#include "EnemyManager.h"
 
 Player::Player() :GameObject(),
 moveSpeed(1.f), moveAccelAmount(0.05f), isGround(true), hp(0), maxHP(10.f),
@@ -302,9 +303,12 @@ void Player::Update()
 		godmodeTimer.Reset();
 	}
 
+	bool nowCollected = WaxManager::GetInstance()->isCollected && 
+		!EnemyManager::GetInstance()->GetNowCollectEnemy();
+
 	moveVec *=
 		moveSpeed * moveAccel *
-		WaxManager::GetInstance()->isCollected;				//移動速度をかけ合わせたら完成(回収中は動けない)
+		nowCollected;				//移動速度をかけ合わせたら完成(回収中は動けない)
 	obj.mTransform.position += moveVec;						//完成したものを座標に足し合わせる
 
 	//回収中なら回収中モデルのスケールを入れる
@@ -318,7 +322,7 @@ void Player::Update()
 	}
 
 	//攻撃中と回収中なら正面へ、それ以外なら後ろへ
-	if (isAttack || !WaxManager::GetInstance()->isCollected) {
+	if (isAttack || !nowCollected) {
 		Vector3 tVec = collectRangeModel.mTransform.position - collectCol.start;
 		tVec.y = 0;
 		tVec.Normalize();

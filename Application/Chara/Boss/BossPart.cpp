@@ -30,10 +30,26 @@ Parts::~Parts()
 void Parts::Init()
 {
 	hp = maxHP;
+	isAlive = true;
+
+	isCollected = false;
+	mutekiTimer.Reset();
+
+	waxShakeOffTimer.Reset();
+
+	shake = Vector3::ZERO;
+	shakeTimer.Reset();
+	waxScatterTimer.Reset();
+
+	waxSolidCount = 0;
 
 	obj.mPaintDissolveMapTex = TextureManager::Load("./Resources/DissolveMap.png", "DissolveMapTex");
 
 	state = std::make_unique<BossPartNormal>();
+	changingState = false;
+
+	obj.mTransform.UpdateMatrix();
+	BrightTransferBuffer(Camera::sNowCamera->mViewProjection);
 }
 
 void Parts::Update()
