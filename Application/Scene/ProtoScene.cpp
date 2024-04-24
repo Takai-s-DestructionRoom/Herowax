@@ -94,6 +94,8 @@ void ProtoScene::Update()
 	if (Util::debugBool) {
 		if (RInput::GetInstance()->GetKeyDown(DIK_B))
 		{
+			RAudio::Stop("Boss");
+		    RAudio::Stop("Normal");
 			EventCaller::EventCall(BossDeadScene::GetEventCallStr());
 			player.isMove = false;
 		}
@@ -101,6 +103,8 @@ void ProtoScene::Update()
 		//ボス登場シーンに切り替え
 		if (RInput::GetInstance()->GetKeyDown(DIK_T))
 		{
+			RAudio::Stop("Boss");
+			RAudio::Stop("Normal");
 			EventCaller::EventCall(BossAppearanceScene::GetEventCallStr());
 			player.isMove = false;
 		}
@@ -116,6 +120,7 @@ void ProtoScene::Update()
 		eventScene->Init(Boss::GetInstance()->GetCenterPos() + Vector3::UP * 20.f);
 
 		RAudio::Stop("Boss");
+		RAudio::Stop("Normal");
 
 		player.isMove = false;
 		Boss::GetInstance()->isDead = true;
@@ -131,6 +136,7 @@ void ProtoScene::Update()
 		eventScene = std::make_unique<BossAppearanceScene>();
 		eventScene->Init(Boss::GetInstance()->GetCenterPos() + Vector3::UP * 20.f);
 
+		RAudio::Stop("Boss");
 		RAudio::Stop("Normal");
 		RAudio::Play("Boss", 0.5f, 1.0f, true);
 
@@ -173,6 +179,8 @@ void ProtoScene::Update()
 
 		//死亡シーンの呼び出しが終わったならタイトルに戻す
 		if (EventCaller::GetNowEventStr() == BossDeadScene::GetEventCallStr()) {
+			RAudio::Stop("Boss");
+			RAudio::Stop("Normal");
 			SceneManager::GetInstance()->Change<TitleScene,SimpleSceneTransition>();
 		}
 
@@ -494,6 +502,8 @@ void ProtoScene::Update()
 	if (RInput::GetInstance()->GetKeyDown(DIK_F6) ||
 		RInput::GetInstance()->GetPadButtonDown(XINPUT_GAMEPAD_START))
 	{
+		RAudio::Stop("Boss");
+		RAudio::Stop("Normal");
 		SceneManager::GetInstance()->Change<FailedScene,SimpleSceneTransition>();
 	}
 

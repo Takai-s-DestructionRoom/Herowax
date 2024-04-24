@@ -8,7 +8,7 @@
 
 TitleScene::TitleScene()
 {
-	TextureManager::Load("./Resources/hi-rou_logo_eye.png", "title");
+	TextureManager::Load("./Resources/UI/hi-rou_logo_eye.png", "title");
 
 	skydome = ModelObj(Model::Load("./Resources/Model/bg/bg.obj", "bg"));
 	skydome.mTransform.scale = { 1.5f, 1.5f, 1.5f };
@@ -74,7 +74,7 @@ void TitleScene::Update()
 	if (button && !sceneChange)
 	{
 		sceneChange = true;
-		RAudio::Play("Select");
+		RAudio::Play("Select", 0.6f);
 		SceneManager::GetInstance()->Change<ProtoScene, SimpleSceneTransition>();
 	}
 
@@ -100,13 +100,13 @@ void TitleScene::Draw()
 	{
 		InstantDrawer::DrawGraph(
 			buttonUIPos.x, buttonUIPos.y,
-			0.8f, 0.8f, 0.f, TextureManager::Load("./Resources/Abutton_UI_push.png", "AbuttonPush"));
+			0.8f, 0.8f, 0.f, TextureManager::Load("./Resources/UI/A_push.png", "AbuttonPush"));
 	}
 	else
 	{
 		InstantDrawer::DrawGraph(
 			buttonUIPos.x, buttonUIPos.y,
-			0.8f, 0.8f, 0.f, TextureManager::Load("./Resources/Abutton_UI_normal.png", "Abutton"));
+			0.8f, 0.8f, 0.f, TextureManager::Load("./Resources/UI/A_normal.png", "Abutton"));
 	}
 
 	//更新

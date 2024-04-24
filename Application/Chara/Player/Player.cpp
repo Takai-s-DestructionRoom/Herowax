@@ -90,7 +90,7 @@ isFireStock(false), isWaxStock(true), isCollectFan(false), maxWaxStock(20)
 
 	RAudio::Load("Resources/Sounds/SE/P_attack.wav", "Attack");
 	
-	
+	RAudio::Load("Resources/Sounds/SE/P_attackHit.wav", "Hit");
 	RAudio::Load("Resources/Sounds/SE/P_enemyCollect.wav", "eCollect");
 }
 
@@ -860,7 +860,7 @@ void Player::PabloAttack()
 	}
 
 	//音鳴らす
-	RAudio::Play("Attack");
+	RAudio::Play("Attack",0.6f);
 }
 
 void Player::WaxCollect()
@@ -1042,7 +1042,7 @@ void Player::DealDamage(float damage)
 
 	damageCoolTimer.Start();
 	blinkTimer.Start();
-
+	RAudio::Play("Hit");
 	hp -= damage;
 
 	//パーティクル生成
