@@ -498,36 +498,36 @@ void ProtoScene::Update()
 
 	skydome.TransferBuffer(Camera::sNowCamera->mViewProjection);
 
-	//F6かメニューボタン押されたらリザルトシーンへ
-	if (RInput::GetInstance()->GetKeyDown(DIK_F6) ||
-		RInput::GetInstance()->GetPadButtonDown(XINPUT_GAMEPAD_START))
-	{
-		RAudio::Stop("Boss");
-		RAudio::Stop("Normal");
-		SceneManager::GetInstance()->Change<FailedScene,SimpleSceneTransition>();
-	}
+	////F6かメニューボタン押されたらリザルトシーンへ
+	//if (RInput::GetInstance()->GetKeyDown(DIK_F6) ||
+	//	RInput::GetInstance()->GetPadButtonDown(XINPUT_GAMEPAD_START))
+	//{
+	//	RAudio::Stop("Boss");
+	//	RAudio::Stop("Normal");
+	//	SceneManager::GetInstance()->Change<FailedScene,SimpleSceneTransition>();
+	//}
 
-#pragma region ImGui
-	ImGui::SetNextWindowSize({ 400, 200 }, ImGuiCond_FirstUseEver);
-
-	// デバッグモード //
-	ImGui::Begin("デバッグ");
-	ImGui::Text("デバッグモード中はシーン切り替えが発生しません");
-	ImGui::Text("デバッグモードはF5で切り替えもできます");
-	if (ImGui::Checkbox("デバッグモード切り替え", &Util::debugBool)) {
-		ImGui::Text("デバッグモード中です");
-	}
-	if (ImGui::Button("セーブ")) {
-		Parameter::Begin("DebugBool");
-		Parameter::Save("debugBool", Util::debugBool);
-		Parameter::End();
-	}
-
-	ImGui::End();
-
-	SpawnDataLoader::OrderCreateGUI();
-
-#pragma endregion
+//#pragma region ImGui
+//	ImGui::SetNextWindowSize({ 400, 200 }, ImGuiCond_FirstUseEver);
+//
+//	// デバッグモード //
+//	ImGui::Begin("デバッグ");
+//	ImGui::Text("デバッグモード中はシーン切り替えが発生しません");
+//	ImGui::Text("デバッグモードはF5で切り替えもできます");
+//	if (ImGui::Checkbox("デバッグモード切り替え", &Util::debugBool)) {
+//		ImGui::Text("デバッグモード中です");
+//	}
+//	if (ImGui::Button("セーブ")) {
+//		Parameter::Begin("DebugBool");
+//		Parameter::Save("debugBool", Util::debugBool);
+//		Parameter::End();
+//	}
+//
+//	ImGui::End();
+//
+//	SpawnDataLoader::OrderCreateGUI();
+//
+//#pragma endregion
 }
 
 void ProtoScene::Draw()

@@ -6,7 +6,7 @@
 #include "ParticleManager.h"
 #include "Util.h"
 #include "Quaternion.h"
-#include "RImGui.h"
+//#include "RImGui.h"
 #include "Parameter.h"
 #include "InstantDrawer.h"
 #include "Renderer.h"
@@ -386,15 +386,6 @@ void Player::Update()
 		}
 	}
 
-	ImGui::SetNextWindowSize({ 600, 250 }, ImGuiCond_FirstUseEver);
-
-	ImGui::Begin("移動制限");
-	ImGui::Text("残った方向:%f,%f,%f", slideVec.x, slideVec.y, slideVec.z);
-	ImGui::Text("壁との距離:%f", toWallLen);
-	ImGui::Text("2枚目壁との距離:%f", len);
-
-	ImGui::End();
-
 	toWallLen = 0;
 
 	if (isCollision)
@@ -426,147 +417,147 @@ void Player::Update()
 
 	ui.Update(this);
 
-#pragma region ImGui
-	ImGui::SetNextWindowSize({ 600, 250 }, ImGuiCond_FirstUseEver);
-
-	ImGui::Begin("Player");
-
-	ImGui::Text("現在のHP:%f", hp);
-	ImGui::InputFloat("最大HP:", &maxHP, 1.0f);
-	ImGui::Text("Lスティック移動、Aボタンジャンプ、Rで攻撃,Lでロウ回収");
-	ImGui::Text("WASD移動、スペースジャンプ、右クリで攻撃,Pでパブロ攻撃,Qでロウ回収");
-
-	if (ImGui::TreeNode("Transform系")) {
-
-		ImGui::DragFloat("人の位置Y", &humanOffset);
-		ImGui::DragFloat("人の大きさ", &humanScale);
-		ImGui::DragFloat("風船の大きさ", &bagScale);
-		ImGui::DragFloat("回収中の大きさ", &collectScale);
-		ImGui::ColorEdit4("プレイヤーの色", &obj.mTuneMaterial.mColor.r);
-		ImGui::DragFloat("モデルをずらすY", &modelOffset.y,0.1f);
-
-		if (ImGui::TreeNode("初期状態設定"))
-		{
-			ImGui::SliderFloat("初期座標X", &initPos.x, -100.f, 100.f);
-			ImGui::SliderFloat("初期座標Y", &initPos.y, -100.f, 100.f);
-			ImGui::SliderFloat("初期座標Z", &initPos.z, -100.f, 100.f);
-			ImGui::SliderFloat("初期方向X", &initRot.x, 0.f, 360.f);
-			ImGui::SliderFloat("初期方向Y", &initRot.y, 0.f, 360.f);
-			ImGui::SliderFloat("初期方向Z", &initRot.z, 0.f, 360.f);
-
-			ImGui::TreePop();
-		}
-
-		ImGui::TreePop();
-	}
-	if (ImGui::TreeNode("移動系"))
-	{
-		ImGui::Text("座標:%f,%f,%f", GetPos().x, GetPos().y, GetPos().z);
-		ImGui::Text("動く方向:%f,%f,%f", moveVec.x, moveVec.y, moveVec.z);
-		ImGui::Text("ジャンプの高さ:%f", jumpHeight);
-		ImGui::Text("ジャンプ速度:%f", jumpSpeed);
-		ImGui::Text("加速度:%f", moveAccel);
-		ImGui::SliderFloat("移動速度:%f", &moveSpeed, 0.f, 5.f);
-		ImGui::SliderFloat("移動加速度:%f", &moveAccelAmount, 0.f, 0.1f);
-		ImGui::SliderFloat("重力:%f", &gravity, 0.f, 0.2f);
-		ImGui::SliderFloat("ジャンプ力:%f", &jumpPower, 0.f, 5.f);
-
-		ImGui::TreePop();
-	}
-	if (ImGui::TreeNode("攻撃系"))
-	{
-		ImGui::Text("攻撃中か:%d", isAttack);
-		ImGui::Checkbox("ロウをストック性にするか", &isWaxStock);
-
-		ImGui::InputInt("敵に与えるダメージ", &atkPower, 1);
-		ImGui::DragFloat("攻撃範囲_横", &pabloSideRange, 0.1f);
-		ImGui::DragFloat("攻撃範囲_最小", &minRange, 0.1f);
-		ImGui::DragFloat("攻撃範囲_最大", &maxRange, 0.1f);
-		ImGui::DragFloat("射出高度", &atkHeight, 0.1f);
-		ImGui::DragFloat("攻撃が地面につくまでの時間", &atkTimer.maxTime_, 0.1f);
-		ImGui::DragFloat("クールタイム", &atkCoolTimer.maxTime_, 0.1f);
-		ImGui::InputInt("一度に出るロウの数", &waxNum, 1);
-		ImGui::InputInt("ロウの最大ストック数", &maxWaxStock, 1, 100);
-		ImGui::Text("現在のロウのストック数:%d", waxStock);
-
-		ImGui::TreePop();
-	}
-	if (ImGui::TreeNode("ロウ回収系"))
-	{
-		ImGui::SliderFloat("ロウ回収範囲(横幅)", &waxCollectRange, 0.f, 100.f);
-		ImGui::SliderFloat("範囲objの透明度", &collectRangeModel.mTuneMaterial.mColor.a, 0.f, 1.f);
-		ImGui::InputFloat("ロウ回収範囲(縦幅)", &waxCollectVertical, 1.f);
-		ImGui::InputFloat("ロウ回収の時間", &WaxManager::GetInstance()->collectTime, 1.f);
-		if (ImGui::TreeNode("扇"))
-		{
-			ImGui::SliderFloat("ロウ回収半径", &waxCollectDist, 0.f, 100.f);
-			ImGui::SliderFloat("ロウ回収角度", &waxCollectAngle, 1.f, 180.f);
-			ImGui::SliderFloat("範囲(扇)objの透明度", &collectRangeModelCircle.mTuneMaterial.mColor.a, 0.f, 1.f);
-			ImGui::Text("回収できる状態か:%d", WaxManager::GetInstance()->isCollected);
-			ImGui::TreePop();
-		}
-
-		ImGui::TreePop();
-	}
-	if (ImGui::TreeNode("当たり判定"))
-	{
-		ImGui::Checkbox("当たり判定描画切り替え", &isDrawCollider);
-		ImGui::InputFloat("敵がこの範囲に入ると攻撃状態へ遷移する大きさ", &attackHitCollider.r, 1.0f);
-		ImGui::TreePop();
-	}
-	if (ImGui::TreeNode("MUTEKI系"))
-	{
-		ImGui::Checkbox("無敵状態切り替え", &isGodmode);
-		ImGui::InputFloat("無敵時間", &godmodeTimer.maxTime_, 1.0f);
-		ImGui::TreePop();
-	}
-
-	if (ImGui::Button("Reset")) {
-		Init();
-	}
-	if (ImGui::Button("セーブ")) {
-		Parameter::Begin("Player");
-		Parameter::Save("移動速度", moveSpeed);
-		Parameter::Save("移動加速度", moveAccelAmount);
-		Parameter::Save("重力", gravity);
-		Parameter::Save("ジャンプ力", jumpPower);
-		Parameter::Save("敵に与えるダメージ", (float)atkPower);
-		Parameter::Save("攻撃時間", atkTimer.maxTime_);
-		Parameter::Save("射出高度", atkHeight);
-		Parameter::Save("攻撃範囲", atkSize);
-		Parameter::Save("クールタイム", atkCoolTimer.maxTime_);
-		Parameter::Save("固まるまでの時間", solidTimer.maxTime_);
-		Parameter::Save("パブロ攻撃の横の広がり", pabloSideRange);
-		Parameter::Save("パブロ攻撃時の移動速度低下係数", pabloSpeedMag);
-		Parameter::Save("パブロ攻撃を移動しながら撃った時の係数", pabloShotSpeedMag);
-		Parameter::Save("ショットが出る基準", shotDeadZone);
-		Parameter::Save("初期座標X", initPos.x);
-		Parameter::Save("初期座標Y", initPos.y);
-		Parameter::Save("初期座標Z", initPos.z);
-		Parameter::Save("初期方向X", initRot.x);
-		Parameter::Save("初期方向Y", initRot.y);
-		Parameter::Save("初期方向Z", initRot.z);
-		Parameter::Save("ロウ回収範囲", waxCollectRange);
-		Parameter::Save("範囲objの透明度", collectRangeModel.mTuneMaterial.mColor.a);
-		Parameter::Save("敵がこの範囲に入ると攻撃状態へ遷移する大きさ", attackHitCollider.r);
-		Parameter::Save("ロウ回収縦幅", waxCollectVertical);
-		Parameter::Save("プレイヤーの色R", obj.mTuneMaterial.mColor.r);
-		Parameter::Save("プレイヤーの色G", obj.mTuneMaterial.mColor.g);
-		Parameter::Save("プレイヤーの色B", obj.mTuneMaterial.mColor.b);
-		Parameter::Save("無敵時間", godmodeTimer.maxTime_);
-		Parameter::Save("最大HP", maxHP);
-		Parameter::Save("攻撃範囲_最小", minRange);
-		Parameter::Save("攻撃範囲_最大", maxRange);
-		Parameter::Save("人の位置Y", humanOffset);
-		Parameter::Save("人の大きさ", humanScale);
-		Parameter::Save("風船の大きさ",bagScale);
-		Parameter::Save("回収中の大きさ", collectScale);
-
-		Parameter::End();
-	}
-
-	ImGui::End();
-#pragma endregion
+//#pragma region ImGui
+//	ImGui::SetNextWindowSize({ 600, 250 }, ImGuiCond_FirstUseEver);
+//
+//	ImGui::Begin("Player");
+//
+//	ImGui::Text("現在のHP:%f", hp);
+//	ImGui::InputFloat("最大HP:", &maxHP, 1.0f);
+//	ImGui::Text("Lスティック移動、Aボタンジャンプ、Rで攻撃,Lでロウ回収");
+//	ImGui::Text("WASD移動、スペースジャンプ、右クリで攻撃,Pでパブロ攻撃,Qでロウ回収");
+//
+//	if (ImGui::TreeNode("Transform系")) {
+//
+//		ImGui::DragFloat("人の位置Y", &humanOffset);
+//		ImGui::DragFloat("人の大きさ", &humanScale);
+//		ImGui::DragFloat("風船の大きさ", &bagScale);
+//		ImGui::DragFloat("回収中の大きさ", &collectScale);
+//		ImGui::ColorEdit4("プレイヤーの色", &obj.mTuneMaterial.mColor.r);
+//		ImGui::DragFloat("モデルをずらすY", &modelOffset.y,0.1f);
+//
+//		if (ImGui::TreeNode("初期状態設定"))
+//		{
+//			ImGui::SliderFloat("初期座標X", &initPos.x, -100.f, 100.f);
+//			ImGui::SliderFloat("初期座標Y", &initPos.y, -100.f, 100.f);
+//			ImGui::SliderFloat("初期座標Z", &initPos.z, -100.f, 100.f);
+//			ImGui::SliderFloat("初期方向X", &initRot.x, 0.f, 360.f);
+//			ImGui::SliderFloat("初期方向Y", &initRot.y, 0.f, 360.f);
+//			ImGui::SliderFloat("初期方向Z", &initRot.z, 0.f, 360.f);
+//
+//			ImGui::TreePop();
+//		}
+//
+//		ImGui::TreePop();
+//	}
+//	if (ImGui::TreeNode("移動系"))
+//	{
+//		ImGui::Text("座標:%f,%f,%f", GetPos().x, GetPos().y, GetPos().z);
+//		ImGui::Text("動く方向:%f,%f,%f", moveVec.x, moveVec.y, moveVec.z);
+//		ImGui::Text("ジャンプの高さ:%f", jumpHeight);
+//		ImGui::Text("ジャンプ速度:%f", jumpSpeed);
+//		ImGui::Text("加速度:%f", moveAccel);
+//		ImGui::SliderFloat("移動速度:%f", &moveSpeed, 0.f, 5.f);
+//		ImGui::SliderFloat("移動加速度:%f", &moveAccelAmount, 0.f, 0.1f);
+//		ImGui::SliderFloat("重力:%f", &gravity, 0.f, 0.2f);
+//		ImGui::SliderFloat("ジャンプ力:%f", &jumpPower, 0.f, 5.f);
+//
+//		ImGui::TreePop();
+//	}
+//	if (ImGui::TreeNode("攻撃系"))
+//	{
+//		ImGui::Text("攻撃中か:%d", isAttack);
+//		ImGui::Checkbox("ロウをストック性にするか", &isWaxStock);
+//
+//		ImGui::InputInt("敵に与えるダメージ", &atkPower, 1);
+//		ImGui::DragFloat("攻撃範囲_横", &pabloSideRange, 0.1f);
+//		ImGui::DragFloat("攻撃範囲_最小", &minRange, 0.1f);
+//		ImGui::DragFloat("攻撃範囲_最大", &maxRange, 0.1f);
+//		ImGui::DragFloat("射出高度", &atkHeight, 0.1f);
+//		ImGui::DragFloat("攻撃が地面につくまでの時間", &atkTimer.maxTime_, 0.1f);
+//		ImGui::DragFloat("クールタイム", &atkCoolTimer.maxTime_, 0.1f);
+//		ImGui::InputInt("一度に出るロウの数", &waxNum, 1);
+//		ImGui::InputInt("ロウの最大ストック数", &maxWaxStock, 1, 100);
+//		ImGui::Text("現在のロウのストック数:%d", waxStock);
+//
+//		ImGui::TreePop();
+//	}
+//	if (ImGui::TreeNode("ロウ回収系"))
+//	{
+//		ImGui::SliderFloat("ロウ回収範囲(横幅)", &waxCollectRange, 0.f, 100.f);
+//		ImGui::SliderFloat("範囲objの透明度", &collectRangeModel.mTuneMaterial.mColor.a, 0.f, 1.f);
+//		ImGui::InputFloat("ロウ回収範囲(縦幅)", &waxCollectVertical, 1.f);
+//		ImGui::InputFloat("ロウ回収の時間", &WaxManager::GetInstance()->collectTime, 1.f);
+//		if (ImGui::TreeNode("扇"))
+//		{
+//			ImGui::SliderFloat("ロウ回収半径", &waxCollectDist, 0.f, 100.f);
+//			ImGui::SliderFloat("ロウ回収角度", &waxCollectAngle, 1.f, 180.f);
+//			ImGui::SliderFloat("範囲(扇)objの透明度", &collectRangeModelCircle.mTuneMaterial.mColor.a, 0.f, 1.f);
+//			ImGui::Text("回収できる状態か:%d", WaxManager::GetInstance()->isCollected);
+//			ImGui::TreePop();
+//		}
+//
+//		ImGui::TreePop();
+//	}
+//	if (ImGui::TreeNode("当たり判定"))
+//	{
+//		ImGui::Checkbox("当たり判定描画切り替え", &isDrawCollider);
+//		ImGui::InputFloat("敵がこの範囲に入ると攻撃状態へ遷移する大きさ", &attackHitCollider.r, 1.0f);
+//		ImGui::TreePop();
+//	}
+//	if (ImGui::TreeNode("MUTEKI系"))
+//	{
+//		ImGui::Checkbox("無敵状態切り替え", &isGodmode);
+//		ImGui::InputFloat("無敵時間", &godmodeTimer.maxTime_, 1.0f);
+//		ImGui::TreePop();
+//	}
+//
+//	if (ImGui::Button("Reset")) {
+//		Init();
+//	}
+//	if (ImGui::Button("セーブ")) {
+//		Parameter::Begin("Player");
+//		Parameter::Save("移動速度", moveSpeed);
+//		Parameter::Save("移動加速度", moveAccelAmount);
+//		Parameter::Save("重力", gravity);
+//		Parameter::Save("ジャンプ力", jumpPower);
+//		Parameter::Save("敵に与えるダメージ", (float)atkPower);
+//		Parameter::Save("攻撃時間", atkTimer.maxTime_);
+//		Parameter::Save("射出高度", atkHeight);
+//		Parameter::Save("攻撃範囲", atkSize);
+//		Parameter::Save("クールタイム", atkCoolTimer.maxTime_);
+//		Parameter::Save("固まるまでの時間", solidTimer.maxTime_);
+//		Parameter::Save("パブロ攻撃の横の広がり", pabloSideRange);
+//		Parameter::Save("パブロ攻撃時の移動速度低下係数", pabloSpeedMag);
+//		Parameter::Save("パブロ攻撃を移動しながら撃った時の係数", pabloShotSpeedMag);
+//		Parameter::Save("ショットが出る基準", shotDeadZone);
+//		Parameter::Save("初期座標X", initPos.x);
+//		Parameter::Save("初期座標Y", initPos.y);
+//		Parameter::Save("初期座標Z", initPos.z);
+//		Parameter::Save("初期方向X", initRot.x);
+//		Parameter::Save("初期方向Y", initRot.y);
+//		Parameter::Save("初期方向Z", initRot.z);
+//		Parameter::Save("ロウ回収範囲", waxCollectRange);
+//		Parameter::Save("範囲objの透明度", collectRangeModel.mTuneMaterial.mColor.a);
+//		Parameter::Save("敵がこの範囲に入ると攻撃状態へ遷移する大きさ", attackHitCollider.r);
+//		Parameter::Save("ロウ回収縦幅", waxCollectVertical);
+//		Parameter::Save("プレイヤーの色R", obj.mTuneMaterial.mColor.r);
+//		Parameter::Save("プレイヤーの色G", obj.mTuneMaterial.mColor.g);
+//		Parameter::Save("プレイヤーの色B", obj.mTuneMaterial.mColor.b);
+//		Parameter::Save("無敵時間", godmodeTimer.maxTime_);
+//		Parameter::Save("最大HP", maxHP);
+//		Parameter::Save("攻撃範囲_最小", minRange);
+//		Parameter::Save("攻撃範囲_最大", maxRange);
+//		Parameter::Save("人の位置Y", humanOffset);
+//		Parameter::Save("人の大きさ", humanScale);
+//		Parameter::Save("風船の大きさ",bagScale);
+//		Parameter::Save("回収中の大きさ", collectScale);
+//
+//		Parameter::End();
+//	}
+//
+//	ImGui::End();
+//#pragma endregion
 }
 
 void Player::Draw()

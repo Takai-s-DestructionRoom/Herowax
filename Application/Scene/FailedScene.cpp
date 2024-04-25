@@ -71,14 +71,14 @@ void FailedScene::Update()
 	Boss::GetInstance()->Update();
 	Level::Get()->Update();
 
-	//F6かメニューボタン押されたらタイトルシーンへ
-	if (RInput::GetInstance()->GetKeyDown(DIK_F6) ||
-		RInput::GetInstance()->GetKeyDown(DIK_SPACE) ||
-		RInput::GetInstance()->GetPadButtonDown(XINPUT_GAMEPAD_A))
-	{
-		RAudio::Play("Select", 0.6f);
-		SceneManager::GetInstance()->Change<TitleScene, SimpleSceneTransition>();
-	}
+	////F6かメニューボタン押されたらタイトルシーンへ
+	//if (RInput::GetInstance()->GetKeyDown(DIK_F6) ||
+	//	RInput::GetInstance()->GetKeyDown(DIK_SPACE) ||
+	//	RInput::GetInstance()->GetPadButtonDown(XINPUT_GAMEPAD_A))
+	//{
+	//	RAudio::Play("Select", 0.6f);
+	//	SceneManager::GetInstance()->Change<TitleScene, SimpleSceneTransition>();
+	//}
 
 	camera.mViewProjection.UpdateMatrix();
 

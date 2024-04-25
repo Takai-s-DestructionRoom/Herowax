@@ -3,7 +3,7 @@
 #include "RInput.h"
 #include "Parameter.h"
 #include "Quaternion.h"
-#include "RImGui.h"
+//#include "RImGui.h"
 #include "WaxManager.h"
 #include "EnemyManager.h"
 
@@ -60,129 +60,131 @@ void GameCamera::Update()
 	camera.mViewProjection.mTarget.y += cameraUpOffset;
 	camera.mViewProjection.UpdateMatrix();
 
-	ImGui::SetNextWindowSize({ 500, 200 }, ImGuiCond_FirstUseEver);
-
-	// カメラ //
-	ImGui::Begin("Camera");
-
-	ImGui::Text("スティック x: % f y : % f", stick.x, stick.y);
-	ImGui::Text("座標:%f,%f,%f",
-		camera.mViewProjection.mEye.x,
-		camera.mViewProjection.mEye.y,
-		camera.mViewProjection.mEye.z);
-	ImGui::SliderFloat("カメラ距離:%f", &cameraDist, -500.f, 0.f);
-	ImGui::DragFloat("プレイヤーからのYのオフセット:%f", &cameraUpOffset, 0.1f);
-	ImGui::SliderAngle("カメラアングルX:%f", &cameraAngle.x);
-	ImGui::SliderAngle("カメラアングルY:%f", &cameraAngle.y);
-	ImGui::SliderFloat("カメラ移動速度X", &cameraSpeed.x, 0.0f, 0.5f);
-	ImGui::SliderFloat("カメラ移動速度Y", &cameraSpeed.y, 0.0f, 0.5f);
-	ImGui::SliderFloat("ミニマップカメラ距離:%f", &mmCameraDist, -1000.f, 0.f);
-
-	if (ImGui::Button("カメラ移動反転X"))
-	{
-		inverse.x *= -1;
-	}
-	if (inverse.x >= 0) {
-		invStr = "通常";
-	}
-	else
-	{
-		invStr = "反転";
-	}
-	ImGui::SameLine();
-	ImGui::Text(invStr.c_str());
-	
-	if (ImGui::Button("カメラ移動反転Y"))
-	{
-		inverse.y *= -1;
-	}
-
-	if (inverse.y >= 0) {
-		invStr = "反転";
-	}
-	else
-	{
-		invStr = "通常";
-	}
-	ImGui::SameLine();
-	ImGui::Text(invStr.c_str());
-	
-
-	static float saveDist = cameraDist;
-	static Vector2 saveAngle = cameraAngle;
-
-	if (ImGui::Checkbox("上から視点に切り替え", &changeCamera) ||
-		RInput::GetPadButtonDown(XINPUT_GAMEPAD_BACK))
-	{
-		//パッド入力の場合はフラグ切り替え1
-		if (RInput::GetPadButtonDown(XINPUT_GAMEPAD_BACK)) {
-			changeCamera = !changeCamera;
-		}
-
-		if (changeCamera)
-		{
-			saveDist = cameraDist;
-			saveAngle = cameraAngle;
-		}
-		else {
-			cameraDist = saveDist;
-			cameraAngle = saveAngle;
-		}
-	}
-
-	if (changeCamera) {
-		cameraDist = -160.f;
-		cameraAngle.x = 70.f;
-		cameraAngle.y = 0.f;
-	}
-
-	static Vector3 fpsPos;
-	static float fpsDist = cameraDist;
-	//static Vector2 fpsAngle = cameraAngle;
-
-	if (ImGui::Checkbox("FPS視点に切り替え", &changeFPS)) {
-		if (changeFPS) {
-			fpsDist = cameraDist;
-			//fpsAngle = cameraAngle;
-			fpsPos = camera.mViewProjection.mEye;
-		}
-		else {
-			cameraDist = fpsDist;
-			//cameraAngle = fpsAngle;
-			camera.mViewProjection.mEye = fpsPos;
-		}
-	}
-	if (changeFPS) {
-		camera.mViewProjection.mEye = target->mTransform.position;
-		camera.mViewProjection.UpdateMatrix();
-		cameraDist = 0.01f;
-
-		if (stick.LengthSq() > 0.0f) {
-			float moveSpeed = cameraSpeed.x;
-
-			if (!std::signbit(stick.y)) {
-				moveSpeed *= -1;
-			}
-
-			cameraAngle.x -= moveSpeed;
-		}
-	}
-
-	if (ImGui::Button("セーブ")) {
-		Parameter::Begin("Camera");
-		Parameter::Save("カメラ距離", cameraDist);
-		Parameter::Save("プレイヤーからのYのオフセット", cameraUpOffset);
-		Parameter::Save("カメラアングルX", cameraAngle.x);
-		Parameter::Save("カメラアングルY", cameraAngle.y);
-		Parameter::Save("カメラの移動速度X", cameraSpeed.x);
-		Parameter::Save("カメラの移動速度Y", cameraSpeed.y);
-		Parameter::Save("ミニマップ用カメラ距離", mmCameraDist);
-		Parameter::Save("カメラ方向反転X", inverse.x);
-		Parameter::Save("カメラ方向反転Y", inverse.y);
-		Parameter::End();
-	}
-
-	ImGui::End();
+//#pragma region ImGui
+//	ImGui::SetNextWindowSize({ 500, 200 }, ImGuiCond_FirstUseEver);
+//
+//	// カメラ //
+//	ImGui::Begin("Camera");
+//
+//	ImGui::Text("スティック x: % f y : % f", stick.x, stick.y);
+//	ImGui::Text("座標:%f,%f,%f",
+//		camera.mViewProjection.mEye.x,
+//		camera.mViewProjection.mEye.y,
+//		camera.mViewProjection.mEye.z);
+//	ImGui::SliderFloat("カメラ距離:%f", &cameraDist, -500.f, 0.f);
+//	ImGui::DragFloat("プレイヤーからのYのオフセット:%f", &cameraUpOffset, 0.1f);
+//	ImGui::SliderAngle("カメラアングルX:%f", &cameraAngle.x);
+//	ImGui::SliderAngle("カメラアングルY:%f", &cameraAngle.y);
+//	ImGui::SliderFloat("カメラ移動速度X", &cameraSpeed.x, 0.0f, 0.5f);
+//	ImGui::SliderFloat("カメラ移動速度Y", &cameraSpeed.y, 0.0f, 0.5f);
+//	ImGui::SliderFloat("ミニマップカメラ距離:%f", &mmCameraDist, -1000.f, 0.f);
+//
+//	if (ImGui::Button("カメラ移動反転X"))
+//	{
+//		inverse.x *= -1;
+//	}
+//	if (inverse.x >= 0) {
+//		invStr = "通常";
+//	}
+//	else
+//	{
+//		invStr = "反転";
+//	}
+//	ImGui::SameLine();
+//	ImGui::Text(invStr.c_str());
+//	
+//	if (ImGui::Button("カメラ移動反転Y"))
+//	{
+//		inverse.y *= -1;
+//	}
+//
+//	if (inverse.y >= 0) {
+//		invStr = "反転";
+//	}
+//	else
+//	{
+//		invStr = "通常";
+//	}
+//	ImGui::SameLine();
+//	ImGui::Text(invStr.c_str());
+//	
+//
+//	static float saveDist = cameraDist;
+//	static Vector2 saveAngle = cameraAngle;
+//
+//	if (ImGui::Checkbox("上から視点に切り替え", &changeCamera) ||
+//		RInput::GetPadButtonDown(XINPUT_GAMEPAD_BACK))
+//	{
+//		//パッド入力の場合はフラグ切り替え1
+//		if (RInput::GetPadButtonDown(XINPUT_GAMEPAD_BACK)) {
+//			changeCamera = !changeCamera;
+//		}
+//
+//		if (changeCamera)
+//		{
+//			saveDist = cameraDist;
+//			saveAngle = cameraAngle;
+//		}
+//		else {
+//			cameraDist = saveDist;
+//			cameraAngle = saveAngle;
+//		}
+//	}
+//
+//	if (changeCamera) {
+//		cameraDist = -160.f;
+//		cameraAngle.x = 70.f;
+//		cameraAngle.y = 0.f;
+//	}
+//
+//	static Vector3 fpsPos;
+//	static float fpsDist = cameraDist;
+//	//static Vector2 fpsAngle = cameraAngle;
+//
+//	if (ImGui::Checkbox("FPS視点に切り替え", &changeFPS)) {
+//		if (changeFPS) {
+//			fpsDist = cameraDist;
+//			//fpsAngle = cameraAngle;
+//			fpsPos = camera.mViewProjection.mEye;
+//		}
+//		else {
+//			cameraDist = fpsDist;
+//			//cameraAngle = fpsAngle;
+//			camera.mViewProjection.mEye = fpsPos;
+//		}
+//	}
+//	if (changeFPS) {
+//		camera.mViewProjection.mEye = target->mTransform.position;
+//		camera.mViewProjection.UpdateMatrix();
+//		cameraDist = 0.01f;
+//
+//		if (stick.LengthSq() > 0.0f) {
+//			float moveSpeed = cameraSpeed.x;
+//
+//			if (!std::signbit(stick.y)) {
+//				moveSpeed *= -1;
+//			}
+//
+//			cameraAngle.x -= moveSpeed;
+//		}
+//	}
+//
+//	if (ImGui::Button("セーブ")) {
+//		Parameter::Begin("Camera");
+//		Parameter::Save("カメラ距離", cameraDist);
+//		Parameter::Save("プレイヤーからのYのオフセット", cameraUpOffset);
+//		Parameter::Save("カメラアングルX", cameraAngle.x);
+//		Parameter::Save("カメラアングルY", cameraAngle.y);
+//		Parameter::Save("カメラの移動速度X", cameraSpeed.x);
+//		Parameter::Save("カメラの移動速度Y", cameraSpeed.y);
+//		Parameter::Save("ミニマップ用カメラ距離", mmCameraDist);
+//		Parameter::Save("カメラ方向反転X", inverse.x);
+//		Parameter::Save("カメラ方向反転Y", inverse.y);
+//		Parameter::End();
+//	}
+//
+//	ImGui::End();
+//#pragma endregion
 }
 
 void GameCamera::SetTarget(ModelObj* target_)

@@ -1,5 +1,5 @@
 #include "BehaviorTestScene.h"
-#include "RImGui.h"
+//#include "RImGui.h"
 #include "Camera.h"
 #include "Easing.h"
 
@@ -34,39 +34,41 @@ void BehaviorTestScene::Update()
 
 	skydome.TransferBuffer(camera.mViewProjection);
 
-	ImGui::SetNextWindowSize({ 400, 200 }, ImGuiCond_FirstUseEver);
-
-	ImGui::Begin("敵挙動作成GUI");
-
-	if (ImGui::Button("初期化")) {
-		objs.clear();
-		lineCube.clear();
-		CubeCreate({ 0,0,0 });
-		CubeCreate({ 0,0,0 });
-	}
-
-	ImGui::DragFloat3("配置オブジェクト:pos", &objs.back().mTransform.position.x, 1.0f);
-	if (ImGui::Button("配置")) {
-		CubeCreate(objs.back().mTransform.position);
-	}
-
-	ImGui::InputText("セーブするファイル名", &fileName);
-
-	if (ImGui::Button("セーブ")) {
-		int32_t i = 0;
-		data.points.clear();
-		for (auto& obj : objs)
-		{
-			//最後は入れない
-			if (i == objs.size() - 1)break;
-			data.points.push_back(obj.mTransform.position);
-			i++;
-		}
-
-		EnemyBehaviorEditor::Save(data, fileName);
-	}
-
-	ImGui::End();
+//#pragma region ImGui
+//	ImGui::SetNextWindowSize({ 400, 200 }, ImGuiCond_FirstUseEver);
+//
+//	ImGui::Begin("敵挙動作成GUI");
+//
+//	if (ImGui::Button("初期化")) {
+//		objs.clear();
+//		lineCube.clear();
+//		CubeCreate({ 0,0,0 });
+//		CubeCreate({ 0,0,0 });
+//	}
+//
+//	ImGui::DragFloat3("配置オブジェクト:pos", &objs.back().mTransform.position.x, 1.0f);
+//	if (ImGui::Button("配置")) {
+//		CubeCreate(objs.back().mTransform.position);
+//	}
+//
+//	ImGui::InputText("セーブするファイル名", &fileName);
+//
+//	if (ImGui::Button("セーブ")) {
+//		int32_t i = 0;
+//		data.points.clear();
+//		for (auto& obj : objs)
+//		{
+//			//最後は入れない
+//			if (i == objs.size() - 1)break;
+//			data.points.push_back(obj.mTransform.position);
+//			i++;
+//		}
+//
+//		EnemyBehaviorEditor::Save(data, fileName);
+//	}
+//
+//	ImGui::End();
+//#pragma endregion
 }
 
 void BehaviorTestScene::Draw()

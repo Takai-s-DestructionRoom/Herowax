@@ -1,5 +1,5 @@
 #include "EnemyManager.h"
-#include "RImGui.h"
+//#include "RImGui.h"
 #include "Colliders.h"
 #include "Parameter.h"
 
@@ -98,129 +98,129 @@ void EnemyManager::Update()
 
 	solidCombo = 0;	//同フレームで固まった敵のみカウントするので逐一0に戻す
 
-#pragma region ImGui
-	ImGui::SetNextWindowSize({ 300, 150 }, ImGuiCond_FirstUseEver);
-
-	ImGui::Begin("Enemy");
-
-	if (ImGui::Button("敵を攻撃状態へ遷移")) {
-		for (auto& enemy : enemys)
-		{
-			enemy->ChangeAttackState<EnemyFindState>();
-		}
-	}
-
-	if (ImGui::Button("敵を回収状態へ遷移")) {
-		for (auto& enemy : enemys)
-		{
-			enemy->ChangeState<EnemyCollect>();
-		}
-	}
-
-	ImGui::Text("EnemyNum:%d", enemys.size());
-	ImGui::DragFloat3("敵の大きさ", &enemySize.x, 0.1f);
-	static bool hitChecker = false;
-	if (ImGui::TreeNode("攻撃系"))
-	{
-		ImGui::Checkbox("接触ダメージをつけるか", &isContactDamage);
-		ImGui::InputFloat("敵の攻撃力(突進時)", &normalAtkPower, 1.f);
-		if (isContactDamage) {
-			ImGui::InputFloat("敵の攻撃力(接触時)", &contactAtkPower, 1.f);
-		}
-		else {
-			ImGui::Text("接触時の敵攻撃力の調整項目は、");
-			ImGui::Text("接触ダメージをつけるフラグが立っている場合のみ表示されます");
-		}
-		ImGui::TreePop();
-	}
-	if (ImGui::TreeNode("当たり判定"))
-	{
-		ImGui::Checkbox("当たり判定描画", &hitChecker);
-
-		ImGui::InputFloat("敵の当たり判定の大きさ", &collideSize, 0.1f);
-		ImGui::InputFloat("敵が自分と当たる当たり判定の大きさ", &attackHitColliderSize, 1.0f);
-		ImGui::InputFloat("突っ込んでくる距離", &attackMove, 1.0f);
-		ImGui::TreePop();
-	}
-	if (ImGui::TreeNode("温度系"))
-	{
-		ImGui::PushItemWidth(100);
-		ImGui::InputFloat("敵が燃えたときのボーナス上昇温度", &burningBonus, 1.f);
-		ImGui::PopItemWidth();
-		ImGui::TreePop();
-	}
-	if (ImGui::TreeNode("速度系"))
-	{
-		ImGui::PushItemWidth(100);
-		ImGui::InputFloat("移動速度", &moveSpeed, 0.1f);
-		ImGui::SliderFloat("減速率", &slowMag, 0.f, 1.f);
-		ImGui::SliderFloat("ろうまみれ減速率", &slowCoatingMag, 0.f, 1.f);
-		ImGui::PopItemWidth();
-		ImGui::TreePop();
-	}
-	if (ImGui::TreeNode("ノックバック系"))
-	{
-		ImGui::SliderFloat("ノックバックにかかる時間", &knockTime, 0.0f, 5.0f);
-		ImGui::SliderFloat("ノックバックする距離", &knockRange, 0.0f, 10.f);
-
-		ImGui::SliderFloat("knockRandXS", &knockRandXS, -Util::PI, Util::PI);
-		ImGui::SliderFloat("knockRandXE", &knockRandXE, -Util::PI, Util::PI);
-		ImGui::SliderFloat("knockRandZS", &knockRandZS, -Util::PI, Util::PI);
-		ImGui::SliderFloat("knockRandZE", &knockRandZE, -Util::PI, Util::PI);
-		ImGui::SliderFloat("knockRandZE", &knockRandZE, -Util::PI, Util::PI);
-		ImGui::TreePop();
-	}
-	ImGui::SliderFloat("無敵時間さん", &mutekiTime, 0.0f, 1.0f);
-	static Color changeColor = { 1,1,1,1 };
-	ImGui::ColorEdit4("ロウで固まってるときの色", &changeColor.r);
-
-	if (ImGui::Button("Reset")) {
-		enemys.clear();
-	}
-	if (ImGui::Button("セーブ")) {
-		Parameter::Begin("Enemy");
-		Parameter::Save("減速率", slowMag);
-		Parameter::Save("ろうまみれ減速率", slowCoatingMag);
-		Parameter::Save("敵が燃えたときのボーナス上昇温度", burningBonus);
-		Parameter::Save("ノックバックにかかる時間", knockTime);
-		Parameter::Save("ノックバックする距離", knockRange);
-		Parameter::Save("knockRandXS", knockRandXS);
-		Parameter::Save("knockRandXE", knockRandXE);
-		Parameter::Save("knockRandZS", knockRandZS);
-		Parameter::Save("knockRandZE", knockRandZE);
-		Parameter::Save("knockRandZE", knockRandZE);
-		Parameter::Save("knockRandZE", knockRandZE);
-		Parameter::Save("敵の大きさX", enemySize.x);
-		Parameter::Save("敵の大きさY", enemySize.y);
-		Parameter::Save("敵の大きさZ", enemySize.z);
-		Parameter::Save("敵の当たり判定の大きさ", collideSize);
-		Parameter::Save("敵がプレイヤーと当たる判定の大きさ", attackHitColliderSize);
-		Parameter::Save("突っ込んでくる距離", attackMove);
-		Parameter::Save("移動速度", moveSpeed);
-		Parameter::Save("敵の攻撃力", normalAtkPower);
-
-		Parameter::End();
-	}
-
-	for (auto& enemy : enemys)
-	{
-		ImGui::Text("ステート:%s", enemy->GetState().c_str());
-		ImGui::Text("回転 x:%f y:%f z:%f",
-			enemy->obj.mTransform.rotation.x,
-			enemy->obj.mTransform.rotation.y,
-			enemy->obj.mTransform.rotation.z);
-
-		enemy->changeColor = changeColor;
-		enemy->colliderSize = collideSize;
-		enemy->obj.mTransform.scale = enemySize;
-		enemy->SetDrawCollider(hitChecker);
-		enemy->attackHitCollider.r = attackHitColliderSize;
-		enemy->attackMovePower = attackMove;
-		enemy->SetMoveSpeed(moveSpeed);
-	}
-
-	ImGui::End();
-#pragma endregion
+//#pragma region ImGui
+//	ImGui::SetNextWindowSize({ 300, 150 }, ImGuiCond_FirstUseEver);
+//
+//	ImGui::Begin("Enemy");
+//
+//	if (ImGui::Button("敵を攻撃状態へ遷移")) {
+//		for (auto& enemy : enemys)
+//		{
+//			enemy->ChangeAttackState<EnemyFindState>();
+//		}
+//	}
+//
+//	if (ImGui::Button("敵を回収状態へ遷移")) {
+//		for (auto& enemy : enemys)
+//		{
+//			enemy->ChangeState<EnemyCollect>();
+//		}
+//	}
+//
+//	ImGui::Text("EnemyNum:%d", enemys.size());
+//	ImGui::DragFloat3("敵の大きさ", &enemySize.x, 0.1f);
+//	static bool hitChecker = false;
+//	if (ImGui::TreeNode("攻撃系"))
+//	{
+//		ImGui::Checkbox("接触ダメージをつけるか", &isContactDamage);
+//		ImGui::InputFloat("敵の攻撃力(突進時)", &normalAtkPower, 1.f);
+//		if (isContactDamage) {
+//			ImGui::InputFloat("敵の攻撃力(接触時)", &contactAtkPower, 1.f);
+//		}
+//		else {
+//			ImGui::Text("接触時の敵攻撃力の調整項目は、");
+//			ImGui::Text("接触ダメージをつけるフラグが立っている場合のみ表示されます");
+//		}
+//		ImGui::TreePop();
+//	}
+//	if (ImGui::TreeNode("当たり判定"))
+//	{
+//		ImGui::Checkbox("当たり判定描画", &hitChecker);
+//
+//		ImGui::InputFloat("敵の当たり判定の大きさ", &collideSize, 0.1f);
+//		ImGui::InputFloat("敵が自分と当たる当たり判定の大きさ", &attackHitColliderSize, 1.0f);
+//		ImGui::InputFloat("突っ込んでくる距離", &attackMove, 1.0f);
+//		ImGui::TreePop();
+//	}
+//	if (ImGui::TreeNode("温度系"))
+//	{
+//		ImGui::PushItemWidth(100);
+//		ImGui::InputFloat("敵が燃えたときのボーナス上昇温度", &burningBonus, 1.f);
+//		ImGui::PopItemWidth();
+//		ImGui::TreePop();
+//	}
+//	if (ImGui::TreeNode("速度系"))
+//	{
+//		ImGui::PushItemWidth(100);
+//		ImGui::InputFloat("移動速度", &moveSpeed, 0.1f);
+//		ImGui::SliderFloat("減速率", &slowMag, 0.f, 1.f);
+//		ImGui::SliderFloat("ろうまみれ減速率", &slowCoatingMag, 0.f, 1.f);
+//		ImGui::PopItemWidth();
+//		ImGui::TreePop();
+//	}
+//	if (ImGui::TreeNode("ノックバック系"))
+//	{
+//		ImGui::SliderFloat("ノックバックにかかる時間", &knockTime, 0.0f, 5.0f);
+//		ImGui::SliderFloat("ノックバックする距離", &knockRange, 0.0f, 10.f);
+//
+//		ImGui::SliderFloat("knockRandXS", &knockRandXS, -Util::PI, Util::PI);
+//		ImGui::SliderFloat("knockRandXE", &knockRandXE, -Util::PI, Util::PI);
+//		ImGui::SliderFloat("knockRandZS", &knockRandZS, -Util::PI, Util::PI);
+//		ImGui::SliderFloat("knockRandZE", &knockRandZE, -Util::PI, Util::PI);
+//		ImGui::SliderFloat("knockRandZE", &knockRandZE, -Util::PI, Util::PI);
+//		ImGui::TreePop();
+//	}
+//	ImGui::SliderFloat("無敵時間さん", &mutekiTime, 0.0f, 1.0f);
+//	static Color changeColor = { 1,1,1,1 };
+//	ImGui::ColorEdit4("ロウで固まってるときの色", &changeColor.r);
+//
+//	if (ImGui::Button("Reset")) {
+//		enemys.clear();
+//	}
+//	if (ImGui::Button("セーブ")) {
+//		Parameter::Begin("Enemy");
+//		Parameter::Save("減速率", slowMag);
+//		Parameter::Save("ろうまみれ減速率", slowCoatingMag);
+//		Parameter::Save("敵が燃えたときのボーナス上昇温度", burningBonus);
+//		Parameter::Save("ノックバックにかかる時間", knockTime);
+//		Parameter::Save("ノックバックする距離", knockRange);
+//		Parameter::Save("knockRandXS", knockRandXS);
+//		Parameter::Save("knockRandXE", knockRandXE);
+//		Parameter::Save("knockRandZS", knockRandZS);
+//		Parameter::Save("knockRandZE", knockRandZE);
+//		Parameter::Save("knockRandZE", knockRandZE);
+//		Parameter::Save("knockRandZE", knockRandZE);
+//		Parameter::Save("敵の大きさX", enemySize.x);
+//		Parameter::Save("敵の大きさY", enemySize.y);
+//		Parameter::Save("敵の大きさZ", enemySize.z);
+//		Parameter::Save("敵の当たり判定の大きさ", collideSize);
+//		Parameter::Save("敵がプレイヤーと当たる判定の大きさ", attackHitColliderSize);
+//		Parameter::Save("突っ込んでくる距離", attackMove);
+//		Parameter::Save("移動速度", moveSpeed);
+//		Parameter::Save("敵の攻撃力", normalAtkPower);
+//
+//		Parameter::End();
+//	}
+//
+//	for (auto& enemy : enemys)
+//	{
+//		ImGui::Text("ステート:%s", enemy->GetState().c_str());
+//		ImGui::Text("回転 x:%f y:%f z:%f",
+//			enemy->obj.mTransform.rotation.x,
+//			enemy->obj.mTransform.rotation.y,
+//			enemy->obj.mTransform.rotation.z);
+//
+//		enemy->changeColor = changeColor;
+//		enemy->colliderSize = collideSize;
+//		enemy->obj.mTransform.scale = enemySize;
+//		enemy->SetDrawCollider(hitChecker);
+//		enemy->attackHitCollider.r = attackHitColliderSize;
+//		enemy->attackMovePower = attackMove;
+//		enemy->SetMoveSpeed(moveSpeed);
+//	}
+//
+//	ImGui::End();
+//#pragma endregion
 
 }
 

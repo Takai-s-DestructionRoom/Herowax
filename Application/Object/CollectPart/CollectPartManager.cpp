@@ -62,7 +62,7 @@ void CollectPartManager::Update()
     //制作報酬を渡す
     CreateReward();
 
-    ImGui();
+    //ImGui();
 }
 
 void CollectPartManager::Draw()

@@ -55,25 +55,27 @@ void Minimap::Update()
 	float cameraDist = Camera::sMinimapCamera->mViewProjection.mEye.y;
 	iconSize = 1.f / (cameraDist / 250.f) * (Minimap::GetInstance()->size / 180.f);
 
-	ImGui::SetNextWindowSize({ 300, 200 }, ImGuiCond_FirstUseEver);
-
-	// カメラ //
-	ImGui::Begin("Minimap");
-
-	ImGui::InputFloat("ミニマップ座標X", &pos.x, 1.0f);
-	ImGui::InputFloat("ミニマップ座標Y", &pos.y, 1.0f);
-	ImGui::InputFloat("ミニマップサイズ", &size, 5.0f);
-	size = Util::Clamp(size, 50.f, 500.f);
-
-	if (ImGui::Button("セーブ")) {
-		Parameter::Begin("Minimap");
-		Parameter::Save("ミニマップ座標X", pos.x);
-		Parameter::Save("ミニマップ座標Y", pos.y);
-		Parameter::Save("ミニマップサイズ", size);
-		Parameter::End();
-	}
-
-	ImGui::End();
+//#pragma region ImGui
+//	ImGui::SetNextWindowSize({ 300, 200 }, ImGuiCond_FirstUseEver);
+//
+//	// カメラ //
+//	ImGui::Begin("Minimap");
+//
+//	ImGui::InputFloat("ミニマップ座標X", &pos.x, 1.0f);
+//	ImGui::InputFloat("ミニマップ座標Y", &pos.y, 1.0f);
+//	ImGui::InputFloat("ミニマップサイズ", &size, 5.0f);
+//	size = Util::Clamp(size, 50.f, 500.f);
+//
+//	if (ImGui::Button("セーブ")) {
+//		Parameter::Begin("Minimap");
+//		Parameter::Save("ミニマップ座標X", pos.x);
+//		Parameter::Save("ミニマップ座標Y", pos.y);
+//		Parameter::Save("ミニマップサイズ", size);
+//		Parameter::End();
+//	}
+//
+//	ImGui::End();
+//#pragma endregion
 }
 
 void Minimap::Draw()

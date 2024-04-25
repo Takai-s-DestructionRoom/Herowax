@@ -50,7 +50,7 @@ void SlimeWax::Update()
 
 	ScreenSizeForce();
 	
-	ImGui();
+	//ImGui();
 
 	//一番近い位置に配置
 	screen.mTransform.position = GetNearSpherePosition();
