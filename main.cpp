@@ -29,6 +29,7 @@
 #include "RImGui.h"
 #include "MainTestScene.h"
 #include "ProtoScene.h"
+#include "TitleScene.h"
 #include "Colliders.h"
 #include <RenderTarget.h>
 #include <Renderer.h>
@@ -113,7 +114,7 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 	//初期シーンセット
 	Util::debugBool = true;
 	//SceneManager::Set<BehaviorTestScene>();
-	SceneManager::Set<ProtoScene>();
+	SceneManager::Set<TitleScene>();
 	
 	//////////////////////////////////////
 
