@@ -8,7 +8,7 @@ void CollectZone::Init()
 	obj = PaintableModelObj(Model::Load("./Resources/Model/Cube.obj", "Cube"));
 
 	obj.mTuneMaterial.mColor = { 1,0,0,0.7f };
-	obj.mTuneMaterial.mAmbient = Vector3::ONE * 100.f;
+	obj.mTuneMaterial.mAmbient = Vector3(1, 1, 1) * 100.f;
 	obj.mTuneMaterial.mDiffuse = Vector3::ZERO;
 	obj.mTuneMaterial.mSpecular = Vector3::ZERO;
 

@@ -508,22 +508,26 @@ void ProtoScene::Update()
 	}
 
 #pragma region ImGui
-	ImGui::SetNextWindowSize({ 400, 200 }, ImGuiCond_FirstUseEver);
+	if (RImGui::showImGui)
+	{
 
-	// デバッグモード //
-	ImGui::Begin("デバッグ");
-	ImGui::Text("デバッグモード中はシーン切り替えが発生しません");
-	ImGui::Text("デバッグモードはF5で切り替えもできます");
-	if (ImGui::Checkbox("デバッグモード切り替え", &Util::debugBool)) {
-		ImGui::Text("デバッグモード中です");
-	}
-	if (ImGui::Button("セーブ")) {
-		Parameter::Begin("DebugBool");
-		Parameter::Save("debugBool", Util::debugBool);
-		Parameter::End();
-	}
+		ImGui::SetNextWindowSize({ 400, 200 }, ImGuiCond_FirstUseEver);
 
-	ImGui::End();
+		// デバッグモード //
+		ImGui::Begin("デバッグ");
+		ImGui::Text("デバッグモード中はシーン切り替えが発生しません");
+		ImGui::Text("デバッグモードはF5で切り替えもできます");
+		if (ImGui::Checkbox("デバッグモード切り替え", &Util::debugBool)) {
+			ImGui::Text("デバッグモード中です");
+		}
+		if (ImGui::Button("セーブ")) {
+			Parameter::Begin("DebugBool");
+			Parameter::Save("debugBool", Util::debugBool);
+			Parameter::End();
+		}
+
+		ImGui::End();
+	}
 
 	SpawnDataLoader::OrderCreateGUI();
 
@@ -537,11 +541,6 @@ void ProtoScene::Draw()
 	skydome.Draw();
 	WaxManager::GetInstance()->Draw();
 	//CollectPartManager::GetInstance()->Draw();
-
-	//FireManager::GetInstance()->Draw();
-	//TemperatureManager::GetInstance()->Draw();
-	//eggUI.Draw();
-	//nest.Draw();
 
 	Level::Get()->Draw();
 	Boss::GetInstance()->Draw();

@@ -34,39 +34,43 @@ void BehaviorTestScene::Update()
 
 	skydome.TransferBuffer(camera.mViewProjection);
 
-	ImGui::SetNextWindowSize({ 400, 200 }, ImGuiCond_FirstUseEver);
+	if (RImGui::showImGui)
+	{
 
-	ImGui::Begin("敵挙動作成GUI");
+		ImGui::SetNextWindowSize({ 400, 200 }, ImGuiCond_FirstUseEver);
 
-	if (ImGui::Button("初期化")) {
-		objs.clear();
-		lineCube.clear();
-		CubeCreate({ 0,0,0 });
-		CubeCreate({ 0,0,0 });
-	}
+		ImGui::Begin("敵挙動作成GUI");
 
-	ImGui::DragFloat3("配置オブジェクト:pos", &objs.back().mTransform.position.x, 1.0f);
-	if (ImGui::Button("配置")) {
-		CubeCreate(objs.back().mTransform.position);
-	}
-
-	ImGui::InputText("セーブするファイル名", &fileName);
-
-	if (ImGui::Button("セーブ")) {
-		int32_t i = 0;
-		data.points.clear();
-		for (auto& obj : objs)
-		{
-			//最後は入れない
-			if (i == objs.size() - 1)break;
-			data.points.push_back(obj.mTransform.position);
-			i++;
+		if (ImGui::Button("初期化")) {
+			objs.clear();
+			lineCube.clear();
+			CubeCreate({ 0,0,0 });
+			CubeCreate({ 0,0,0 });
 		}
 
-		EnemyBehaviorEditor::Save(data, fileName);
-	}
+		ImGui::DragFloat3("配置オブジェクト:pos", &objs.back().mTransform.position.x, 1.0f);
+		if (ImGui::Button("配置")) {
+			CubeCreate(objs.back().mTransform.position);
+		}
 
-	ImGui::End();
+		ImGui::InputText("セーブするファイル名", &fileName);
+
+		if (ImGui::Button("セーブ")) {
+			int32_t i = 0;
+			data.points.clear();
+			for (auto& obj : objs)
+			{
+				//最後は入れない
+				if (i == objs.size() - 1)break;
+				data.points.push_back(obj.mTransform.position);
+				i++;
+			}
+
+			EnemyBehaviorEditor::Save(data, fileName);
+		}
+
+		ImGui::End();
+	}
 }
 
 void BehaviorTestScene::Draw()

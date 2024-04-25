@@ -36,7 +36,7 @@ gravity(0.2f)
 
 	predictionLine = ModelObj(Model::Load("./Resources/Model/Cube.obj", "Cube"));
 	//影をなくす
-	predictionLine.mTuneMaterial.mAmbient = Vector3::ONE * 100.f;
+	predictionLine.mTuneMaterial.mAmbient = Vector3(1, 1, 1) * 100.f;
 	predictionLine.mTuneMaterial.mDiffuse = Vector3::ZERO;
 	predictionLine.mTuneMaterial.mSpecular = Vector3::ZERO;
 
@@ -369,8 +369,8 @@ void Enemy::DealDamage(uint32_t damage, const Vector3& dir, ModelObj* target_)
 	ParticleManager::GetInstance()->AddSimple(
 		obj.mTransform.position, obj.mTransform.scale,
 		10, 0.3f, obj.mTuneMaterial.mColor, "", 0.5f, 1.2f,
-		dir.GetNormalize() - Vector3::ONE * 0.3f, dir.GetNormalize() - Vector3::ONE * 0.3f,
-		0.03f, -Vector3::ONE * 0.1f, Vector3::ONE * 0.1f, 0.1f);
+		dir.GetNormalize() - Vector3(1, 1, 1) * 0.3f, dir.GetNormalize() - Vector3(1, 1, 1) * 0.3f,
+		0.03f, -Vector3(1, 1, 1) * 0.1f, Vector3(1, 1, 1) * 0.1f, 0.1f);
 
 	//ヒットエフェクト出す
 	ParticleManager::GetInstance()->AddSimple(

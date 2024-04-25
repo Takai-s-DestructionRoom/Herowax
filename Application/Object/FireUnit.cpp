@@ -96,13 +96,13 @@ void FireUnit::Update()
 			obj.mTransform.position, obj.mTransform.scale * 0.5f, 2, 0.4f,
 			Color::kFireOutside, TextureManager::Load("./Resources/fireEffect.png"),
 			2.f, 3.5f, { -0.1f,0.1f,-0.1f }, { 0.1f,0.5f,0.1f },
-			0.05f, -Vector3::ONE * 0.1f, Vector3::ONE * 0.1f, 0.05f, 0.f, false, true);
+			0.05f, -Vector3(1, 1, 1) * 0.1f, Vector3(1, 1, 1) * 0.1f, 0.05f, 0.f, false, true);
 		//中心の炎
 		ParticleManager::GetInstance()->AddSimple(
 			obj.mTransform.position, obj.mTransform.scale * 0.3f, 2, 0.2f,
 			Color::kFireInside, TextureManager::Load("./Resources/fireEffect.png"),
 			2.5f, 3.5f, { -0.1f,0.1f,-0.1f }, { 0.1f,0.4f,0.1f },
-			0.01f, -Vector3::ONE * 0.1f, Vector3::ONE * 0.1f, 0.05f, 0.f, false, true);
+			0.01f, -Vector3(1, 1, 1) * 0.1f, Vector3(1, 1, 1) * 0.1f, 0.05f, 0.f, false, true);
 	}
 
 	//更新してからバッファに送る
@@ -115,13 +115,13 @@ void FireUnit::Update()
 				fire.mTransform.position, fire.mTransform.scale * 0.4f, 1, 0.3f,
 				Color::kFireOutside, TextureManager::Load("./Resources/fireEffect.png"),
 				1.f, 2.5f, { -0.1f,0.1f,-0.1f }, { 0.1f,0.5f,0.1f },
-				0.05f, -Vector3::ONE * 0.1f, Vector3::ONE * 0.1f, 0.05f, 0.f, false, true);
+				0.05f, -Vector3(1, 1, 1) * 0.1f, Vector3(1, 1, 1) * 0.1f, 0.05f, 0.f, false, true);
 			//中心の炎
 			ParticleManager::GetInstance()->AddSimple(
 				fire.mTransform.position, fire.mTransform.scale * 0.2f, 1, 0.2f,
 				Color::kFireInside, TextureManager::Load("./Resources/fireEffect.png"),
 				1.f, 2.5f, { -0.1f,0.1f,-0.1f }, { 0.1f,0.4f,0.1f },
-				0.01f, -Vector3::ONE * 0.1f, Vector3::ONE * 0.1f, 0.05f, 0.f, false, true);
+				0.01f, -Vector3(1, 1, 1) * 0.1f, Vector3(1, 1, 1) * 0.1f, 0.05f, 0.f, false, true);
 		}
 
 		fire.mTransform.UpdateMatrix();

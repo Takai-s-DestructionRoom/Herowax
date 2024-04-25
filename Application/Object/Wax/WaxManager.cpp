@@ -6,6 +6,7 @@
 #include "ColPrimitive3D.h"
 #include "Quaternion.h"
 #include <RAudio.h>
+#include "RImGui.h"
 
 WaxManager* WaxManager::GetInstance()
 {
@@ -182,55 +183,59 @@ void WaxManager::Update()
 	slimeWax.Update();
 
 #pragma region ImGui
-	ImGui::SetNextWindowSize({ 350, 180 }, ImGuiCond_FirstUseEver);
-
-	ImGui::Begin("Wax");
-	ImGui::Text("存在しているロウの数:%d", (int)GetWaxNum());
-	ImGui::PushItemWidth(100);
-
-	ImGui::InputFloat("回収時の加速度", &accelAmount, 0.05f);
-	ImGui::InputFloat("当たり判定の大きさ", &colliderSize, 0.1f);
-	ImGui::InputFloat("ロウの見た目の大きさの係数", &slimeWaxSizeMag, 0.1f);
-
-	ImGui::Checkbox("当たり判定の描画", &isViewCol);
-	ImGui::Checkbox("ロウの見た目の描画", &isViewSlimeWax);
-	ImGui::Checkbox("オブジェクトロウの描画", &isViewObjectWax);
-
-	ImGui::Text("敵を捕まえたときの固まっている秒数");
-	for (int i = 0; i < 10; i++)
+	if (RImGui::showImGui)
 	{
-		std::string waxnum = std::to_string(i + 1) + "体の時";
-		if (i + 1 >= 10) {
-			waxnum = std::to_string(i + 1) + "体以上の時";
-		}
-		ImGui::InputFloat(waxnum.c_str(), &waxTime[i], 1.0f);
-	}
-	ImGui::Text("ロウグループ数:%d", (int)waxGroups.size());
-	ImGui::PopItemWidth();
 
-	if (ImGui::Button("Reset")) {
-		Init();
-	}
-	if (ImGui::Button("セーブ")) {
-		Parameter::Begin(fileName);
-		Parameter::Save("ロウが燃えたときの上昇温度", heatUpTemperature);
-		Parameter::Save("ボーナス上昇温度", heatBonus);
-		Parameter::Save("回収時の加速度", accelAmount);
-		Parameter::Save("当たり判定の大きさ", colliderSize);
-		Parameter::Save("ロウの見た目の大きさの係数", slimeWaxSizeMag);
+		ImGui::SetNextWindowSize({ 350, 180 }, ImGuiCond_FirstUseEver);
 
+		ImGui::Begin("Wax");
+		ImGui::Text("存在しているロウの数:%d", (int)GetWaxNum());
+		ImGui::PushItemWidth(100);
+
+		ImGui::InputFloat("回収時の加速度", &accelAmount, 0.05f);
+		ImGui::InputFloat("当たり判定の大きさ", &colliderSize, 0.1f);
+		ImGui::InputFloat("ロウの見た目の大きさの係数", &slimeWaxSizeMag, 0.1f);
+
+		ImGui::Checkbox("当たり判定の描画", &isViewCol);
+		ImGui::Checkbox("ロウの見た目の描画", &isViewSlimeWax);
+		ImGui::Checkbox("オブジェクトロウの描画", &isViewObjectWax);
+
+		ImGui::Text("敵を捕まえたときの固まっている秒数");
 		for (int i = 0; i < 10; i++)
 		{
 			std::string waxnum = std::to_string(i + 1) + "体の時";
 			if (i + 1 >= 10) {
 				waxnum = std::to_string(i + 1) + "体以上の時";
 			}
-			Parameter::Save(waxnum.c_str(), waxTime[i]);
+			ImGui::InputFloat(waxnum.c_str(), &waxTime[i], 1.0f);
 		}
-		Parameter::End();
-	}
+		ImGui::Text("ロウグループ数:%d", (int)waxGroups.size());
+		ImGui::PopItemWidth();
 
-	ImGui::End();
+		if (ImGui::Button("Reset")) {
+			Init();
+		}
+		if (ImGui::Button("セーブ")) {
+			Parameter::Begin(fileName);
+			Parameter::Save("ロウが燃えたときの上昇温度", heatUpTemperature);
+			Parameter::Save("ボーナス上昇温度", heatBonus);
+			Parameter::Save("回収時の加速度", accelAmount);
+			Parameter::Save("当たり判定の大きさ", colliderSize);
+			Parameter::Save("ロウの見た目の大きさの係数", slimeWaxSizeMag);
+
+			for (int i = 0; i < 10; i++)
+			{
+				std::string waxnum = std::to_string(i + 1) + "体の時";
+				if (i + 1 >= 10) {
+					waxnum = std::to_string(i + 1) + "体以上の時";
+				}
+				Parameter::Save(waxnum.c_str(), waxTime[i]);
+			}
+			Parameter::End();
+		}
+
+		ImGui::End();
+	}
 #pragma endregion
 }
 
