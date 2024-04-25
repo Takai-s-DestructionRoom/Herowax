@@ -12,7 +12,7 @@ BossDeadScene::BossDeadScene()
 	cameraChangeTimer[1] = 0.5f;
 	cameraChangeTimer[2] = 0.7f;
 
-	TextureManager::Load("./Resources/clear.png", "clear");
+	TextureManager::Load("./Resources/UI/clear.png", "clear");
 	clearStrPos = { RWindow::GetWidth() * 0.5f,- 300.f };
 }
 
