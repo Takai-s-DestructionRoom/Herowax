@@ -82,6 +82,8 @@ void ProtoScene::Init()
 	CollectPartManager::GetInstance()->zone.scale = { 100,100 };
 
 	CollectPartManager::GetInstance()->SetPlayer(&player);*/
+
+	controlUI.Init();
 }
 
 void ProtoScene::Update()
@@ -507,27 +509,33 @@ void ProtoScene::Update()
 	//	SceneManager::GetInstance()->Change<FailedScene,SimpleSceneTransition>();
 	//}
 
-//#pragma region ImGui
-//	ImGui::SetNextWindowSize({ 400, 200 }, ImGuiCond_FirstUseEver);
-//
-//	// デバッグモード //
-//	ImGui::Begin("デバッグ");
-//	ImGui::Text("デバッグモード中はシーン切り替えが発生しません");
-//	ImGui::Text("デバッグモードはF5で切り替えもできます");
-//	if (ImGui::Checkbox("デバッグモード切り替え", &Util::debugBool)) {
-//		ImGui::Text("デバッグモード中です");
-//	}
-//	if (ImGui::Button("セーブ")) {
-//		Parameter::Begin("DebugBool");
-//		Parameter::Save("debugBool", Util::debugBool);
-//		Parameter::End();
-//	}
-//
-//	ImGui::End();
-//
-//	SpawnDataLoader::OrderCreateGUI();
-//
-//#pragma endregion
+	controlUI.Update();
+
+#pragma region ImGui
+	if (RImGui::showImGui)
+	{
+
+		ImGui::SetNextWindowSize({ 400, 200 }, ImGuiCond_FirstUseEver);
+
+		// デバッグモード //
+		ImGui::Begin("デバッグ");
+		ImGui::Text("デバッグモード中はシーン切り替えが発生しません");
+		ImGui::Text("デバッグモードはF5で切り替えもできます");
+		if (ImGui::Checkbox("デバッグモード切り替え", &Util::debugBool)) {
+			ImGui::Text("デバッグモード中です");
+		}
+		if (ImGui::Button("セーブ")) {
+			Parameter::Begin("DebugBool");
+			Parameter::Save("debugBool", Util::debugBool);
+			Parameter::End();
+		}
+
+		ImGui::End();
+	}
+
+	SpawnDataLoader::OrderCreateGUI();
+
+#pragma endregion
 }
 
 void ProtoScene::Draw()
@@ -546,6 +554,8 @@ void ProtoScene::Draw()
 	{
 		eventScene->Draw();
 	}
+
+	controlUI.Draw();
 
 	//更新
 	InstantDrawer::AllUpdate();
