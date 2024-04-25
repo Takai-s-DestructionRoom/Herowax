@@ -19,6 +19,7 @@
 #include "GameCamera.h"
 
 #include "IEventScene.h"
+#include "ControlUI.h"
 
 class ProtoScene : public IScene
 {
@@ -45,6 +46,8 @@ private:
 	//Vector2 cameraSpeed{};				//カメラの移動速度
 	//Vector2 mAngle = { 0, 0 };
 	LightGroup light;
+
+	ControlUI controlUI;
 
 	float rot[3] = { 0, 0, 0 };
 	float scale[3] = { 1, 1, 1 };

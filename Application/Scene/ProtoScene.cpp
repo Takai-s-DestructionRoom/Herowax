@@ -82,6 +82,8 @@ void ProtoScene::Init()
 	CollectPartManager::GetInstance()->zone.scale = { 100,100 };
 
 	CollectPartManager::GetInstance()->SetPlayer(&player);*/
+
+	controlUI.Init();
 }
 
 void ProtoScene::Update()
@@ -507,6 +509,8 @@ void ProtoScene::Update()
 		SceneManager::GetInstance()->Change<FailedScene,SimpleSceneTransition>();
 	}
 
+	controlUI.Update();
+
 #pragma region ImGui
 	if (RImGui::showImGui)
 	{
@@ -550,6 +554,8 @@ void ProtoScene::Draw()
 	{
 		eventScene->Draw();
 	}
+
+	controlUI.Draw();
 
 	//更新
 	InstantDrawer::AllUpdate();

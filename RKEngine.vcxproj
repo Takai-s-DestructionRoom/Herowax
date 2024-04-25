@@ -161,6 +161,7 @@
     <ClCompile Include="Application\EventScene\BossDeadScene.cpp" />
     <ClCompile Include="Application\Object\BehaviorTestScene.cpp" />
     <ClCompile Include="Application\Object\EnemyBehaviorEditor.cpp" />
+    <ClCompile Include="Application\ControlUI.cpp" />
     <ClCompile Include="Engine\Collision\AABBCollider.cpp" />
     <ClCompile Include="Application\Chara\Enemy\EnemySpawner.cpp" />
     <ClCompile Include="Application\InstantDrawer.cpp" />
@@ -773,6 +774,7 @@
     <ClInclude Include="Application\EventScene\BossDeadScene.h" />
     <ClInclude Include="Application\Object\BehaviorTestScene.h" />
     <ClInclude Include="Application\Object\EnemyBehaviorEditor.h" />
+    <ClInclude Include="Application\ControlUI.h" />
     <ClInclude Include="Engine\Collision\AABBCollider.h" />
     <ClInclude Include="Application\Chara\Enemy\EnemySpawner.h" />
     <ClInclude Include="Application\InstantDrawer.h" />
