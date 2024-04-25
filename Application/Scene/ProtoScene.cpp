@@ -92,25 +92,25 @@ void ProtoScene::Update()
 	InstantDrawer::DrawInit();
 	WaxManager::GetInstance()->slimeWax.Reset();
 
-	//ボス撃破シーンに切り替え
-	if (Util::debugBool) {
-		if (RInput::GetInstance()->GetKeyDown(DIK_B))
-		{
-			RAudio::Stop("Boss");
-		    RAudio::Stop("Normal");
-			EventCaller::EventCall(BossDeadScene::GetEventCallStr());
-			player.isMove = false;
-		}
+	////ボス撃破シーンに切り替え
+	//if (Util::debugBool) {
+	//	if (RInput::GetInstance()->GetKeyDown(DIK_B))
+	//	{
+	//		RAudio::Stop("Boss");
+	//	    RAudio::Stop("Normal");
+	//		EventCaller::EventCall(BossDeadScene::GetEventCallStr());
+	//		player.isMove = false;
+	//	}
 
-		//ボス登場シーンに切り替え
-		if (RInput::GetInstance()->GetKeyDown(DIK_T))
-		{
-			RAudio::Stop("Boss");
-			RAudio::Stop("Normal");
-			EventCaller::EventCall(BossAppearanceScene::GetEventCallStr());
-			player.isMove = false;
-		}
-	}
+	//	//ボス登場シーンに切り替え
+	//	if (RInput::GetInstance()->GetKeyDown(DIK_T))
+	//	{
+	//		RAudio::Stop("Boss");
+	//		RAudio::Stop("Normal");
+	//		EventCaller::EventCall(BossAppearanceScene::GetEventCallStr());
+	//		player.isMove = false;
+	//	}
+	//}
 
 	SceneTrance::GetInstance()->Update();
 
