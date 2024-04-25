@@ -30,14 +30,14 @@ public:
 	//終了処理まとめ
 	static void Finalize();
 
+	static bool showImGui;
+
 private:
 	ID3D12Device* mDevicePtr = nullptr;
 	ID3D12DescriptorHeap* mSrvHeapPtr = nullptr;
 
 	std::string mConfigPath;
-
-	static bool showImGui;
-
+	
 	void InitInternal();
 	void FinalInternal();
 

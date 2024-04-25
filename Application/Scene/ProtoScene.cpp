@@ -538,11 +538,6 @@ void ProtoScene::Draw()
 	WaxManager::GetInstance()->Draw();
 	//CollectPartManager::GetInstance()->Draw();
 
-	//FireManager::GetInstance()->Draw();
-	//TemperatureManager::GetInstance()->Draw();
-	//eggUI.Draw();
-	//nest.Draw();
-
 	Level::Get()->Draw();
 	Boss::GetInstance()->Draw();
 	player.Draw();

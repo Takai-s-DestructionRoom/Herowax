@@ -56,7 +56,7 @@ isFireStock(false), isWaxStock(true), isCollectFan(false), maxWaxStock(20)
 	collectRangeModel = ModelObj(Model::Load("./Resources/Model/Cube.obj", "Cube", true));
 	waxCollectRange = Parameter::GetParam(extract, "ロウ回収範囲", 5.f);
 	collectRangeModel.mTuneMaterial.mColor.a = Parameter::GetParam(extract, "範囲objの透明度", 0.5f);
-	collectRangeModel.mTuneMaterial.mAmbient = Vector3::ONE * 100.f;
+	collectRangeModel.mTuneMaterial.mAmbient = Vector3(1, 1, 1) * 100.f;
 	collectRangeModel.mTuneMaterial.mDiffuse = Vector3::ZERO;
 	collectRangeModel.mTuneMaterial.mSpecular = Vector3::ZERO;
 
@@ -79,32 +79,27 @@ isFireStock(false), isWaxStock(true), isCollectFan(false), maxWaxStock(20)
 	minRange = Parameter::GetParam(extract, "攻撃範囲_最小", minRange);
 	maxRange = Parameter::GetParam(extract, "攻撃範囲_最大", maxRange);
 
-	Model::Load("./Resources/Model/collect/collect.obj", "collect", true);
-	Model::Load("./Resources/Model/playerHuman/playerHuman.obj", "playerHuman", true);
-	Model::Load("./Resources/Model/playerBag/playerBag.obj", "playerBag", true);
-
 	bagScale = Parameter::GetParam(extract, "風船の大きさ", 1.0f);
 	humanOffset = Parameter::GetParam(extract,"人の位置Y", humanOffset);
 	humanScale = Parameter::GetParam(extract,"人の大きさ", humanScale);
 	collectScale = Parameter::GetParam(extract,"回収中の大きさ", collectScale);
-
-	RAudio::Load("Resources/Sounds/SE/P_attack.wav", "Attack");
-	
-	RAudio::Load("Resources/Sounds/SE/P_attackHit.wav", "Hit");
-	RAudio::Load("Resources/Sounds/SE/P_enemyCollect.wav", "eCollect");
 }
 
 void Player::Init()
 {
+	Model::Load("./Resources/Model/collect/collect.obj", "collect", true);
+	Model::Load("./Resources/Model/playerHuman/playerHuman.obj", "playerHuman", true);
+	Model::Load("./Resources/Model/playerBag/playerBag.obj", "playerBag", true);
+
+	RAudio::Load("Resources/Sounds/SE/P_attack.wav", "Attack");
+	RAudio::Load("Resources/Sounds/SE/P_attackHit.wav", "Hit");
+	RAudio::Load("Resources/Sounds/SE/P_enemyCollect.wav", "eCollect");
+
 	obj = PaintableModelObj("playerBag");
 	obj.mPaintDissolveMapTex = TextureManager::Load("./Resources/DissolveMap.png",
 		"DissolveMap");
 
 	humanObj = ModelObj("playerHuman");
-
-	waxTankObj = PaintableModelObj(Model::Load("./Resources/Model/sphere.obj", "sphere", true));
-	waxTankObj.mPaintDissolveMapTex = TextureManager::Load("./Resources/deleteDesolveTex.png",
-		"deleteDesolveTex");
 
 	std::map<std::string, std::string> extract = Parameter::Extract("Player");
 	defColor.r = Parameter::GetParam(extract, "プレイヤーの色R", 1);
@@ -315,11 +310,11 @@ void Player::Update()
 	//回収中なら回収中モデルのスケールを入れる
 	if (!WaxManager::GetInstance()->isCollected)
 	{
-		obj.mTransform.scale = Vector3::ONE * collectScale;
+		obj.mTransform.scale = Vector3(1, 1, 1) * collectScale;
 	}
 	else
 	{
-		obj.mTransform.scale = Vector3::ONE * bagScale;
+		obj.mTransform.scale = Vector3(1, 1, 1) * bagScale;
 	}
 
 	//攻撃中と回収中なら正面へ、それ以外なら後ろへ
@@ -339,12 +334,7 @@ void Player::Update()
 	humanObj.mTransform.rotation.y -= Util::AngleToRadian(180.f);
 
 	//大きさを適用
-	humanObj.mTransform.scale = Vector3::ONE * humanScale;
-
-	//
-	waxTankObj.mTransform = obj.mTransform;
-	waxTankObj.mTransform.scale = (Vector3::ONE * bagScale) * 0.7f;
-	waxTankObj.mTransform.position.y = obj.mTransform.position.y + (bagScale * 0.75f);
+	humanObj.mTransform.scale = Vector3(1,1,1) * humanScale;
 
 	UpdateCollider();
 	UpdateAttackCollider();
@@ -408,12 +398,6 @@ void Player::Update()
 
 	humanObj.mTransform.UpdateMatrix();
 	humanObj.TransferBuffer(Camera::sNowCamera->mViewProjection);
-
-	waxTankObj.mTransform.UpdateMatrix();
-	waxTankObj.mPaintDataBuff->dissolveVal = (float)waxStock / (float)maxWaxStock;;
-	waxTankObj.mPaintDataBuff->color = Color(0.8f, 0.6f, 0.35f, 1.0f);
-	waxTankObj.mPaintDataBuff->slide += TimeManager::deltaTime;
-	waxTankObj.TransferBuffer(Camera::sNowCamera->mViewProjection);
 
 	ui.Update(this);
 
@@ -564,29 +548,28 @@ void Player::Draw()
 {
 	if (isAlive || Util::debugBool)
 	{
-		//waxTankObj.Draw();
-
-		BrightDraw();
 		
-		//回収中は別モデルに置き換えるので描画しない
-		if (WaxManager::GetInstance()->isCollected) {
-			humanObj.Draw();
-		}
-
-		if (isCollectFan)
-		{
-			collectRangeModelCircle.Draw();
-			collectRangeModelRayLeft.Draw();
-			collectRangeModelRayRight.Draw();
-		}
-		else
-		{
-			collectRangeModel.Draw();
-		}
-		ui.Draw();
-
-		DrawAttackCollider();
 	}
+	BrightDraw();
+
+	//回収中は別モデルに置き換えるので描画しない
+	if (WaxManager::GetInstance()->isCollected) {
+		humanObj.Draw();
+	}
+
+	if (isCollectFan)
+	{
+		collectRangeModelCircle.Draw();
+		collectRangeModelRayLeft.Draw();
+		collectRangeModelRayRight.Draw();
+	}
+	else
+	{
+		collectRangeModel.Draw();
+	}
+	ui.Draw();
+
+	DrawAttackCollider();
 }
 
 void Player::MovePad()

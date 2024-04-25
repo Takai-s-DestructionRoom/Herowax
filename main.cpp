@@ -38,6 +38,7 @@
 #include <PathUtil.h>
 #include "ParticleEditorScene.h"
 #include "BehaviorTestScene.h"
+#include "TitleScene.h"
 
 using namespace std;
 using namespace DirectX;
@@ -112,8 +113,8 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 	TextureManager::Load("Resources/Internals/loadingMark.png", "LoadingMark");
 
 	//初期シーンセット
-	Util::debugBool = true;
-	//SceneManager::Set<BehaviorTestScene>();
+	Util::debugBool = false;
+	//SceneManager::Set<ProtoScene>();
 	SceneManager::Set<TitleScene>();
 	
 	//////////////////////////////////////

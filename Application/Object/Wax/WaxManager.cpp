@@ -6,6 +6,7 @@
 #include "ColPrimitive3D.h"
 #include "Quaternion.h"
 #include <RAudio.h>
+#include "RImGui.h"
 
 WaxManager* WaxManager::GetInstance()
 {

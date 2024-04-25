@@ -23,7 +23,7 @@ moveSpeed(0.1f), hp(0), maxHP(10.f)
 	nextState = nullptr;
 	obj = PaintableModelObj(Model::Load("./Resources/Model/bossBody/bossBody.obj", "bossBody", true));
 	obj.mPaintDissolveMapTex = TextureManager::Load("./Resources/DissolveMap.png", "DissolveMapTex");
-	obj.mTransform.scale = Vector3::ONE * 8.f;
+	obj.mTransform.scale = Vector3(1,1,1) * 8.f;
 
 	parts[(size_t)PartsNum::LeftHand].oriPos = { 50.f,20.f,0.f };
 	parts[(size_t)PartsNum::RightHand].oriPos = { -50.f,20.f,0.f };
@@ -246,6 +246,7 @@ void Boss::Update()
 	if (bossSpawnTimer.GetNowEnd()) {
 		EventCaller::EventCall(BossAppearanceScene::GetEventCallStr());
 	}
+#pragma region ImGui
 
 //#pragma region ImGui
 //	ImGui::SetNextWindowSize({ 300, 250 }, ImGuiCond_FirstUseEver);

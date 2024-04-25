@@ -175,44 +175,48 @@ void SlimeWax::TransferBuffer()
 
 void SlimeWax::ImGui()
 {
-	ImGui::SetNextWindowSize({ 300, 200 }, ImGuiCond_FirstUseEver);
+	if (RImGui::showImGui)
+	{
 
-	ImGui::Begin("RayMarchTest");
-	if (ImGui::Button("カメラ位置に配置")) {
-		//cube.mTransform.position = GetNearSpherePosition();
-		screen.mTransform.position = GetNearSpherePosition();
-	}
-	ImGui::DragFloat3("masterMoveVec", &masterMoveVec.x);
-	ImGui::SliderInt("球の数(再生成しないと変わらない)", &changeNum, 1, MAX_SPHERE_COUNT);
-	if (ImGui::Button("球再生成")) {
-		sphereNum = changeNum;
-		spheres.clear();
-		for (int32_t i = 0; i < sphereNum; i++)
-		{
-			spheres.emplace_back();
-			spheres.back().Init();
-			spheres.back().collider.pos = sphereCenter;
+		ImGui::SetNextWindowSize({ 300, 200 }, ImGuiCond_FirstUseEver);
+
+		ImGui::Begin("RayMarchTest");
+		if (ImGui::Button("カメラ位置に配置")) {
+			//cube.mTransform.position = GetNearSpherePosition();
+			screen.mTransform.position = GetNearSpherePosition();
 		}
-	}
-	ImGui::Checkbox("板描画切り替え", &isPlaneDraw);
-	ImGui::DragFloat3("position", &screen.mTransform.position.x);
-	static Vector2 size = screen.mImage.GetSize();
-	ImGui::DragFloat2("size", &size.x);
-	screen.mImage.SetSize(size);
-	ImGui::DragFloat3("rotation", &screen.mTransform.rotation.x, 0.01f);
-	ImGui::SliderFloat("slimeValue", &slimeValue, 0.01f, 1.0f);
-	ImGui::SliderInt("rayMatchNum", &rayMatchNum, 1, 64);
-	ImGui::InputFloat("clipValue", &clipValue, 0.001f);
-	if (ImGui::Button("セーブ")) {
-		Parameter::Begin("slimeWax");
-		Parameter::Save("sphereNum", sphereNum);
-		Parameter::Save("slimeValue", slimeValue);
-		Parameter::Save("rayMatchNum", rayMatchNum);
-		Parameter::Save("clipValue", clipValue);
-		Parameter::End();
-	}
-	ImGui::End();
+		ImGui::DragFloat3("masterMoveVec", &masterMoveVec.x);
+		ImGui::SliderInt("球の数(再生成しないと変わらない)", &changeNum, 1, MAX_SPHERE_COUNT);
+		if (ImGui::Button("球再生成")) {
+			sphereNum = changeNum;
+			spheres.clear();
+			for (int32_t i = 0; i < sphereNum; i++)
+			{
+				spheres.emplace_back();
+				spheres.back().Init();
+				spheres.back().collider.pos = sphereCenter;
+			}
+		}
+		ImGui::Checkbox("板描画切り替え", &isPlaneDraw);
+		ImGui::DragFloat3("position", &screen.mTransform.position.x);
+		static Vector2 size = screen.mImage.GetSize();
+		ImGui::DragFloat2("size", &size.x);
+		screen.mImage.SetSize(size);
+		ImGui::DragFloat3("rotation", &screen.mTransform.rotation.x, 0.01f);
+		ImGui::SliderFloat("slimeValue", &slimeValue, 0.01f, 1.0f);
+		ImGui::SliderInt("rayMatchNum", &rayMatchNum, 1, 64);
+		ImGui::InputFloat("clipValue", &clipValue, 0.001f);
+		if (ImGui::Button("セーブ")) {
+			Parameter::Begin("slimeWax");
+			Parameter::Save("sphereNum", sphereNum);
+			Parameter::Save("slimeValue", slimeValue);
+			Parameter::Save("rayMatchNum", rayMatchNum);
+			Parameter::Save("clipValue", clipValue);
+			Parameter::End();
+		}
+		ImGui::End();
 
+	}
 }
 
 void SlimeWax::ScreenSizeForce()
