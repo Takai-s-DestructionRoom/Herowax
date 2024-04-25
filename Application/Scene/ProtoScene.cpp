@@ -75,7 +75,7 @@ void ProtoScene::Init()
 	RAudio::Play("Normal", 0.5f, 1.0f, true);
 
 	std::map<std::string, std::string> extract = Parameter::Extract("DebugBool");
-	Util::debugBool = Parameter::GetParam(extract, "debugBool", false);
+	//Util::debugBool = Parameter::GetParam(extract, "debugBool", false);
 
 	/*CollectPartManager::GetInstance()->Init();
 	CollectPartManager::GetInstance()->zone.pos = { 100,0,100 };
