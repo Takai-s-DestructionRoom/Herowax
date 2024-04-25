@@ -6,7 +6,7 @@
 
 #include "RInput.h"
 
-bool RImGui::showImGui = true;
+bool RImGui::showImGui = false;
 
 RImGui* RImGui::GetInstance()
 {
@@ -32,7 +32,7 @@ void RImGui::Render()
         showImGui = !showImGui;
     }
 
-    if (!showImGui)return;
+    //if (!showImGui)return;
 
     RImGui* instance = GetInstance();
     ImGui::Render();

@@ -61,42 +61,46 @@ void ParticleEditorScene::Update()
 
 	ParticleManager::GetInstance()->Update();
 
-	ImGui::SetNextWindowSize({ 400, 200 }, ImGuiCond_FirstUseEver);
-
-	ImGui::Begin("パーティクル生成GUI");
-
-	fileNames = ParticleEditor::LoadFileNames();
-
-	//ImGui::InputText("読み込むパーティクル名", &loadPartName);
-	if (!fileNames.empty())
+	if (RImGui::showImGui)
 	{
-		//ハンドルの一覧をプルダウンで表示
-		std::vector<const char*> temp;
-		for (size_t i = 0; i < fileNames.size(); i++)
+
+		ImGui::SetNextWindowSize({ 400, 200 }, ImGuiCond_FirstUseEver);
+
+		ImGui::Begin("パーティクル生成GUI");
+
+		fileNames = ParticleEditor::LoadFileNames();
+
+		//ImGui::InputText("読み込むパーティクル名", &loadPartName);
+		if (!fileNames.empty())
 		{
-			temp.push_back(fileNames[i].c_str());
+			//ハンドルの一覧をプルダウンで表示
+			std::vector<const char*> temp;
+			for (size_t i = 0; i < fileNames.size(); i++)
+			{
+				temp.push_back(fileNames[i].c_str());
+			}
+			static int32_t select = 0;
+			ImGui::Combo("読み込むパーティクル名", &select, &temp[0], (int32_t)fileNames.size());
+			loadPartName = fileNames[select];
 		}
-		static int32_t select = 0;
-		ImGui::Combo("読み込むパーティクル名", &select, &temp[0], (int32_t)fileNames.size());
-		loadPartName = fileNames[select];
+		ImGui::DragFloat3("生成位置", &emitPos.x);
+		if (ImGui::Button("一回生成")) {
+			//ファイル名に"_ring"が含まれてるなら円形パーティクルを出す
+			if (Util::ContainString(loadPartName, "_ring")) {
+				ParticleManager::GetInstance()->AddRing(emitPos, loadPartName);
+			}
+			//それ以外はシンプルパーティクルとみなす
+			else if (loadPartName != "") {
+				ParticleManager::GetInstance()->AddSimple(emitPos, loadPartName);
+				drawEmitter.mTransform.scale = ParticleEditor::LoadSimple(loadPartName).emitScale * 2.f;
+			}
+		}
+		ImGui::Checkbox("無限に生成するか", &isAutoCreate);
+		ImGui::InputFloat("無限生成の間隔", &roopTimer.maxTime_, 0.1f);
+		ImGui::Text("カメラ固定はF3でも切り替えられます");
+		ImGui::Checkbox("カメラ固定を解除", &camForce);
+		ImGui::End();
 	}
-	ImGui::DragFloat3("生成位置", &emitPos.x);
-	if (ImGui::Button("一回生成")) {
-		//ファイル名に"_ring"が含まれてるなら円形パーティクルを出す
-		if (Util::ContainString(loadPartName,"_ring")) {
-			ParticleManager::GetInstance()->AddRing(emitPos, loadPartName);
-		}
-		//それ以外はシンプルパーティクルとみなす
-		else if (loadPartName != "") {
-			ParticleManager::GetInstance()->AddSimple(emitPos, loadPartName);
-			drawEmitter.mTransform.scale = ParticleEditor::LoadSimple(loadPartName).emitScale * 2.f;
-		}
-	}
-	ImGui::Checkbox("無限に生成するか", &isAutoCreate);
-	ImGui::InputFloat("無限生成の間隔", &roopTimer.maxTime_,0.1f);
-	ImGui::Text("カメラ固定はF3でも切り替えられます");
-	ImGui::Checkbox("カメラ固定を解除", &camForce);
-	ImGui::End();
 }
 
 void ParticleEditorScene::Draw()

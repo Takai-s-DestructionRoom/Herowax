@@ -72,12 +72,15 @@ void FailedScene::Update()
 	Level::Get()->Update();
 
 	//F6かメニューボタン押されたらタイトルシーンへ
-	if (RInput::GetInstance()->GetKeyDown(DIK_F6) ||
+	bool button = RInput::GetInstance()->GetKeyDown(DIK_F6) ||
 		RInput::GetInstance()->GetKeyDown(DIK_SPACE) ||
-		RInput::GetInstance()->GetPadButtonDown(XINPUT_GAMEPAD_A))
+		RInput::GetInstance()->GetPadButtonDown(XINPUT_GAMEPAD_A);
+
+	if (button && !sceneChange)
 	{
 		RAudio::Play("Select", 0.6f);
 		SceneManager::GetInstance()->Change<TitleScene, SimpleSceneTransition>();
+		sceneChange = true;
 	}
 
 	camera.mViewProjection.UpdateMatrix();
