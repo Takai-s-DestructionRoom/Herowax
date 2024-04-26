@@ -4,7 +4,7 @@
 
 BossAppearanceScene::BossAppearanceScene()
 {
-	TextureManager::Load("./Resources/boss.png", "boss");
+	TextureManager::Load("./Resources/UI/boss.png", "boss");
 }
 
 BossAppearanceScene::~BossAppearanceScene()
@@ -40,7 +40,7 @@ void BossAppearanceScene::Update()
 		textEaseTimer.Start();
 	}
 
-	textOriSize = { 2.5f,2.5f };
+	textOriSize = { 1.5f,1.5f };
 	textSize = textOriSize * Easing::OutBack(textEaseTimer.GetTimeRate());
 
 	//イベントシーン終わったらシーン遷移開始

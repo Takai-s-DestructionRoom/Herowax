@@ -42,20 +42,24 @@ void ParticleManager::Update()
 	}
 
 #pragma region ImGui
-	ImGui::SetNextWindowSize({ 150, 70 }, ImGuiCond_FirstUseEver);
-
-	// パーティクル //
-	ImGui::Begin("Particle");
-
-	size_t particleSize = 0;
-	for (auto& emitter : emitters_)
+	if (RImGui::showImGui)
 	{
-		particleSize += emitter->GetParticlesSize();
+
+		ImGui::SetNextWindowSize({ 150, 70 }, ImGuiCond_FirstUseEver);
+
+		// パーティクル //
+		ImGui::Begin("Particle");
+
+		size_t particleSize = 0;
+		for (auto& emitter : emitters_)
+		{
+			particleSize += emitter->GetParticlesSize();
+		}
+
+		ImGui::Text("生存個体数:%d", particleSize);
+
+		ImGui::End();
 	}
-
-	ImGui::Text("生存個体数:%d", particleSize);
-
-	ImGui::End();
 #pragma endregion
 }
 

@@ -35,7 +35,7 @@ void WaxIgnite::Update(Wax* wax)
 			15, 0.3f, wax->waxEndColor,
 			TextureManager::Load("./Resources/particle_simple.png"),
 			2.f, 4.f,1.5f,3.0f, 0.1f, 0.5f,
-			-Vector3::ONE * 0.1f, Vector3::ONE * 0.1f, 0.1f,0.f, false, true);
+			-Vector3(1, 1, 1) * 0.1f, Vector3(1, 1, 1) * 0.1f, 0.1f,0.f, false, true);
 	}
 
 	//色が変わる
@@ -76,13 +76,13 @@ void WaxBurning::Update(Wax* wax)
 			wax->GetCenterPos(), wax->obj.mTransform.scale * 1.f, 3, 0.4f,
 			Color::kFireOutside, TextureManager::Load("./Resources/fireEffect.png"),
 			2.5f, 5.f, { -0.1f,0.1f,-0.1f }, { 0.1f,0.5f,0.1f },
-			0.05f, -Vector3::ONE * 0.1f, Vector3::ONE * 0.1f, 0.1f, 0.f, false, true);
+			0.05f, -Vector3(1, 1, 1) * 0.1f, Vector3(1, 1, 1) * 0.1f, 0.1f, 0.f, false, true);
 		//中心の炎
 		ParticleManager::GetInstance()->AddSimple(
 			wax->GetCenterPos(), wax->obj.mTransform.scale * 1.f, 2, 0.2f,
 			Color::kFireInside, TextureManager::Load("./Resources/fireEffect.png"),
 			2.5f, 5.f, { -0.1f,0.1f,-0.1f }, { 0.1f,0.4f,0.1f },
-			0.01f, -Vector3::ONE * 0.1f, Vector3::ONE * 0.1f, 0.05f, 0.f, false, true);
+			0.01f, -Vector3(1, 1, 1) * 0.1f, Vector3(1, 1, 1) * 0.1f, 0.05f, 0.f, false, true);
 		frameCount = 0;
 	}
 

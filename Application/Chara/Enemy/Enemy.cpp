@@ -8,7 +8,7 @@
 #include "RImGui.h"
 #include "Renderer.h"
 #include <TimeManager.h>
-#include "CollectPartManager.h"
+//#include "CollectPartManager.h"
 
 Enemy::Enemy(ModelObj* target_) : GameObject(),
 moveSpeed(0.1f), slowMag(0.8f),
@@ -36,7 +36,7 @@ gravity(0.2f)
 
 	predictionLine = ModelObj(Model::Load("./Resources/Model/Cube.obj", "Cube"));
 	//影をなくす
-	predictionLine.mTuneMaterial.mAmbient = Vector3::ONE * 100.f;
+	predictionLine.mTuneMaterial.mAmbient = Vector3(1, 1, 1) * 100.f;
 	predictionLine.mTuneMaterial.mDiffuse = Vector3::ZERO;
 	predictionLine.mTuneMaterial.mSpecular = Vector3::ZERO;
 
@@ -45,11 +45,11 @@ gravity(0.2f)
 
 Enemy::~Enemy()
 {
-	//50%の確率でドロップ
-	int32_t rand = Util::GetRand(0, 1);
-	if (rand == 1) {
-		CollectPartManager::GetInstance()->Craete(obj.mTransform.position);
-	}
+	////50%の確率でドロップ
+	//int32_t rand = Util::GetRand(0, 1);
+	//if (rand == 1) {
+	//	CollectPartManager::GetInstance()->Craete(obj.mTransform.position);
+	//}
 
 	//死んだときパーティクル出す
 	ParticleManager::GetInstance()->AddSimple(
@@ -369,8 +369,8 @@ void Enemy::DealDamage(uint32_t damage, const Vector3& dir, ModelObj* target_)
 	ParticleManager::GetInstance()->AddSimple(
 		obj.mTransform.position, obj.mTransform.scale,
 		10, 0.3f, obj.mTuneMaterial.mColor, "", 0.5f, 1.2f,
-		dir.GetNormalize() - Vector3::ONE * 0.3f, dir.GetNormalize() - Vector3::ONE * 0.3f,
-		0.03f, -Vector3::ONE * 0.1f, Vector3::ONE * 0.1f, 0.1f);
+		dir.GetNormalize() - Vector3(1, 1, 1) * 0.3f, dir.GetNormalize() - Vector3(1, 1, 1) * 0.3f,
+		0.03f, -Vector3(1, 1, 1) * 0.1f, Vector3(1, 1, 1) * 0.1f, 0.1f);
 
 	//ヒットエフェクト出す
 	ParticleManager::GetInstance()->AddSimple(

@@ -25,7 +25,7 @@ PlayerUI::PlayerUI()
 		maxSize[i] = size[i] * 1.1f;
 	}
 
-	iconSize = { 0.25f,0.25f };
+	/*iconSize = { 0.25f,0.25f };
 	minimapIcon.SetTexture(TextureManager::Load("./Resources/minimap_icon.png", "minimapIcon"));
 	minimapIcon.mMaterial.mColor = Color::kWhite;
 
@@ -33,7 +33,7 @@ PlayerUI::PlayerUI()
 	minimapIconRange.SetTexture(TextureManager::Load("./Resources/white2x2.png", "white2x2"));
 	minimapIconRange.SetAnchor({ 0.5f,1.f });
 	minimapIconRange.mMaterial.mColor = Color::kWhite;
-	minimapIconRange.mMaterial.mColor.a = 0.3f;
+	minimapIconRange.mMaterial.mColor.a = 0.3f;*/
 }
 
 void PlayerUI::Update(Player* player)
@@ -52,34 +52,34 @@ void PlayerUI::Update(Player* player)
 	size[(uint32_t)UIType::fireGauge].x =
 		maxSize[(uint32_t)UIType::fireGauge].x * player->hp / player->maxHP;
 
-	//スクリーン座標を求める
-	screenPos = Minimap::GetInstance()->GetScreenPos(player->obj.mTransform.position);
-	minimapIcon.mTransform.position = { screenPos.x,screenPos.y,0.f };
-	//回転適用
-	minimapIcon.mTransform.rotation.z =
-		player->obj.mTransform.rotation.y;
-	//決めたサイズに
-	iconSize = { player->obj.mTransform.scale.x * 0.2f,player->obj.mTransform.scale.z * 0.2f };
-	minimapIcon.mTransform.scale = Vector3(iconSize.x,iconSize.y,1.f) * Minimap::GetInstance()->iconSize;
+	////スクリーン座標を求める
+	//screenPos = Minimap::GetInstance()->GetScreenPos(player->obj.mTransform.position);
+	//minimapIcon.mTransform.position = { screenPos.x,screenPos.y,0.f };
+	////回転適用
+	//minimapIcon.mTransform.rotation.z =
+	//	player->obj.mTransform.rotation.y;
+	////決めたサイズに
+	//iconSize = { player->obj.mTransform.scale.x * 0.2f,player->obj.mTransform.scale.z * 0.2f };
+	//minimapIcon.mTransform.scale = Vector3(iconSize.x,iconSize.y,1.f) * Minimap::GetInstance()->iconSize;
 
-	//更新忘れずに
-	minimapIcon.mTransform.UpdateMatrix();
-	minimapIcon.TransferBuffer();
+	////更新忘れずに
+	//minimapIcon.mTransform.UpdateMatrix();
+	//minimapIcon.TransferBuffer();
 
 
-	//スクリーン座標を求める
-	screenPosRange = Minimap::GetInstance()->GetScreenPos(player->obj.mTransform.position);
-	minimapIconRange.mTransform.position = { screenPosRange.x,screenPosRange.y,0.f };
-	//回転適用
-	minimapIconRange.mTransform.rotation.z =
-		player->obj.mTransform.rotation.y;
-	//決めたサイズに
-	minimapIconRange.mTransform.scale =
-		Vector3(player->waxCollectRange * 0.5f, player->waxCollectVertical * 0.5f, 1.f) * Minimap::GetInstance()->iconSize;
+	////スクリーン座標を求める
+	//screenPosRange = Minimap::GetInstance()->GetScreenPos(player->obj.mTransform.position);
+	//minimapIconRange.mTransform.position = { screenPosRange.x,screenPosRange.y,0.f };
+	////回転適用
+	//minimapIconRange.mTransform.rotation.z =
+	//	player->obj.mTransform.rotation.y;
+	////決めたサイズに
+	//minimapIconRange.mTransform.scale =
+	//	Vector3(player->waxCollectRange * 0.5f, player->waxCollectVertical * 0.5f, 1.f) * Minimap::GetInstance()->iconSize;
 
-	//更新忘れずに
-	minimapIconRange.mTransform.UpdateMatrix();
-	minimapIconRange.TransferBuffer();
+	////更新忘れずに
+	//minimapIconRange.mTransform.UpdateMatrix();
+	//minimapIconRange.TransferBuffer();
 }
 
 void PlayerUI::Draw()
@@ -92,11 +92,11 @@ void PlayerUI::Draw()
 		InstantDrawer::DrawGraph3D(position[i], size[i].x, size[i].y, "white2x2", gaugeColor[i]);
 	}
 
-	//描画範囲制限
-	Renderer::SetScissorRects({ Minimap::GetInstance()->rect });
-	minimapIconRange.Draw();
-	minimapIcon.Draw();
+	////描画範囲制限
+	//Renderer::SetScissorRects({ Minimap::GetInstance()->rect });
+	//minimapIconRange.Draw();
+	//minimapIcon.Draw();
 
-	//元の範囲に戻してあげる
-	Renderer::SetScissorRects({ Minimap::GetInstance()->defaultRect });
+	////元の範囲に戻してあげる
+	//Renderer::SetScissorRects({ Minimap::GetInstance()->defaultRect });
 }

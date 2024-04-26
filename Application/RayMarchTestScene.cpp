@@ -131,17 +131,21 @@ void RayMarchTestScene::Update()
 
 	skydome.TransferBuffer(camera.mViewProjection);
 
-	ImGui::SetNextWindowSize({ 300, 200 }, ImGuiCond_FirstUseEver);
+	if (RImGui::showImGui)
+	{
 
-	ImGui::Begin("plane");
-	ImGui::DragFloat3("板の位置", &plane.mTransform.position.x);
-	ImGui::DragFloat3("板の大きさ", &plane.mTransform.scale.x);
-	ImGui::DragFloat("magY", &magY,0.1f);
-	ImGui::DragFloat("timer", &timer.maxTime_,0.1f);
-	ImGui::DragFloat("delay1", &delay1,0.01f);
-	ImGui::DragFloat("delay2", &delay2,0.01f);
-	ImGui::Checkbox("autoView", &autoView);
-	ImGui::End();
+		ImGui::SetNextWindowSize({ 300, 200 }, ImGuiCond_FirstUseEver);
+
+		ImGui::Begin("plane");
+		ImGui::DragFloat3("板の位置", &plane.mTransform.position.x);
+		ImGui::DragFloat3("板の大きさ", &plane.mTransform.scale.x);
+		ImGui::DragFloat("magY", &magY, 0.1f);
+		ImGui::DragFloat("timer", &timer.maxTime_, 0.1f);
+		ImGui::DragFloat("delay1", &delay1, 0.01f);
+		ImGui::DragFloat("delay2", &delay2, 0.01f);
+		ImGui::Checkbox("autoView", &autoView);
+		ImGui::End();
+	}
 }
 
 void RayMarchTestScene::Draw()

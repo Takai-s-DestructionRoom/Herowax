@@ -23,13 +23,12 @@ Parts::~Parts()
 	ParticleManager::GetInstance()->AddHoming(
 		obj.mTransform.position, obj.mTransform.scale,
 		10, 0.8f, Wax::waxOriginColor, "", 0.8f, 1.5f,
-		-Vector3::ONE * 0.3f, Vector3::ONE * 0.3f,
-		0.03f, -Vector3::ONE * 0.1f, Vector3::ONE * 0.1f, 0.3f, 0.5f);
+		-Vector3(1, 1, 1) * 0.3f, Vector3(1, 1, 1) * 0.3f,
+		0.03f, -Vector3(1, 1, 1) * 0.1f, Vector3(1, 1, 1) * 0.1f, 0.3f, 0.5f);
 }
 
 void Parts::Init()
 {
-	hp = maxHP;
 	isAlive = true;
 
 	isCollected = false;
@@ -137,6 +136,11 @@ void Parts::Draw()
 	}
 }
 
+bool Parts::GetIsSolid()
+{
+	return waxSolidCount >= requireWaxSolidCount;
+}
+
 void Parts::DealDamage(int32_t damage)
 {
 	//無敵時間さん中ならスキップ
@@ -156,7 +160,4 @@ void Parts::DealDamage(int32_t damage)
 	waxShakeOffTimer.Start();
 
 	waxScatterTimer.Reset();
-
-	//一応HPにダメージ(使うか不明)
-	hp -= damage;
 }

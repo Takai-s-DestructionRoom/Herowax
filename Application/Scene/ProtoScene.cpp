@@ -11,7 +11,7 @@
 #include "Parameter.h"
 #include "SpawnOrderData.h"
 #include "Minimap.h"
-#include "CollectPartManager.h"
+//#include "CollectPartManager.h"
 #include "BossAppearanceScene.h"
 #include "BossDeadScene.h"
 #include "SceneTrance.h"
@@ -24,7 +24,7 @@
 ProtoScene::ProtoScene()
 {
 	TextureManager::Load("./Resources/Brush.png", "brush");
-	CollectPartManager::LoadResouces();
+	//CollectPartManager::LoadResouces();
 
 	skydome = ModelObj(Model::Load("./Resources/Model/bg/bg.obj", "bg"));
 	skydome.mTransform.scale = { 1.5f, 1.5f, 1.5f };
@@ -44,7 +44,7 @@ void ProtoScene::Init()
 {
 	eventScene = std::make_unique<BossAppearanceScene>();
 
-	Camera::sMinimapCamera = &minimapCamera;
+	//Camera::sMinimapCamera = &minimapCamera;
 
 	gameCamera.Init();
 
@@ -67,7 +67,7 @@ void ProtoScene::Init()
 
 	EnemyManager::GetInstance()->SetTarget(&player.obj);
 
-	Minimap::GetInstance()->Init();
+	//Minimap::GetInstance()->Init();
 
 	RAudio::Stop("Normal");
 	RAudio::Stop("Boss");
@@ -77,11 +77,13 @@ void ProtoScene::Init()
 	std::map<std::string, std::string> extract = Parameter::Extract("DebugBool");
 	Util::debugBool = Parameter::GetParam(extract, "debugBool", false);
 
-	CollectPartManager::GetInstance()->Init();
+	/*CollectPartManager::GetInstance()->Init();
 	CollectPartManager::GetInstance()->zone.pos = { 100,0,100 };
 	CollectPartManager::GetInstance()->zone.scale = { 100,100 };
 
-	CollectPartManager::GetInstance()->SetPlayer(&player);
+	CollectPartManager::GetInstance()->SetPlayer(&player);*/
+
+	controlUI.Init();
 }
 
 void ProtoScene::Update()
@@ -94,6 +96,8 @@ void ProtoScene::Update()
 	if (Util::debugBool) {
 		if (RInput::GetInstance()->GetKeyDown(DIK_B))
 		{
+			RAudio::Stop("Boss");
+		    RAudio::Stop("Normal");
 			EventCaller::EventCall(BossDeadScene::GetEventCallStr());
 			player.isMove = false;
 		}
@@ -101,6 +105,8 @@ void ProtoScene::Update()
 		//ボス登場シーンに切り替え
 		if (RInput::GetInstance()->GetKeyDown(DIK_T))
 		{
+			RAudio::Stop("Boss");
+			RAudio::Stop("Normal");
 			EventCaller::EventCall(BossAppearanceScene::GetEventCallStr());
 			player.isMove = false;
 		}
@@ -116,6 +122,7 @@ void ProtoScene::Update()
 		eventScene->Init(Boss::GetInstance()->GetCenterPos() + Vector3::UP * 20.f);
 
 		RAudio::Stop("Boss");
+		RAudio::Stop("Normal");
 
 		player.isMove = false;
 		Boss::GetInstance()->isDead = true;
@@ -131,6 +138,7 @@ void ProtoScene::Update()
 		eventScene = std::make_unique<BossAppearanceScene>();
 		eventScene->Init(Boss::GetInstance()->GetCenterPos() + Vector3::UP * 20.f);
 
+		RAudio::Stop("Boss");
 		RAudio::Stop("Normal");
 		RAudio::Play("Boss", 0.5f, 1.0f, true);
 
@@ -173,6 +181,8 @@ void ProtoScene::Update()
 
 		//死亡シーンの呼び出しが終わったならタイトルに戻す
 		if (EventCaller::GetNowEventStr() == BossDeadScene::GetEventCallStr()) {
+			RAudio::Stop("Boss");
+			RAudio::Stop("Normal");
 			SceneManager::GetInstance()->Change<TitleScene,SimpleSceneTransition>();
 		}
 
@@ -180,7 +190,7 @@ void ProtoScene::Update()
 	}
 
 	gameCamera.Update();
-	MinimapCameraUpdate();
+	//MinimapCameraUpdate();
 
 	//ここに無限に当たり判定増やしていくの嫌なのであとで何か作ります
 	//クソ手抜き当たり判定
@@ -200,29 +210,29 @@ void ProtoScene::Update()
 		}
 	}
 
-	//パーツとの判定
-	for (auto& part : CollectPartManager::GetInstance()->parts)
-	{
-		if ((int32_t)player.carryingParts.size() <
-			CollectPartManager::GetInstance()->GetMaxCarryingNum()) {
-			if (ColPrimitive3D::CheckSphereToSphere(part->collider, player.collider)) {
-				//一旦複数持てる
-				//後でプレイヤー側でフラグ立てて個数制限する
-				part->Carrying(&player);
-			}
-		}
+	////パーツとの判定
+	//for (auto& part : CollectPartManager::GetInstance()->parts)
+	//{
+	//	if ((int32_t)player.carryingParts.size() <
+	//		CollectPartManager::GetInstance()->GetMaxCarryingNum()) {
+	//		if (ColPrimitive3D::CheckSphereToSphere(part->collider, player.collider)) {
+	//			//一旦複数持てる
+	//			//後でプレイヤー側でフラグ立てて個数制限する
+	//			part->Carrying(&player);
+	//		}
+	//	}
 
-		//プレイヤーが持っているなら
-		if (part->IsCarrying()) {
-			//当たり判定する
-			if (ColPrimitive3D::CheckSphereToAABB(player.collider,
-				CollectPartManager::GetInstance()->zone.aabbCol)) {
-				part->Collect();
-				part->SetIsAlive(false);
-				CollectPartManager::GetInstance()->zone.Create(*part);
-			}
-		}
-	}
+	//	//プレイヤーが持っているなら
+	//	if (part->IsCarrying()) {
+	//		//当たり判定する
+	//		if (ColPrimitive3D::CheckSphereToAABB(player.collider,
+	//			CollectPartManager::GetInstance()->zone.aabbCol)) {
+	//			part->Collect();
+	//			part->SetIsAlive(false);
+	//			CollectPartManager::GetInstance()->zone.Create(*part);
+	//		}
+	//	}
+	//}
 
 	for (auto itr = player.carryingParts.begin(); itr != player.carryingParts.end();)
 	{
@@ -361,7 +371,9 @@ void ProtoScene::Update()
 		}
 		//回収ボタン押されたときに固まってるなら吸収
 		//今は範囲外でも吸収できちゃってる
-		if (isCollected2 && enemy->GetIsSolid())
+		//ここもプレイヤーの中に入れちゃう
+		if (isCollected2 && enemy->GetIsSolid() &&
+			ColPrimitive3D::RayToSphereCol(player.collectCol, enemy->collider))
 		{
 			//回収状態に遷移
 			enemy->collectPos = player.GetPos();
@@ -369,27 +381,6 @@ void ProtoScene::Update()
 			enemy->ChangeState<EnemyCollect>();
 
 			player.waxCollectAmount++;
-		}
-	}
-
-	//蝋とプレイヤーの当たり判定
-	player.isCollect = true;
-	for (auto& group : WaxManager::GetInstance()->waxGroups)
-	{
-		//蝋一つ一つとの判定
-		for (auto& wax : group->waxs)
-		{
-			if (wax->GetState() == "WaxCollectFan")
-			{
-				bool isCollision = ColPrimitive3D::CheckSphereToSphere(player.collider, wax->collider);
-				player.isCollect = false;	//一個でも回収中のロウあると回収できなくする
-
-				if (isCollision)
-				{
-					wax->isAlive = false;
-					player.waxCollectAmount++;
-				}
-			}
 		}
 	}
 
@@ -501,9 +492,9 @@ void ProtoScene::Update()
 	ParticleManager::GetInstance()->Update();
 
 	WaxManager::GetInstance()->Update();
-	CollectPartManager::GetInstance()->Update();
+	//CollectPartManager::GetInstance()->Update();
 
-	Minimap::GetInstance()->Update();
+	//Minimap::GetInstance()->Update();
 
 	light.Update();
 
@@ -513,26 +504,34 @@ void ProtoScene::Update()
 	if (RInput::GetInstance()->GetKeyDown(DIK_F6) ||
 		RInput::GetInstance()->GetPadButtonDown(XINPUT_GAMEPAD_START))
 	{
+		RAudio::Stop("Boss");
+		RAudio::Stop("Normal");
 		SceneManager::GetInstance()->Change<FailedScene,SimpleSceneTransition>();
 	}
 
+	controlUI.Update();
+
 #pragma region ImGui
-	ImGui::SetNextWindowSize({ 400, 200 }, ImGuiCond_FirstUseEver);
+	if (RImGui::showImGui)
+	{
 
-	// デバッグモード //
-	ImGui::Begin("デバッグ");
-	ImGui::Text("デバッグモード中はシーン切り替えが発生しません");
-	ImGui::Text("デバッグモードはF5で切り替えもできます");
-	if (ImGui::Checkbox("デバッグモード切り替え", &Util::debugBool)) {
-		ImGui::Text("デバッグモード中です");
-	}
-	if (ImGui::Button("セーブ")) {
-		Parameter::Begin("DebugBool");
-		Parameter::Save("debugBool", Util::debugBool);
-		Parameter::End();
-	}
+		ImGui::SetNextWindowSize({ 400, 200 }, ImGuiCond_FirstUseEver);
 
-	ImGui::End();
+		// デバッグモード //
+		ImGui::Begin("デバッグ");
+		ImGui::Text("デバッグモード中はシーン切り替えが発生しません");
+		ImGui::Text("デバッグモードはF5で切り替えもできます");
+		if (ImGui::Checkbox("デバッグモード切り替え", &Util::debugBool)) {
+			ImGui::Text("デバッグモード中です");
+		}
+		if (ImGui::Button("セーブ")) {
+			Parameter::Begin("DebugBool");
+			Parameter::Save("debugBool", Util::debugBool);
+			Parameter::End();
+		}
+
+		ImGui::End();
+	}
 
 	SpawnDataLoader::OrderCreateGUI();
 
@@ -541,16 +540,11 @@ void ProtoScene::Update()
 
 void ProtoScene::Draw()
 {
-	Minimap::GetInstance()->Draw();
+	//Minimap::GetInstance()->Draw();
 	ParticleManager::GetInstance()->Draw();
 	skydome.Draw();
 	WaxManager::GetInstance()->Draw();
-	CollectPartManager::GetInstance()->Draw();
-
-	//FireManager::GetInstance()->Draw();
-	//TemperatureManager::GetInstance()->Draw();
-	//eggUI.Draw();
-	//nest.Draw();
+	//CollectPartManager::GetInstance()->Draw();
 
 	Level::Get()->Draw();
 	Boss::GetInstance()->Draw();
@@ -560,6 +554,8 @@ void ProtoScene::Draw()
 	{
 		eventScene->Draw();
 	}
+
+	controlUI.Draw();
 
 	//更新
 	InstantDrawer::AllUpdate();

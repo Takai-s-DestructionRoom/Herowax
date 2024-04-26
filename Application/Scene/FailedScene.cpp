@@ -7,10 +7,11 @@
 #include "SimpleSceneTransition.h"
 #include "Boss.h"
 #include "Level.h"
+#include <RAudio.h>
 
 FailedScene::FailedScene()
 {
-	TextureManager::Load("./Resources/failed.png", "failed");
+	TextureManager::Load("./Resources/UI/failed.png", "failed");
 
 	skydome = ModelObj(Model::Load("./Resources/Model/bg/bg.obj", "bg"));
 	skydome.mTransform.scale = { 1.5f, 1.5f, 1.5f };
@@ -32,6 +33,8 @@ FailedScene::FailedScene()
 	failedPos = { RWindow::GetWidth() * 0.5f,RWindow::GetHeight() * 0.5f - 150.f };
 	buttonUIPos = failedPos;
 	buttonUIPos.y += 400.f;
+
+	RAudio::Load("Resources/Sounds/SE/A_select.wav", "Select");
 }
 
 void FailedScene::Init()
@@ -69,11 +72,15 @@ void FailedScene::Update()
 	Level::Get()->Update();
 
 	//F6かメニューボタン押されたらタイトルシーンへ
-	if (RInput::GetInstance()->GetKeyDown(DIK_F6) ||
+	bool button = RInput::GetInstance()->GetKeyDown(DIK_F6) ||
 		RInput::GetInstance()->GetKeyDown(DIK_SPACE) ||
-		RInput::GetInstance()->GetPadButtonDown(XINPUT_GAMEPAD_A))
+		RInput::GetInstance()->GetPadButtonDown(XINPUT_GAMEPAD_A);
+
+	if (button && !sceneChange)
 	{
+		RAudio::Play("Select", 0.6f);
 		SceneManager::GetInstance()->Change<TitleScene, SimpleSceneTransition>();
+		sceneChange = true;
 	}
 
 	camera.mViewProjection.UpdateMatrix();
@@ -100,13 +107,13 @@ void FailedScene::Draw()
 	{
 		InstantDrawer::DrawGraph(
 			buttonUIPos.x, buttonUIPos.y,
-			0.8f, 0.8f, 0.f, TextureManager::Load("./Resources/Abutton_UI_push.png", "AbuttonPush"));
+			0.8f, 0.8f, 0.f, TextureManager::Load("./Resources/UI/A_push.png", "AbuttonPush"));
 	}
 	else
 	{
 		InstantDrawer::DrawGraph(
 			buttonUIPos.x, buttonUIPos.y,
-			0.8f, 0.8f, 0.f, TextureManager::Load("./Resources/Abutton_UI_normal.png", "Abutton"));
+			0.8f, 0.8f, 0.f, TextureManager::Load("./Resources/UI/A_normal.png", "Abutton"));
 	}
 
 	//更新

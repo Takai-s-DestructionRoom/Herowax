@@ -51,118 +51,122 @@ std::string SaveColor(const Color& data)
 
 void ParticleEditor::OrderCreateGUI()
 {
-	ImGui::SetNextWindowSize({ 500, 400 }, ImGuiCond_FirstUseEver);
-
-	ImGui::Begin("ParticleCreateGUI");
-
-	ImGui::PushItemWidth(200);
-	ImGui::Checkbox("常に更新する", &isAlwaysUpdate);
-	
-	if (!file_names.empty())
+	if (RImGui::showImGui)
 	{
-		//ハンドルの一覧をプルダウンで表示
-		std::vector<const char*> temp;
-		for (size_t i = 0; i < file_names.size(); i++)
-		{
-			temp.push_back(file_names[i].c_str());
-		}
-		static int32_t select = 0;
-		ImGui::Combo("読み込むファイル名", &select, &temp[0], (int32_t)file_names.size());
-		loadFileName = file_names[select];
-	}
 
-	if (ImGui::Button("ロード")) {
-		if (Util::ContainString(loadFileName, "_ring"))
-		{
-			saveRingPData = LoadRing(loadFileName);
-		}
-		else
-		{
-			saveSimplePData = LoadSimple(loadFileName);
-		}
-		saveFileName = loadFileName;
-	}
-	//エラーメッセージが入っているなら表示
-	if (saveSimplePData.error != "") {
-		ImGui::Text(saveSimplePData.error.c_str());
-	}
+		ImGui::SetNextWindowSize({ 500, 400 }, ImGuiCond_FirstUseEver);
 
-	if (ImGui::TreeNode("シンプルパーティクル"))
-	{
-		ImGui::Text("テクスチャは/Particle/の中に入れてください");
-		ImGui::InputText("使用するテクスチャ", &saveSimplePData.tex);
-		ImGui::ColorEdit4("パーティクルの色", &saveSimplePData.color.r);
-		ImGui::Text("------------------------------------------");
-		ImGui::InputInt("生成数", &saveSimplePData.addNum, 1);
-		ImGui::InputFloat("パーティクルの生存時間", &saveSimplePData.life);
-		ImGui::Text("------------------------------------------");
-		ImGui::InputFloat3("エミッターサイズ", &saveSimplePData.emitScale.x);
-		ImGui::InputFloat("最小の大きさ(ランダムのmin)", &saveSimplePData.minScale);
-		ImGui::InputFloat("最大の大きさ(ランダムのmax)", &saveSimplePData.maxScale);
-		ImGui::InputFloat3("最小の方向(ランダムのmin)", &saveSimplePData.minVelo.x);
-		ImGui::InputFloat3("最大の方向(ランダムのmax)", &saveSimplePData.maxVelo.x);
-		ImGui::InputFloat3("最小の回転(ランダムのmin)", &saveSimplePData.minRot.x);
-		ImGui::InputFloat3("最大の回転(ランダムのmax)", &saveSimplePData.maxRot.x);
-		ImGui::InputFloat("最終スケール", &saveSimplePData.endScale);
-		ImGui::Text("------------------------------------------");
-		ImGui::InputFloat("大きくなるまでの時間", &saveSimplePData.growingTimer, 0.05f);
-		ImGui::InputFloat("加速度", &saveSimplePData.accelPower, 0.05f);
-		ImGui::Text("------------------------------------------");
-		ImGui::Checkbox("重力を適用するか", &saveSimplePData.isGravity);
-		ImGui::Checkbox("Y軸ビルボード化するか", &saveSimplePData.isBillboard);
-		ImGui::Text("------------------------------------------");
-		ImGui::InputText("セーブするファイル名", &saveFileName);
-		
-		if (ImGui::Button("セーブ") || isAlwaysUpdate) {
-			SaveSimple(saveSimplePData, saveFileName);
-		}
+		ImGui::Begin("ParticleCreateGUI");
 
-		ImGui::TreePop();
-	}
-	if (ImGui::TreeNode("円形パーティクル"))
-	{
-		ImGui::Text("テクスチャは/Particle/の中に入れてください");
-		ImGui::InputText("使用するテクスチャ", &saveRingPData.tex);
-		ImGui::ColorEdit4("パーティクルの色", &saveRingPData.color.r);
-		ImGui::Text("------------------------------------------");
-		ImGui::InputInt("生成数", &saveRingPData.addNum, 1);
-		ImGui::InputFloat("パーティクルの生存時間", &saveRingPData.life);
-		ImGui::Text("------------------------------------------");
-		ImGui::InputFloat("開始半径", &saveRingPData.startRadius);
-		ImGui::InputFloat("終了半径", &saveRingPData.endRadius);
-		ImGui::InputFloat("最小の大きさ(ランダムのmin)", &saveRingPData.minScale);
-		ImGui::InputFloat("最大の大きさ(ランダムのmax)", &saveRingPData.maxScale);
-		ImGui::InputFloat("最小のY方向(ランダムのmin)", &saveRingPData.minVeloY);
-		ImGui::InputFloat("最大のY方向(ランダムのmax)", &saveRingPData.maxVeloY);
-		ImGui::InputFloat3("最小の回転(ランダムのmin)", &saveRingPData.minRot.x);
-		ImGui::InputFloat3("最大の回転(ランダムのmax)", &saveRingPData.maxRot.x);
-		ImGui::InputFloat("最終スケール", &saveRingPData.endScale);
-		ImGui::Text("------------------------------------------");
-		ImGui::InputFloat("大きくなるまでの時間", &saveRingPData.growingTimer, 0.05f);
-		ImGui::Text("------------------------------------------");
-		ImGui::Checkbox("重力を適用するか", &saveRingPData.isGravity);
-		ImGui::Checkbox("Y軸ビルボード化するか", &saveRingPData.isBillboard);
-		ImGui::Text("------------------------------------------");
-		ImGui::InputText("セーブするファイル名", &saveFileName);
-		
-		if (ImGui::Button("セーブ") || isAlwaysUpdate) {
-			if (Util::ContainString(saveFileName, "_ring"))
+		ImGui::PushItemWidth(200);
+		ImGui::Checkbox("常に更新する", &isAlwaysUpdate);
+
+		if (!file_names.empty())
+		{
+			//ハンドルの一覧をプルダウンで表示
+			std::vector<const char*> temp;
+			for (size_t i = 0; i < file_names.size(); i++)
 			{
-				SaveRing(saveRingPData, saveFileName);
+				temp.push_back(file_names[i].c_str());
+			}
+			static int32_t select = 0;
+			ImGui::Combo("読み込むファイル名", &select, &temp[0], (int32_t)file_names.size());
+			loadFileName = file_names[select];
+		}
+
+		if (ImGui::Button("ロード")) {
+			if (Util::ContainString(loadFileName, "_ring"))
+			{
+				saveRingPData = LoadRing(loadFileName);
 			}
 			else
 			{
-				SaveRing(saveRingPData, saveFileName + "_ring");
+				saveSimplePData = LoadSimple(loadFileName);
 			}
-
-			//セーブを押したらディレクトリ内を参照して文字列更新
-			file_names = LoadFileNames();
+			saveFileName = loadFileName;
+		}
+		//エラーメッセージが入っているなら表示
+		if (saveSimplePData.error != "") {
+			ImGui::Text(saveSimplePData.error.c_str());
 		}
 
-		ImGui::TreePop();
+		if (ImGui::TreeNode("シンプルパーティクル"))
+		{
+			ImGui::Text("テクスチャは/Particle/の中に入れてください");
+			ImGui::InputText("使用するテクスチャ", &saveSimplePData.tex);
+			ImGui::ColorEdit4("パーティクルの色", &saveSimplePData.color.r);
+			ImGui::Text("------------------------------------------");
+			ImGui::InputInt("生成数", &saveSimplePData.addNum, 1);
+			ImGui::InputFloat("パーティクルの生存時間", &saveSimplePData.life);
+			ImGui::Text("------------------------------------------");
+			ImGui::InputFloat3("エミッターサイズ", &saveSimplePData.emitScale.x);
+			ImGui::InputFloat("最小の大きさ(ランダムのmin)", &saveSimplePData.minScale);
+			ImGui::InputFloat("最大の大きさ(ランダムのmax)", &saveSimplePData.maxScale);
+			ImGui::InputFloat3("最小の方向(ランダムのmin)", &saveSimplePData.minVelo.x);
+			ImGui::InputFloat3("最大の方向(ランダムのmax)", &saveSimplePData.maxVelo.x);
+			ImGui::InputFloat3("最小の回転(ランダムのmin)", &saveSimplePData.minRot.x);
+			ImGui::InputFloat3("最大の回転(ランダムのmax)", &saveSimplePData.maxRot.x);
+			ImGui::InputFloat("最終スケール", &saveSimplePData.endScale);
+			ImGui::Text("------------------------------------------");
+			ImGui::InputFloat("大きくなるまでの時間", &saveSimplePData.growingTimer, 0.05f);
+			ImGui::InputFloat("加速度", &saveSimplePData.accelPower, 0.05f);
+			ImGui::Text("------------------------------------------");
+			ImGui::Checkbox("重力を適用するか", &saveSimplePData.isGravity);
+			ImGui::Checkbox("Y軸ビルボード化するか", &saveSimplePData.isBillboard);
+			ImGui::Text("------------------------------------------");
+			ImGui::InputText("セーブするファイル名", &saveFileName);
+
+			if (ImGui::Button("セーブ") || isAlwaysUpdate) {
+				SaveSimple(saveSimplePData, saveFileName);
+			}
+
+			ImGui::TreePop();
+		}
+		if (ImGui::TreeNode("円形パーティクル"))
+		{
+			ImGui::Text("テクスチャは/Particle/の中に入れてください");
+			ImGui::InputText("使用するテクスチャ", &saveRingPData.tex);
+			ImGui::ColorEdit4("パーティクルの色", &saveRingPData.color.r);
+			ImGui::Text("------------------------------------------");
+			ImGui::InputInt("生成数", &saveRingPData.addNum, 1);
+			ImGui::InputFloat("パーティクルの生存時間", &saveRingPData.life);
+			ImGui::Text("------------------------------------------");
+			ImGui::InputFloat("開始半径", &saveRingPData.startRadius);
+			ImGui::InputFloat("終了半径", &saveRingPData.endRadius);
+			ImGui::InputFloat("最小の大きさ(ランダムのmin)", &saveRingPData.minScale);
+			ImGui::InputFloat("最大の大きさ(ランダムのmax)", &saveRingPData.maxScale);
+			ImGui::InputFloat("最小のY方向(ランダムのmin)", &saveRingPData.minVeloY);
+			ImGui::InputFloat("最大のY方向(ランダムのmax)", &saveRingPData.maxVeloY);
+			ImGui::InputFloat3("最小の回転(ランダムのmin)", &saveRingPData.minRot.x);
+			ImGui::InputFloat3("最大の回転(ランダムのmax)", &saveRingPData.maxRot.x);
+			ImGui::InputFloat("最終スケール", &saveRingPData.endScale);
+			ImGui::Text("------------------------------------------");
+			ImGui::InputFloat("大きくなるまでの時間", &saveRingPData.growingTimer, 0.05f);
+			ImGui::Text("------------------------------------------");
+			ImGui::Checkbox("重力を適用するか", &saveRingPData.isGravity);
+			ImGui::Checkbox("Y軸ビルボード化するか", &saveRingPData.isBillboard);
+			ImGui::Text("------------------------------------------");
+			ImGui::InputText("セーブするファイル名", &saveFileName);
+
+			if (ImGui::Button("セーブ") || isAlwaysUpdate) {
+				if (Util::ContainString(saveFileName, "_ring"))
+				{
+					SaveRing(saveRingPData, saveFileName);
+				}
+				else
+				{
+					SaveRing(saveRingPData, saveFileName + "_ring");
+				}
+
+				//セーブを押したらディレクトリ内を参照して文字列更新
+				file_names = LoadFileNames();
+			}
+
+			ImGui::TreePop();
+		}
+		ImGui::PopItemWidth();
+		ImGui::End();
 	}
-	ImGui::PopItemWidth();
-	ImGui::End();
 }
 
 void ParticleEditor::Init()

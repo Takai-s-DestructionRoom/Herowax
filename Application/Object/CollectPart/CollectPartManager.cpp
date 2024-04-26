@@ -112,41 +112,44 @@ void CollectPartManager::CratePostDelete()
 
 void CollectPartManager::ImGui()
 {
-    ImGui::SetNextWindowSize({ 400, 200 }, ImGuiCond_FirstUseEver);
+    if (RImGui::showImGui) {
 
-    // デバッグモード //
-    ImGui::Begin("部品集める");
-    ImGui::Text("無敵モードへの遷移は");
-    ImGui::Text("ゾーン内の数が10以上の状態で");
-    ImGui::Text("パッドならRB,キーならEを長押しすると");
-    ImGui::Text("10個消費して無敵モードへ遷移します");
-    ImGui::Text("経過時間 %f", zone.hammerTimer.GetTimeRate());
-    ImGui::Text("ゾーン内の数 %d", zone.GetPartsNum());
-    ImGui::InputInt("一度に運べる数", &maxCarryingNum, 1);
-    if (ImGui::TreeNode("調整項目_ゾーン")) {
-        ImGui::InputFloat("回復量", &zone.healPower,1.0f);
-        ImGui::InputInt("作るのに必要な個数", &requireCreateNum);
-        ImGui::InputFloat("作るまでにかかる時間", &zone.hammerTimer.maxTime_);
-        ImGui::DragFloat3("位置", &zone.pos.x, 1.f);
-        ImGui::DragFloat2("大きさ", &zone.scale.x, 1.f);
-        ImGui::DragFloat("透明度", &zone.obj.mTuneMaterial.mColor.a, 0.1f);
-    }
-    if (ImGui::Button("セーブ")){
-        Parameter::Begin("zone");
-        Parameter::Save("一度に運べる数", maxCarryingNum);
-        Parameter::Save("作るのに必要な個数", requireCreateNum);
-        Parameter::Save("作るまでにかかる時間", zone.hammerTimer.maxTime_);
-        Parameter::Save("位置X", zone.pos.x);
-        Parameter::Save("位置Y", zone.pos.y);
-        Parameter::Save("位置Z", zone.pos.z);
-        Parameter::Save("大きさX", zone.scale.x);
-        Parameter::Save("大きさZ", zone.scale.y);
-        Parameter::Save("透明度", zone.obj.mTuneMaterial.mColor.a);
-        Parameter::Save("回復量", zone.healPower);
-        Parameter::End();
-    }
+        ImGui::SetNextWindowSize({ 400, 200 }, ImGuiCond_FirstUseEver);
 
-    ImGui::End();
+        // デバッグモード //
+        ImGui::Begin("部品集める");
+        ImGui::Text("無敵モードへの遷移は");
+        ImGui::Text("ゾーン内の数が10以上の状態で");
+        ImGui::Text("パッドならRB,キーならEを長押しすると");
+        ImGui::Text("10個消費して無敵モードへ遷移します");
+        ImGui::Text("経過時間 %f", zone.hammerTimer.GetTimeRate());
+        ImGui::Text("ゾーン内の数 %d", zone.GetPartsNum());
+        ImGui::InputInt("一度に運べる数", &maxCarryingNum, 1);
+        if (ImGui::TreeNode("調整項目_ゾーン")) {
+            ImGui::InputFloat("回復量", &zone.healPower, 1.0f);
+            ImGui::InputInt("作るのに必要な個数", &requireCreateNum);
+            ImGui::InputFloat("作るまでにかかる時間", &zone.hammerTimer.maxTime_);
+            ImGui::DragFloat3("位置", &zone.pos.x, 1.f);
+            ImGui::DragFloat2("大きさ", &zone.scale.x, 1.f);
+            ImGui::DragFloat("透明度", &zone.obj.mTuneMaterial.mColor.a, 0.1f);
+        }
+        if (ImGui::Button("セーブ")) {
+            Parameter::Begin("zone");
+            Parameter::Save("一度に運べる数", maxCarryingNum);
+            Parameter::Save("作るのに必要な個数", requireCreateNum);
+            Parameter::Save("作るまでにかかる時間", zone.hammerTimer.maxTime_);
+            Parameter::Save("位置X", zone.pos.x);
+            Parameter::Save("位置Y", zone.pos.y);
+            Parameter::Save("位置Z", zone.pos.z);
+            Parameter::Save("大きさX", zone.scale.x);
+            Parameter::Save("大きさZ", zone.scale.y);
+            Parameter::Save("透明度", zone.obj.mTuneMaterial.mColor.a);
+            Parameter::Save("回復量", zone.healPower);
+            Parameter::End();
+        }
+
+        ImGui::End();
+    }
 }
 
 int32_t CollectPartManager::GetCarryingNum()
