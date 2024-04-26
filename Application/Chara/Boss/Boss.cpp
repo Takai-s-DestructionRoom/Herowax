@@ -23,7 +23,13 @@ moveSpeed(0.1f), hp(0), maxHP(10.f)
 	nextState = nullptr;
 	obj = PaintableModelObj(Model::Load("./Resources/Model/bossBody/bossBody.obj", "bossBody", true));
 	obj.mPaintDissolveMapTex = TextureManager::Load("./Resources/DissolveMap.png", "DissolveMapTex");
-	obj.mTransform.scale = Vector3(1,1,1) * 8.f;
+	obj.mTransform.scale = Vector3(1, 1, 1) * 8.f;
+
+	barrier = PaintableModelObj(Model::Load("./Resources/Model/Sphere.obj", "sphere", true));
+	barrier.mTransform.position = { 0,15.f,0 };
+	barrier.mTransform.scale = Vector3(1, 1, 1) * 35.f;
+	barrier.mTuneMaterial.mColor = Color::kLightblue;
+	barrier.mTuneMaterial.mColor.a = 0.1f;
 
 	parts[(size_t)PartsNum::LeftHand].oriPos = { 50.f,20.f,0.f };
 	parts[(size_t)PartsNum::RightHand].oriPos = { -50.f,20.f,0.f };
@@ -33,15 +39,15 @@ moveSpeed(0.1f), hp(0), maxHP(10.f)
 	BossUI::LoadResource();
 
 	std::map<std::string, std::string> extract = Parameter::Extract("Boss");
-	obj.mTransform.scale.x = Parameter::GetParam(extract,"ボス本体のスケールX", obj.mTransform.scale.x);
-	obj.mTransform.scale.y = Parameter::GetParam(extract,"ボス本体のスケールY", obj.mTransform.scale.y);
-	obj.mTransform.scale.z = Parameter::GetParam(extract,"ボス本体のスケールZ", obj.mTransform.scale.z);
-	colliderSize = Parameter::GetParam(extract,"ボス本体の当たり判定", colliderSize);
-	mutekiTimer.maxTime_ = Parameter::GetParam(extract,"無敵時間", mutekiTimer.maxTime_);
-	
-	standTimer = Parameter::GetParam(extract,"モーション待機時間", 3.f);
-	punchTimer = Parameter::GetParam(extract,"パンチにかかる時間", 0.7f);
-	punchStayTimer = Parameter::GetParam(extract,"パンチ後留まる時間", 1.5f);
+	obj.mTransform.scale.x = Parameter::GetParam(extract, "ボス本体のスケールX", obj.mTransform.scale.x);
+	obj.mTransform.scale.y = Parameter::GetParam(extract, "ボス本体のスケールY", obj.mTransform.scale.y);
+	obj.mTransform.scale.z = Parameter::GetParam(extract, "ボス本体のスケールZ", obj.mTransform.scale.z);
+	colliderSize = Parameter::GetParam(extract, "ボス本体の当たり判定", colliderSize);
+	mutekiTimer.maxTime_ = Parameter::GetParam(extract, "無敵時間", mutekiTimer.maxTime_);
+
+	standTimer = Parameter::GetParam(extract, "モーション待機時間", 3.f);
+	punchTimer = Parameter::GetParam(extract, "パンチにかかる時間", 0.7f);
+	punchStayTimer = Parameter::GetParam(extract, "パンチ後留まる時間", 1.5f);
 
 	bossSpawnTimer = Parameter::GetParam(extract, "ボスが出現するまでの時間", 60.0f);
 
@@ -63,7 +69,7 @@ void Boss::Init()
 	hp = maxHP;
 	isAlive = false;
 	bossSpawnTimer.Start();
-	
+
 	mutekiTimer.Reset();
 
 	waxSolidCount = 0;
@@ -96,6 +102,8 @@ void Boss::Init()
 	shakeTimer.Reset();
 	waxScatterTimer.Reset();
 	shake = Vector3::ZERO;
+
+	isBarrier = true;
 
 	ai.Init();
 
@@ -175,16 +183,16 @@ void Boss::AllStateUpdate()
 	}
 
 	//固まったなら
-	if (GetIsSolid(PartsNum::LeftHand)) 
+	if (GetIsSolid(PartsNum::LeftHand))
 	{
 		//状態を右手オンリーに
 		ai.SetSituation(BossSituation::OnlyRight);
 
 		//吸収可能に
 		parts[(int32_t)PartsNum::LeftHand].isCollected = true;
-		
+
 	}
-	if (GetIsSolid(PartsNum::RightHand)) 
+	if (GetIsSolid(PartsNum::RightHand))
 	{
 		//状態を左手オンリーに
 		ai.SetSituation(BossSituation::OnlyLeft);
@@ -196,6 +204,12 @@ void Boss::AllStateUpdate()
 	//両方固まってるなら
 	if (GetIsSolid(PartsNum::LeftHand) && GetIsSolid(PartsNum::RightHand))
 	{
+		if (isBarrier)
+		{
+			ParticleManager::GetInstance()->AddSimple(obj.mTransform.position, "barrier_crash");
+			isBarrier = false;
+		}
+
 		ai.SetSituation(BossSituation::NoArms);
 	}
 
@@ -207,9 +221,9 @@ void Boss::AllStateUpdate()
 
 	//白を加算
 	if (whiteTimer.GetStarted()) {
-		brightColor.r = Easing::OutQuad(1.f,0.f, whiteTimer.GetTimeRate());
-		brightColor.g = Easing::OutQuad(1.f,0.f, whiteTimer.GetTimeRate());
-		brightColor.b = Easing::OutQuad(1.f,0.f, whiteTimer.GetTimeRate());
+		brightColor.r = Easing::OutQuad(1.f, 0.f, whiteTimer.GetTimeRate());
+		brightColor.g = Easing::OutQuad(1.f, 0.f, whiteTimer.GetTimeRate());
+		brightColor.b = Easing::OutQuad(1.f, 0.f, whiteTimer.GetTimeRate());
 	}
 
 	//コライダー更新
@@ -227,6 +241,10 @@ void Boss::AllStateUpdate()
 	obj.mPaintDataBuff->dissolveVal = waxSolidCount >= requireWaxSolidCount ? 1.0f : 0.3f / (requireWaxSolidCount - 1) * waxSolidCount;
 	obj.mPaintDataBuff->color = Color(0.8f, 0.6f, 0.35f, 1.0f);
 	obj.mPaintDataBuff->slide += TimeManager::deltaTime;
+
+	barrier.mTransform.rotation = obj.mTransform.rotation;
+	barrier.mTransform.UpdateMatrix();
+	barrier.TransferBuffer(Camera::sNowCamera->mViewProjection);
 
 	for (size_t i = 0; i < parts.size(); i++)
 	{
@@ -314,7 +332,7 @@ void Boss::Update()
 
 		ImGui::End();
 	}
-	
+
 #pragma endregion
 
 	//ImGuiと出現呼び出し以外は、ボスの出現後に呼び出すため、isAliveがtrueでなければ通さない
@@ -379,9 +397,15 @@ void Boss::Update()
 void Boss::Draw()
 {
 	if (!isAlive)return;
-	
+
 	if (isDrawObj) {
 		BrightDraw();
+
+		if (isBarrier)
+		{
+			barrier.Draw();
+		}
+
 		for (size_t i = 0; i < parts.size(); i++)
 		{
 			parts[i].Draw();
@@ -437,7 +461,7 @@ void Boss::DealDamage(int32_t damage)
 
 	//無敵時間開始
 	mutekiTimer.Start();
-	
+
 	//無敵時間の前半の時間は白く光る演出
 	whiteTimer.maxTime_ = mutekiTimer.maxTime_ / 2;
 	whiteTimer.Start();
@@ -446,7 +470,7 @@ void Boss::DealDamage(int32_t damage)
 	waxSolidCount += damage;
 	//振り払いタイマー開始
 	//(初期化も行うため、攻撃を受ける度にタイマーが継続する形に)
-	
+
 	//腕が残っていないなら通常タイマー
 	if (GetIsOnlyBody()) {
 		waxShakeOffTimer.maxTime_ = armBreakOffTime;
@@ -455,7 +479,7 @@ void Boss::DealDamage(int32_t damage)
 	else {
 		waxShakeOffTimer.maxTime_ = armRemainOffTime;
 	}
-	
+
 	waxShakeOffTimer.Start();
 
 	//一応HPにダメージ(使うか不明)

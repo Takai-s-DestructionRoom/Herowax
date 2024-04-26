@@ -1,0 +1,16 @@
+addNum:70
+life:0.5
+minscale:15
+maxscale:30
+accelpower:0.05
+growingTimer:0.05
+endscale:0
+isgravity:false
+isbillboard:true
+emitscale:20.000000_20.000000_20.000000
+minvelo:-5.000000_-5.000000_-5.000000
+maxvelo:5.000000_5.000000_5.000000
+minrot:0.100000_0.100000_0.100000
+maxrot:0.200000_0.200000_0.200000
+color:0.666667_0.996078_1.000000_0.588235
+tex:triangle_particle

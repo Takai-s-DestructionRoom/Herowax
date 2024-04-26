@@ -41,7 +41,10 @@ private:
 	bool changingState = false;		//ステート変更中かフラグ
 	bool isDrawObj = true;			//オブジェクト描画するかフラグ
 
-	float phaseTimer;	//フェーズ移行に使うタイマー
+	float phaseTimer;				//フェーズ移行に使うタイマー
+
+	ModelObj barrier;				//ダメージ与えられないの伝える用バリア
+	bool isBarrier;					//バリア張られてるかフラグ
 
 	//------------- イベントシーン関連 -----------//
 	Easing::EaseTimer bossSpawnTimer;
