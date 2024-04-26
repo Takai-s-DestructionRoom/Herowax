@@ -13,7 +13,7 @@ public:
 	std::string error = "";
 
 	//行動を取得(イージングで座標を返す)
-	Vector3 GetBehavior(Vector3 basis);
+	Vector3 GetBehavior(Vector3 basis,Vector3 nowPos);
 	//進行方向を取得
 	Vector3 GetMoveDir();
 
@@ -21,9 +21,8 @@ public:
 	void Reset();
 
 private:
-	int32_t progress = -1;
-	Easing::EaseTimer timer;
-	float oldRate;
+	int32_t progress = 0;
+	bool hitCheck = false;
 };
 
 class EnemyBehaviorEditor

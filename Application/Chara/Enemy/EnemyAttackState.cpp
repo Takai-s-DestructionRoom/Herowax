@@ -207,6 +207,35 @@ void EnemyEndAttackState::Update(Enemy* enemy)
 
 	if (postureTimer.GetEnd()) {
 		//遷移命令
+		enemy->ChangeAttackState<EnemySeekState>();
+	}
+}
+
+EnemySeekState::EnemySeekState()
+{
+	seekTimer.Start();
+}
+
+void EnemySeekState::Update(Enemy* enemy)
+{
+	//探す タイマーを回す
+	seekTimer.Update();
+	
+	//本当は当たり判定を直接持ってきたい
+	ColPrimitive3D::Sphere sphere;
+	sphere.pos = enemy->GetTarget()->mTransform.position;
+	sphere.r = 20;
+
+	//見つかったら
+	if (ColPrimitive3D::CheckSphereToSphere(enemy->collider, sphere))
+	{
+		//攻撃ステートへ
+		enemy->ChangeAttackState<EnemyFindState>();
+	}
+
+	//この時間中探しても見つからなかったら
+	if (seekTimer.GetEnd()) {
+		//戻るステートへ
 		enemy->ChangeAttackState<EnemyBackOriginState>();
 	}
 }

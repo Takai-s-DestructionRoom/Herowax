@@ -68,6 +68,16 @@ private:
 	Easing::EaseTimer postureTimer;	//姿勢タイマー
 };
 
+class EnemySeekState : public EnemyAttackState
+{
+public:
+	EnemySeekState();
+	void Update(Enemy* enemy);
+private:
+	Easing::EaseTimer seekTimer = 2.0f;
+	int32_t seekCount = 0;
+};
+
 class EnemyBackOriginState : public EnemyAttackState
 {
 public:

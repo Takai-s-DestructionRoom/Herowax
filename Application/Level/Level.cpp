@@ -20,7 +20,6 @@ void Level::Reset()
 {
 	spawnerManager->Init();
 	EnemyManager::GetInstance()->Init();
-	//EnemyManager::GetInstance()->SetTarget(&tower.obj);
 	objects.clear();
 	wall.clear();
 }

@@ -126,7 +126,8 @@ void Enemy::Update()
 		if (GetAttackState() == "NonAttack")
 		{
 			//通常移動をオーダーをもとにやる
-			obj.mTransform.position = loadBehaviorData.GetBehavior(behaviorOrigen);
+			Vector3 behaviorDir = loadBehaviorData.GetBehavior(behaviorOrigen, obj.mTransform.position).GetNormalize();
+			moveVec += behaviorDir * moveSpeed;
 		}
 	}
 	hp = Util::Clamp(hp, 0.f, maxHP);

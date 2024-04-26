@@ -63,6 +63,8 @@ void EnemyManager::SetTarget(ModelObj* target_)
 void EnemyManager::Init()
 {
 	enemys.clear();
+	Model::Load("./Resources/Model/enemy/enemy.obj", "enemy", true);
+	Model::Load("./Resources/Model/Cube.obj", "Cube", true);
 }
 
 void EnemyManager::Update()
@@ -100,6 +102,14 @@ void EnemyManager::Update()
 	
 	static Color changeColor = { 1,1,1,1 };
 	static bool hitChecker = false;
+	
+	static std::string handle = "";
+	if (handle != "") {
+		for (auto& enemy : enemys)
+		{
+			enemy->obj.mModel = ModelManager::Get(handle);
+		}
+	}
 
 #pragma region ImGui
 	if (RImGui::showImGui) {
@@ -171,6 +181,25 @@ void EnemyManager::Update()
 			ImGui::SliderFloat("knockRandZS", &knockRandZS, -Util::PI, Util::PI);
 			ImGui::SliderFloat("knockRandZE", &knockRandZE, -Util::PI, Util::PI);
 			ImGui::SliderFloat("knockRandZE", &knockRandZE, -Util::PI, Util::PI);
+			ImGui::TreePop();
+		}
+		if (ImGui::TreeNode("デバッグ")) {
+			//敵のモデルをボタンで切り替えられるようにする
+			static bool changeModel = false;
+			if (ImGui::Button("モデル切り替え")) {
+				changeModel = !changeModel;
+				if (changeModel) {
+					handle = "enemy";
+				}
+				else {
+					handle = "Cube";
+				}
+			}
+			//敵を出現させられるようにする
+			if (ImGui::Button("敵出現(ボスの位置)")) {
+				CreateEnemy<Enemy>(Vector3(0, 0, 0), { 3,3,3 }, { 0,0,0 }, "test");
+			}
+
 			ImGui::TreePop();
 		}
 		ImGui::SliderFloat("無敵時間さん", &mutekiTime, 0.0f, 1.0f);
