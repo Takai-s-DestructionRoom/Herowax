@@ -27,11 +27,14 @@ Parts::~Parts()
 		0.03f, -Vector3(1, 1, 1) * 0.1f, Vector3(1, 1, 1) * 0.1f, 0.3f, 0.5f);
 }
 
+
 void Parts::Init()
 {
 	isAlive = true;
 
 	isCollected = false;
+	collectTimer.Reset();
+
 	mutekiTimer.Reset();
 
 	waxShakeOffTimer.Reset();

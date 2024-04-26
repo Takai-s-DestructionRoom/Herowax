@@ -110,6 +110,8 @@ void Boss::Init()
 	shake = Vector3::ZERO;
 
 	isBarrier = true;
+	barrier.mTuneMaterial.mColor = Color::kLightblue;
+	barrier.mTuneMaterial.mColor.a = 0.05f;
 	barrierCrushTimer.Reset();
 
 	ai.Init();
