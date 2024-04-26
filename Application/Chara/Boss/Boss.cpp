@@ -26,10 +26,14 @@ moveSpeed(0.1f), hp(0), maxHP(10.f)
 	obj.mTransform.scale = Vector3(1, 1, 1) * 8.f;
 
 	barrier = PaintableModelObj(Model::Load("./Resources/Model/Sphere.obj", "sphere", true));
-	barrier.mTransform.position = { 0,15.f,0 };
-	barrier.mTransform.scale = Vector3(1, 1, 1) * 35.f;
+	barrier.SetParent(&obj);
+	barrier.mTransform.position = { 0,3.f,0 };
+	barrier.mTransform.scale = Vector3(1, 1, 1) * 5.f;
 	barrier.mTuneMaterial.mColor = Color::kLightblue;
-	barrier.mTuneMaterial.mColor.a = 0.1f;
+	barrier.mTuneMaterial.mColor.a = 0.05f;
+	barrier.mTuneMaterial.mAmbient = Vector3(1, 1, 1) * 100.f;
+	barrier.mTuneMaterial.mDiffuse = Vector3::ZERO;
+	barrier.mTuneMaterial.mSpecular = Vector3::ZERO;
 
 	parts[(size_t)PartsNum::LeftHand].oriPos = { 50.f,20.f,0.f };
 	parts[(size_t)PartsNum::RightHand].oriPos = { -50.f,20.f,0.f };
@@ -58,6 +62,8 @@ moveSpeed(0.1f), hp(0), maxHP(10.f)
 	atkSize = 0.f;
 	atkSpeed = Parameter::GetParam(extract, "射出速度", 1.f);
 	atkTime = Parameter::GetParam(extract, "攻撃時間", 0.5f);
+
+	barrierCrushTimer = Parameter::GetParam(extract, "バリア割れるまでの時間", 1.f);
 }
 
 Boss::~Boss()
@@ -104,6 +110,7 @@ void Boss::Init()
 	shake = Vector3::ZERO;
 
 	isBarrier = true;
+	barrierCrushTimer.Reset();
 
 	ai.Init();
 
@@ -140,6 +147,7 @@ void Boss::AllStateUpdate()
 	waxShakeOffTimer.Update();
 	shakeTimer.Update();
 	waxScatterTimer.Update();
+	barrierCrushTimer.Update();
 
 	//かかっているロウを振り払う
 	//10段階かかったら固まる
@@ -204,7 +212,17 @@ void Boss::AllStateUpdate()
 	//両方固まってるなら
 	if (GetIsSolid(PartsNum::LeftHand) && GetIsSolid(PartsNum::RightHand))
 	{
-		if (isBarrier)
+		if (barrierCrushTimer.GetStarted() == false)
+		{
+			barrierCrushTimer.Start();
+		}
+
+		barrier.mTuneMaterial.mColor.r = Easing::InQuad(Color::kLightblue.r, Color::kWhite.r, barrierCrushTimer.GetTimeRate());
+		barrier.mTuneMaterial.mColor.g = Easing::InQuad(Color::kLightblue.g, Color::kWhite.g, barrierCrushTimer.GetTimeRate());
+		barrier.mTuneMaterial.mColor.b = Easing::InQuad(Color::kLightblue.b, Color::kWhite.b, barrierCrushTimer.GetTimeRate());
+		barrier.mTuneMaterial.mColor.a = Easing::InBounce(0.05f, 1.f, barrierCrushTimer.GetTimeRate());
+
+		if (barrierCrushTimer.GetEnd() && isBarrier)
 		{
 			ParticleManager::GetInstance()->AddSimple(obj.mTransform.position, "barrier_crash");
 			isBarrier = false;
@@ -242,7 +260,6 @@ void Boss::AllStateUpdate()
 	obj.mPaintDataBuff->color = Color(0.8f, 0.6f, 0.35f, 1.0f);
 	obj.mPaintDataBuff->slide += TimeManager::deltaTime;
 
-	barrier.mTransform.rotation = obj.mTransform.rotation;
 	barrier.mTransform.UpdateMatrix();
 	barrier.TransferBuffer(Camera::sNowCamera->mViewProjection);
 
@@ -277,6 +294,7 @@ void Boss::Update()
 		ImGui::Text("1:待機\n2:左パンチ\n3:右パンチ");
 		ImGui::Checkbox("オブジェクト描画", &isDrawObj);
 		ImGui::Checkbox("当たり判定描画", &isDrawCollider);
+		ImGui::Checkbox("バリアフラグ", &isBarrier);
 
 		if (ImGui::TreeNode("調整項目_ボス")) {
 			ImGui::DragFloat("ボスが出現するまでの時間(最大)", &bossSpawnTimer.maxTime_, 0.1f);
@@ -289,6 +307,7 @@ void Boss::Update()
 			ImGui::InputFloat("モーション待機時間", &standTimer.maxTime_, 0.1f);
 			ImGui::InputFloat("パンチにかかる時間", &punchTimer.maxTime_, 0.1f);
 			ImGui::InputFloat("パンチ後留まる時間", &punchStayTimer.maxTime_, 0.1f);
+			ImGui::InputFloat("バリア割れるまでの時間", &barrierCrushTimer.maxTime_, 0.1f);
 			ImGui::TreePop();
 		}
 

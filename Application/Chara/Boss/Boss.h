@@ -43,8 +43,9 @@ private:
 
 	float phaseTimer;				//フェーズ移行に使うタイマー
 
-	ModelObj barrier;				//ダメージ与えられないの伝える用バリア
-	bool isBarrier;					//バリア張られてるかフラグ
+	ModelObj barrier;						//ダメージ与えられないの伝える用バリア
+	bool isBarrier;							//バリア張られてるかフラグ
+	Easing::EaseTimer barrierCrushTimer;	//バリア破壊される時用タイマー
 
 	//------------- イベントシーン関連 -----------//
 	Easing::EaseTimer bossSpawnTimer;
