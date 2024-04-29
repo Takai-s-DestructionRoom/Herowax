@@ -114,7 +114,8 @@ void Level::Extract(const std::string& handle)
 			spawnerManager->Create(objectData->translation,
 				objectData->scaling,
 				objectData->rotation,
-				objectData->spawnerOrder);
+				objectData->spawnerOrder,
+				objectData->behaviorOrder);
 
 			SpawnOrderData temp = SpawnDataLoader::Load(objectData->spawnerOrder);
 			saveStartTiming.push_back(temp.startTiming);

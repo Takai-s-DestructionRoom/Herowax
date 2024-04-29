@@ -69,6 +69,11 @@ void EnemySpawner::Draw()
 	obj.Draw();
 }
 
+void EnemySpawner::LoadBehavior(const std::string& loadOrder)
+{
+	behaviorOrder = loadOrder;
+}
+
 bool EnemySpawner::GetStarted()
 {
 	return lifeTimer.GetStarted();
@@ -92,14 +97,14 @@ void EnemySpawner::PopEnemy(const Vector3 position, const SpawnOrderOnce& order)
 				spawnPos,
 				Vector3(1,1,1),
 				Vector3(0,0,0),
-				"test");
+				behaviorOrder);
 		}
 		if (order.enemyClassName == "bombsolider") {
 			EnemyManager::GetInstance()->CreateEnemy<BombSolider>(
 				spawnPos,
 				Vector3(1, 1, 1),
 				Vector3(0, 0, 0), 
-				"test");
+				behaviorOrder);
 		}
 	}
 }
