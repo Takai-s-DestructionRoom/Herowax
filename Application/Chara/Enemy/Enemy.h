@@ -9,6 +9,8 @@
 #include "EnemyAttackState.h"
 #include "EnemyBehaviorEditor.h"
 
+//このEnemyは基底にしたい
+//ので、処理を分化して現状のタンクくんというクラスを別で作る
 class Enemy : public GameObject
 {
 private:
@@ -104,6 +106,10 @@ public:
 	bool isCollect;				//回収されてるか
 	Vector3 oriScale;			//元の大きさ
 
+protected:
+	//今までのUpdateの中身(継承先で必ず呼ぶように)
+	void BaseUpdate();
+
 private:
 	//ノックバック処理をまとめた
 	void KnockBack();
@@ -114,14 +120,18 @@ private:
 	void Rotation(const Vector3& pVec);
 	//Updateの最初で初期化するもの
 	void Reset();
+	
+	void UpdateAttackCollider();
+	void DrawAttackCollider();
 
 public:
 	Enemy(ModelObj* target_);
 	virtual ~Enemy();
 	void Init() override;
-	void Update() override;
-	void TransfarBuffer();
+	void Update()override;	//ここではBaseUpdate
 	void Draw() override;
+
+	void TransfarBuffer();
 
 	//引数があればノックバックもする(その方向を向かせるために攻撃対象も入れる)
 	void DealDamage(uint32_t damage, const Vector3& dir, ModelObj* target_);
@@ -215,10 +225,6 @@ public:
 	void RotVecPlus(const Vector3& plusVec);
 	//
 	void BehaviorOrigenPosPlus(const Vector3& plusVec) { behaviorOrigen += plusVec; };
-	void BehaviorOrigenReset() { behaviorOrigen = basis; };
-
-private:
-	void UpdateAttackCollider();
-	void DrawAttackCollider();
+	void BehaviorOrigenReset() { behaviorOrigen = basis; }
 };
 

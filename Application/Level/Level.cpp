@@ -5,6 +5,7 @@
 #include "Camera.h"
 #include "Util.h"
 #include "PaintUtil.h"
+#include "Tank.h"
 
 Level::Level()
 {
@@ -103,7 +104,7 @@ void Level::Extract(const std::string& handle)
 		}
 		if (objectData->setObjectName == "Enemy")
 		{
-			EnemyManager::GetInstance()->CreateEnemy<Enemy>(
+			EnemyManager::GetInstance()->CreateEnemy<Tank>(
 				objectData->translation,
 				objectData->scaling,
 				objectData->rotation,
