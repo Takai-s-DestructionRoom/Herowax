@@ -5,9 +5,6 @@
 #include "ParticleManager.h"
 #include "Minimap.h"
 
-Color Wax::waxOriginColor = { 0.8f, 0.6f, 0.35f, 1.f };
-Color Wax::waxEndColor = { 0.8f, 0.0f, 0.f, 1.f };
-
 Wax::Wax():GameObject(),
 	atkSpeed(1.f),
 	igniteTimer(0.25f),
@@ -17,17 +14,17 @@ Wax::Wax():GameObject(),
 {
 	state = std::make_unique<WaxNormal>();
 	obj = PaintableModelObj(Model::Load("./Resources/Model/wax/wax.obj", "wax", true));
-	obj.mTuneMaterial.mColor = waxOriginColor;
+	obj.mTuneMaterial.mColor = Color::kWaxColor;
 	TextureManager::Load("./Resources/DissolveMap.png","DissolveMap");
 }
 
 void Wax::DeadParticle()
 {
 	ParticleManager::GetInstance()->AddHoming(
-		obj.mTransform.position, obj.mTransform.scale,
-		1, 0.8f, waxOriginColor, "", 0.8f, 1.5f,
-		-Vector3(1, 1, 1) * 0.3f, Vector3(1, 1, 1) * 0.3f,
-		0.03f, -Vector3(1, 1, 1) * 0.1f, Vector3(1, 1, 1) * 0.1f, 0.3f, 0.5f);
+		obj.mTransform.position, obj.mTransform.scale * 4.f,
+		1, 0.4f, Color::kWaxColor, "", 0.8f, 1.5f,
+		-Vector3(1, 1, 1) * 0.7f, Vector3(1, 1, 1) * 0.7f, obj.mTransform.position,
+		0.03f, -Vector3(1, 1, 1) * 0.1f, Vector3(1, 1, 1) * 0.1f, 0.1f, 0.3f);
 }
 
 bool Wax::GetIsSolidNow()
@@ -63,7 +60,7 @@ void Wax::Init(Transform transform, Vector3 endPos_, float height, float size, f
 
 	/*iconSize = { 0.5f,0.5f };
 	minimapIcon.SetTexture(TextureManager::Load("./Resources/circle.png", "circle"));
-	minimapIcon.mMaterial.mColor = waxOriginColor;*/
+	minimapIcon.mMaterial.mColor = Color::kWaxColor;*/
 }
 
 void Wax::Update()
@@ -200,5 +197,5 @@ Color Wax::SolidBling(const Easing::EaseTimer& timer)
 		}
 	}
 	
-	return waxOriginColor;
+	return Color::kWaxColor;
 }

@@ -1,5 +1,6 @@
 #include "BossPartState.h"
 #include "BossPart.h"
+#include "ParticleManager.h"
 
 void BossPartNormal::Update(Parts* parts)
 {
@@ -31,6 +32,12 @@ void BossPartCollect::Update(Parts* parts)
 	parts->SetRota(InQuadVec3(startRota, endRota, parts->collectTimer.GetTimeRate()));
 
 	if (parts->collectTimer.GetEnd()) {
+		ParticleManager::GetInstance()->AddHoming(
+			parts->obj.mTransform.position, Vector3(1, 1, 1) * 7.f,
+			10, 0.5f, Color::kWaxColor, "", 2.f, 4.f,
+			-Vector3(1, 1, 1) * 0.8f, Vector3(1, 1, 1) * 0.8f, parts->obj.mTransform.position,
+			0.03f, -Vector3(1, 1, 1) * 0.1f, Vector3(1, 1, 1) * 0.1f, 0.1f, 0.8f);
+
 		//切り替え
 		parts->ChangeState<BossPartNormal>();
 

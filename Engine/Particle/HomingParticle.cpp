@@ -1,6 +1,11 @@
 #include "HomingParticle.h"
 #include "WaxManager.h"
 
+HomingParticle::HomingParticle(Vector3 targetPos)
+{
+	targetPos_ = targetPos;
+}
+
 void HomingParticle::Init()
 {
 	IEmitter3D::Init();
@@ -25,7 +30,7 @@ void HomingParticle::Update()
 		else if (particle.easeTimer.GetRun())
 		{
 			//イージングで目的地まで飛ばす
-			particle.pos = InQuadVec3(particle.startPos, targetPos, particle.easeTimer.GetTimeRate());
+			particle.pos = InQuadVec3(particle.startPos, targetPos_, particle.easeTimer.GetTimeRate());
 		}
 
 		if (particle.easeTimer.GetEnd())
@@ -82,7 +87,11 @@ void HomingParticle::Update()
 	transform.UpdateMatrix();
 }
 
-void HomingParticle::Add(uint32_t addNum, float life, Color color, TextureHandle tex, float minScale, float maxScale, Vector3 minVelo, Vector3 maxVelo, float accelPower, Vector3 minRot, Vector3 maxRot, float growingTimer, float endScale, bool isGravity, bool isBillboard)
+void HomingParticle::Add(
+	uint32_t addNum, float life, Color color, TextureHandle tex,
+	float minScale, float maxScale, Vector3 minVelo, Vector3 maxVelo,
+	float accelPower, Vector3 minRot, Vector3 maxRot,
+	float growingTimer, float endScale, bool isGravity, bool isBillboard)
 {
 	IEmitter3D::Add(
 		addNum, life, color, tex, minScale, maxScale,
