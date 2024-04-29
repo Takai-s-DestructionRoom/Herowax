@@ -57,7 +57,7 @@ void EnemyAllStop::Update(Enemy* enemy)
 	//色を保存
 	saveColor = enemy->obj.mTuneMaterial.mColor;
 	//ロウの色にして固まってるっぽく
-	//enemy->obj.mTuneMaterial.mColor = Wax::waxOriginColor;
+	//enemy->obj.mTuneMaterial.mColor = Color::kWaxColor;
 
 	//脱出タイマーが終わったら通常の状態へ戻す
 	/*if (enemy->solidTimer.GetEnd()) {

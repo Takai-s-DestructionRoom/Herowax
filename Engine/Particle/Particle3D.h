@@ -72,8 +72,6 @@ protected:
 	//何フレームに一回パーティクル追加するか
 	uint32_t addInterval_;
 
-	Vector3 targetPos;	//向かう場所
-
 	//経過時間のスピード(スローモーション用)
 	bool isElapse_ = true;					//経過時間の影響受けるかフラグ
 	float elapseSpeed_;
@@ -160,7 +158,4 @@ public:
 	void SetElapseSpeed(const float elapseSpeed) { elapseSpeed_ = elapseSpeed; }
 	//拡縮用タイマー開始
 	void SetIsElapse(bool isElapse) { isElapse_ = isElapse; }
-
-	//向かう場所設定
-	void SetTargetPos(Vector3 pos) { targetPos = pos; }
 };

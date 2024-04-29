@@ -4,9 +4,11 @@ class HomingParticle :
     public IEmitter3D
 {
 private:
-	
+	Vector3 targetPos_;	//向かう場所
 
 public:
+	HomingParticle(Vector3 targetPos);
+
 	//初期化
 	void Init() override;
 	//更新処理

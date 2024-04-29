@@ -35,7 +35,6 @@ void ParticleManager::Update()
 		else
 		{
 			//更新処理して次の要素へ
-			emit->get()->SetTargetPos(playerPos);
 			emit->get()->Update();
 			++emit;
 		}
@@ -127,10 +126,14 @@ void ParticleManager::AddRing(Vector3 emitPos, std::string pDataHandle)
 		pdata.growingTimer, pdata.endScale, pdata.isGravity, pdata.isBillboard);
 }
 
-void ParticleManager::AddHoming(Vector3 emitPos, Vector3 emitScale, uint32_t addNum, float life, Color color, TextureHandle tex, float minScale, float maxScale, Vector3 minVelo, Vector3 maxVelo, float accelPower, Vector3 minRot, Vector3 maxRot, float growingTimer, float endScale, bool isGravity, bool isBillboard)
+void ParticleManager::AddHoming(
+	Vector3 emitPos, Vector3 emitScale, uint32_t addNum, float life, Color color, TextureHandle tex,
+	float minScale, float maxScale, Vector3 minVelo, Vector3 maxVelo, Vector3 targetPos,
+	float accelPower, Vector3 minRot, Vector3 maxRot,
+	float growingTimer, float endScale, bool isGravity, bool isBillboard)
 {
 	emitters_.emplace_back();
-	emitters_.back() = std::make_unique<HomingParticle>();
+	emitters_.back() = std::make_unique<HomingParticle>(targetPos);
 	emitters_.back()->SetPos(emitPos);
 	emitters_.back()->SetScale(emitScale);
 	emitters_.back()->Add(

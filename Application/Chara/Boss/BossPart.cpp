@@ -1,9 +1,6 @@
 #include "BossPart.h"
 #include "TimeManager.h"
-#include "WaxManager.h"
 #include "Parameter.h"
-#include "ParticleManager.h"
-#include "Wax.h"
 
 Parts::Parts() : GameObject()
 {
@@ -20,11 +17,6 @@ Parts::Parts() : GameObject()
 
 Parts::~Parts()
 {
-	ParticleManager::GetInstance()->AddHoming(
-		obj.mTransform.position, obj.mTransform.scale,
-		10, 0.8f, Wax::waxOriginColor, "", 0.8f, 1.5f,
-		-Vector3(1, 1, 1) * 0.3f, Vector3(1, 1, 1) * 0.3f,
-		0.03f, -Vector3(1, 1, 1) * 0.1f, Vector3(1, 1, 1) * 0.1f, 0.3f, 0.5f);
 }
 
 
