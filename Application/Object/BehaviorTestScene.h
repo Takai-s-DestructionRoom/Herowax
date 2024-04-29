@@ -39,6 +39,8 @@ public:
 private:
 	void CubeCreate(Vector3 pos);
 
+	void LineCubeReCreate();
+
 private:
 	BehaviorData data;
 	

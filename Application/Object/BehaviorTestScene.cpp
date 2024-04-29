@@ -27,10 +27,12 @@ void BehaviorTestScene::Update()
 		obj.mTransform.UpdateMatrix();
 		obj.TransferBuffer(camera.mViewProjection);
 	}
+
 	for (auto& cube : lineCube)
 	{
 		cube.Update();
 	}
+
 	returnCube.Update();
 
 	skydome.TransferBuffer(camera.mViewProjection);
@@ -48,7 +50,7 @@ void BehaviorTestScene::Update()
 		{
 			//ハンドルの一覧をプルダウンで表示
 			std::vector<const char*> temp;
-			for (size_t i = 0; i < comboFileNames.size(); i++)
+			for (int32_t i = 0; i < comboFileNames.size(); i++)
 			{
 				temp.push_back(comboFileNames[i].c_str());
 			}
@@ -87,7 +89,9 @@ void BehaviorTestScene::Update()
 		ImGui::InputText("セーブするファイル名", &fileName);
 
 		if (ImGui::Button("セーブ")) {
+			
 			int32_t i = 0;
+			//一度データを消して、改めて入れ直す
 			data.points.clear();
 			for (auto& obj : objs)
 			{
@@ -98,6 +102,29 @@ void BehaviorTestScene::Update()
 			}
 
 			EnemyBehaviorEditor::Save(data, fileName);
+		}
+
+		//データ一覧表示
+		ImGui::Text("セーブ予定のデータ");
+
+		int32_t i = 0;
+		for (auto itr = objs.begin(); itr != objs.end() - 1;)
+		{
+			i++;
+			ImGui::Text("--------%d番--------", i);
+			std::string str = "座標" + std::to_string(i);
+			ImGui::DragFloat3(str.c_str(), &(*itr).mTransform.position.x);
+			std::string deleteStr = "このデータを削除" + std::to_string(i);
+			if (ImGui::Button(deleteStr.c_str()))
+			{
+				itr = objs.erase(itr);
+
+				//2点をつなぐキューブを再生成
+				LineCubeReCreate();
+			}
+			else {
+				itr++;
+			}
 		}
 
 		ImGui::End();
@@ -126,17 +153,12 @@ void BehaviorTestScene::Finalize()
 
 void BehaviorTestScene::CubeCreate(Vector3 pos)
 {
-	lineCube.emplace_back();
 	//2つ以上オブジェクトが出来たら
 	if (objs.size() >= 1) {
-		//オブジェクトを作る前に一番後ろのオブジェクトを開始位置に
-		lineCube.back().start = &objs.back();
-
 		objs.back().mTuneMaterial.mColor = { 1,1,1,1 };
 
-		returnCube.end = &objs.front();
-		returnCube.start = &objs.back();
-		returnCube.SetColor(Color::kLightblue);
+		//表示用にデータを入れる
+		data.points.push_back(objs.back().mTransform.position);
 	}
 
 	objs.emplace_back();
@@ -146,8 +168,30 @@ void BehaviorTestScene::CubeCreate(Vector3 pos)
 	objs.back().mTransform.scale = {1,1,1};
 	objs.back().mTuneMaterial.mColor = {1,0,0,1};
 
-	//オブジェクトを作った後に一番後ろのオブジェクトを終点位置に
-	lineCube.back().end = &objs.back();
+	LineCubeReCreate();
+}
+
+void BehaviorTestScene::LineCubeReCreate()
+{
+	//2点をつなぐキューブを描画
+	lineCube.clear();
+	for (int32_t j = 0; j < objs.size() - 1; j++)
+	{
+		//2つ目以降なら
+		if (j >= 1) {
+			lineCube.emplace_back();
+
+			//オブジェクトを作る前に一番後ろのオブジェクトを開始位置に
+			lineCube.back().start = &objs[j - 1];
+
+			//オブジェクトを作った後に一番後ろのオブジェクトを終点位置に
+			lineCube.back().end = &objs[j];
+		}
+	}
+
+	returnCube.end = &objs.front();
+	returnCube.start = &objs.back() - 1;
+	returnCube.SetColor(Color::kLightblue);
 }
 
 EasingCube::EasingCube()
