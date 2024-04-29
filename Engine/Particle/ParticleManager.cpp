@@ -126,6 +126,29 @@ void ParticleManager::AddRing(Vector3 emitPos, std::string pDataHandle)
 		pdata.growingTimer, pdata.endScale, pdata.isGravity, pdata.isBillboard);
 }
 
+void ParticleManager::AddHoming(Vector3 emitPos, std::string pDataHandle, Vector3 targetPos)
+{
+	HomingPData pdata = ParticleEditor::LoadHoming(pDataHandle);
+	emitters_.emplace_back();
+
+	//エミッター座標に吸い寄せられるやつなら
+	if (pdata.isTargetEmitter)
+	{
+		emitters_.back() = std::make_unique<HomingParticle>(emitPos);
+	}
+	//それ以外なら指定されたターゲット
+	else
+	{
+		emitters_.back() = std::make_unique<HomingParticle>(targetPos);
+	}
+	emitters_.back()->SetPos(emitPos);
+	emitters_.back()->SetScale(pdata.emitScale);
+	emitters_.back()->Add(
+		pdata.addNum, pdata.life, pdata.color, pdata.tex, pdata.minScale, pdata.maxScale,
+		pdata.minVelo, pdata.maxVelo, pdata.accelPower, pdata.minRot, pdata.maxRot,
+		pdata.growingTimer, pdata.endScale, pdata.isGravity, pdata.isBillboard);
+}
+
 void ParticleManager::AddHoming(
 	Vector3 emitPos, Vector3 emitScale, uint32_t addNum, float life, Color color, TextureHandle tex,
 	float minScale, float maxScale, Vector3 minVelo, Vector3 maxVelo, Vector3 targetPos,

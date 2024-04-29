@@ -51,6 +51,11 @@ void ParticleEditorScene::Update()
 			if (Util::ContainString(loadPartName, "_ring")) {
 				ParticleManager::GetInstance()->AddRing(emitPos, loadPartName);
 			}
+			//ファイル名に"_homing"が含まれてるならホーミングパーティクルを出す
+			else if (Util::ContainString(loadPartName, "_homing")) {
+				ParticleManager::GetInstance()->AddHoming(emitPos, loadPartName);
+				drawEmitter.mTransform.scale = ParticleEditor::LoadHoming(loadPartName).emitScale * 2.f;
+			}
 			//それ以外はシンプルパーティクルとみなす
 			else if (loadPartName != "") {
 				ParticleManager::GetInstance()->AddSimple(emitPos, loadPartName);
@@ -88,6 +93,11 @@ void ParticleEditorScene::Update()
 			//ファイル名に"_ring"が含まれてるなら円形パーティクルを出す
 			if (Util::ContainString(loadPartName, "_ring")) {
 				ParticleManager::GetInstance()->AddRing(emitPos, loadPartName);
+			}
+			//ファイル名に"_homing"が含まれてるならホーミングパーティクルを出す
+			else if (Util::ContainString(loadPartName, "_homing")) {
+				ParticleManager::GetInstance()->AddHoming(emitPos, loadPartName);
+				drawEmitter.mTransform.scale = ParticleEditor::LoadHoming(loadPartName).emitScale * 2.f;
 			}
 			//それ以外はシンプルパーティクルとみなす
 			else if (loadPartName != "") {

@@ -20,11 +20,7 @@ Wax::Wax():GameObject(),
 
 void Wax::DeadParticle()
 {
-	ParticleManager::GetInstance()->AddHoming(
-		obj.mTransform.position, obj.mTransform.scale * 4.f,
-		1, 0.4f, Color::kWaxColor, "", 0.8f, 1.5f,
-		-Vector3(1, 1, 1) * 0.7f, Vector3(1, 1, 1) * 0.7f, obj.mTransform.position,
-		0.03f, -Vector3(1, 1, 1) * 0.1f, Vector3(1, 1, 1) * 0.1f, 0.1f, 0.3f);
+	ParticleManager::GetInstance()->AddHoming(obj.mTransform.position,"wax_dead_homing");
 }
 
 bool Wax::GetIsSolidNow()
