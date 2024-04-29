@@ -26,6 +26,7 @@ struct SimplePData
 	float endScale = 0.f;
 	bool isGravity = false;
 	bool isBillboard = false;
+	float rejectRadius = 0.f;
 
 	std::string error = "";
 };
@@ -73,6 +74,7 @@ struct HomingPData
 	float endScale = 0.f;
 	bool isGravity = false;
 	bool isBillboard = false;
+	float rejectRadius = 0.f;
 	bool isTargetEmitter = true;	//目標地点がエミッターの座標か
 
 	std::string error = "";

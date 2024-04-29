@@ -5,6 +5,7 @@ maxscale:3
 accelpower:0.13
 growingTimer:0.1
 endscale:0.5
+rejectradius:0
 isgravity:false
 isbillboard:false
 istargetemitter:true

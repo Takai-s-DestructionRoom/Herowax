@@ -4,7 +4,7 @@ class HomingParticle :
     public IEmitter3D
 {
 private:
-	Vector3 targetPos_;	//向かう場所
+	Vector3 targetPos_;		//向かう場所
 
 public:
 	HomingParticle(Vector3 targetPos);

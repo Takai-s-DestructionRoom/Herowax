@@ -105,6 +105,7 @@ void ParticleEditor::OrderCreateGUI()
 			ImGui::InputFloat("パーティクルの生存時間", &saveSimplePData.life);
 			ImGui::Text("------------------------------------------");
 			ImGui::InputFloat3("エミッターサイズ", &saveSimplePData.emitScale.x);
+			ImGui::InputFloat("生成しない範囲", &saveSimplePData.rejectRadius);
 			ImGui::InputFloat("最小の大きさ(ランダムのmin)", &saveSimplePData.minScale);
 			ImGui::InputFloat("最大の大きさ(ランダムのmax)", &saveSimplePData.maxScale);
 			ImGui::InputFloat3("最小の方向(ランダムのmin)", &saveSimplePData.minVelo.x);
@@ -179,6 +180,7 @@ void ParticleEditor::OrderCreateGUI()
 			ImGui::InputFloat("パーティクルの生存時間", &saveHomingPData.life);
 			ImGui::Text("------------------------------------------");
 			ImGui::InputFloat3("エミッターサイズ", &saveHomingPData.emitScale.x);
+			ImGui::InputFloat("生成しない範囲", &saveHomingPData.rejectRadius);
 			ImGui::InputFloat("最小の大きさ(ランダムのmin)", &saveHomingPData.minScale);
 			ImGui::InputFloat("最大の大きさ(ランダムのmax)", &saveHomingPData.maxScale);
 			ImGui::InputFloat3("最小の方向(ランダムのmin)", &saveHomingPData.minVelo.x);
@@ -292,6 +294,10 @@ SimplePData ParticleEditor::LoadSimple(const std::string& filename)
 		if (Util::ContainString(line, "endscale")) {
 			std::vector<std::string> strs = Util::StringSplit(line, ":");
 			result.endScale = std::stof(strs[1]);
+		}
+		if (Util::ContainString(line, "rejectradius")) {
+			std::vector<std::string> strs = Util::StringSplit(line, ":");
+			result.rejectRadius = std::stof(strs[1]);
 		}
 
 		//boolども
@@ -509,6 +515,10 @@ HomingPData ParticleEditor::LoadHoming(const std::string& filename)
 			std::vector<std::string> strs = Util::StringSplit(line, ":");
 			result.endScale = std::stof(strs[1]);
 		}
+		if (Util::ContainString(line, "rejectradius")) {
+			std::vector<std::string> strs = Util::StringSplit(line, ":");
+			result.rejectRadius = std::stof(strs[1]);
+		}
 
 		//boolども
 		if (Util::ContainString(line, "isgravity")) {
@@ -592,6 +602,7 @@ void ParticleEditor::SaveSimple(const SimplePData& saveData, const std::string& 
 	writing_file << "accelpower:" << saveData.accelPower << std::endl;
 	writing_file << "growingTimer:" << saveData.growingTimer << std::endl;
 	writing_file << "endscale:" << saveData.endScale << std::endl;
+	writing_file << "rejectradius:" << saveData.rejectRadius << std::endl;
 
 	std::string tempGrab = "false";
 	if (saveData.isGravity)tempGrab = "true";
@@ -666,6 +677,7 @@ void ParticleEditor::SaveHoming(const HomingPData& saveData, const std::string& 
 	writing_file << "accelpower:" << saveData.accelPower << std::endl;
 	writing_file << "growingTimer:" << saveData.growingTimer << std::endl;
 	writing_file << "endscale:" << saveData.endScale << std::endl;
+	writing_file << "rejectradius:" << saveData.rejectRadius << std::endl;
 
 	std::string tempGrab = "false";
 	if (saveData.isGravity)tempGrab = "true";

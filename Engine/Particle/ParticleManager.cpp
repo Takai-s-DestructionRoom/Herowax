@@ -111,7 +111,7 @@ void ParticleManager::AddSimple(Vector3 emitPos, std::string pDataHandle)
 	emitters_.back()->Add(
 		pdata.addNum, pdata.life, pdata.color, pdata.tex, pdata.minScale, pdata.maxScale,
 		pdata.minVelo, pdata.maxVelo, pdata.accelPower, pdata.minRot, pdata.maxRot,
-		pdata.growingTimer, pdata.endScale, pdata.isGravity, pdata.isBillboard);
+		pdata.growingTimer, pdata.endScale, pdata.isGravity, pdata.isBillboard,pdata.rejectRadius);
 }
 
 void ParticleManager::AddRing(Vector3 emitPos, std::string pDataHandle)
@@ -146,7 +146,7 @@ void ParticleManager::AddHoming(Vector3 emitPos, std::string pDataHandle, Vector
 	emitters_.back()->Add(
 		pdata.addNum, pdata.life, pdata.color, pdata.tex, pdata.minScale, pdata.maxScale,
 		pdata.minVelo, pdata.maxVelo, pdata.accelPower, pdata.minRot, pdata.maxRot,
-		pdata.growingTimer, pdata.endScale, pdata.isGravity, pdata.isBillboard);
+		pdata.growingTimer, pdata.endScale, pdata.isGravity, pdata.isBillboard,pdata.rejectRadius);
 }
 
 void ParticleManager::AddHoming(
