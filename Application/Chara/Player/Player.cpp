@@ -87,6 +87,8 @@ isFireStock(false), isWaxStock(true), isCollectFan(false), maxWaxStock(20)
 
 void Player::Init()
 {
+	waxUI.Init();
+
 	Model::Load("./Resources/Model/collect/collect.obj", "collect", true);
 	Model::Load("./Resources/Model/playerHuman/playerHuman.obj", "playerHuman", true);
 	Model::Load("./Resources/Model/playerBag/playerBag.obj", "playerBag", true);
@@ -414,6 +416,8 @@ void Player::Update()
 
 	ui.Update(this);
 
+	waxUI.Update(obj.mTransform.position);
+	
 #pragma region ImGui
 	if (RImGui::showImGui)
 	{
@@ -565,28 +569,29 @@ void Player::Draw()
 {
 	if (isAlive || Util::debugBool)
 	{
+		BrightDraw();
+
+		//回収中は別モデルに置き換えるので描画しない
+		if (WaxManager::GetInstance()->isCollected) {
+			humanObj.Draw();
+		}
+
+		if (isCollectFan)
+		{
+			collectRangeModelCircle.Draw();
+			collectRangeModelRayLeft.Draw();
+			collectRangeModelRayRight.Draw();
+		}
+		else
+		{
+			collectRangeModel.Draw();
+		}
+		ui.Draw();
+
+		DrawAttackCollider(); 
 		
+		waxUI.Draw();
 	}
-	BrightDraw();
-
-	//回収中は別モデルに置き換えるので描画しない
-	if (WaxManager::GetInstance()->isCollected) {
-		humanObj.Draw();
-	}
-
-	if (isCollectFan)
-	{
-		collectRangeModelCircle.Draw();
-		collectRangeModelRayLeft.Draw();
-		collectRangeModelRayRight.Draw();
-	}
-	else
-	{
-		collectRangeModel.Draw();
-	}
-	ui.Draw();
-
-	DrawAttackCollider();
 }
 
 void Player::MovePad()
@@ -922,6 +927,8 @@ void Player::WaxCollect()
 				maxWaxStock = waxStock;
 				//音鳴らす
 				RAudio::Play("eCollect");
+
+				waxUI.Start();
 			}
 		}
 	}

@@ -291,6 +291,7 @@
     <ClCompile Include="Application\ParticleEditor\ParticleEditorScene.cpp" />
     <ClCompile Include="Application\Object\CollectPart\CollectPart.cpp" />
     <ClCompile Include="Application\Scene\SceneTrance.cpp" />
+    <ClCompile Include="Application\WaxUI.cpp" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Shader\PaintedBright\PaintedBrightPS.hlsl">
@@ -909,6 +910,7 @@
     <ClInclude Include="Application\Scene\SceneTrance.h" />
     <ClInclude Include="Application\EventCaller.h" />
     <ClInclude Include="Application\Scene\FailedScene.h" />
+    <ClInclude Include="Application\WaxUI.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Shader\GameObject\GameObject.hlsli" />

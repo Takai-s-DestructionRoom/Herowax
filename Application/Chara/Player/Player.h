@@ -9,6 +9,7 @@
 #include "ColPrimitive3D.h"
 #include <stdint.h>
 #include "CollectPart.h"
+#include "WaxUI.h"
 
 class Boss;
 
@@ -140,6 +141,9 @@ private:
 	bool modelChange = false;
 
 	Vector3 modelOffset;//描画位置をずらす
+
+	WaxUI waxUI;
+
 public:
 	Player();
 
