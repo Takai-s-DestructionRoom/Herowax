@@ -26,7 +26,7 @@ moveSpeed(1.f), moveAccelAmount(0.05f), isGround(true), hp(0), maxHP(10.f),
 isJumping(false), jumpTimer(0.2f), jumpHeight(0.f), maxJumpHeight(5.f), jumpPower(2.f), jumpSpeed(0.f),
 isAttack(false), atkSize(3.f), atkPower(1),
 atkCoolTimer(0.3f), atkTimer(0.5f), atkHeight(1.f), solidTimer(5.f),
-isFireStock(false), isWaxStock(true), isCollectFan(false), maxWaxStock(20)
+isFireStock(false), isWaxStock(true), isCollectFan(false), waxCollectAmount(0)
 {
 	std::map<std::string, std::string> extract = Parameter::Extract("Player");
 	moveSpeed = Parameter::GetParam(extract, "移動速度", 1.f);
@@ -216,12 +216,12 @@ void Player::Update()
 	}
 
 	//---ロウ回収処理周り---///
-	if (isWaxStock == false)
-	{
-		waxStock = maxWaxStock;
-	}
-	//ストックがおかしな値にならないように
-	waxStock = Util::Clamp(waxStock, 0, maxWaxStock);
+	//if (isWaxStock == false)
+	//{
+	//	waxStock = maxWaxStock;
+	//}
+	////ストックがおかしな値にならないように
+	//waxStock = Util::Clamp(waxStock, 0, maxWaxStock);
 
 	//回収処理
 	WaxCollect();
