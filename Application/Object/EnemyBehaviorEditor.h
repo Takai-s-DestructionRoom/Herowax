@@ -30,6 +30,7 @@ class EnemyBehaviorEditor
 public:
 	static BehaviorData Load(const std::string& filename);
 	static void Save(const BehaviorData& data, const std::string& saveFileName_);
+	static std::vector<std::string> EnemyBehaviorEditor::LoadFileNames();
 
 private:
 	static Vector3 GetVector3Data(const std::string& str);

@@ -51,5 +51,7 @@ private:
 	ModelObj skydome;
 
 	std::string fileName = "";
+	std::string loadFileName = "";
+	std::vector<std::string> comboFileNames;
 };
 

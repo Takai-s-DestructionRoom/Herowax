@@ -92,11 +92,23 @@ void EnemyBehaviorEditor::Save(const BehaviorData& data, const std::string& save
 	writing_file.close();
 }
 
-Vector3 GetLerp(Vector3 start, Vector3 end, float timeRate)
+std::vector<std::string> EnemyBehaviorEditor::LoadFileNames()
 {
-	return Vector3(Easing::lerp(start.x,end.x, timeRate),
-			 Easing::lerp(start.y,end.y, timeRate),
-			 Easing::lerp(start.z,end.z, timeRate));
+	std::filesystem::path path = PathUtil::ConvertAbsolute(Util::ConvertStringToWString("./Resources/Data/BehaviorOrder/"));
+	directory_iterator iter(path), end;
+	std::error_code err;
+
+	std::vector<std::string> temp_file_names;
+
+	for (; iter != end && !err; iter.increment(err)) {
+		const directory_entry entry = *iter;
+
+		temp_file_names.push_back(entry.path().filename().string());
+		std::vector<std::string> temp2 = Util::StringSplit(temp_file_names.back(), ".");
+		temp_file_names.back() = temp2[0];
+	}
+
+	return temp_file_names;
 }
 
 Vector3 BehaviorData::GetBehavior(Vector3 basis, Vector3 nowPos)

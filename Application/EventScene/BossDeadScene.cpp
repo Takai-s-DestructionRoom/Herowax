@@ -1,6 +1,8 @@
 #include "BossDeadScene.h"
 #include "SceneTrance.h"
 #include "InstantDrawer.h"
+#include "Boss.h"
+#include "ParticleManager.h"
 
 BossDeadScene::BossDeadScene()
 {
@@ -84,6 +86,16 @@ void BossDeadScene::Update()
 	{
 		clearStrTimer.Start();
 		callStr = true;
+	}
+
+	//死亡パーティクル出現
+	if (Boss::GetInstance()->isDead && eventTimer.GetTimeRate() > 0.7f)
+	{
+		if (Boss::GetInstance()->isAlive)
+		{
+			ParticleManager::GetInstance()->AddSimple(Boss::GetInstance()->GetPos() + Vector3::UP * 20.f, "boss_dead");
+		}
+		Boss::GetInstance()->isAlive = false;
 	}
 
 	//イベントシーン終わったらシーン遷移開始(待機を追加)

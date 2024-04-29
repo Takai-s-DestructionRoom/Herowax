@@ -1,5 +1,6 @@
 #pragma once
 #include "string"
+#include "IEventScene.h"
 
 //イベント呼び出し機
 class EventCaller
@@ -17,6 +18,12 @@ public:
 	static std::string GetNowEventStr();
 	//呼び出し中イベント管理文字列を削除
 	static void NowEventStrReset();
+
+	static void Init();
+	static void Update();
+	static void Draw();
+
+	static std::unique_ptr<IEventScene> eventScene;
 
 private:
 	//イベント呼び出しを管理する文字列

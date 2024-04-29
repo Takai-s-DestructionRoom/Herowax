@@ -16,6 +16,7 @@ void BehaviorTestScene::Init()
 	skydome.mTransform.UpdateMatrix();
 }
 
+//ロードと途中経過の変更
 void BehaviorTestScene::Update()
 {
 	camera.Update();
@@ -36,10 +37,40 @@ void BehaviorTestScene::Update()
 
 	if (RImGui::showImGui)
 	{
-
 		ImGui::SetNextWindowSize({ 400, 200 }, ImGuiCond_FirstUseEver);
 
 		ImGui::Begin("敵挙動作成GUI");
+
+		comboFileNames = EnemyBehaviorEditor::LoadFileNames();
+
+		//ImGui::InputText("読み込むパーティクル名", &loadPartName);
+		if (!comboFileNames.empty())
+		{
+			//ハンドルの一覧をプルダウンで表示
+			std::vector<const char*> temp;
+			for (size_t i = 0; i < comboFileNames.size(); i++)
+			{
+				temp.push_back(comboFileNames[i].c_str());
+			}
+			static int32_t select = 0;
+			ImGui::Combo("読み込むオーダー名", &select, &temp[0], (int32_t)comboFileNames.size());
+			loadFileName = comboFileNames[select];
+		}
+
+		if (ImGui::Button("ロード")) {
+			BehaviorData temp = EnemyBehaviorEditor::Load(loadFileName);
+			fileName = loadFileName;
+
+			objs.clear();
+			lineCube.clear();
+
+			//最後は入れない
+			for (int32_t i = 0; i < temp.points.size(); i++)
+			{
+				CubeCreate(temp.points[i]);
+			}
+			CubeCreate(temp.points[0]);
+		}
 
 		if (ImGui::Button("初期化")) {
 			objs.clear();
