@@ -292,6 +292,7 @@
     <ClCompile Include="Application\Object\CollectPart\CollectPart.cpp" />
     <ClCompile Include="Application\Scene\SceneTrance.cpp" />
     <ClCompile Include="Application\WaxUI.cpp" />
+    <ClCompile Include="Application\Object\Tank.cpp" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Shader\PaintedBright\PaintedBrightPS.hlsl">
@@ -911,6 +912,7 @@
     <ClInclude Include="Application\EventCaller.h" />
     <ClInclude Include="Application\Scene\FailedScene.h" />
     <ClInclude Include="Application\WaxUI.h" />
+    <ClInclude Include="Application\Object\Tank.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Shader\GameObject\GameObject.hlsli" />

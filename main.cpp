@@ -35,8 +35,6 @@
 #include <SRBuffer.h>
 #include <DebugGUI.h>
 #include <PathUtil.h>
-#include "ParticleEditorScene.h"
-#include "BehaviorTestScene.h"
 #include "TitleScene.h"
 
 using namespace std;
@@ -113,7 +111,6 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 
 	//初期シーンセット
 	Util::debugBool = false;
-	//SceneManager::Set<ProtoScene>();
 	SceneManager::Set<TitleScene>();
 	
 	//////////////////////////////////////

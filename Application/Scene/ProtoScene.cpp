@@ -42,8 +42,7 @@ ProtoScene::ProtoScene()
 
 void ProtoScene::Init()
 {
-	eventScene = std::make_unique<BossAppearanceScene>();
-
+	EventCaller::Init();
 	//Camera::sMinimapCamera = &minimapCamera;
 
 	gameCamera.Init();
@@ -118,8 +117,8 @@ void ProtoScene::Update()
 	if ((EventCaller::GetEventCallStr() == BossDeadScene::GetEventCallStr()) &&
 		SceneTrance::GetInstance()->GetIsChange())
 	{
-		eventScene = std::make_unique<BossDeadScene>();
-		eventScene->Init(Boss::GetInstance()->GetCenterPos() + Vector3::UP * 20.f);
+		EventCaller::eventScene = std::make_unique<BossDeadScene>();
+		EventCaller::eventScene->Init(Boss::GetInstance()->GetCenterPos() + Vector3::UP * 20.f);
 
 		RAudio::Stop("Boss");
 		RAudio::Stop("Normal");
@@ -135,8 +134,8 @@ void ProtoScene::Update()
 	if ((EventCaller::GetEventCallStr() == BossAppearanceScene::GetEventCallStr()) &&
 		SceneTrance::GetInstance()->GetIsChange())
 	{
-		eventScene = std::make_unique<BossAppearanceScene>();
-		eventScene->Init(Boss::GetInstance()->GetCenterPos() + Vector3::UP * 20.f);
+		EventCaller::eventScene = std::make_unique<BossAppearanceScene>();
+		EventCaller::eventScene->Init(Boss::GetInstance()->GetCenterPos() + Vector3::UP * 20.f);
 
 		RAudio::Stop("Boss");
 		RAudio::Stop("Normal");
@@ -152,19 +151,7 @@ void ProtoScene::Update()
 	}
 
 	//イベントシーン中なら
-	if (eventScene->isActive)
-	{
-		eventScene->Update();
-
-		if (Boss::GetInstance()->isDead && eventScene->eventTimer.GetTimeRate() > 0.7f)
-		{
-			if (Boss::GetInstance()->isAlive)
-			{
-				ParticleManager::GetInstance()->AddSimple(Boss::GetInstance()->GetPos() + Vector3::UP * 20.f, "boss_dead");
-			}
-			Boss::GetInstance()->isAlive = false;
-		}
-	}
+	EventCaller::Update();
 
 	//イベントシーンが終わりカメラが空っぽになったら
 	if (Camera::sNowCamera == nullptr)
@@ -550,10 +537,7 @@ void ProtoScene::Draw()
 	Boss::GetInstance()->Draw();
 	player.Draw();
 
-	if (eventScene->isActive)
-	{
-		eventScene->Draw();
-	}
+	EventCaller::Draw();
 
 	controlUI.Draw();
 

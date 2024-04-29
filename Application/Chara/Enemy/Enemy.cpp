@@ -21,7 +21,7 @@ gravity(0.2f)
 	attackState = std::make_unique<EnemyNonAttackState>();
 	nextState = nullptr;
 	nextAttackState = nullptr;
-	obj = PaintableModelObj(Model::Load("./Resources/Model/enemy/enemy.obj", "enemy", true));
+	obj = PaintableModelObj(Model::Load("./Resources/Model/firewisp/firewisp.obj", "firewisp", true));
 	obj.mPaintDissolveMapTex = TextureManager::Load("./Resources/DissolveMap.png", "DissolveMapTex");
 	target = target_;
 
@@ -80,6 +80,11 @@ void Enemy::Reset()
 }
 
 void Enemy::Update()
+{
+	BaseUpdate();
+}
+
+void Enemy::BaseUpdate()
 {
 	Reset();
 
