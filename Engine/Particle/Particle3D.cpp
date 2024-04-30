@@ -378,7 +378,7 @@ void IEmitter3D::TransferBuffer(ViewProjection viewprojection)
 
 void IEmitter3D::Add(uint32_t addNum, float life, Color color, TextureHandle tex,
 	float minScale, float maxScale, Vector3 minVelo, Vector3 maxVelo, float accelPower,
-	Vector3 minRot, Vector3 maxRot, float growingTimer, float endScale, bool isGravity, bool isBillboard)
+	Vector3 minRot, Vector3 maxRot, float growingTimer, float endScale, bool isGravity, bool isBillboard, float rejectRadius)
 {
 	isGravity_ = isGravity;
 	isBillboard_ = isBillboard;
@@ -399,10 +399,28 @@ void IEmitter3D::Add(uint32_t addNum, float life, Color color, TextureHandle tex
 		Particle3D& p = particles_.back();
 
 		//エミッターの中からランダムで座標を決定
-		float pX = Util::GetRand(-transform.scale.x, transform.scale.x);
-		float pY = Util::GetRand(-transform.scale.y, transform.scale.y);
-		float pZ = Util::GetRand(-transform.scale.z, transform.scale.z);
-		Vector3 randomPos(pX, pY, pZ);
+		float pX = 0, pY = 0, pZ = 0;
+		Vector3 randomPos{};
+
+		pX = Util::GetRand(-transform.scale.x, transform.scale.x);
+		pY = Util::GetRand(-transform.scale.y, transform.scale.y);
+		pZ = Util::GetRand(-transform.scale.z, transform.scale.z);
+		randomPos = { pX, pY, pZ };
+
+		//生成しない範囲があるなら
+		if (rejectRadius > 0.f)
+		{
+			//生成しない範囲外になるまで座標決めなおす
+			while ((randomPos - transform.position).Length() < rejectRadius)
+			{
+				pX = Util::GetRand(-transform.scale.x, transform.scale.x);
+				pY = Util::GetRand(-transform.scale.y, transform.scale.y);
+				pZ = Util::GetRand(-transform.scale.z, transform.scale.z);
+
+				randomPos = { pX, pY, pZ };
+			}
+		}
+
 		//引数の範囲から大きさランダムで決定
 		float sX = Util::GetRand(minScale, maxScale);
 		float sY = Util::GetRand(minScale, maxScale);

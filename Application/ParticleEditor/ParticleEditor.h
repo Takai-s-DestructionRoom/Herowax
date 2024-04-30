@@ -26,6 +26,7 @@ struct SimplePData
 	float endScale = 0.f;
 	bool isGravity = false;
 	bool isBillboard = false;
+	float rejectRadius = 0.f;
 
 	std::string error = "";
 };
@@ -37,8 +38,8 @@ struct RingPData
 	float life = 0;
 	Color color = { 1,1,1,1 };
 	TextureHandle tex = "";
-	float startRadius;
-	float endRadius;
+	float startRadius = 0;
+	float endRadius = 0;
 	float minScale = 0;
 	float maxScale = 0;
 	float minVeloY = 0;
@@ -49,6 +50,32 @@ struct RingPData
 	float endScale = 0.f;
 	bool isGravity = false;
 	bool isBillboard = false;
+
+	std::string error = "";
+};
+
+struct HomingPData
+{
+	//Vector3 emitPos; //posは使うときに指定したいので省略
+	Vector3 emitScale = {};
+	int32_t addNum = 0;
+	float life = 0;
+	Color color = { 1,1,1,1 };
+	TextureHandle tex = "";
+	float minScale = 0;
+	float maxScale = 0;
+	Vector3 minVelo = {};
+	Vector3 maxVelo = {};
+	Vector3 targetPos = {};
+	float accelPower = 0.f;
+	Vector3 minRot = {};
+	Vector3 maxRot = {};
+	float growingTimer = 0.f;
+	float endScale = 0.f;
+	bool isGravity = false;
+	bool isBillboard = false;
+	float rejectRadius = 0.f;
+	bool isTargetEmitter = true;	//目標地点がエミッターの座標か
 
 	std::string error = "";
 };
@@ -68,10 +95,12 @@ public:
 	//読み込み
 	static SimplePData LoadSimple(const std::string& filename);
 	static RingPData LoadRing(const std::string& filename);
+	static HomingPData LoadHoming(const std::string& filename);
 
 	//書き出し
 	static void SaveSimple(const SimplePData& saveData, const std::string& saveFileName_);
 	static void SaveRing(const RingPData& saveData, const std::string& saveFileName_);
+	static void SaveHoming(const HomingPData& saveData, const std::string& saveFileName_);
 
 private:
 	//読み込みで使うデータたち
@@ -80,6 +109,7 @@ private:
 	static std::string loadFileName;
 	static SimplePData saveSimplePData;
 	static RingPData saveRingPData;
+	static HomingPData saveHomingPData;
 
 	static bool isAlwaysUpdate;
 
