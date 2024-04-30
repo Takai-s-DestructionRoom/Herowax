@@ -334,7 +334,7 @@ void ProtoScene::Update()
 	{
 		//プレイヤーとの当たり判定
 		//特定範囲内に入ったら敵を攻撃状態へ遷移
-		if (enemy->GetAttackState() == "NonAttack")
+		if (enemy->GetAttackState() == EnemyNormalState::GetStateStr())
 		{
 			if (ColPrimitive3D::CheckSphereToSphere(enemy->attackHitCollider, player.attackHitCollider))
 			{
@@ -342,7 +342,7 @@ void ProtoScene::Update()
 			}
 		}
 		//攻撃中に本体同士がぶつかったらプレイヤーにダメージ
-		if (enemy->GetAttackState() == "NowAttack")
+		if (enemy->GetAttackState() == EnemyNowAttackState::GetStateStr())
 		{
 			if (ColPrimitive3D::CheckSphereToSphere(enemy->collider, player.collider))
 			{
@@ -404,11 +404,11 @@ void ProtoScene::Update()
 				
 				//プレイヤーを探している状態(攻撃状態でない時)に他の敵にぶつかった場合
 				//周回座標の基準をずらす
-				if (enemy1->GetAttackState() == "NonAttack")
+				if (enemy1->GetAttackState() == EnemyNormalState::GetStateStr())
 				{
 					enemy1->BehaviorOrigenPosPlus(e1RepulsionVec);
 				}
-				if (enemy1->GetAttackState() == "NonAttack")
+				if (enemy1->GetAttackState() == EnemyNormalState::GetStateStr())
 				{
 					enemy2->BehaviorOrigenPosPlus(e2RepulsionVec);
 				}

@@ -43,7 +43,7 @@ namespace Util {
     その結果の文字列を返す
     例:
     StringFormat("X = %d, Y = %d", 100, 500); -> "X = 100, Y = 500"
-*/
+    */
     template<typename ... Args>
     std::string StringFormat(const std::string& format, Args&& ... args) {
         /* フォーマット後の文字数を算出 */
@@ -183,4 +183,7 @@ namespace Util {
 
     //円運動
     Vector2 CircleMotion(Vector2 CenterPoint, float radius, float angle);
+
+    //指定したファイル名から一行ずつ文字列として返す
+    std::vector<std::string> GetFileData(const std::string& fullPath);
 }

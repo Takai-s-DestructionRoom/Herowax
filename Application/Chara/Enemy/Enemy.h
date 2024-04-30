@@ -106,6 +106,11 @@ public:
 	bool isCollect;				//回収されてるか
 	Vector3 oriScale;			//元の大きさ
 
+	//配列にロードする
+	std::vector<std::string> stateStrings;
+	//今何番のステートを実行しているかの管理番号
+	int32_t stateManageNumber = 0;
+
 protected:
 	//今までのUpdateの中身(継承先で必ず呼ぶように)
 	void BaseUpdate();

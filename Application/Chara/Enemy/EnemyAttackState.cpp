@@ -1,4 +1,5 @@
 #include "EnemyAttackState.h"
+#include "EnemyRangeAttackState.h"
 #include "Enemy.h"
 #include "InstantDrawer.h"
 #include "Camera.h"
@@ -8,10 +9,27 @@ void EnemyAttackState::LoadResource()
 	TextureManager::Load("./Resources/exclametion.png", "exclametion");
 }
 
-void EnemyNonAttackState::Update(Enemy* enemy)
+void EnemyAttackState::ChangeAttackStateString(Enemy* enemy, const std::string& state)
+{
+	if (state == EnemyPreState::GetStateStr()) {
+		enemy->ChangeAttackState<EnemyPreState>();
+		//enemy->stateManageNumber++;
+	}
+	if (state == EnemyRangePreState::GetStateStr()) {
+		enemy->ChangeAttackState<EnemyRangePreState>();
+		//enemy->stateManageNumber++;
+	}
+}
+
+void EnemyNormalState::Update(Enemy* enemy)
 {
 	//何もしない
-	enemy->SetAttackStateStr("NonAttack");
+	enemy->SetAttackStateStr(EnemyNormalState::GetStateStr());
+}
+
+std::string EnemyNormalState::GetStateStr()
+{
+	return "Normal";
 }
 
 EnemyFindState::EnemyFindState()
@@ -22,7 +40,7 @@ EnemyFindState::EnemyFindState()
 
 void EnemyFindState::Update(Enemy* enemy)
 {
-	enemy->SetAttackStateStr("FindAttack");
+	enemy->SetAttackStateStr(EnemyFindState::GetStateStr());
 	
 	if (isStart) {
 		position = enemy->obj.mTransform.position;
@@ -41,8 +59,15 @@ void EnemyFindState::Update(Enemy* enemy)
 	//時間たったら次へ
 	if (lifeTimer.GetEnd()) {
 		//遷移命令
-		enemy->ChangeAttackState<EnemyPreState>();
+		//番号と読みだした文字に応じて変化先を決定
+		EnemyAttackState::ChangeAttackStateString(enemy, enemy->stateStrings[enemy->stateManageNumber]);
+		//enemy->ChangeAttackState<EnemyPreState>();
 	}
+}
+
+std::string EnemyFindState::GetStateStr()
+{
+	return "FindAttack";
 }
 
 EnemyPreState::EnemyPreState()
@@ -57,6 +82,8 @@ EnemyPreState::EnemyPreState()
 
 void EnemyPreState::Update(Enemy* enemy)
 {
+	enemy->SetAttackStateStr(EnemyPreState::GetStateStr());
+
 	ModelObj* target = enemy->GetTarget();
 	Vector3 pVec = target->mTransform.position - enemy->obj.mTransform.position;
 	pVec.Normalize();
@@ -67,8 +94,7 @@ void EnemyPreState::Update(Enemy* enemy)
 		start = enemy->obj.mTransform.position;
 		end = enemy->obj.mTransform.position - pVec * 10.f;
 	}
-	enemy->SetAttackStateStr("PreAttack");
-
+	
 	float oldTime = lifeTimer.GetTimeRate();
 	lifeTimer.Update();
 	blinkTimer.RoopReverse();
@@ -127,6 +153,11 @@ void EnemyPreState::Update(Enemy* enemy)
 	}
 }
 
+std::string EnemyPreState::GetStateStr()
+{
+	return "PreAttack";
+}
+
 EnemyNowAttackState::EnemyNowAttackState()
 {
 	isStart = true;
@@ -135,7 +166,7 @@ EnemyNowAttackState::EnemyNowAttackState()
 
 void EnemyNowAttackState::Update(Enemy* enemy)
 {
-	enemy->SetAttackStateStr("NowAttack");
+	enemy->SetAttackStateStr(EnemyNowAttackState::GetStateStr());
 
 	//初回フレーム時にパーティクル発生
 	if (isStart) {
@@ -175,6 +206,11 @@ void EnemyNowAttackState::Update(Enemy* enemy)
 	}
 }
 
+std::string EnemyNowAttackState::GetStateStr()
+{
+	return "NowAttack";
+}
+
 EnemyEndAttackState::EnemyEndAttackState() 
 {
 	postureTimer.Start();
@@ -182,7 +218,7 @@ EnemyEndAttackState::EnemyEndAttackState()
 
 void EnemyEndAttackState::Update(Enemy* enemy)
 {
-	enemy->SetAttackStateStr("EndAttack");
+	enemy->SetAttackStateStr(EnemyEndAttackState::GetStateStr());
 
 	postureTimer.Update();
 
@@ -211,6 +247,11 @@ void EnemyEndAttackState::Update(Enemy* enemy)
 	}
 }
 
+std::string EnemyEndAttackState::GetStateStr()
+{
+	return "EndAttack";
+}
+
 EnemySeekState::EnemySeekState()
 {
 	seekTimer.Start();
@@ -218,6 +259,8 @@ EnemySeekState::EnemySeekState()
 
 void EnemySeekState::Update(Enemy* enemy)
 {
+	enemy->SetAttackStateStr(EnemySeekState::GetStateStr());
+
 	//探す タイマーを回す
 	seekTimer.Update();
 	
@@ -240,6 +283,11 @@ void EnemySeekState::Update(Enemy* enemy)
 	}
 }
 
+std::string EnemySeekState::GetStateStr()
+{
+	return "Seek";
+}
+
 EnemyBackOriginState::EnemyBackOriginState()
 {
 	
@@ -247,6 +295,8 @@ EnemyBackOriginState::EnemyBackOriginState()
 
 void EnemyBackOriginState::Update(Enemy* enemy)
 {
+	enemy->SetAttackStateStr(EnemyBackOriginState::GetStateStr());
+
 	Vector3 moveVec = enemy->GetOriginPos() - enemy->GetPos();
 	moveVec.Normalize();
 	moveVec.y = 0;
@@ -270,6 +320,11 @@ void EnemyBackOriginState::Update(Enemy* enemy)
 		enemy->BehaviorReset();
 
 		//遷移命令
-		enemy->ChangeAttackState<EnemyNonAttackState>();
+		enemy->ChangeAttackState<EnemyNormalState>();
 	}
+}
+
+std::string EnemyBackOriginState::GetStateStr()
+{
+	return "BackOrigin";
 }
