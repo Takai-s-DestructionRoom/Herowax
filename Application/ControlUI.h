@@ -16,6 +16,8 @@ public:
 class ControlUI
 {
 public:
+	static void LoadResource();
+
 	ControlUI();
 
 	void Init();

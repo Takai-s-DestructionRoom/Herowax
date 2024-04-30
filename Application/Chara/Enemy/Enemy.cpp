@@ -213,6 +213,7 @@ void Enemy::TransfarBuffer()
 	//更新してからバッファに送る
 	obj.mTransform.UpdateMatrix();
 	obj.mPaintDataBuff->dissolveVal = waxSolidCount >= requireWaxSolidCount ? 1.0f : 0.3f / (requireWaxSolidCount - 1) * waxSolidCount;
+	//obj.mPaintDataBuff->dissolveVal = 1.0f;
 	obj.mPaintDataBuff->color = Color(0.8f, 0.6f, 0.35f, 1.0f);
 	obj.mPaintDataBuff->slide += TimeManager::deltaTime;
 	BrightTransferBuffer(Camera::sNowCamera->mViewProjection);
@@ -225,11 +226,10 @@ void Enemy::TransfarBuffer()
 
 void Enemy::Draw()
 {
-	BrightDraw();
 	if (isAlive)
 	{
-		//obj.Draw();
-
+		BrightDraw();
+		
 		ui.Draw();
 
 		predictionLine.Draw();

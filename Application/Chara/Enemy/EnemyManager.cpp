@@ -234,11 +234,7 @@ void EnemyManager::Update()
 		}
 		for (auto& enemy : enemys)
 		{
-			ImGui::Text("ステート:%s", enemy->GetState().c_str());
-			ImGui::Text("回転 x:%f y:%f z:%f",
-				enemy->obj.mTransform.rotation.x,
-				enemy->obj.mTransform.rotation.y,
-				enemy->obj.mTransform.rotation.z);
+			ImGui::Text("dissolveVal:%f", enemy->obj.mPaintDataBuff->dissolveVal);
 		}
 
 		ImGui::End();

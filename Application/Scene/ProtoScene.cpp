@@ -38,6 +38,8 @@ ProtoScene::ProtoScene()
 	RAudio::Load("Resources/Sounds/BGM/Ingame.wav", "Normal");
 	RAudio::Load("Resources/Sounds/BGM/Boss.wav", "Boss");
 	RAudio::Load("Resources/Sounds/SE/P_attackHit.wav", "Hit");
+
+	ControlUI::LoadResource();
 }
 
 void ProtoScene::Init()

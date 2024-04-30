@@ -3,7 +3,7 @@
 #include "RImGui.h"
 #include "Parameter.h"
 
-ControlUI::ControlUI()
+void ControlUI::LoadResource()
 {
 	TextureManager::Load("./Resources/UI/L_Stick.png", "L_Stick");
 	TextureManager::Load("./Resources/UI/LT.png", "LT");
@@ -15,6 +15,11 @@ ControlUI::ControlUI()
 	TextureManager::Load("./Resources/UI/collectText.png", "collectText");
 	TextureManager::Load("./Resources/UI/moveText.png", "moveText");
 	TextureManager::Load("./Resources/UI/shotText.png", "shotText");
+}
+
+ControlUI::ControlUI()
+{
+	
 }
 
 void ControlUI::Init()
