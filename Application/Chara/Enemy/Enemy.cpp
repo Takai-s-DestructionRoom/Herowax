@@ -196,7 +196,9 @@ void Enemy::BaseUpdate()
 	//回転の適用
 	obj.mTransform.rotation = rotVec;
 
-	obj.mTuneMaterial.mColor = changeColor;
+	if (GetIsSolid()) {
+		obj.mTuneMaterial.mColor = changeColor;
+	}
 
 	//色の加算
 	whiteTimer.Update();

@@ -68,7 +68,6 @@ void ParticleEditorScene::Update()
 
 	if (RImGui::showImGui)
 	{
-
 		ImGui::SetNextWindowSize({ 400, 200 }, ImGuiCond_FirstUseEver);
 
 		ImGui::Begin("パーティクル生成GUI");

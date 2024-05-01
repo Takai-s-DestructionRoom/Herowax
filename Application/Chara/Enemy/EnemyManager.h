@@ -5,6 +5,7 @@
 #include "Easing.h"
 #include "EnemyShot.h"
 #include <memory>
+#include "ParticleManager.h"
 
 class EnemyManager
 {
@@ -83,6 +84,9 @@ public:
 		enemys.back()->SetRota(rotation);
 		enemys.back()->SetBehaviorOrder(behaviorOrder);
 		enemys.back()->Init();
+
+		ParticleManager::GetInstance()->AddSimple(enemys.back()->GetPos(), "smoke_red");
+		ParticleManager::GetInstance()->AddSimple(enemys.back()->GetPos(), "smoke_black");
 	}
 
 	void CreateEnemyShot(Enemy* enemy);
