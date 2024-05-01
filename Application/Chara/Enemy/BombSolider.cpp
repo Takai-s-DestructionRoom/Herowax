@@ -12,5 +12,7 @@ BombSolider::BombSolider(ModelObj* target_) : Enemy(target_)
 
 void BombSolider::Update()
 {
+
+
 	BaseUpdate();
 }

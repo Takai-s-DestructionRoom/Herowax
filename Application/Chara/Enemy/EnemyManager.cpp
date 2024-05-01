@@ -7,6 +7,7 @@ void EnemyManager::LoadResource()
 {
 	EnemyUI::LoadResource();
 	EnemyAttackState::LoadResource();
+	EnemyShot::LoadResource();
 }
 
 EnemyManager* EnemyManager::GetInstance()
@@ -53,6 +54,27 @@ EnemyManager::EnemyManager()
 
 	normalAtkPower = Parameter::GetParam(extract,"敵の攻撃力", 1.f);
 	isContactDamage = Parameter::GetParam(extract,"接触ダメージをつけるか",0.0f);
+
+	shotDamage = Parameter::GetParam(extract, "弾の威力", 1.f);
+	shotLifeTime = Parameter::GetParam(extract, "弾の生存時間", 2.0f);
+	shotMoveSpeed = Parameter::GetParam(extract,"弾の速度", 1.5f);
+}
+
+void EnemyManager::CreateEnemyShot(Enemy* enemy)
+{
+	enemyShots.emplace_back();
+	enemyShots.back() = std::make_unique<EnemyShot>();
+	enemyShots.back()->Init();
+	Vector3 targetVec = enemy->GetTarget()->mTransform.position - enemy->GetPos();
+	targetVec.Normalize();
+	enemyShots.back()->SetParam(enemy->GetPos(), targetVec);
+}
+
+void EnemyManager::SetShotParam(float damage, float moveSpeed_, float lifeTime_)
+{
+	shotDamage = damage;
+	shotMoveSpeed = moveSpeed_;
+	shotLifeTime = lifeTime_;
 }
 
 void EnemyManager::SetTarget(ModelObj* target_)
@@ -91,6 +113,11 @@ void EnemyManager::Update()
 		enemy->TransfarBuffer();
 	}
 
+	for (auto& shot : enemyShots)
+	{
+		shot->Update();
+	}
+
 	burningComboTimer.Update();
 	//猶予時間過ぎたらリセット
 	if (burningComboTimer.GetEnd())
@@ -104,12 +131,6 @@ void EnemyManager::Update()
 	static bool hitChecker = false;
 	
 	static std::string handle = "";
-	if (handle != "") {
-		for (auto& enemy : enemys)
-		{
-			enemy->obj.mModel = ModelManager::Get(handle);
-		}
-	}
 
 #pragma region ImGui
 	if (RImGui::showImGui) {
@@ -202,6 +223,12 @@ void EnemyManager::Update()
 
 			ImGui::TreePop();
 		}
+		if (ImGui::TreeNode("敵の弾")) {
+			ImGui::DragFloat("弾の威力",&shotDamage);
+			ImGui::DragFloat("弾の生存時間",&shotLifeTime);
+			ImGui::DragFloat("弾の速度",&shotMoveSpeed);
+			ImGui::TreePop();
+		}
 		ImGui::SliderFloat("無敵時間さん", &mutekiTime, 0.0f, 1.0f);
 		ImGui::ColorEdit4("ロウで固まってるときの色", &changeColor.r);
 
@@ -229,17 +256,18 @@ void EnemyManager::Update()
 			Parameter::Save("突っ込んでくる距離", attackMove);
 			Parameter::Save("移動速度", moveSpeed);
 			Parameter::Save("敵の攻撃力", normalAtkPower);
+			Parameter::Save("弾の威力", shotDamage);
+			Parameter::Save("弾の生存時間", shotLifeTime);
+			Parameter::Save("弾の速度",shotMoveSpeed);
 
 			Parameter::End();
-		}
-		for (auto& enemy : enemys)
-		{
-			ImGui::Text("dissolveVal:%f", enemy->obj.mPaintDataBuff->dissolveVal);
 		}
 
 		ImGui::End();
 	}
+#pragma endregion
 	
+	//パラメータを適用
 	for (auto& enemy : enemys)
 	{
 		enemy->changeColor = changeColor;
@@ -249,10 +277,23 @@ void EnemyManager::Update()
 		enemy->attackHitCollider.r = attackHitColliderSize;
 		enemy->attackMovePower = attackMove;
 		enemy->SetMoveSpeed(moveSpeed);
+	
+		if (handle != "") {
+			enemy->obj.mModel = ModelManager::Get(handle);
+		}
 	}
 
-#pragma endregion
+	if (handle != "") {
+		handle = "";
+	}
 
+
+	for (auto& shot : enemyShots)
+	{
+		shot->SetDamage(shotDamage);
+		shot->SetLifeTime(shotLifeTime);
+		shot->SetMoveSpeed(shotMoveSpeed);
+	}
 }
 
 void EnemyManager::Draw()
@@ -261,6 +302,10 @@ void EnemyManager::Draw()
 	{
 		enemy->Draw();
 	}
+	for (auto& shot : enemyShots)
+	{
+		shot->Draw();
+	}
 }
 
 void EnemyManager::Delete()
@@ -268,5 +313,9 @@ void EnemyManager::Delete()
 	//死んでるならリストから削除
 	enemys.remove_if([](std::unique_ptr<Enemy>& enemy) {
 		return !enemy->GetIsAlive();
+		});
+
+	enemyShots.remove_if([](std::unique_ptr<EnemyShot>& shot) {
+		return !shot->GetIsAlive();
 		});
 }

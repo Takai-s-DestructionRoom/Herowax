@@ -3,6 +3,7 @@
 #include "Enemy.h"
 #include <list>
 #include "Easing.h"
+#include "EnemyShot.h"
 #include <memory>
 
 class EnemyManager
@@ -10,6 +11,9 @@ class EnemyManager
 public:
 	//敵リスト
 	std::list<std::unique_ptr<Enemy>> enemys;
+
+	//弾リスト
+	std::list<std::unique_ptr<EnemyShot>> enemyShots;
 
 	float knockRandXS;
 	float knockRandXE;
@@ -39,11 +43,17 @@ private:
 	Vector3 enemySize = { 3,3,3 };
 	
 	//調整項目
+	//敵本体
 	float collideSize = 3;
 	float attackHitColliderSize = 3.0f;
 	float attackMove = 10.0f;
 	float moveSpeed = 0.0f;
 	
+	//弾の項目
+	float shotDamage;
+	float shotMoveSpeed;
+	float shotLifeTime;
+
 	//通常の敵の攻撃力
 	float normalAtkPower = 1;
 	//接触時のダメージ
@@ -68,6 +78,11 @@ public:
 		enemys.back()->SetBehaviorOrder(behaviorOrder);
 		enemys.back()->Init();
 	}
+
+	void CreateEnemyShot(Enemy* enemy);
+
+	//ダメージ設定
+	void SetShotParam(float damage, float moveSpeed_, float lifeTime_);
 
 	//敵の追跡対象を変更(プレイヤーを入れるのを想定)
 	void SetTarget(ModelObj* target_);

@@ -380,10 +380,21 @@ void ProtoScene::Update()
 		player.soundFlag = true;
 	}
 
+	//弾とプレイヤーの判定
+	for (auto& shot : EnemyManager::GetInstance()->enemyShots)
+	{
+		if (ColPrimitive3D::CheckSphereToSphere(shot->collider, player.collider)) {
+			shot->SetIsAlive(false);
+			player.DealDamage(shot->GetDamage());
+		}
+	}
+
+
 	player.Update();
 	Boss::GetInstance()->Update();
 	Level::Get()->Update();
 
+	//敵同士の押し戻し
 	for (auto& enemy1 : EnemyManager::GetInstance()->enemys)
 	{
 		for (auto& enemy2 : EnemyManager::GetInstance()->enemys)

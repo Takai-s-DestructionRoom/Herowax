@@ -1,6 +1,7 @@
 #include "EnemyRangeAttackState.h"
 #include "EnemyAttackState.h"
 #include "Enemy.h"
+#include "EnemyManager.h"
 
 EnemyRangePreState::EnemyRangePreState()
 {
@@ -48,7 +49,7 @@ void EnemyRangePreState::Update(Enemy* enemy)
 	//時間たったら次へ
 	if (lifeTimer.GetEnd()) {
 		//遷移命令
-		enemy->ChangeAttackState<EnemyNormalState>();
+		enemy->ChangeAttackState<EnemyRangeNowState>();
 	}
 }
 
@@ -66,7 +67,9 @@ void EnemyRangeNowState::Update(Enemy* enemy)
 	enemy->SetAttackStateStr(EnemyRangeNowState::GetStateStr());
 
 	//球を撃たせる
-
+	EnemyManager::GetInstance()->CreateEnemyShot(enemy);
+	//ステート変更
+	enemy->ChangeAttackState<EnemyNormalState>();
 }
 
 std::string EnemyRangeNowState::GetStateStr()

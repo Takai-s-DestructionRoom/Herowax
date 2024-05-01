@@ -780,8 +780,8 @@
     <ClCompile Include="Application\Object\EnemyRangeAttackState.cpp">
       <Filter>ソース ファイル\Application\Object\Chara\Enemy</Filter>
     </ClCompile>
-    <ClCompile Include="EnemyShot.cpp">
-      <Filter>ソース ファイル</Filter>
+    <ClCompile Include="Application\Object\EnemyShot.cpp">
+      <Filter>ソース ファイル\Application\Object\Chara\Enemy</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -1433,8 +1433,8 @@
     <ClInclude Include="Application\Object\EnemyRangeAttackState.h">
       <Filter>ヘッダー ファイル\Application\Object\Chara\Enemy</Filter>
     </ClInclude>
-    <ClInclude Include="EnemyShot.h">
-      <Filter>ヘッダー ファイル</Filter>
+    <ClInclude Include="Application\Object\EnemyShot.h">
+      <Filter>ヘッダー ファイル\Application\Object\Chara\Enemy</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
