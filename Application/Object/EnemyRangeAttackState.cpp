@@ -30,9 +30,11 @@ void EnemyRangePreState::Update(Enemy* enemy)
 	enemy->predictionLine.mTransform.rotation.x = 0;
 
 	float xSize = enemy->obj.mTransform.scale.x;
-	enemy->predictionLine.mTransform.scale = { xSize,0.1f,enemy->attackMovePower };
+	//大きさ設定
+	float zSize = (enemy->GetTarget()->mTransform.position - enemy->GetPos()).Length();
+	enemy->predictionLine.mTransform.scale = { xSize,0.1f,zSize };
 	//大きさ分前に置く
-	enemy->predictionLine.mTransform.position += pVec * enemy->attackMovePower * 0.5f;
+	enemy->predictionLine.mTransform.position += pVec * zSize * 0.5f;
 
 	//角度加算
 	//向く方向のベクトルを取得

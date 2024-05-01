@@ -110,6 +110,9 @@ public:
 	std::vector<std::string> stateStrings;
 	//今何番のステートを実行しているかの管理番号
 	int32_t stateManageNumber = 0;
+	
+	//------ 識別関連 ------//
+	std::string enemyTag = "";	//識別用に、生成時に敵のタグを入れる
 
 protected:
 	//今までのUpdateの中身(継承先で必ず呼ぶように)

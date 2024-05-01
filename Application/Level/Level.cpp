@@ -6,6 +6,7 @@
 #include "Util.h"
 #include "PaintUtil.h"
 #include "Tank.h"
+#include "BombSolider.h"
 
 Level::Level()
 {
@@ -108,7 +109,17 @@ void Level::Extract(const std::string& handle)
 				objectData->translation,
 				objectData->scaling,
 				objectData->rotation,
-				objectData->behaviorOrder);
+				objectData->behaviorOrder,
+				Tank::GetEnemyTag());
+		}
+		if (objectData->setObjectName == "bombsolider")
+		{
+			EnemyManager::GetInstance()->CreateEnemy<BombSolider>(
+				objectData->translation,
+				objectData->scaling,
+				objectData->rotation,
+				objectData->behaviorOrder,
+				BombSolider::GetEnemyTag());
 		}
 		if (objectData->setObjectName == "EnemySpawner")
 		{

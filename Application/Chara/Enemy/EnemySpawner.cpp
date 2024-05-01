@@ -98,14 +98,16 @@ void EnemySpawner::PopEnemy(const Vector3 position, const SpawnOrderOnce& order)
 				spawnPos,
 				Vector3(1,1,1),
 				Vector3(0,0,0),
-				behaviorOrder);
+				behaviorOrder,
+				Tank::GetEnemyTag());
 		}
 		if (order.enemyClassName == "bombsolider") {
 			EnemyManager::GetInstance()->CreateEnemy<BombSolider>(
 				spawnPos,
 				Vector3(1, 1, 1),
 				Vector3(0, 0, 0), 
-				behaviorOrder);
+				behaviorOrder,
+				BombSolider::GetEnemyTag());
 		}
 	}
 }

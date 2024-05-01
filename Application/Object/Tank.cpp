@@ -14,3 +14,8 @@ void Tank::Update()
 {
 	BaseUpdate();
 }
+
+std::string Tank::GetEnemyTag()
+{
+	return "Tank";
+}

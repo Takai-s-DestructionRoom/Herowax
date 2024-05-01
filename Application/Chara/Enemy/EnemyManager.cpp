@@ -2,6 +2,8 @@
 #include "RImGui.h"
 #include "Colliders.h"
 #include "Parameter.h"
+#include "Tank.h"
+#include "BombSolider.h"
 
 void EnemyManager::LoadResource()
 {
@@ -49,7 +51,8 @@ EnemyManager::EnemyManager()
 	enemySize.z = Parameter::GetParam(extract,"敵の大きさZ", enemySize.z);
 	collideSize = Parameter::GetParam(extract,"敵の当たり判定の大きさ", collideSize);
 	attackMove = Parameter::GetParam(extract,"突っ込んでくる距離", 100.f);
-	attackHitColliderSize = Parameter::GetParam(extract,"敵がプレイヤーと当たる判定の大きさ", 3.0f);
+	tankFindColliderSize = Parameter::GetParam(extract,"tankが攻撃状態になる大きさ", 3.0f);
+	rangeFindColliderSize = Parameter::GetParam(extract,"rangeが攻撃状態になる大きさ", 30.f);
 	moveSpeed = Parameter::GetParam(extract,"移動速度", 0.1f);
 
 	normalAtkPower = Parameter::GetParam(extract,"敵の攻撃力", 1.f);
@@ -171,9 +174,18 @@ void EnemyManager::Update()
 		{
 			ImGui::Checkbox("当たり判定描画", &hitChecker);
 
-			ImGui::InputFloat("敵の当たり判定の大きさ", &collideSize, 0.1f);
-			ImGui::InputFloat("敵が自分と当たる当たり判定の大きさ", &attackHitColliderSize, 1.0f);
-			ImGui::InputFloat("突っ込んでくる距離", &attackMove, 1.0f);
+			ImGui::DragFloat("敵の当たり判定の大きさ", &collideSize, 0.1f);
+			if (ImGui::TreeNode("突っ込んでくる敵"))
+			{
+				ImGui::DragFloat("攻撃状態になる当たり判定の大きさ", &tankFindColliderSize, 1.0f);
+				ImGui::DragFloat("突っ込んでくる距離", &attackMove, 1.0f);
+				ImGui::TreePop();
+			}
+			if (ImGui::TreeNode("遠距離攻撃する敵"))
+			{
+				ImGui::DragFloat("攻撃状態になる当たり判定の大きさ", &rangeFindColliderSize, 1.0f);
+				ImGui::TreePop();
+			}
 			ImGui::TreePop();
 		}
 		if (ImGui::TreeNode("温度系"))
@@ -203,6 +215,12 @@ void EnemyManager::Update()
 			ImGui::SliderFloat("knockRandZE", &knockRandZE, -Util::PI, Util::PI);
 			ImGui::SliderFloat("knockRandZE", &knockRandZE, -Util::PI, Util::PI);
 			ImGui::TreePop();
+		}		
+		if (ImGui::TreeNode("敵の弾")) {
+			ImGui::DragFloat("弾の威力",&shotDamage,0.1f);
+			ImGui::DragFloat("弾の生存時間",&shotLifeTime, 0.1f);
+			ImGui::DragFloat("弾の速度",&shotMoveSpeed, 0.1f);
+			ImGui::TreePop();
 		}
 		if (ImGui::TreeNode("デバッグ")) {
 			//敵のモデルをボタンで切り替えられるようにする
@@ -218,15 +236,9 @@ void EnemyManager::Update()
 			}
 			//敵を出現させられるようにする
 			if (ImGui::Button("敵出現(ボスの位置)")) {
-				CreateEnemy<Enemy>(Vector3(0, 0, 0), { 3,3,3 }, { 0,0,0 }, "test");
+				CreateEnemy<Enemy>(Vector3(0, 0, 0), { 3,3,3 }, { 0,0,0 }, "test", "Debug");
 			}
 
-			ImGui::TreePop();
-		}
-		if (ImGui::TreeNode("敵の弾")) {
-			ImGui::DragFloat("弾の威力",&shotDamage);
-			ImGui::DragFloat("弾の生存時間",&shotLifeTime);
-			ImGui::DragFloat("弾の速度",&shotMoveSpeed);
 			ImGui::TreePop();
 		}
 		ImGui::SliderFloat("無敵時間さん", &mutekiTime, 0.0f, 1.0f);
@@ -252,7 +264,8 @@ void EnemyManager::Update()
 			Parameter::Save("敵の大きさY", enemySize.y);
 			Parameter::Save("敵の大きさZ", enemySize.z);
 			Parameter::Save("敵の当たり判定の大きさ", collideSize);
-			Parameter::Save("敵がプレイヤーと当たる判定の大きさ", attackHitColliderSize);
+			Parameter::Save("tankが攻撃状態になる大きさ", tankFindColliderSize);
+			Parameter::Save("rangeが攻撃状態になる大きさ", rangeFindColliderSize);
 			Parameter::Save("突っ込んでくる距離", attackMove);
 			Parameter::Save("移動速度", moveSpeed);
 			Parameter::Save("敵の攻撃力", normalAtkPower);
@@ -274,7 +287,12 @@ void EnemyManager::Update()
 		enemy->colliderSize = collideSize;
 		enemy->obj.mTransform.scale = enemySize;
 		enemy->SetDrawCollider(hitChecker);
-		enemy->attackHitCollider.r = attackHitColliderSize;
+		if (enemy->enemyTag == Tank::GetEnemyTag()) {
+			enemy->attackHitCollider.r = tankFindColliderSize;
+		}
+		if (enemy->enemyTag == BombSolider::GetEnemyTag()) {
+			enemy->attackHitCollider.r = rangeFindColliderSize;
+		}
 		enemy->attackMovePower = attackMove;
 		enemy->SetMoveSpeed(moveSpeed);
 	

@@ -16,3 +16,8 @@ void BombSolider::Update()
 
 	BaseUpdate();
 }
+
+std::string BombSolider::GetEnemyTag()
+{
+	return "BombSolider";
+}
