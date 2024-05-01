@@ -8,7 +8,6 @@
 #include "RImGui.h"
 #include "Renderer.h"
 #include <TimeManager.h>
-//#include "CollectPartManager.h"
 
 Enemy::Enemy(ModelObj* target_) : GameObject(),
 moveSpeed(0.1f), slowMag(0.8f),
@@ -18,10 +17,10 @@ isAttack(false), atkPower(0.f), atkCoolTimer(1.f),
 gravity(0.2f)
 {
 	state = std::make_unique<EnemyNormal>();
-	attackState = std::make_unique<EnemyNonAttackState>();
+	attackState = std::make_unique<EnemyNormalState>();
 	nextState = nullptr;
 	nextAttackState = nullptr;
-	obj = PaintableModelObj(Model::Load("./Resources/Model/enemy/enemy.obj", "enemy", true));
+	obj = PaintableModelObj(Model::Load("./Resources/Model/firewisp/firewisp.obj", "firewisp", true));
 	obj.mPaintDissolveMapTex = TextureManager::Load("./Resources/DissolveMap.png", "DissolveMapTex");
 	target = target_;
 
@@ -81,6 +80,11 @@ void Enemy::Reset()
 
 void Enemy::Update()
 {
+	BaseUpdate();
+}
+
+void Enemy::BaseUpdate()
+{
 	Reset();
 
 	//かかっているロウを振り払う
@@ -106,9 +110,9 @@ void Enemy::Update()
 		nextState = nullptr;
 	}
 
+
 	//固まっていなければする処理
 	if (!GetIsSolid()) {
-
 		//ステートに入る前に、予測線は消しておきたいのでスケールを0に
 		predictionLine.mTransform.scale = { 0.f,0.f,0.f };
 		//予測線を使う場合はこの中で値を変える
@@ -120,15 +124,19 @@ void Enemy::Update()
 			changingAttackState = false;
 			nextAttackState = nullptr;
 		}
-		
+	}
+
+	if (!GetIsSolid()) {
 		//攻撃準備に入ったらプレイヤーへ向けた移動をしない
 		//(ステート内に書いてもいいけどどこにあるかわからなくなりそうなのでここで)
-		if (GetAttackState() == "NonAttack")
+		if (GetAttackState() == EnemyNormalState::GetStateStr())
 		{
 			//通常移動をオーダーをもとにやる
-			obj.mTransform.position = loadBehaviorData.GetBehavior(behaviorOrigen);
+			Vector3 behaviorDir = loadBehaviorData.GetBehavior(behaviorOrigen, obj.mTransform.position).GetNormalize();
+			moveVec += behaviorDir * moveSpeed;
 		}
 	}
+
 	hp = Util::Clamp(hp, 0.f, maxHP);
 
 	if (hp <= 0 && isCollect == false) {
@@ -188,7 +196,9 @@ void Enemy::Update()
 	//回転の適用
 	obj.mTransform.rotation = rotVec;
 
-	obj.mTuneMaterial.mColor = changeColor;
+	if (GetIsSolid()) {
+		obj.mTuneMaterial.mColor = changeColor;
+	}
 
 	//色の加算
 	whiteTimer.Update();
@@ -207,6 +217,7 @@ void Enemy::TransfarBuffer()
 	//更新してからバッファに送る
 	obj.mTransform.UpdateMatrix();
 	obj.mPaintDataBuff->dissolveVal = waxSolidCount >= requireWaxSolidCount ? 1.0f : 0.3f / (requireWaxSolidCount - 1) * waxSolidCount;
+	//obj.mPaintDataBuff->dissolveVal = 1.0f;
 	obj.mPaintDataBuff->color = Color(0.8f, 0.6f, 0.35f, 1.0f);
 	obj.mPaintDataBuff->slide += TimeManager::deltaTime;
 	BrightTransferBuffer(Camera::sNowCamera->mViewProjection);
@@ -219,11 +230,10 @@ void Enemy::TransfarBuffer()
 
 void Enemy::Draw()
 {
-	BrightDraw();
 	if (isAlive)
 	{
-		//obj.Draw();
-
+		BrightDraw();
+		
 		ui.Draw();
 
 		predictionLine.Draw();

@@ -9,6 +9,7 @@
 #include "ColPrimitive3D.h"
 #include <stdint.h>
 #include "CollectPart.h"
+#include "WaxUI.h"
 
 class Boss;
 
@@ -65,6 +66,7 @@ public:
 	//----------- ロウ回収関連 ------------//
 	int32_t waxStock;			//ロウストック
 	int32_t maxWaxStock;		//ロウストック最大値
+	int32_t initWaxStock;		//ロウストック最大値(初期値)
 	bool isWaxStock;			//ストック性にするかフラグ
 	bool isCollectFan;			//回収範囲扇型にするかフラグ
 	bool isCollect;				//回収できるかフラグ
@@ -140,6 +142,9 @@ private:
 	bool modelChange = false;
 
 	Vector3 modelOffset;//描画位置をずらす
+
+	WaxUI waxUI;
+
 public:
 	Player();
 

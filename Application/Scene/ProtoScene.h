@@ -35,8 +35,7 @@ public:
 private:
 	ModelObj skydome;	//天球
 	Player player;
-	std::unique_ptr<IEventScene> eventScene;
-
+	
 	Camera minimapCamera = Camera();	//ミニマップ用の仮想カメラ
 
 	GameCamera gameCamera;

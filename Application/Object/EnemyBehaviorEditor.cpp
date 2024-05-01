@@ -3,6 +3,7 @@
 #include "PathUtil.h"
 #include <cassert>
 #include "RImGui.h"
+#include "ColPrimitive3D.h"
 
 using namespace std::filesystem;
 
@@ -91,39 +92,76 @@ void EnemyBehaviorEditor::Save(const BehaviorData& data, const std::string& save
 	writing_file.close();
 }
 
-Vector3 GetLerp(Vector3 start, Vector3 end, float timeRate)
+std::vector<std::string> EnemyBehaviorEditor::LoadFileNames()
 {
-	return Vector3(Easing::lerp(start.x,end.x, timeRate),
-			 Easing::lerp(start.y,end.y, timeRate),
-			 Easing::lerp(start.z,end.z, timeRate));
+	std::filesystem::path path = PathUtil::ConvertAbsolute(Util::ConvertStringToWString("./Resources/Data/BehaviorOrder/"));
+	directory_iterator iter(path), end;
+	std::error_code err;
+
+	std::vector<std::string> temp_file_names;
+
+	for (; iter != end && !err; iter.increment(err)) {
+		const directory_entry entry = *iter;
+
+		temp_file_names.push_back(entry.path().filename().string());
+		std::vector<std::string> temp2 = Util::StringSplit(temp_file_names.back(), ".");
+		temp_file_names.back() = temp2[0];
+	}
+
+	return temp_file_names;
 }
 
-Vector3 BehaviorData::GetBehavior(Vector3 basis)
+Vector3 BehaviorData::GetBehavior(Vector3 basis, Vector3 nowPos)
 {
 	//1つしか入ってないならスキップ
 	if (points.size() < 2)return Vector3(0,0,0);
-
-	oldRate = timer.GetTimeRate();
-
-	if (!timer.GetRun()) {
-		timer.Start();
-		progress++;
-		if (progress >= points.size()) {
-			progress = 0;
-		}
-	}
-
-	timer.Update();
-
+	
 	Vector3 result = { 0,0,0 };
 	
 	//終点まで到達したら最初の位置に戻る
 	if (progress >= points.size() - 1) {
-		result = GetLerp(basis + points[progress], basis + points[0], timer.GetTimeRate());
+		result = (basis + points[0]) - (basis + points[progress]);
+		
+		ColPrimitive3D::Sphere sphere1;
+		sphere1.pos = basis + points[0];
+		sphere1.pos.y = 0;
+		sphere1.r = 3;
+		ColPrimitive3D::Sphere sphere2;
+		sphere2.pos = nowPos;
+		sphere2.pos.y = 0;
+		sphere2.r = 3;
+		//終点まで到達したら
+		if (ColPrimitive3D::CheckSphereToSphere(sphere1, sphere2)) {
+			//次に進める
+			hitCheck = true;
+		}
 	}
 	else
 	{
-		result = GetLerp(basis + points[progress], basis + points[progress + 1], timer.GetTimeRate());
+		result = (basis + points[progress + 1]) - (basis + points[progress]);
+	
+		ColPrimitive3D::Sphere sphere1;
+		sphere1.pos = basis + points[progress + 1];
+		sphere1.pos.y = 0;
+		sphere1.r = 3;
+		ColPrimitive3D::Sphere sphere2;
+		sphere2.pos = nowPos;
+		sphere2.pos.y = 0;
+		sphere2.r = 3;
+		//終点まで到達したら
+		if (ColPrimitive3D::CheckSphereToSphere(sphere1, sphere2)) {
+			//次に進める
+			hitCheck = true;
+		}
+	}
+
+	if (hitCheck) {
+		progress++;
+		if (progress >= points.size()) {
+			progress = 0;
+		}
+
+		hitCheck = false;
 	}
 
 	return result;
@@ -142,7 +180,5 @@ Vector3 BehaviorData::GetMoveDir()
 
 void BehaviorData::Reset()
 {
-	progress = -1;
-	timer.Reset();
-	oldRate = 0.0f;
+	progress = 0;
 }

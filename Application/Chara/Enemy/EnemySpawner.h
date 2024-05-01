@@ -2,6 +2,7 @@
 #include "GameObject.h"
 #include "Easing.h"
 #include "SpawnOrderData.h"
+#include "EnemyBehaviorEditor.h"
 
 class EnemySpawner : public GameObject
 {
@@ -20,6 +21,7 @@ public:
 
 private:
 	SpawnOrderData orderData;
+	std::string behaviorOrder;
 
 public:
 	EnemySpawner();
@@ -27,6 +29,8 @@ public:
 	void Init(const std::string& loadfile);
 	void Update()override;
 	void Draw()override;
+
+	void LoadBehavior(const std::string& loadOrder);
 
 	//このスポナーが敵を出現させているか(待機状態でないか)
 	bool GetStarted();

@@ -18,7 +18,8 @@ public:
 	void Create(const Vector3& position,
 		const Vector3& scale,
 		const Vector3& rotation,
-		const std::string& loadfile = "test");
+		const std::string& loadfile = "test",
+		const std::string& behaviorOrder = "test");
 
 	void Start(const std::vector<float>& startTimings);
 

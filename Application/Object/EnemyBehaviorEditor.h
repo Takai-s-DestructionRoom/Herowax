@@ -13,7 +13,7 @@ public:
 	std::string error = "";
 
 	//行動を取得(イージングで座標を返す)
-	Vector3 GetBehavior(Vector3 basis);
+	Vector3 GetBehavior(Vector3 basis,Vector3 nowPos);
 	//進行方向を取得
 	Vector3 GetMoveDir();
 
@@ -21,9 +21,8 @@ public:
 	void Reset();
 
 private:
-	int32_t progress = -1;
-	Easing::EaseTimer timer;
-	float oldRate;
+	int32_t progress = 0;
+	bool hitCheck = false;
 };
 
 class EnemyBehaviorEditor
@@ -31,6 +30,7 @@ class EnemyBehaviorEditor
 public:
 	static BehaviorData Load(const std::string& filename);
 	static void Save(const BehaviorData& data, const std::string& saveFileName_);
+	static std::vector<std::string> EnemyBehaviorEditor::LoadFileNames();
 
 private:
 	static Vector3 GetVector3Data(const std::string& str);

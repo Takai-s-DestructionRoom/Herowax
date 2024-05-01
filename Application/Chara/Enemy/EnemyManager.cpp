@@ -2,11 +2,14 @@
 #include "RImGui.h"
 #include "Colliders.h"
 #include "Parameter.h"
+#include "Tank.h"
+#include "BombSolider.h"
 
 void EnemyManager::LoadResource()
 {
 	EnemyUI::LoadResource();
 	EnemyAttackState::LoadResource();
+	EnemyShot::LoadResource();
 }
 
 EnemyManager* EnemyManager::GetInstance()
@@ -48,11 +51,33 @@ EnemyManager::EnemyManager()
 	enemySize.z = Parameter::GetParam(extract,"敵の大きさZ", enemySize.z);
 	collideSize = Parameter::GetParam(extract,"敵の当たり判定の大きさ", collideSize);
 	attackMove = Parameter::GetParam(extract,"突っ込んでくる距離", 100.f);
-	attackHitColliderSize = Parameter::GetParam(extract,"敵がプレイヤーと当たる判定の大きさ", 3.0f);
+	tankFindColliderSize = Parameter::GetParam(extract,"tankが攻撃状態になる大きさ", 3.0f);
+	rangeFindColliderSize = Parameter::GetParam(extract,"rangeが攻撃状態になる大きさ", 30.f);
 	moveSpeed = Parameter::GetParam(extract,"移動速度", 0.1f);
 
 	normalAtkPower = Parameter::GetParam(extract,"敵の攻撃力", 1.f);
 	isContactDamage = Parameter::GetParam(extract,"接触ダメージをつけるか",0.0f);
+
+	shotDamage = Parameter::GetParam(extract, "弾の威力", 1.f);
+	shotLifeTime = Parameter::GetParam(extract, "弾の生存時間", 2.0f);
+	shotMoveSpeed = Parameter::GetParam(extract,"弾の速度", 1.5f);
+}
+
+void EnemyManager::CreateEnemyShot(Enemy* enemy)
+{
+	enemyShots.emplace_back();
+	enemyShots.back() = std::make_unique<EnemyShot>();
+	enemyShots.back()->Init();
+	Vector3 targetVec = enemy->GetTarget()->mTransform.position - enemy->GetPos();
+	targetVec.Normalize();
+	enemyShots.back()->SetParam(enemy->GetPos(), targetVec);
+}
+
+void EnemyManager::SetShotParam(float damage, float moveSpeed_, float lifeTime_)
+{
+	shotDamage = damage;
+	shotMoveSpeed = moveSpeed_;
+	shotLifeTime = lifeTime_;
 }
 
 void EnemyManager::SetTarget(ModelObj* target_)
@@ -63,6 +88,8 @@ void EnemyManager::SetTarget(ModelObj* target_)
 void EnemyManager::Init()
 {
 	enemys.clear();
+	Model::Load("./Resources/Model/enemy/enemy.obj", "enemy", true);
+	Model::Load("./Resources/Model/Cube.obj", "Cube", true);
 }
 
 void EnemyManager::Update()
@@ -89,6 +116,11 @@ void EnemyManager::Update()
 		enemy->TransfarBuffer();
 	}
 
+	for (auto& shot : enemyShots)
+	{
+		shot->Update();
+	}
+
 	burningComboTimer.Update();
 	//猶予時間過ぎたらリセット
 	if (burningComboTimer.GetEnd())
@@ -100,6 +132,8 @@ void EnemyManager::Update()
 	
 	static Color changeColor = { 1,1,1,1 };
 	static bool hitChecker = false;
+	
+	static std::string handle = "";
 
 #pragma region ImGui
 	if (RImGui::showImGui) {
@@ -140,9 +174,18 @@ void EnemyManager::Update()
 		{
 			ImGui::Checkbox("当たり判定描画", &hitChecker);
 
-			ImGui::InputFloat("敵の当たり判定の大きさ", &collideSize, 0.1f);
-			ImGui::InputFloat("敵が自分と当たる当たり判定の大きさ", &attackHitColliderSize, 1.0f);
-			ImGui::InputFloat("突っ込んでくる距離", &attackMove, 1.0f);
+			ImGui::DragFloat("敵の当たり判定の大きさ", &collideSize, 0.1f);
+			if (ImGui::TreeNode("突っ込んでくる敵"))
+			{
+				ImGui::DragFloat("攻撃状態になる当たり判定の大きさ", &tankFindColliderSize, 1.0f);
+				ImGui::DragFloat("突っ込んでくる距離", &attackMove, 1.0f);
+				ImGui::TreePop();
+			}
+			if (ImGui::TreeNode("遠距離攻撃する敵"))
+			{
+				ImGui::DragFloat("攻撃状態になる当たり判定の大きさ", &rangeFindColliderSize, 1.0f);
+				ImGui::TreePop();
+			}
 			ImGui::TreePop();
 		}
 		if (ImGui::TreeNode("温度系"))
@@ -172,6 +215,31 @@ void EnemyManager::Update()
 			ImGui::SliderFloat("knockRandZE", &knockRandZE, -Util::PI, Util::PI);
 			ImGui::SliderFloat("knockRandZE", &knockRandZE, -Util::PI, Util::PI);
 			ImGui::TreePop();
+		}		
+		if (ImGui::TreeNode("敵の弾")) {
+			ImGui::DragFloat("弾の威力",&shotDamage,0.1f);
+			ImGui::DragFloat("弾の生存時間",&shotLifeTime, 0.1f);
+			ImGui::DragFloat("弾の速度",&shotMoveSpeed, 0.1f);
+			ImGui::TreePop();
+		}
+		if (ImGui::TreeNode("デバッグ")) {
+			//敵のモデルをボタンで切り替えられるようにする
+			static bool changeModel = false;
+			if (ImGui::Button("モデル切り替え")) {
+				changeModel = !changeModel;
+				if (changeModel) {
+					handle = "enemy";
+				}
+				else {
+					handle = "Cube";
+				}
+			}
+			//敵を出現させられるようにする
+			if (ImGui::Button("敵出現(ボスの位置)")) {
+				CreateEnemy<Enemy>(Vector3(0, 0, 0), { 3,3,3 }, { 0,0,0 }, "test", "Debug");
+			}
+
+			ImGui::TreePop();
 		}
 		ImGui::SliderFloat("無敵時間さん", &mutekiTime, 0.0f, 1.0f);
 		ImGui::ColorEdit4("ロウで固まってるときの色", &changeColor.r);
@@ -196,38 +264,54 @@ void EnemyManager::Update()
 			Parameter::Save("敵の大きさY", enemySize.y);
 			Parameter::Save("敵の大きさZ", enemySize.z);
 			Parameter::Save("敵の当たり判定の大きさ", collideSize);
-			Parameter::Save("敵がプレイヤーと当たる判定の大きさ", attackHitColliderSize);
+			Parameter::Save("tankが攻撃状態になる大きさ", tankFindColliderSize);
+			Parameter::Save("rangeが攻撃状態になる大きさ", rangeFindColliderSize);
 			Parameter::Save("突っ込んでくる距離", attackMove);
 			Parameter::Save("移動速度", moveSpeed);
 			Parameter::Save("敵の攻撃力", normalAtkPower);
+			Parameter::Save("弾の威力", shotDamage);
+			Parameter::Save("弾の生存時間", shotLifeTime);
+			Parameter::Save("弾の速度",shotMoveSpeed);
 
 			Parameter::End();
-		}
-		for (auto& enemy : enemys)
-		{
-			ImGui::Text("ステート:%s", enemy->GetState().c_str());
-			ImGui::Text("回転 x:%f y:%f z:%f",
-				enemy->obj.mTransform.rotation.x,
-				enemy->obj.mTransform.rotation.y,
-				enemy->obj.mTransform.rotation.z);
 		}
 
 		ImGui::End();
 	}
+#pragma endregion
 	
+	//パラメータを適用
 	for (auto& enemy : enemys)
 	{
 		enemy->changeColor = changeColor;
 		enemy->colliderSize = collideSize;
 		enemy->obj.mTransform.scale = enemySize;
 		enemy->SetDrawCollider(hitChecker);
-		enemy->attackHitCollider.r = attackHitColliderSize;
+		if (enemy->enemyTag == Tank::GetEnemyTag()) {
+			enemy->attackHitCollider.r = tankFindColliderSize;
+		}
+		if (enemy->enemyTag == BombSolider::GetEnemyTag()) {
+			enemy->attackHitCollider.r = rangeFindColliderSize;
+		}
 		enemy->attackMovePower = attackMove;
 		enemy->SetMoveSpeed(moveSpeed);
+	
+		if (handle != "") {
+			enemy->obj.mModel = ModelManager::Get(handle);
+		}
 	}
 
-#pragma endregion
+	if (handle != "") {
+		handle = "";
+	}
 
+
+	for (auto& shot : enemyShots)
+	{
+		shot->SetDamage(shotDamage);
+		shot->SetLifeTime(shotLifeTime);
+		shot->SetMoveSpeed(shotMoveSpeed);
+	}
 }
 
 void EnemyManager::Draw()
@@ -236,6 +320,10 @@ void EnemyManager::Draw()
 	{
 		enemy->Draw();
 	}
+	for (auto& shot : enemyShots)
+	{
+		shot->Draw();
+	}
 }
 
 void EnemyManager::Delete()
@@ -243,5 +331,9 @@ void EnemyManager::Delete()
 	//死んでるならリストから削除
 	enemys.remove_if([](std::unique_ptr<Enemy>& enemy) {
 		return !enemy->GetIsAlive();
+		});
+
+	enemyShots.remove_if([](std::unique_ptr<EnemyShot>& shot) {
+		return !shot->GetIsAlive();
 		});
 }

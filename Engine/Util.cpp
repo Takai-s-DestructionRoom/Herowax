@@ -1,5 +1,7 @@
 #include "Util.h"
 #include <cassert>
+#include "PathUtil.h"
+#include <fstream>
 
 using namespace std;
 
@@ -254,4 +256,31 @@ Vector2 Util::CircleMotion(Vector2 CenterPoint, float radius, float angle)
 	position.y = CenterPoint.y + radius * sinf(angle);
 
 	return position;
+}
+
+std::vector<std::string> Util::GetFileData(const std::string& fullPath)
+{
+	std::filesystem::path path = PathUtil::ConvertAbsolute(
+		Util::ConvertStringToWString(fullPath));
+
+	std::vector<std::string> result;
+
+	//ファイルストリーム
+	std::ifstream file;
+
+	//ファイルを開く
+	file.open(path.c_str());
+	if (file.fail()) {
+		result.push_back("error_ファイルの展開に失敗しました");
+		return result;
+	}
+
+	std::string line = "";
+	while (getline(file, line)) {
+		std::istringstream line_stream(line);
+	
+		result.push_back(line);
+	}
+
+	return result;
 }

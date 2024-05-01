@@ -39,6 +39,8 @@ public:
 private:
 	void CubeCreate(Vector3 pos);
 
+	void LineCubeReCreate();
+
 private:
 	BehaviorData data;
 	
@@ -51,5 +53,7 @@ private:
 	ModelObj skydome;
 
 	std::string fileName = "";
+	std::string loadFileName = "";
+	std::vector<std::string> comboFileNames;
 };
 

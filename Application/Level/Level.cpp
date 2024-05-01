@@ -5,6 +5,8 @@
 #include "Camera.h"
 #include "Util.h"
 #include "PaintUtil.h"
+#include "Tank.h"
+#include "BombSolider.h"
 
 Level::Level()
 {
@@ -20,7 +22,6 @@ void Level::Reset()
 {
 	spawnerManager->Init();
 	EnemyManager::GetInstance()->Init();
-	//EnemyManager::GetInstance()->SetTarget(&tower.obj);
 	objects.clear();
 	wall.clear();
 }
@@ -104,18 +105,29 @@ void Level::Extract(const std::string& handle)
 		}
 		if (objectData->setObjectName == "Enemy")
 		{
-			EnemyManager::GetInstance()->CreateEnemy<Enemy>(
+			EnemyManager::GetInstance()->CreateEnemy<Tank>(
 				objectData->translation,
 				objectData->scaling,
 				objectData->rotation,
-				objectData->behaviorOrder);
+				objectData->behaviorOrder,
+				Tank::GetEnemyTag());
+		}
+		if (objectData->setObjectName == "bombsolider")
+		{
+			EnemyManager::GetInstance()->CreateEnemy<BombSolider>(
+				objectData->translation,
+				objectData->scaling,
+				objectData->rotation,
+				objectData->behaviorOrder,
+				BombSolider::GetEnemyTag());
 		}
 		if (objectData->setObjectName == "EnemySpawner")
 		{
 			spawnerManager->Create(objectData->translation,
 				objectData->scaling,
 				objectData->rotation,
-				objectData->spawnerOrder);
+				objectData->spawnerOrder,
+				objectData->behaviorOrder);
 
 			SpawnOrderData temp = SpawnDataLoader::Load(objectData->spawnerOrder);
 			saveStartTiming.push_back(temp.startTiming);

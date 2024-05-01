@@ -39,15 +39,15 @@ public:
 		float growingTimer = 0.f, float endScale = 0.f, bool isGravity = false, bool isBillboard = false);
 
 	//パーティクルの追加(外部データを使用)
-	void AddSimple(Vector3 emitPos,std::string pDataHandle);
+	void AddSimple(Vector3 emitPos, std::string pDataHandle);
 	void AddRing(Vector3 emitPos, std::string pDataHandle);
+	void AddHoming(Vector3 emitPos, std::string pDataHandle, Vector3 targetPos = {});
 
 	//パーティクルの追加
 	void AddHoming(Vector3 emitPos, Vector3 emitScale, uint32_t addNum, float life,
-		Color color, TextureHandle tex, float minScale, float maxScale, Vector3 minVelo, Vector3 maxVelo,
+		Color color, TextureHandle tex, float minScale, float maxScale, Vector3 minVelo, Vector3 maxVelo, Vector3 targetPos,
 		float accelPower = 0.f, Vector3 minRot = {}, Vector3 maxRot = {},
 		float growingTimer = 0.f, float endScale = 0.f, bool isGravity = false, bool isBillboard = false);
-
 	void SetPlayerPos(Vector3 pos) { playerPos = pos; }
 
 private:

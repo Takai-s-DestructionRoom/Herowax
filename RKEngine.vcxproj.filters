@@ -771,6 +771,18 @@
     <ClCompile Include="Application\ControlUI.cpp">
       <Filter>ソース ファイル\Application\ControlUI</Filter>
     </ClCompile>
+    <ClCompile Include="Application\WaxUI.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Application\Object\Tank.cpp">
+      <Filter>ソース ファイル\Application\Object\Chara\Enemy</Filter>
+    </ClCompile>
+    <ClCompile Include="Application\Object\EnemyRangeAttackState.cpp">
+      <Filter>ソース ファイル\Application\Object\Chara\Enemy</Filter>
+    </ClCompile>
+    <ClCompile Include="Application\Object\EnemyShot.cpp">
+      <Filter>ソース ファイル\Application\Object\Chara\Enemy</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Shader\Basic\BasicPS.hlsl">
@@ -1411,6 +1423,18 @@
     </ClInclude>
     <ClInclude Include="Application\ControlUI.h">
       <Filter>ヘッダー ファイル\Application\ControlUI</Filter>
+    </ClInclude>
+    <ClInclude Include="Application\WaxUI.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Application\Object\Tank.h">
+      <Filter>ヘッダー ファイル\Application\Object\Chara\Enemy</Filter>
+    </ClInclude>
+    <ClInclude Include="Application\Object\EnemyRangeAttackState.h">
+      <Filter>ヘッダー ファイル\Application\Object\Chara\Enemy</Filter>
+    </ClInclude>
+    <ClInclude Include="Application\Object\EnemyShot.h">
+      <Filter>ヘッダー ファイル\Application\Object\Chara\Enemy</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

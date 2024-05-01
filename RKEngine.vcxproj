@@ -162,6 +162,8 @@
     <ClCompile Include="Application\Object\BehaviorTestScene.cpp" />
     <ClCompile Include="Application\Object\EnemyBehaviorEditor.cpp" />
     <ClCompile Include="Application\ControlUI.cpp" />
+    <ClCompile Include="Application\Object\EnemyRangeAttackState.cpp" />
+    <ClCompile Include="Application\Object\EnemyShot.cpp" />
     <ClCompile Include="Engine\Collision\AABBCollider.cpp" />
     <ClCompile Include="Application\Chara\Enemy\EnemySpawner.cpp" />
     <ClCompile Include="Application\InstantDrawer.cpp" />
@@ -291,6 +293,8 @@
     <ClCompile Include="Application\ParticleEditor\ParticleEditorScene.cpp" />
     <ClCompile Include="Application\Object\CollectPart\CollectPart.cpp" />
     <ClCompile Include="Application\Scene\SceneTrance.cpp" />
+    <ClCompile Include="Application\WaxUI.cpp" />
+    <ClCompile Include="Application\Object\Tank.cpp" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Shader\PaintedBright\PaintedBrightPS.hlsl">
@@ -775,6 +779,8 @@
     <ClInclude Include="Application\Object\BehaviorTestScene.h" />
     <ClInclude Include="Application\Object\EnemyBehaviorEditor.h" />
     <ClInclude Include="Application\ControlUI.h" />
+    <ClInclude Include="Application\Object\EnemyRangeAttackState.h" />
+    <ClInclude Include="Application\Object\EnemyShot.h" />
     <ClInclude Include="Engine\Collision\AABBCollider.h" />
     <ClInclude Include="Application\Chara\Enemy\EnemySpawner.h" />
     <ClInclude Include="Application\InstantDrawer.h" />
@@ -909,6 +915,8 @@
     <ClInclude Include="Application\Scene\SceneTrance.h" />
     <ClInclude Include="Application\EventCaller.h" />
     <ClInclude Include="Application\Scene\FailedScene.h" />
+    <ClInclude Include="Application\WaxUI.h" />
+    <ClInclude Include="Application\Object\Tank.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Shader\GameObject\GameObject.hlsli" />

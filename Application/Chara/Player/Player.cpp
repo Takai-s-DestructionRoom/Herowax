@@ -26,7 +26,7 @@ moveSpeed(1.f), moveAccelAmount(0.05f), isGround(true), hp(0), maxHP(10.f),
 isJumping(false), jumpTimer(0.2f), jumpHeight(0.f), maxJumpHeight(5.f), jumpPower(2.f), jumpSpeed(0.f),
 isAttack(false), atkSize(3.f), atkPower(1),
 atkCoolTimer(0.3f), atkTimer(0.5f), atkHeight(1.f), solidTimer(5.f),
-isFireStock(false), isWaxStock(true), isCollectFan(false), maxWaxStock(20)
+isFireStock(false), isWaxStock(true), isCollectFan(false), waxCollectAmount(0)
 {
 	std::map<std::string, std::string> extract = Parameter::Extract("Player");
 	moveSpeed = Parameter::GetParam(extract, "移動速度", 1.f);
@@ -83,10 +83,16 @@ isFireStock(false), isWaxStock(true), isCollectFan(false), maxWaxStock(20)
 	humanOffset = Parameter::GetParam(extract,"人の位置Y", humanOffset);
 	humanScale = Parameter::GetParam(extract,"人の大きさ", humanScale);
 	collectScale = Parameter::GetParam(extract,"回収中の大きさ", collectScale);
+
+	initWaxStock = (int32_t)Parameter::GetParam(extract,"ロウの初期最大ストック数", (float)initWaxStock);
+	maxWaxStock = (int32_t)Parameter::GetParam(extract,"ロウの初期最大ストック数", (float)initWaxStock);
+	waxStock = (int32_t)Parameter::GetParam(extract,"ロウの初期最大ストック数", (float)initWaxStock);
 }
 
 void Player::Init()
 {
+	waxUI.Init();
+
 	Model::Load("./Resources/Model/collect/collect.obj", "collect", true);
 	Model::Load("./Resources/Model/playerHuman/playerHuman.obj", "playerHuman", true);
 	Model::Load("./Resources/Model/playerBag/playerBag.obj", "playerBag", true);
@@ -122,8 +128,6 @@ void Player::Init()
 	redTimer_.SetEnd(true);
 	greenTimer_.SetReverseEnd(true);
 	blueTimer_.SetReverseEnd(true);
-
-	waxStock = maxWaxStock;
 
 	//初期値適用
 	obj.mTransform.position = initPos;
@@ -212,6 +216,13 @@ void Player::Update()
 	}
 
 	//---ロウ回収処理周り---///
+	//if (isWaxStock == false)
+	//{
+	//	waxStock = maxWaxStock;
+	//}
+	////ストックがおかしな値にならないように
+	//waxStock = Util::Clamp(waxStock, 0, maxWaxStock);
+
 	//回収処理
 	WaxCollect();
 
@@ -220,14 +231,6 @@ void Player::Update()
 		obj.mModel = ModelManager::Get("playerBag");
 		modelChange = false;
 	}
-
-	if (isWaxStock == false)
-	{
-		waxStock = maxWaxStock;
-	}
-	//ストックがおかしな値にならないように
-	waxStock = Util::Clamp(waxStock, 0, maxWaxStock);
-
 	//ジャンプなくなったので、地面座標にピッタリくっつける
 	obj.mTransform.position.y = Level::Get()->ground.mTransform.position.y;
 
@@ -414,6 +417,8 @@ void Player::Update()
 
 	ui.Update(this);
 
+	waxUI.Update(obj.mTransform.position);
+	
 #pragma region ImGui
 	if (RImGui::showImGui)
 	{
@@ -444,6 +449,7 @@ void Player::Update()
 				ImGui::SliderFloat("初期方向X", &initRot.x, 0.f, 360.f);
 				ImGui::SliderFloat("初期方向Y", &initRot.y, 0.f, 360.f);
 				ImGui::SliderFloat("初期方向Z", &initRot.z, 0.f, 360.f);
+				ImGui::InputInt("ロウの初期最大ストック数", &initWaxStock, 1, 100);
 
 				ImGui::TreePop();
 			}
@@ -552,6 +558,7 @@ void Player::Update()
 			Parameter::Save("人の大きさ", humanScale);
 			Parameter::Save("風船の大きさ", bagScale);
 			Parameter::Save("回収中の大きさ", collectScale);
+			Parameter::Save("ロウの初期最大ストック数", initWaxStock);
 
 			Parameter::End();
 		}
@@ -565,28 +572,29 @@ void Player::Draw()
 {
 	if (isAlive || Util::debugBool)
 	{
+		BrightDraw();
+
+		//回収中は別モデルに置き換えるので描画しない
+		if (WaxManager::GetInstance()->isCollected) {
+			humanObj.Draw();
+		}
+
+		if (isCollectFan)
+		{
+			collectRangeModelCircle.Draw();
+			collectRangeModelRayLeft.Draw();
+			collectRangeModelRayRight.Draw();
+		}
+		else
+		{
+			collectRangeModel.Draw();
+		}
+		ui.Draw();
+
+		DrawAttackCollider(); 
 		
+		waxUI.Draw();
 	}
-	BrightDraw();
-
-	//回収中は別モデルに置き換えるので描画しない
-	if (WaxManager::GetInstance()->isCollected) {
-		humanObj.Draw();
-	}
-
-	if (isCollectFan)
-	{
-		collectRangeModelCircle.Draw();
-		collectRangeModelRayLeft.Draw();
-		collectRangeModelRayRight.Draw();
-	}
-	else
-	{
-		collectRangeModel.Draw();
-	}
-	ui.Draw();
-
-	DrawAttackCollider();
 }
 
 void Player::MovePad()
@@ -922,6 +930,8 @@ void Player::WaxCollect()
 				maxWaxStock = waxStock;
 				//音鳴らす
 				RAudio::Play("eCollect");
+
+				waxUI.Start();
 			}
 		}
 	}

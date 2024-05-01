@@ -74,7 +74,7 @@ void InstantDrawer::DrawGraph(const float& x, const float& y,
 }
 
 void InstantDrawer::DrawGraph3D(const Vector3& pos, float width, float height,
-	const std::string& handle, const Color& color)
+	const std::string& handle, const Color& color, float angle)
 {
 	//ハンドルが空なら描画をキャンセル
 	if (handle == "")return;
@@ -89,6 +89,7 @@ void InstantDrawer::DrawGraph3D(const Vector3& pos, float width, float height,
 			instant.mImage.SetTexture(handle);
 			instant.mImage.SetSize({ width, height });
 			instant.mTransform.position = pos;
+			instant.mImage.mTransform.rotation.z = angle;
 			instant.mImage.mMaterial.mColor = color;
 			instant.mImage.mBlendMode = Image3D::BlendMode::TransparentAlpha;
 			break;

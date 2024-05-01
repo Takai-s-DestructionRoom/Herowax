@@ -370,6 +370,8 @@ class MYADDON_OT_EnemySpawner(bpy.types.Operator):
 
 		import_obj['spawnerOrder'] = ""
 
+		import_obj['behaviorOrder'] = ""
+
 		#オペレータの命令終了を通知
 		return {'FINISHED'}
 	

@@ -46,6 +46,8 @@ public:
 	const static Color kFireOutside;
 	const static Color kFireInside;
 
+	const static Color kWaxColor;
+
 	//単項演算子
 	//加算
 	Color operator+(const float num) const;

@@ -11,6 +11,7 @@ const Color Color::kBlack(0, 0, 0, 1.f);
 
 const Color Color::kFireOutside(1.f, 0.25f, 0.05f, 1.f);
 const Color Color::kFireInside(0.9f, 0.8f, 0.05f, 1.f);
+const Color Color::kWaxColor(0.8f, 0.6f, 0.35f, 1.f);
 
 Color::Color(int32_t hexcolor)
 {

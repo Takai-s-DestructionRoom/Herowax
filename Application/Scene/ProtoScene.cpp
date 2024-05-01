@@ -38,12 +38,13 @@ ProtoScene::ProtoScene()
 	RAudio::Load("Resources/Sounds/BGM/Ingame.wav", "Normal");
 	RAudio::Load("Resources/Sounds/BGM/Boss.wav", "Boss");
 	RAudio::Load("Resources/Sounds/SE/P_attackHit.wav", "Hit");
+
+	ControlUI::LoadResource();
 }
 
 void ProtoScene::Init()
 {
-	eventScene = std::make_unique<BossAppearanceScene>();
-
+	EventCaller::Init();
 	//Camera::sMinimapCamera = &minimapCamera;
 
 	gameCamera.Init();
@@ -118,8 +119,8 @@ void ProtoScene::Update()
 	if ((EventCaller::GetEventCallStr() == BossDeadScene::GetEventCallStr()) &&
 		SceneTrance::GetInstance()->GetIsChange())
 	{
-		eventScene = std::make_unique<BossDeadScene>();
-		eventScene->Init(Boss::GetInstance()->GetCenterPos() + Vector3::UP * 20.f);
+		EventCaller::eventScene = std::make_unique<BossDeadScene>();
+		EventCaller::eventScene->Init(Boss::GetInstance()->GetCenterPos() + Vector3::UP * 20.f);
 
 		RAudio::Stop("Boss");
 		RAudio::Stop("Normal");
@@ -135,8 +136,8 @@ void ProtoScene::Update()
 	if ((EventCaller::GetEventCallStr() == BossAppearanceScene::GetEventCallStr()) &&
 		SceneTrance::GetInstance()->GetIsChange())
 	{
-		eventScene = std::make_unique<BossAppearanceScene>();
-		eventScene->Init(Boss::GetInstance()->GetCenterPos() + Vector3::UP * 20.f);
+		EventCaller::eventScene = std::make_unique<BossAppearanceScene>();
+		EventCaller::eventScene->Init(Boss::GetInstance()->GetCenterPos() + Vector3::UP * 20.f);
 
 		RAudio::Stop("Boss");
 		RAudio::Stop("Normal");
@@ -152,19 +153,7 @@ void ProtoScene::Update()
 	}
 
 	//イベントシーン中なら
-	if (eventScene->isActive)
-	{
-		eventScene->Update();
-
-		if (Boss::GetInstance()->isDead && eventScene->eventTimer.GetTimeRate() > 0.7f)
-		{
-			if (Boss::GetInstance()->isAlive)
-			{
-				ParticleManager::GetInstance()->AddSimple(Boss::GetInstance()->GetPos() + Vector3::UP * 20.f, "boss_dead");
-			}
-			Boss::GetInstance()->isAlive = false;
-		}
-	}
+	EventCaller::Update();
 
 	//イベントシーンが終わりカメラが空っぽになったら
 	if (Camera::sNowCamera == nullptr)
@@ -345,7 +334,7 @@ void ProtoScene::Update()
 	{
 		//プレイヤーとの当たり判定
 		//特定範囲内に入ったら敵を攻撃状態へ遷移
-		if (enemy->GetAttackState() == "NonAttack")
+		if (enemy->GetAttackState() == EnemyNormalState::GetStateStr())
 		{
 			if (ColPrimitive3D::CheckSphereToSphere(enemy->attackHitCollider, player.attackHitCollider))
 			{
@@ -353,7 +342,7 @@ void ProtoScene::Update()
 			}
 		}
 		//攻撃中に本体同士がぶつかったらプレイヤーにダメージ
-		if (enemy->GetAttackState() == "NowAttack")
+		if (enemy->GetAttackState() == EnemyNowAttackState::GetStateStr())
 		{
 			if (ColPrimitive3D::CheckSphereToSphere(enemy->collider, player.collider))
 			{
@@ -391,10 +380,21 @@ void ProtoScene::Update()
 		player.soundFlag = true;
 	}
 
+	//弾とプレイヤーの判定
+	for (auto& shot : EnemyManager::GetInstance()->enemyShots)
+	{
+		if (ColPrimitive3D::CheckSphereToSphere(shot->collider, player.collider)) {
+			shot->SetIsAlive(false);
+			player.DealDamage(shot->GetDamage());
+		}
+	}
+
+
 	player.Update();
 	Boss::GetInstance()->Update();
 	Level::Get()->Update();
 
+	//敵同士の押し戻し
 	for (auto& enemy1 : EnemyManager::GetInstance()->enemys)
 	{
 		for (auto& enemy2 : EnemyManager::GetInstance()->enemys)
@@ -415,11 +415,11 @@ void ProtoScene::Update()
 				
 				//プレイヤーを探している状態(攻撃状態でない時)に他の敵にぶつかった場合
 				//周回座標の基準をずらす
-				if (enemy1->GetAttackState() == "NonAttack")
+				if (enemy1->GetAttackState() == EnemyNormalState::GetStateStr())
 				{
 					enemy1->BehaviorOrigenPosPlus(e1RepulsionVec);
 				}
-				if (enemy1->GetAttackState() == "NonAttack")
+				if (enemy1->GetAttackState() == EnemyNormalState::GetStateStr())
 				{
 					enemy2->BehaviorOrigenPosPlus(e2RepulsionVec);
 				}
@@ -550,10 +550,7 @@ void ProtoScene::Draw()
 	Boss::GetInstance()->Draw();
 	player.Draw();
 
-	if (eventScene->isActive)
-	{
-		eventScene->Draw();
-	}
+	EventCaller::Draw();
 
 	controlUI.Draw();
 

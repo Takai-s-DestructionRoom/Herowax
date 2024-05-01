@@ -3,6 +3,7 @@
 #include "EnemyManager.h"
 #include "Util.h"
 #include "BombSolider.h"
+#include "Tank.h"
 
 EnemySpawner::EnemySpawner() : GameObject(),
 	hp(0), maxHP(5.f), spawnNum(1),
@@ -69,6 +70,11 @@ void EnemySpawner::Draw()
 	obj.Draw();
 }
 
+void EnemySpawner::LoadBehavior(const std::string& loadOrder)
+{
+	behaviorOrder = loadOrder;
+}
+
 bool EnemySpawner::GetStarted()
 {
 	return lifeTimer.GetStarted();
@@ -88,18 +94,20 @@ void EnemySpawner::PopEnemy(const Vector3 position, const SpawnOrderOnce& order)
 		spawnPos.z += Util::GetRand(-spawnRandomPos, spawnRandomPos);
 		//ここで文字列に応じてクラスごとに敵を出現させる
 		if (order.enemyClassName == "enemy") {
-			EnemyManager::GetInstance()->CreateEnemy<Enemy>(
+			EnemyManager::GetInstance()->CreateEnemy<Tank>(
 				spawnPos,
 				Vector3(1,1,1),
 				Vector3(0,0,0),
-				"test");
+				behaviorOrder,
+				Tank::GetEnemyTag());
 		}
 		if (order.enemyClassName == "bombsolider") {
 			EnemyManager::GetInstance()->CreateEnemy<BombSolider>(
 				spawnPos,
 				Vector3(1, 1, 1),
 				Vector3(0, 0, 0), 
-				"test");
+				behaviorOrder,
+				BombSolider::GetEnemyTag());
 		}
 	}
 }

@@ -72,8 +72,6 @@ protected:
 	//何フレームに一回パーティクル追加するか
 	uint32_t addInterval_;
 
-	Vector3 targetPos;	//向かう場所
-
 	//経過時間のスピード(スローモーション用)
 	bool isElapse_ = true;					//経過時間の影響受けるかフラグ
 	float elapseSpeed_;
@@ -110,7 +108,7 @@ public:
 	//life:秒数指定なので注意
 	virtual void Add(uint32_t addNum, float life, Color color, TextureHandle tex, float minScale, float maxScale,
 		Vector3 minVelo, Vector3 maxVelo, float accelPower = 0.f, Vector3 minRot = {}, Vector3 maxRot = {},
-		float growingTimer = 0.f, float endScale = 0.f, bool isGravity = false, bool isBillboard = false);
+		float growingTimer = 0.f, float endScale = 0.f, bool isGravity = false, bool isBillboard = false, float rejectRadius = 0.f);
 
 	//リング状パーティクル追加(固有処理にしたかったらoverrideで上書きする)
 	//life:秒数指定なので注意
@@ -160,7 +158,4 @@ public:
 	void SetElapseSpeed(const float elapseSpeed) { elapseSpeed_ = elapseSpeed; }
 	//拡縮用タイマー開始
 	void SetIsElapse(bool isElapse) { isElapse_ = isElapse; }
-
-	//向かう場所設定
-	void SetTargetPos(Vector3 pos) { targetPos = pos; }
 };
