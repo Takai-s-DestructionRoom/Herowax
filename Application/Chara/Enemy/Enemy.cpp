@@ -141,6 +141,7 @@ void Enemy::BaseUpdate()
 
 	if (hp <= 0 && isCollect == false) {
 		//hpが0になったら、自身の状態を固まり状態へ遷移
+		//現在毎フレーム通常状態に戻す処理を行っているので無意味
 		ChangeState<EnemyAllStop>();
 	}
 
@@ -233,7 +234,7 @@ void Enemy::Draw()
 	if (isAlive)
 	{
 		BrightDraw();
-		
+
 		ui.Draw();
 
 		predictionLine.Draw();
@@ -345,8 +346,8 @@ void Enemy::BehaviorReset()
 
 void Enemy::DealDamage(uint32_t damage, const Vector3& dir, ModelObj* target_)
 {
-	//無敵時間さん!?中なら攻撃を喰らわない
-	if (mutekiTimer.GetRun())return;
+	//無敵時間さん!?中かHP0なら攻撃を喰らわない
+	if (mutekiTimer.GetRun() || GetIsSolid())return;
 	//無敵時間さん!?を開始
 	mutekiTimer.Start();
 
@@ -390,6 +391,11 @@ void Enemy::DealDamage(uint32_t damage, const Vector3& dir, ModelObj* target_)
 	//かかりカウント加算
 	waxSolidCount++;
 	waxShakeOffTimer = 0;
+
+	if (GetIsSolid())
+	{
+		ParticleManager::GetInstance()->AddHoming(obj.mTransform.position, "enemy_solid_homing");
+	}
 }
 
 void Enemy::SetDeath()
