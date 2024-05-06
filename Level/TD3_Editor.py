@@ -162,6 +162,19 @@ class MYADDON_OT_add_behaviorOrder(bpy.types.Operator):
 		context.object["behaviorOrder"] = ""
 
 		return {"FINISHED"}
+	
+#スポナー用に入力欄を追加
+class MYADDON_OT_add_enemyOrder(bpy.types.Operator):
+	bl_idname = "myaddon.myaddon_ot_enemyorder"
+	bl_label = "ビヘイビア 追加"
+	bl_description = "この敵が使用するビヘイビア(挙動)のファイルを指定します"
+	bl_options = {"REGISTER","UNDO"}
+
+	def execute(self,context):
+		#['enemyOrder']カスタムプロパティを追加
+		context.object["enemyOrder"] = ""
+
+		return {"FINISHED"}
 
 #コライダーを追加するクラス
 class MYADDON_OT_add_collider(bpy.types.Operator):
@@ -223,6 +236,19 @@ class OBJECT_PT_behaviorOrder(bpy.types.Panel):
 			#すでにプロパティがあれば、プロパティを表示
 			self.layout.prop(context.object,'["behaviorOrder"]',text=self.bl_label)
 
+class OBJECT_PT_enemyOrder(bpy.types.Panel):
+	"""オブジェクトのファイルネームパネル"""
+	bl_idname = "OBJECT_PT_enemyOrder"
+	bl_label = "enemyOrder"
+	bl_space_type = "PROPERTIES"
+	bl_region_type = "WINDOW"
+	bl_context = "object"
+
+	#サブメニューの描画
+	def draw(self,context):
+		if "enemyOrder" in context.object:
+			#すでにプロパティがあれば、プロパティを表示
+			self.layout.prop(context.object,'["enemyOrder"]',text=self.bl_label)
 
 class MYADDON_OT_export_scene(bpy.types.Operator,bpy_extras.io_utils.ExportHelper):
 	bl_idname = "myaddon.myaddon_ot_export_scene"
@@ -324,7 +350,8 @@ class MYADDON_OT_export_scene(bpy.types.Operator,bpy_extras.io_utils.ExportHelpe
 		if "behaviorOrder" in object:
 			json_object["behaviorOrder"] = object["behaviorOrder"]
 
-		
+		if "enemyOrder" in object:
+			json_object["enemyOrder"] = object["enemyOrder"]
 
 		#1個分のjsonオブジェクトを親オブジェクトに登録
 		data_parent.append(json_object)
@@ -372,6 +399,8 @@ class MYADDON_OT_EnemySpawner(bpy.types.Operator):
 
 		import_obj['behaviorOrder'] = ""
 
+		import_obj['enemyOrder'] = ""
+
 		#オペレータの命令終了を通知
 		return {'FINISHED'}
 	
@@ -405,6 +434,8 @@ class MYADDON_OT_SetEnemy(bpy.types.Operator):
 		import_obj.rotation_euler = mathutils.Vector((0,0,0))
 
 		import_obj['behaviorOrder'] = ""
+		
+		import_obj['enemyOrder'] = ""
 
 		#オペレータの命令終了を通知
 		return {'FINISHED'}
@@ -503,6 +534,8 @@ classes = (
 	MYADDON_OT_add_spawnerOrder,
 	OBJECT_PT_behaviorOrder,
 	MYADDON_OT_add_behaviorOrder,
+	OBJECT_PT_enemyOrder,
+	MYADDON_OT_add_enemyOrder,
 	OBJECT_PT_spawnerOrder,
 	MYADDON_OT_EnemySpawner,
 	MYADDON_OT_Birdnest,

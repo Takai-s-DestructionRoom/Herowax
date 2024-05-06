@@ -64,6 +64,13 @@ private:
 	float requireWaxShakeOffTime = 5.0f; //ロウを振り払うまでにかかる時間(秒)
 
 	Easing::EaseTimer whiteTimer = 0.5f;
+	
+	//------------ 出現関連 ------------//
+	Easing::EaseTimer warningTimer = 1.0f;
+	Easing::EaseTimer spawnTimer = 1.0f;
+
+	Easing::EaseTimer warningRoop = 1.0f;
+	Color warningColor = { 1,1,1,0 };
 
 	//------------ その他 ------------//
 	ModelObj* target = nullptr;
@@ -225,6 +232,8 @@ public:
 	void SetDeath();
 	//行動ファイルを設定、読み込み
 	void SetBehaviorOrder(const std::string& order);
+	//敵の出現タイミングなど、敵の情報を設定
+	void SetEnemyOrder(const std::string& order);
 	//別の回転を使う場合に立てるフラグ
 	void SetForceRot(bool forceRot_) { forceRot = forceRot_; };
 	//移動量に足す

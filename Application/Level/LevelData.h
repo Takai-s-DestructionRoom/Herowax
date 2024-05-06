@@ -18,6 +18,7 @@ struct LevelData
 		std::string setObjectName;
 		std::string spawnerOrder;
 		std::string behaviorOrder;
+		std::string enemyOrder;
 		
 		Vector3 translation{};
 		Vector3 rotation{};

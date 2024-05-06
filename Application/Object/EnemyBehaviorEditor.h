@@ -5,20 +5,29 @@
 #include <vector>
 #include "Easing.h"
 
+struct EnemyData
+{
+	//出現時間(ゲーム開始から警告が表示されるまで)
+	float warningTime = 0;
+
+	//出現時間(警告が表示されてから出現するまで)
+	float spawnTime = 0;
+};
+
 struct BehaviorData
 {
 public:
 	std::vector<Vector3> points;	//点を全て保存
 	
 	std::string error = "";
-
+	
 	//行動を取得(イージングで座標を返す)
 	Vector3 GetBehavior(Vector3 basis,Vector3 nowPos);
 	//進行方向を取得
 	Vector3 GetMoveDir();
 
 	//タイマーと移動順をリセット
-	void Reset();
+	void Init();
 
 private:
 	int32_t progress = 0;
@@ -31,6 +40,8 @@ public:
 	static BehaviorData Load(const std::string& filename);
 	static void Save(const BehaviorData& data, const std::string& saveFileName_);
 	static std::vector<std::string> EnemyBehaviorEditor::LoadFileNames();
+	
+	static EnemyData LoadEnemyData(const std::string& filename);
 
 private:
 	static Vector3 GetVector3Data(const std::string& str);
@@ -43,4 +54,3 @@ private:
 	static std::string loadFileName;
 	static BehaviorData saveBehaviorData;
 };
-

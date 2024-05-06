@@ -13,6 +13,16 @@
 
 class Boss;
 
+class AfterImage : public GameObject
+{
+public:
+	void Init()override;
+	void Update()override;
+	void Draw()override;
+private:
+	Easing::EaseTimer lifeTimer = 10.f;
+};
+
 class Player : public GameObject
 {
 public:
@@ -93,6 +103,13 @@ public:
 	float pabloShotSpeedMag = 2.f;	//プレイヤーの正面に出すための係数
 	int32_t waxNum = 5;				//一度に出るロウの数
 
+	//----------- 回避関連 -------------//
+	Easing::EaseTimer avoidTimer = 0.1f;
+	Vector3 avoidVec = {};
+	float avoidSpeed = 1.25f;
+
+	//std::vector<std::unique_ptr<AfterImage>> afterimagesObj;
+
 	//------------ 炎関係 ------------//
 	FireUnit fireUnit;
 	bool isFireStock;			//炎をストック性にするかフラグ
@@ -155,6 +172,9 @@ public:
 	//移動関数
 	void MovePad();
 	void MoveKey();
+
+	//回避
+	void Avoidance();
 
 	//回転関数
 	void Rotation();

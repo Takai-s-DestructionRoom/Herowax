@@ -56,15 +56,6 @@ BehaviorData EnemyBehaviorEditor::Load(const std::string& filename)
 			std::vector<std::string> strs = Util::StringSplit(line, ":");
 			result.points.push_back(GetVector3Data(strs[1]));
 		}
-		/*if (Util::ContainString(line, "start")) {
-			std::vector<std::string> strs = Util::StringSplit(line, ":");
-			result.start = GetVector3Data(strs[1]);
-		}
-		
-		if (Util::ContainString(line, "end")) {
-			std::vector<std::string> strs = Util::StringSplit(line, ":");
-			result.end = GetVector3Data(strs[1]);
-		}*/
 	}
 
 	return result;
@@ -79,8 +70,6 @@ void EnemyBehaviorEditor::Save(const BehaviorData& data, const std::string& save
 
 	writing_file.open(path, std::ios::out);
 
-	//writing_file << "start:" << SaveVector3(data.start) << std::endl;
-
 	int32_t count = 0;
 	for (auto& inter : data.points)
 	{
@@ -88,7 +77,6 @@ void EnemyBehaviorEditor::Save(const BehaviorData& data, const std::string& save
 		writing_file << "point" << std::to_string(count) << ":" << SaveVector3(inter) << std::endl;
 	}
 
-	//writing_file << "end:" << SaveVector3(data.end) << std::endl;
 	writing_file.close();
 }
 
@@ -109,6 +97,42 @@ std::vector<std::string> EnemyBehaviorEditor::LoadFileNames()
 	}
 
 	return temp_file_names;
+}
+
+EnemyData EnemyBehaviorEditor::LoadEnemyData(const std::string& filename)
+{
+	std::string outputName = "";
+	outputName = "./Resources/Data/EnemyOrder/" + filename + ".txt";
+
+	std::filesystem::path path = PathUtil::ConvertAbsolute(
+		Util::ConvertStringToWString(outputName));
+
+	EnemyData result;
+
+	//ファイルストリーム
+	std::ifstream file;
+	//ファイルを開く
+	file.open(path.c_str());
+	//失敗したら
+	if (file.fail()) {
+		return result;
+	}
+
+	std::string line = "";
+	while (getline(file, line)) {
+		std::istringstream line_stream(line);
+		if (Util::ContainString(line, "warningTime")) {
+			std::vector<std::string> strs = Util::StringSplit(line, ":");
+			result.warningTime = std::stof(strs[1]);
+		}
+
+		if (Util::ContainString(line, "spawnTime")) {
+			std::vector<std::string> strs = Util::StringSplit(line, ":");
+			result.spawnTime = std::stof(strs[1]);
+		}
+	}
+
+	return result;
 }
 
 Vector3 BehaviorData::GetBehavior(Vector3 basis, Vector3 nowPos)
@@ -178,7 +202,7 @@ Vector3 BehaviorData::GetMoveDir()
 	}
 }
 
-void BehaviorData::Reset()
+void BehaviorData::Init()
 {
 	progress = 0;
 }
