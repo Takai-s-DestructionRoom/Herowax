@@ -8,6 +8,7 @@
 #include "RImGui.h"
 #include "Renderer.h"
 #include <TimeManager.h>
+#include "InstantDrawer.h"
 
 Enemy::Enemy(ModelObj* target_) : GameObject(),
 moveSpeed(0.1f), slowMag(0.8f),
@@ -40,6 +41,8 @@ gravity(0.2f)
 	predictionLine.mTuneMaterial.mSpecular = Vector3::ZERO;
 
 	attackDrawerObj = ModelObj(Model::Load("./Resources/Model/Sphere.obj", "Sphere", true));
+
+	TextureManager::Load("./Resources/warning.png", "warning");
 }
 
 Enemy::~Enemy()
@@ -85,6 +88,27 @@ void Enemy::Update()
 
 void Enemy::BaseUpdate()
 {
+	spawnTimer.Update();
+	warningTimer.Update();
+
+	if (warningTimer.GetEnd()) {
+		if(!spawnTimer.GetStarted())spawnTimer.Start();
+		
+		warningRoop.RoopReverse();
+		warningColor.a = Easing::OutQuad(0.f,1.f, warningRoop.GetTimeRate());
+	}
+
+
+	if (spawnTimer.GetNowEnd()) {
+		//パーティクル出現
+		ParticleManager::GetInstance()->AddSimple(obj.mTransform.position, "smoke_red");
+		ParticleManager::GetInstance()->AddSimple(obj.mTransform.position, "smoke_black");
+	}
+
+	//こっから下は出現してからなので
+	//出現タイマーが終わるまで通さない
+	if (!spawnTimer.GetEnd())return;
+
 	Reset();
 
 	//かかっているロウを振り払う
@@ -230,6 +254,15 @@ void Enemy::TransfarBuffer()
 
 void Enemy::Draw()
 {
+	//警告を表示
+	if (spawnTimer.GetRun()) {
+		Vector3 pos = obj.mTransform.position;
+		pos.y += obj.mTransform.scale.y;
+		InstantDrawer::DrawGraph3D(pos,10.f,10.f,"warning", warningColor);
+	}
+
+	if (!spawnTimer.GetEnd()) return;
+
 	if (isAlive)
 	{
 		BrightDraw();
@@ -338,7 +371,7 @@ Vector3 Enemy::GetOriginPos()
 void Enemy::BehaviorReset()
 {
 	//タイマーなど初期化
-	loadBehaviorData.Reset();
+	loadBehaviorData.Init();
 	//基準座標をリセット
 	BehaviorOrigenReset();
 }
@@ -412,7 +445,19 @@ void Enemy::SetBehaviorOrder(const std::string& order)
 {
 	loadFileName = order;
 	loadBehaviorData = EnemyBehaviorEditor::Load(loadFileName);
-	loadBehaviorData.Reset();
+	loadBehaviorData.Init();
+}
+
+void Enemy::SetEnemyOrder(const std::string& order)
+{
+	EnemyData data = EnemyBehaviorEditor::LoadEnemyData(order);
+
+	spawnTimer = data.spawnTime;
+	warningTimer = data.warningTime;
+
+	warningTimer.Start();
+
+	warningRoop.maxTime_ = spawnTimer.maxTime_ / 4;
 }
 
 void Enemy::UpdateAttackCollider()
