@@ -165,19 +165,22 @@ void Player::Update()
 	//ダメージ時点滅
 	//DamageBlink();
 
-	//パッド接続してたら
-	if (RInput::GetInstance()->GetPadConnect())
-	{
-		if (isMove)
+	//回避していない時
+	if (!avoidTimer.GetRun()) {
+		//パッド接続してたら
+		if (RInput::GetInstance()->GetPadConnect())
 		{
-			MovePad();
+			if (isMove)
+			{
+				MovePad();
+			}
 		}
-	}
-	else
-	{
-		if (isMove)
+		else
 		{
-			MoveKey();
+			if (isMove)
+			{
+				MoveKey();
+			}
 		}
 	}
 
@@ -193,6 +196,9 @@ void Player::Update()
 			changingState = false;
 			nextState = nullptr;
 		}
+
+		//回避
+		Avoidance();
 	}
 
 	//攻撃ボタン入力中で、実際にロウが出せたら攻撃フラグを立てる
@@ -419,6 +425,12 @@ void Player::Update()
 
 	waxUI.Update(obj.mTransform.position);
 	
+	//残像
+	/*for (auto& once : afterimagesObj)
+	{
+		once->Update();
+	}*/
+
 #pragma region ImGui
 	if (RImGui::showImGui)
 	{
@@ -572,6 +584,11 @@ void Player::Draw()
 {
 	if (isAlive || Util::debugBool)
 	{
+		/*for (auto& once : afterimagesObj)
+		{
+			once->Draw();
+		}*/
+
 		BrightDraw();
 
 		//回収中は別モデルに置き換えるので描画しない
@@ -742,6 +759,69 @@ void Player::MoveKey()
 
 	//「ジャンプの高さ」+「プレイヤーの大きさ」を反映
 	//obj.mTransform.position.y = jumpHeight + obj.mTransform.scale.y;
+}
+
+void Player::Avoidance()
+{
+	avoidTimer.Update();
+	
+	////削除
+	//for (auto itr = afterimagesObj.begin(); itr != afterimagesObj.end();)
+	//{
+	//	if (!(*itr)->isAlive)
+	//	{
+	//		itr = afterimagesObj.erase(itr);
+	//	}
+	//	else {
+	//		itr++;
+	//	}
+	//}
+
+	//ボタンを押したら
+	if (RInput::GetPadButtonDown(XINPUT_GAMEPAD_RIGHT_SHOULDER) &&
+		!avoidTimer.GetRun()) {
+		//特定方向へ加速を加算
+
+		Vector2 stick = RInput::GetInstance()->GetPadLStick();
+
+		//スティックが倒されてたら回避開始
+		if (stick.LengthSq() > 0.f) {
+			//カメラから注視点へのベクトル
+			Vector3 cameraVec = Camera::sNowCamera->mViewProjection.mTarget - Camera::sNowCamera->mViewProjection.mEye;
+			//カメラの角度
+			float cameraRad = atan2f(cameraVec.x, cameraVec.z);
+			//スティックの角度
+			float stickRad = atan2f(stick.x, stick.y);
+
+			avoidVec = { 0, 0, 1 };									//正面を基準に
+			avoidVec *= Matrix4::RotationY(cameraRad + stickRad);	//カメラの角度から更にスティックの入力角度を足して
+			avoidVec.Normalize();									//方向だけの情報なので正規化して
+			
+			avoidTimer.Start();
+		}
+	}
+
+	//回避中は方向を足し続ける
+	if (avoidTimer.GetRun() && waxStock > 0) {
+		moveVec += avoidVec * avoidSpeed;
+
+		//ストック減らす
+		waxStock--;
+
+		WaxManager::GetInstance()->Create(obj.mTransform, obj.mTransform.position, atkHeight,
+			atkSize, atkTimer.maxTime_, solidTimer.maxTime_);
+
+		/*afterimagesObj.emplace_back();
+		afterimagesObj.back() = std::make_unique<AfterImage>();
+		afterimagesObj.back()->Init();
+		afterimagesObj.back()->obj.mModel = obj.mModel;
+		afterimagesObj.back()->obj.mTransform = obj.mTransform;
+		afterimagesObj.back()->obj.mTuneMaterial.mColor = { 1,1,1,1 };
+		afterimagesObj.back()->brightColor = brightColor;*/
+	}
+	else {
+		avoidVec = {0,0,0};
+	}
 }
 
 void Player::Rotation()
@@ -1153,4 +1233,35 @@ bool Player::GetWaxCollectButtonDown()
 	return (RInput::GetInstance()->GetPadButtonDown(XINPUT_GAMEPAD_LEFT_SHOULDER) ||
 		RInput::GetInstance()->GetLTriggerDown() ||
 		RInput::GetInstance()->GetKeyDown(DIK_Q));
+}
+
+void AfterImage::Init()
+{
+	lifeTimer.Start();
+	isAlive = true;
+}
+
+void AfterImage::Update()
+{
+	lifeTimer.Update();
+	if (lifeTimer.GetEnd()) {
+		isAlive = false;
+	}
+
+	obj.mTuneMaterial.mColor.a = Easing::OutQuad(0.0f,1.0f, lifeTimer.GetTimeRate());
+
+	if (obj.mTuneMaterial.mColor.a > 0.5f) {
+		int32_t hoge;
+		hoge = 100;
+	}
+
+	obj.mTransform.UpdateMatrix();
+	obj.TransferBuffer(Camera::sNowCamera->mViewProjection);
+}
+
+void AfterImage::Draw()
+{
+	if (isAlive) {
+		obj.Draw("Transparent");
+	}
 }

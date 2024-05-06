@@ -96,6 +96,7 @@ GraphicsPipeline* PaintableModelObj::GetPipeline()
 	PipelineStateDesc pDesc = RDirectX::GetDefPipeline().mDesc;
 	pDesc.PS = Shader::GetOrCreate("PaintedBasicPS", "Shader/PaintedBasic/PaintedBasicPS.hlsl", "main", "ps_5_1");
 	pDesc.pRootSignature = GetRootSig()->mPtr.Get();
+	pDesc.BlendState.AlphaToCoverageEnable = true;
 
 	return &GraphicsPipeline::GetOrCreate("PaintableModelObj", pDesc);
 }
