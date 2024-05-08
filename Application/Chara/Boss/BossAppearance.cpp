@@ -31,23 +31,26 @@ void BossAppearance::Update(Boss* boss)
 		//こぶしから目標までのベクトル
 		for (size_t i = 0; i < handToTarget.size(); i++)
 		{
+			//なんでかわかんないけどモデル反転してるから反転するしかない
+			Vector3 oriPos = boss->parts[i].oriPos;
+			oriPos.x = -oriPos.x;
+
 			handToTarget[i] =
-				(Camera::sNowCamera->mViewProjection.mEye -
-					boss->parts[i].oriPos).Normalize();
+				(Camera::sNowCamera->mViewProjection.mEye - oriPos).Normalize();
 
 			Vector3 sideVec{};
 			if (i == 0)
 			{
-				sideVec = boss->GetFrontVec().Cross(Vector3(0, -1, 0));
+				sideVec = boss->GetFrontVec().Cross(Vector3(0, 1, 0));
 			}
 			else
 			{
-				sideVec = boss->GetFrontVec().Cross(Vector3(0, 1, 0));
+				sideVec = boss->GetFrontVec().Cross(Vector3(0, -1, 0));
 			}
 
 			splinePoints[i] = {
-				boss->parts[i].oriPos,					//元の座標から
-				boss->parts[i].oriPos + (sideVec * 30.f),		//横に膨らませる
+				oriPos,							//元の座標から
+				oriPos + (sideVec * 30.f),		//横に膨らませる
 				Camera::sNowCamera->mViewProjection.mEye - handToTarget[i] * 50.f	//目標地点まで
 			};
 		}

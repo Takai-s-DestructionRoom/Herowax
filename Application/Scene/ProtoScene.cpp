@@ -541,8 +541,8 @@ void ProtoScene::Update()
 void ProtoScene::Draw()
 {
 	//Minimap::GetInstance()->Draw();
-	ParticleManager::GetInstance()->Draw();
 	skydome.Draw();
+	ParticleManager::GetInstance()->Draw();
 	WaxManager::GetInstance()->Draw();
 	//CollectPartManager::GetInstance()->Draw();
 
