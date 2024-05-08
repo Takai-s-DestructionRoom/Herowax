@@ -428,6 +428,8 @@ void Enemy::DealDamage(uint32_t damage, const Vector3& dir, ModelObj* target_)
 	if (GetIsSolid())
 	{
 		ParticleManager::GetInstance()->AddHoming(obj.mTransform.position, "enemy_solid_homing");
+		ParticleManager::GetInstance()->AddSimple(
+			obj.mTransform.position + Vector3::UP * obj.mTransform.scale.y,"enemy_solid");
 	}
 }
 

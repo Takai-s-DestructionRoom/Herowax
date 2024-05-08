@@ -10,6 +10,7 @@
 class ParticleEditorScene : public IScene
 {
 public:
+	ParticleEditorScene();
 	~ParticleEditorScene() {}
 
 	void Init()override;
@@ -18,6 +19,7 @@ public:
 	void Finalize()override;
 
 private:
+	ModelObj skydome;	//天球
 	ModelObj drawEmitter;
 	Vector3 emitPos = { 0,0,0 };
 	std::string loadPartName = "";

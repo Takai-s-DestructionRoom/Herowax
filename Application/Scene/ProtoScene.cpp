@@ -509,10 +509,6 @@ void ProtoScene::Update()
 		SceneManager::GetInstance()->Change<FailedScene,SimpleSceneTransition>();
 	}
 
-	if (RInput::GetInstance()->GetKeyDown(DIK_J))
-	{
-		ParticleManager::GetInstance()->AddHoming(player.GetPos(), "enemy_solid_homing");
-	}
 	controlUI.Update();
 
 #pragma region ImGui
