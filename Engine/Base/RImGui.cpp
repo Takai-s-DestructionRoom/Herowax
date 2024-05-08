@@ -55,7 +55,6 @@ void RImGui::InitInternal()
     io.IniFilename = mConfigPath.c_str();
     io.Fonts->AddFontFromFileTTF(Util::ConvertWStringToString(PathUtil::ConvertAbsolute("./Resources/Internals/Fonts/PixelMplus12-Regular.ttf")).c_str(), 16, NULL, io.Fonts->GetGlyphRangesJapanese());
     io.Fonts->Build();
-
     ImGui::StyleColorsDark();
     ImGui::GetStyle().FrameRounding = 5.0f;
 

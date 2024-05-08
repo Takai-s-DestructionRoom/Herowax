@@ -96,3 +96,74 @@ float Parameter::GetParam(std::map<std::string, std::string>& extractData,
 	//ある場合その要素を返す
 	return std::stof(extractData[handle]);
 }
+
+Vector3 Parameter::GetVector3Data(std::map<std::string, std::string>& extractData, 
+	const std::string& handle, Vector3 defaultData)
+{
+	//ここでファイルの中に指定した名前のハンドルがあるかをチェックする
+	//ない場合デフォルトデータを返す
+	if (extractData.find(handle) == std::end(extractData))
+	{
+		return defaultData;
+	}
+
+	std::vector<std::string> temp = Util::StringSplit(extractData[handle], "_");
+
+	Vector3 returnData = {
+		std::stof(temp[0]),
+		std::stof(temp[1]),
+		std::stof(temp[2])
+	};
+
+	//ある場合その要素を返す
+	return returnData;
+}
+
+Color Parameter::GetColorData(std::map<std::string, std::string>& extractData, const std::string& handle, Color defaultData)
+{
+	//ここでファイルの中に指定した名前のハンドルがあるかをチェックする
+	//ない場合デフォルトデータを返す
+	if (extractData.find(handle) == std::end(extractData))
+	{
+		return defaultData;
+	}
+
+	std::vector<std::string> temp = Util::StringSplit(extractData[handle], "_");
+
+	Color returnData = {
+		std::stof(temp[0]),
+		std::stof(temp[1]),
+		std::stof(temp[2]),
+		std::stof(temp[3])
+	};
+
+	//ある場合その要素を返す
+	return returnData;
+}
+
+void Parameter::SaveVector3(const std::string& handle, Vector3 data)
+{
+	//ハンドル側に":"を入れるなほげが
+	if (Util::ContainString(handle, ":"))
+	{
+		assert(0 && "ハンドル側に:を入れるなほげが");
+	}
+	writing_file << handle << ":";
+	writing_file << data.x << "_";
+	writing_file << data.y << "_";
+	writing_file << data.z << std::endl;
+}
+
+void Parameter::SaveColor(const std::string& handle, Color data)
+{
+	//ハンドル側に":"を入れるなほげが
+	if (Util::ContainString(handle, ":"))
+	{
+		assert(0 && "ハンドル側に:を入れるなほげが");
+	}
+	writing_file << handle << ":";
+	writing_file << data.r << "_";
+	writing_file << data.g << "_";
+	writing_file << data.b << "_";
+	writing_file << data.a << std::endl;
+}
