@@ -5,33 +5,23 @@
 class BlinkSpotLightObject : public SpotLightObject
 {
 public:
-	void Update();
+	void Init()override;
+	void Update()override;
+
+	void BlinkStart();
 
 private:
-	//チカチカするタイミングをランダムで決定
-	void SetBlinkTiming();
+	//チカチカ用タイマー
+	Easing::EaseTimer blinkRoopTimer = 0.05f;
+	//チカチカクールタイム
+	Easing::EaseTimer blinkCoolTimer = 5.0f;
 
-private:
-	//点滅用のタイマー(装飾用の別クラスに分離した方がいいかも)
-	Easing::EaseTimer blinkTimer = 5.0f;
-	
-	struct Timing 
-	{
-		Timing(float timing_, bool isCompleted_);
+	int32_t count = 0;
+	const int32_t BLINK_COUNT = 3;
 
-		bool Start(float targetTime);
-		bool End();
+	const float COOLTIME_MIN = 5.0f;
+	const float COOLTIME_MAX = 10.0f;
 
-		void Update();
-
-	private:
-		Easing::EaseTimer returnTimer = 0.1f;
-
-		bool isCompleted = false;
-		float timing = 0.0f;
-	};
-
-	//点滅タイミング
-	std::vector<Timing> timings;
+	Color saveColor = { -1,-1,-1,1};
 };
 

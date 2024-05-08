@@ -66,6 +66,8 @@ public:
 	/// <returns></returns>
 	static float GetParam(std::map<std::string, std::string>& extractData, const std::string& handle,float defaultData);
 
+	static std::string GetParamStr(std::map<std::string, std::string>& extractData, const std::string& handle, std::string defaultData);
+	
 	static Vector3 GetVector3Data(std::map<std::string, std::string>& extractData, const std::string& handle, Vector3 defaultData);
 	static Color GetColorData(std::map<std::string, std::string>& extractData, const std::string& handle, Color defaultData);
 

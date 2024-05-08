@@ -1,74 +1,74 @@
 #include "BlinkSpotLightObject.h"
 #include "Util.h"
 
+//タイマーが終わったら、チカチカを開始
+	//タイマーはループ(チカチカのクールタイムにする)
+	//ループ開始時にタイマーの最大時間をランダムで変える
+
+	//チカチカは別で進める
+
+	//チカチカタイマーを用意
+	//3回ループ
+
+
+void BlinkSpotLightObject::Init()
+{
+	blinkCoolTimer.maxTime_ = Util::GetRand(COOLTIME_MIN, COOLTIME_MAX);
+	blinkCoolTimer.Start();
+	
+	count = BLINK_COUNT;
+
+	SpotLightObject::Init();
+}
+
 void BlinkSpotLightObject::Update()
 {
-	if (!blinkTimer.GetRun())
-	{
-		SetBlinkTiming();
-		blinkTimer.Start();
-	}
-	
-	blinkTimer.Update();
-	
-	//チカチカするタイミングに合わせて、そのタイミングで一瞬消す
-	for (auto& timing : timings)
-	{
-		if (timing.Start(blinkTimer.GetTimeRate())) 
-		{
-			isActive = false;
-		}
-		if (timing.End())
-		{
-			isActive = true;
-		}
-	}
-
-	for (auto& timing : timings)
-	{
-		timing.Update();
-	}
-
 	SpotLightObject::Update();
-}
 
-void BlinkSpotLightObject::SetBlinkTiming()
-{
-	timings.clear();
-
-	int32_t rand = 1;
-
-	//ランダムな回数、チカチカするタイミングを決定
-	for (int32_t i = 0; i < rand; i++)
+	if (saveColor.r == -1 &&
+		saveColor.g == -1 &&
+		saveColor.b == -1) 
 	{
-		timings.emplace_back(Util::GetRand(0.f, 1.f),false);
+		saveColor = obj.mTuneMaterial.mColor;
+	}
+
+	if (count >= BLINK_COUNT) {
+		blinkCoolTimer.Update();
+		
+		if (!blinkCoolTimer.GetStarted()) {
+			blinkCoolTimer.maxTime_ = Util::GetRand(2.0f,8.0f);
+			blinkCoolTimer.Start();
+		}
+		if (blinkCoolTimer.GetEnd()) {
+			count = 0;
+			blinkCoolTimer.Reset();
+		}
+	}
+
+	//カウントが上限を超えたら更新を停止
+	if (count < BLINK_COUNT) {
+		blinkRoopTimer.Update();
+	}
+
+	obj.mTuneMaterial.mColor = saveColor * (1.0f - blinkRoopTimer.GetTimeRate());
+
+	if (blinkRoopTimer.GetStarted() == false && blinkRoopTimer.GetReverseStarted() == false)
+	{
+		blinkRoopTimer.Start();
+	}
+	else if (blinkRoopTimer.GetEnd())
+	{
+		blinkRoopTimer.ReverseStart();
+	}
+	else if (blinkRoopTimer.GetReverseEnd())
+	{
+		blinkRoopTimer.Reset();
+		//タイマーが終わるタイミングでカウントを加算
+		count++;
 	}
 }
 
-BlinkSpotLightObject::Timing::Timing(float timing_, bool isCompleted_)
+void BlinkSpotLightObject::BlinkStart()
 {
-	timing = timing_;
-	isCompleted = isCompleted_;
-}
-
-bool BlinkSpotLightObject::Timing::Start(float targetTime)
-{
-	if (timing <= targetTime && !isCompleted) {
-		isCompleted = true;
-		returnTimer.Start();
-		return true;
-	}
-	else {
-		return false;
-	}
-}
-
-bool BlinkSpotLightObject::Timing::End()
-{
-	return returnTimer.GetNowEnd() && isCompleted;
-}
-
-void BlinkSpotLightObject::Timing::Update()
-{
-	returnTimer.Update();
+	
 }
