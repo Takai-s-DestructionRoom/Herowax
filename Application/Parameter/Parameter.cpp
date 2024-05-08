@@ -97,6 +97,19 @@ float Parameter::GetParam(std::map<std::string, std::string>& extractData,
 	return std::stof(extractData[handle]);
 }
 
+std::string Parameter::GetParamStr(std::map<std::string, std::string>& extractData, const std::string& handle, std::string defaultData)
+{
+	//ここでファイルの中に指定した名前のハンドルがあるかをチェックする
+	//ない場合デフォルトデータを返す
+	if (extractData.find(handle) == std::end(extractData))
+	{
+		return defaultData;
+	}
+
+	//ある場合その要素を返す
+	return extractData[handle];
+}
+
 Vector3 Parameter::GetVector3Data(std::map<std::string, std::string>& extractData, 
 	const std::string& handle, Vector3 defaultData)
 {

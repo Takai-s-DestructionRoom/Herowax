@@ -39,13 +39,9 @@ private:
 	Camera minimapCamera = Camera();	//ミニマップ用の仮想カメラ
 
 	GameCamera gameCamera;
-	//Camera camera = Camera();			//通常カメラ
-	//float cameraDist = -20.f;			//注視点からカメラの距離
-	//Vector2 cameraAngle{};				//カメラアングル
-	//Vector2 cameraSpeed{};				//カメラの移動速度
-	//Vector2 mAngle = { 0, 0 };
-	LightGroup light;
 
+	LightGroup light;
+	
 	ControlUI controlUI;
 
 	float rot[3] = { 0, 0, 0 };

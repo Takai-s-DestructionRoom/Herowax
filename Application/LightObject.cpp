@@ -4,16 +4,11 @@
 #include "Parameter.h"
 #include "BlinkSpotLightObject.h"
 
-void BaseSpotLight::Init()
-{
-	obj = ModelObj(Model::Load("./Resources/Model/Cube.obj", "Cube"));
-	isActive = true;
-}
-
 void BaseSpotLight::Draw()
 {
 	//インデックスが上限値を超えてたら処理を行わない
-	if (LightGroup::SPOT_LIGHT_NUM < index) {
+	assert(LightGroup::SPOT_LIGHT_NUM > index);
+	if (LightGroup::SPOT_LIGHT_NUM <= index) {
 		return;
 	}
 	obj.Draw();
@@ -34,10 +29,17 @@ int32_t BaseSpotLight::GetIndex()
 	return index;
 }
 
+void SpotLightObject::Init()
+{
+	obj = ModelObj(Model::Load("./Resources/Model/Cube.obj", "Cube"));
+	isActive = true;
+}
+
 void SpotLightObject::Update()
 {
 	//インデックスが上限値を超えてたら処理を行わない
-	if (lightPtr->SPOT_LIGHT_NUM < index) {
+	assert(LightGroup::SPOT_LIGHT_NUM > index);
+	if (lightPtr->SPOT_LIGHT_NUM <= index) {
 		return;
 	}
 
@@ -72,8 +74,13 @@ void SpotLightManager::Imgui()
 		
 		ImGui::DragFloat3("spawnPos", &spawnPos.x);
 
+		//ハンドルの一覧をプルダウンで表示
+		ImGui::Combo("ライトの種類", &comboSelect, &typeCombo[0], (int32_t)typeCombo.size());
+		lightType = typeCombo[comboSelect];
+		
 		if (ImGui::Button("生成")) {
-			Create(spawnPos, lightPtr);
+			Create(spawnPos, lightType,lightPtr);
+			lightType = "";
 		}
 
 		for (auto& obj : spotLightObjs)
@@ -101,13 +108,22 @@ void SpotLightManager::Imgui()
 	}
 }
 
-void SpotLightManager::Create(Vector3 spawnPos_, LightGroup* lightPtr_)
+void SpotLightManager::Create(Vector3 spawnPos_, std::string lightType_, LightGroup* lightPtr_)
 {
-	if (LightGroup::SPOT_LIGHT_NUM < createIndex) {
+	assert(LightGroup::SPOT_LIGHT_NUM > createIndex);
+	if (LightGroup::SPOT_LIGHT_NUM <= createIndex) {
 		return;
 	}
 	spotLightObjs.emplace_back();
-	spotLightObjs.back() = std::make_unique<BlinkSpotLightObject>();
+	if (lightType_ == "Blink") {
+		spotLightObjs.back() = std::make_unique<BlinkSpotLightObject>();
+	}
+	if (lightType_ == "Normal") {
+		spotLightObjs.back() = std::make_unique<SpotLightObject>();
+	}
+	if (lightType_ == "") {
+		spotLightObjs.back() = std::make_unique<SpotLightObject>();
+	}
 	spotLightObjs.back()->Init();
 	spotLightObjs.back()->obj.mTransform.position = spawnPos_;
 	spotLightObjs.back()->SetPtr(lightPtr_);
@@ -133,7 +149,8 @@ void SpotLightManager::Load()
 		bool checkExist = Parameter::GetParam(extract, name, 0);
 		
 		if (checkExist) {
-			Create({0,0,0},lightPtr);
+			name = "lightType" + std::to_string(i);
+			Create({0,0,0}, Parameter::GetParamStr(extract, name, ""), lightPtr);
 			name = "active" + std::to_string(i);
 			spotLightObjs.back()->isActive = Parameter::GetParam(extract, name, 0);
 			name = "position" + std::to_string(i);
@@ -206,6 +223,9 @@ void SpotLightManager::Init(LightGroup* lightPtr_)
 {
 	SetLightPtr(lightPtr_);
 	Load();
+
+	comboSelect = 0;
+	createIndex = 0;
 }
 
 void SpotLightManager::Update()
