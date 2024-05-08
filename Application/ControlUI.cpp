@@ -23,6 +23,7 @@ ControlUI::ControlUI()
 }
 
 void ControlUI::Init()
+
 {
 	auto extract = Parameter::Extract("UI配置");
 

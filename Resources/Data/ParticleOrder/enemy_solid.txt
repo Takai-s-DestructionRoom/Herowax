@@ -1,10 +1,10 @@
 addNum:1
-life:0.5
+life:0.1
 minscale:5
 maxscale:5
 accelpower:-7.45058e-09
-growingTimer:0.1
-endscale:8
+growingTimer:0
+endscale:12
 rejectradius:0
 isgravity:false
 isbillboard:true
@@ -13,5 +13,5 @@ minvelo:0.000000_0.000000_0.000000
 maxvelo:0.000000_0.000000_0.000000
 minrot:0.000000_0.000000_0.000000
 maxrot:0.000000_0.000000_0.000000
-color:0.953587_0.887842_0.201179_1.000000
+color:1.000000_0.962762_0.573840_1.000000
 tex:shock_wave
