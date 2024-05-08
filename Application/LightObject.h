@@ -3,6 +3,7 @@
 #include "ModelObj.h"
 #include "Easing.h"
 #include <memory>
+#include <array>
 
 //スポットライトのオブジェクト
 class BaseSpotLight
@@ -73,8 +74,7 @@ private:
 	std::string lightType = "";
 
 	LightGroup* lightPtr = nullptr;
-	
-	std::vector<const char*> typeCombo;
+	std::array<const char*, 2> typeCombo = { "Normal" ,"Blink"};
 	int32_t comboSelect = 0;
 
 	//ホントはここが持つべきじゃないけどDirictionLightをいじる情報も持たせる

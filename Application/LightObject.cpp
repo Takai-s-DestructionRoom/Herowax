@@ -7,7 +7,8 @@
 void BaseSpotLight::Draw()
 {
 	//インデックスが上限値を超えてたら処理を行わない
-	if (LightGroup::SPOT_LIGHT_NUM < index) {
+	assert(LightGroup::SPOT_LIGHT_NUM > index);
+	if (LightGroup::SPOT_LIGHT_NUM <= index) {
 		return;
 	}
 	obj.Draw();
@@ -37,7 +38,8 @@ void SpotLightObject::Init()
 void SpotLightObject::Update()
 {
 	//インデックスが上限値を超えてたら処理を行わない
-	if (lightPtr->SPOT_LIGHT_NUM < index) {
+	assert(LightGroup::SPOT_LIGHT_NUM > index);
+	if (lightPtr->SPOT_LIGHT_NUM <= index) {
 		return;
 	}
 
@@ -108,7 +110,8 @@ void SpotLightManager::Imgui()
 
 void SpotLightManager::Create(Vector3 spawnPos_, std::string lightType_, LightGroup* lightPtr_)
 {
-	if (LightGroup::SPOT_LIGHT_NUM < createIndex) {
+	assert(LightGroup::SPOT_LIGHT_NUM > createIndex);
+	if (LightGroup::SPOT_LIGHT_NUM <= createIndex) {
 		return;
 	}
 	spotLightObjs.emplace_back();
@@ -221,10 +224,8 @@ void SpotLightManager::Init(LightGroup* lightPtr_)
 	SetLightPtr(lightPtr_);
 	Load();
 
-	typeCombo.clear();
-	typeCombo.push_back("Normal");
-	typeCombo.push_back("Blink");
 	comboSelect = 0;
+	createIndex = 0;
 }
 
 void SpotLightManager::Update()
