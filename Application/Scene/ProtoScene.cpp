@@ -85,6 +85,8 @@ void ProtoScene::Init()
 	CollectPartManager::GetInstance()->SetPlayer(&player);*/
 
 	controlUI.Init();
+
+	manager.Init(&light);
 }
 
 void ProtoScene::Update()
@@ -496,6 +498,9 @@ void ProtoScene::Update()
 
 	//Minimap::GetInstance()->Update();
 
+	manager.Imgui();
+	manager.Update();
+
 	light.Update();
 
 	skydome.TransferBuffer(Camera::sNowCamera->mViewProjection);
@@ -540,6 +545,8 @@ void ProtoScene::Update()
 
 void ProtoScene::Draw()
 {
+	manager.Draw();
+
 	//Minimap::GetInstance()->Draw();
 	ParticleManager::GetInstance()->Draw();
 	skydome.Draw();

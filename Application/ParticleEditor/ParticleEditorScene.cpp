@@ -5,6 +5,16 @@
 #include "RInput.h"
 #include "Renderer.h"
 
+ParticleEditorScene::ParticleEditorScene()
+{
+	drawEmitter = ModelObj(Model::Load("./Resources/Model/Cube.obj", "Cube"));
+	drawEmitter.mTransform.scale = { 1,1,1 };
+
+	skydome = ModelObj(Model::Load("./Resources/Model/bg/bg.obj", "bg"));
+	skydome.mTransform.scale = { 1.5f, 1.5f, 1.5f };
+	skydome.mTransform.UpdateMatrix();
+}
+
 void ParticleEditorScene::Init()
 {
 	ParticleManager::GetInstance()->Init();
@@ -16,9 +26,6 @@ void ParticleEditorScene::Init()
 
 	Camera::sNowCamera = &camera;
 	LightGroup::sNowLight = &light;
-
-	drawEmitter = ModelObj(Model::Load("./Resources/Model/Cube.obj","Cube"));
-	drawEmitter.mTransform.scale = { 1,1,1 };
 
 	ParticleEditor::Init();	//初期化
 }
@@ -65,6 +72,8 @@ void ParticleEditorScene::Update()
 	}
 
 	ParticleManager::GetInstance()->Update();
+
+	skydome.TransferBuffer(Camera::sNowCamera->mViewProjection);
 
 	if (RImGui::showImGui)
 	{
@@ -114,6 +123,8 @@ void ParticleEditorScene::Update()
 
 void ParticleEditorScene::Draw()
 {
+	skydome.Draw();
+
 	//パイプラインをワイヤーフレームに
 	PipelineStateDesc pipedesc = RDirectX::GetDefPipeline().mDesc;
 	pipedesc.RasterizerState.FillMode = D3D12_FILL_MODE_WIREFRAME;

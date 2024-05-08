@@ -222,6 +222,7 @@
     <ClCompile Include="Application\EventScene\IEventScene.cpp" />
     <ClCompile Include="Application\EventCaller.cpp" />
     <ClCompile Include="Application\Scene\FailedScene.cpp" />
+    <ClCompile Include="Application\LightObject.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Engine\Base\Material.cpp" />
     <ClCompile Include="Engine\Math\Matrix4.cpp" />
@@ -917,6 +918,7 @@
     <ClInclude Include="Application\Scene\FailedScene.h" />
     <ClInclude Include="Application\WaxUI.h" />
     <ClInclude Include="Application\Object\Tank.h" />
+    <ClInclude Include="Application\LightObject.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Shader\GameObject\GameObject.hlsli" />

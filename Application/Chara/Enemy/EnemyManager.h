@@ -83,10 +83,8 @@ public:
 		enemys.back()->SetScale(scale);
 		enemys.back()->SetRota(rotation);
 		enemys.back()->SetBehaviorOrder(behaviorOrder);
+		enemys.back()->SetEnemyOrder("test");
 		enemys.back()->Init();
-
-		ParticleManager::GetInstance()->AddSimple(enemys.back()->GetPos(), "smoke_red");
-		ParticleManager::GetInstance()->AddSimple(enemys.back()->GetPos(), "smoke_black");
 	}
 
 	void CreateEnemyShot(Enemy* enemy);

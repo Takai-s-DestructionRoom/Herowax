@@ -126,7 +126,7 @@ void ParticleManager::AddRing(Vector3 emitPos, std::string pDataHandle)
 		pdata.growingTimer, pdata.endScale, pdata.isGravity, pdata.isBillboard);
 }
 
-void ParticleManager::AddHoming(Vector3 emitPos, std::string pDataHandle, Vector3 targetPos)
+void ParticleManager::AddHoming(Vector3 emitPos, std::string pDataHandle, Vector3 targetPos, bool useSlimeWax)
 {
 	HomingPData pdata = ParticleEditor::LoadHoming(pDataHandle);
 	emitters_.emplace_back();
@@ -134,12 +134,12 @@ void ParticleManager::AddHoming(Vector3 emitPos, std::string pDataHandle, Vector
 	//エミッター座標に吸い寄せられるやつなら
 	if (pdata.isTargetEmitter)
 	{
-		emitters_.back() = std::make_unique<HomingParticle>(emitPos);
+		emitters_.back() = std::make_unique<HomingParticle>(emitPos, useSlimeWax);
 	}
 	//それ以外なら指定されたターゲット
 	else
 	{
-		emitters_.back() = std::make_unique<HomingParticle>(targetPos);
+		emitters_.back() = std::make_unique<HomingParticle>(targetPos, useSlimeWax);
 	}
 	emitters_.back()->SetPos(emitPos);
 	emitters_.back()->SetScale(pdata.emitScale);
@@ -153,10 +153,10 @@ void ParticleManager::AddHoming(
 	Vector3 emitPos, Vector3 emitScale, uint32_t addNum, float life, Color color, TextureHandle tex,
 	float minScale, float maxScale, Vector3 minVelo, Vector3 maxVelo, Vector3 targetPos,
 	float accelPower, Vector3 minRot, Vector3 maxRot,
-	float growingTimer, float endScale, bool isGravity, bool isBillboard)
+	float growingTimer, float endScale, bool isGravity, bool isBillboard, bool useSlimeWax)
 {
 	emitters_.emplace_back();
-	emitters_.back() = std::make_unique<HomingParticle>(targetPos);
+	emitters_.back() = std::make_unique<HomingParticle>(targetPos, useSlimeWax);
 	emitters_.back()->SetPos(emitPos);
 	emitters_.back()->SetScale(emitScale);
 	emitters_.back()->Add(

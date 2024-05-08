@@ -1,0 +1,2 @@
+dirLightActive:0
+dirLightColor:0_0_0_1

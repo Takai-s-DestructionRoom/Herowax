@@ -161,15 +161,22 @@ void IEmitter3D::Draw()
 
 		pipedesc.RasterizerState.CullMode = D3D12_CULL_MODE_NONE;
 		pipedesc.RasterizerState.FillMode = D3D12_FILL_MODE_SOLID;
-		//pipedesc.BlendState.AlphaToCoverageEnable = false;
+		pipedesc.BlendState.AlphaToCoverageEnable = false;
 
 		//加算合成
+		/*pipedesc.BlendState.RenderTarget[0].BlendOpAlpha = D3D12_BLEND_OP_ADD;
+		pipedesc.BlendState.RenderTarget[0].SrcBlendAlpha = D3D12_BLEND_SRC_ALPHA;
+		pipedesc.BlendState.RenderTarget[0].DestBlendAlpha = D3D12_BLEND_ONE;
+		pipedesc.BlendState.RenderTarget[0].BlendOp = D3D12_BLEND_OP_ADD;
+		pipedesc.BlendState.RenderTarget[0].SrcBlend = D3D12_BLEND_SRC_ALPHA;
+		pipedesc.BlendState.RenderTarget[0].DestBlend = D3D12_BLEND_ONE;*/
+
 		pipedesc.BlendState.RenderTarget[0].BlendOpAlpha = D3D12_BLEND_OP_ADD;
 		pipedesc.BlendState.RenderTarget[0].SrcBlendAlpha = D3D12_BLEND_SRC_ALPHA;
 		pipedesc.BlendState.RenderTarget[0].DestBlendAlpha = D3D12_BLEND_ONE;
 		pipedesc.BlendState.RenderTarget[0].BlendOp = D3D12_BLEND_OP_ADD;
 		pipedesc.BlendState.RenderTarget[0].SrcBlend = D3D12_BLEND_SRC_ALPHA;
-		pipedesc.BlendState.RenderTarget[0].DestBlend = D3D12_BLEND_ONE;
+		pipedesc.BlendState.RenderTarget[0].DestBlend = D3D12_BLEND_INV_SRC_ALPHA;
 
 		RootSignature mRootSignature = RDirectX::GetDefRootSignature();
 
