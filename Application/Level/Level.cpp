@@ -68,7 +68,9 @@ void Level::Update()
 
 void Level::Draw()
 {
-	spawnerManager->Draw();
+	//本体は見えなくしちゃう
+	//spawnerManager->Draw();
+	
 	EnemyManager::GetInstance()->Draw();
 	ground.Draw();
 

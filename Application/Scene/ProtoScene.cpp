@@ -20,6 +20,7 @@
 #include "SimpleSceneTransition.h"
 #include "RAudio.h"
 #include "Boss.h"
+#include "LightObject.h"
 
 ProtoScene::ProtoScene()
 {
@@ -86,7 +87,7 @@ void ProtoScene::Init()
 
 	controlUI.Init();
 
-	manager.Init(&light);
+	SpotLightManager::GetInstance()->Init(&light);
 }
 
 void ProtoScene::Update()
@@ -498,8 +499,8 @@ void ProtoScene::Update()
 
 	//Minimap::GetInstance()->Update();
 
-	manager.Imgui();
-	manager.Update();
+	SpotLightManager::GetInstance()->Imgui();
+	SpotLightManager::GetInstance()->Update();
 
 	light.Update();
 
@@ -545,7 +546,7 @@ void ProtoScene::Update()
 
 void ProtoScene::Draw()
 {
-	manager.Draw();
+	SpotLightManager::GetInstance()->Draw();
 
 	//Minimap::GetInstance()->Draw();
 	skydome.Draw();
