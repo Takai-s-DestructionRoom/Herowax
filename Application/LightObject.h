@@ -1,15 +1,18 @@
 #pragma once
 #include "LightGroup.h"
 #include "ModelObj.h"
+#include "Easing.h"
 #include <memory>
 
 //スポットライトのオブジェクト
-class SpotLightObject
+class BaseSpotLight
 {
 public:
 	void Init();
-	void Update();
+	virtual void Update() = 0;
 	void Draw();
+
+	~BaseSpotLight() {};
 
 	void SetIndex(int32_t index_);
 	void SetPtr(LightGroup* lightPtr_);
@@ -21,15 +24,23 @@ public:
 	Vector3 dir;
 	Vector2 factorAngle;
 	bool isActive = false;
-private:
+protected:
 	LightGroup* lightPtr = nullptr;
 	int32_t index = 0;	//ライトグループと合わせるライトのインデックス
 };
 
-class SpotLightManager 
+class SpotLightObject : public BaseSpotLight
 {
 public:
-	std::vector<SpotLightObject> spotLightObjs;
+	void Update()override;
+};
+
+class SpotLightManager
+{
+public:
+	static SpotLightManager* GetInstance();
+
+	std::vector<std::unique_ptr<SpotLightObject>> spotLightObjs;
 
 	void Init(LightGroup* lightPtr_);
 	void Update();
@@ -38,12 +49,17 @@ public:
 	void Imgui();
 
 	void Create(Vector3 spawnPos, LightGroup* lightPtr_);
-	
+
 	void Load();
 	void Save();
 
+	SpotLightObject* GetLight(int32_t index);
+
 private:
 	void SetLightPtr(LightGroup* lightPtr_);
+
+	SpotLightManager() {};
+	~SpotLightManager() {};
 
 private:
 	int32_t createIndex = 0;
