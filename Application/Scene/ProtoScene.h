@@ -20,7 +20,6 @@
 
 #include "IEventScene.h"
 #include "ControlUI.h"
-#include "LightObject.h"
 
 class ProtoScene : public IScene
 {
@@ -48,8 +47,6 @@ private:
 	LightGroup light;
 
 	ControlUI controlUI;
-
-	SpotLightManager manager;
 
 	float rot[3] = { 0, 0, 0 };
 	float scale[3] = { 1, 1, 1 };

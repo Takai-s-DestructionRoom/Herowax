@@ -7,7 +7,7 @@ factorAngleX0:0.26
 factorAngleY0:0.46
 Color0:5_5_3_1
 exist1:1
-active1:1
+active1:0
 position1:0_86_-202
 atten1:0_0_0
 dir1:0_-1_0.3
