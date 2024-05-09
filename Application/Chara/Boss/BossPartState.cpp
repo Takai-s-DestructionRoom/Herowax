@@ -33,11 +33,6 @@ void BossPartCollect::Update(Parts* parts)
 
 	if (parts->collectTimer.GetEnd()) {
 		ParticleManager::GetInstance()->AddHoming(parts->obj.mTransform.position, "parts_dead_homing");
-		/*ParticleManager::GetInstance()->AddHoming(
-			parts->obj.mTransform.position, Vector3(1, 1, 1) * 7.f,
-			10, 0.5f, Color::kWaxColor, "", 2.f, 4.f,
-			-Vector3(1, 1, 1) * 0.8f, Vector3(1, 1, 1) * 0.8f, parts->obj.mTransform.position,
-			0.03f, -Vector3(1, 1, 1) * 0.1f, Vector3(1, 1, 1) * 0.1f, 0.1f, 0.8f);*/
 
 		//切り替え
 		parts->ChangeState<BossPartNormal>();
