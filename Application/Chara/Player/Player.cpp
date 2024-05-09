@@ -113,10 +113,6 @@ void Player::Init()
 	defColor.b = Parameter::GetParam(extract, "プレイヤーの色B", 1);
 	defColor.a = 1;
 
-	extract = Parameter::Extract("waxCircleGauge");
-	waxCircleGauge.sprite.mTransform.position = Parameter::GetVector3Data(extract, "ゲージの位置", {0,0,0});
-	waxCircleGauge.sprite.mTransform.scale = Parameter::GetVector3Data(extract, "ゲージの大きさ", {1,1,1});
-
 	obj.mTuneMaterial.mColor = defColor;
 
 	hp = maxHP;
@@ -145,7 +141,6 @@ void Player::Init()
 
 	isMove = true;
 
-	waxCircleGauge.Init();
 }
 
 void Player::Reset()
@@ -431,9 +426,6 @@ void Player::Update()
 
 	waxUI.Update(obj.mTransform.position);
 	
-	waxCircleGauge.radian = 360.f * (1.0f - (float)waxStock / (float)maxWaxStock);
-	waxCircleGauge.Update();
-
 	//残像
 	/*for (auto& once : afterimagesObj)
 	{
@@ -585,23 +577,24 @@ void Player::Update()
 		}
 
 		ImGui::End();
-		
-		//円形ロウゲージの位置
-		ImGui::SetNextWindowSize({ 300, 250 }, ImGuiCond_FirstUseEver);
 
-		ImGui::Begin("CircleGauge");
+		//	//円形ロウゲージの位置
+		//	ImGui::SetNextWindowSize({ 300, 250 }, ImGuiCond_FirstUseEver);
 
-		ImGui::DragFloat3("位置", &waxCircleGauge.sprite.mTransform.position.x);
-		ImGui::DragFloat3("大きさ", &waxCircleGauge.sprite.mTransform.scale.x);
+		//	ImGui::Begin("CircleGauge");
 
-		if (ImGui::Button("セーブ")) {
-			Parameter::Begin("waxCircleGauge");
-			Parameter::SaveVector3("ゲージの位置",waxCircleGauge.sprite.mTransform.position);
-			Parameter::SaveVector3("ゲージの大きさ",waxCircleGauge.sprite.mTransform.scale);
-			Parameter::End();
-		}
+		//	ImGui::DragFloat3("位置", &waxCircleGauge.sprite.mTransform.position.x);
+		//	ImGui::DragFloat3("大きさ", &waxCircleGauge.sprite.mTransform.scale.x);
 
-		ImGui::End();
+		//	if (ImGui::Button("セーブ")) {
+		//		Parameter::Begin("waxCircleGauge");
+		//		Parameter::SaveVector3("ゲージの位置",waxCircleGauge.sprite.mTransform.position);
+		//		Parameter::SaveVector3("ゲージの大きさ",waxCircleGauge.sprite.mTransform.scale);
+		//		Parameter::End();
+		//	}
+
+		//	ImGui::End();
+		//}
 	}
 #pragma endregion
 }
@@ -637,8 +630,6 @@ void Player::Draw()
 		DrawAttackCollider(); 
 		
 		waxUI.Draw();
-
-		waxCircleGauge.Draw();
 	}
 }
 

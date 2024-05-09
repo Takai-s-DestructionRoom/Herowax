@@ -6,6 +6,7 @@
 #include "Renderer.h"
 #include "Minimap.h"
 #include "Camera.h"
+#include "Parameter.h"
 
 void PlayerUI::LoadResource()
 {
@@ -24,6 +25,19 @@ PlayerUI::PlayerUI()
 		size[i] = { 5.f,0.2f };
 		maxSize[i] = size[i] * 1.1f;
 	}
+
+	std::map<std::string, std::string> extract = Parameter::Extract("waxCircleGauge");
+	
+	basePos = Parameter::GetVector3Data(extract, "ゲージの位置", {0,0,0});
+	baseScale = Parameter::GetVector3Data(extract,"ゲージの大きさ", { 1,1,1 });
+
+	waxCircleGauge.Init();
+	//デフォルトと同じだけど明示的にしたいのでテクスチャ配置
+	waxCircleGauge.sprite.SetTexture(TextureManager::Load("./Resources/circleGauge.png", "circleGauge"));
+
+	waxCircleGaugeBack.Init();
+	//テクスチャを背景用のモノに変更
+	waxCircleGaugeBack.sprite.SetTexture(TextureManager::Load("./Resources/circleGaugeBack.png", "circleGaugeBack"));
 
 	/*iconSize = { 0.25f,0.25f };
 	minimapIcon.SetTexture(TextureManager::Load("./Resources/minimap_icon.png", "minimapIcon"));
@@ -80,6 +94,21 @@ void PlayerUI::Update(Player* player)
 	////更新忘れずに
 	//minimapIconRange.mTransform.UpdateMatrix();
 	//minimapIconRange.TransferBuffer();
+
+	//ボタンを一回押すごとに減る量
+	float onePushSize = (36.f / (float)player->waxNum);
+	onePushSize *= 2.f;
+
+	waxCircleGauge.radian = 360.f * (1.0f - (float)player->waxStock / player->maxWaxStock);
+	waxCircleGaugeBack.radian = 0.0f;
+
+	waxCircleGauge.sprite.mTransform.position = basePos;
+	waxCircleGauge.sprite.mTransform.scale = baseScale;
+	waxCircleGaugeBack.sprite.mTransform.position = basePos;
+	waxCircleGaugeBack.sprite.mTransform.scale = baseScale;
+
+	waxCircleGauge.Update();
+	waxCircleGaugeBack.Update();
 }
 
 void PlayerUI::Draw()
@@ -91,6 +120,9 @@ void PlayerUI::Draw()
 		InstantDrawer::DrawGraph3D(backPos, maxSize[i].x, maxSize[i].y, "white2x2", Color::kBlack);
 		InstantDrawer::DrawGraph3D(position[i], size[i].x, size[i].y, "white2x2", gaugeColor[i]);
 	}
+
+	waxCircleGaugeBack.Draw();
+	waxCircleGauge.Draw();
 
 	////描画範囲制限
 	//Renderer::SetScissorRects({ Minimap::GetInstance()->rect });

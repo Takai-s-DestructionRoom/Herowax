@@ -25,6 +25,7 @@ void CircleGauge::Init()
 	mPipelineState.Create();
 
 	sprite.Init();
+	//デフォテクスチャを配置
 	sprite.SetTexture(TextureManager::Load("./Resources/circleGauge.png", "circleGauge"));
 }
 
