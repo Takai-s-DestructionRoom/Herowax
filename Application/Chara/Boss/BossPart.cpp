@@ -1,6 +1,7 @@
 #include "BossPart.h"
 #include "TimeManager.h"
 #include "Parameter.h"
+#include "ParticleManager.h"
 
 Parts::Parts() : GameObject()
 {
@@ -138,8 +139,8 @@ bool Parts::GetIsSolid()
 
 void Parts::DealDamage(int32_t damage)
 {
-	//無敵時間さん中ならスキップ
-	if (mutekiTimer.GetRun())return;
+	//無敵時間さん中か固まってるならスキップ
+	if (mutekiTimer.GetRun() || waxSolidCount >= requireWaxSolidCount)return;
 
 	//無敵時間開始
 	mutekiTimer.Start();
@@ -155,4 +156,10 @@ void Parts::DealDamage(int32_t damage)
 	waxShakeOffTimer.Start();
 
 	waxScatterTimer.Reset();
+
+	if (waxSolidCount >= requireWaxSolidCount)
+	{
+		ParticleManager::GetInstance()->AddSimple(obj.mTransform.position,"part_solid");
+		ParticleManager::GetInstance()->AddHoming(obj.mTransform.position, "part_solid_homing");
+	}
 }
