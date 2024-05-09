@@ -63,6 +63,8 @@ void TextureManager::Transfer()
 
 	TextureManager* instance = GetInstance();
 
+	std::lock_guard<std::recursive_mutex> lock(instance->mMutex);
+
 	if (!instance->mRequireTransfer) return;
 	instance->mRequireTransfer = false;
 
