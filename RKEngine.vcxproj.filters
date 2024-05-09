@@ -322,14 +322,14 @@
     <Filter Include="ヘッダー ファイル\Application\GameCamera">
       <UniqueIdentifier>{c65e08c9-555f-4a9d-b1da-940bc4bb3776}</UniqueIdentifier>
     </Filter>
-    <Filter Include="ソース ファイル\Application\Object\Tower">
-      <UniqueIdentifier>{3cc077ba-1f91-4ef0-8fa1-850e2ba3572c}</UniqueIdentifier>
-    </Filter>
     <Filter Include="ソース ファイル\Application\ControlUI">
       <UniqueIdentifier>{030f35cb-5cc0-4e38-95c9-ad89251439d8}</UniqueIdentifier>
     </Filter>
     <Filter Include="ヘッダー ファイル\Application\ControlUI">
       <UniqueIdentifier>{e106e0ed-554a-4b6d-9105-12de0717c8c1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="シェーダー ファイル\Radial360">
+      <UniqueIdentifier>{aa06fd4a-4dcf-4127-a4de-621358e9f32e}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -789,6 +789,9 @@
     <ClCompile Include="Application\BlinkSpotLightObject.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
+    <ClCompile Include="Application\CircleGauge.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Shader\Basic\BasicPS.hlsl">
@@ -966,6 +969,12 @@
       <Filter>シェーダー ファイル\GameObject</Filter>
     </FxCompile>
     <FxCompile Include="Shader\PaintedBright\PaintedBrightPS.hlsl" />
+    <FxCompile Include="Shader\Radial360\Radial360VS.hlsl">
+      <Filter>シェーダー ファイル\Radial360</Filter>
+    </FxCompile>
+    <FxCompile Include="Shader\Radial360\Radial360PS.hlsl">
+      <Filter>シェーダー ファイル\Radial360</Filter>
+    </FxCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\2d\Sprite.h">
@@ -1448,6 +1457,9 @@
     <ClInclude Include="Application\BlinkSpotLightObject.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
+    <ClInclude Include="Application\CircleGauge.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="Shader\Bloom\Bloom.hlsli">
@@ -1533,6 +1545,9 @@
     </None>
     <None Include="Shader\GameObject\GameObject.hlsli">
       <Filter>シェーダー ファイル\GameObject</Filter>
+    </None>
+    <None Include="Shader\Radial360\Radial360.hlsli">
+      <Filter>シェーダー ファイル\Radial360</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>

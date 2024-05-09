@@ -165,6 +165,7 @@
     <ClCompile Include="Application\Object\EnemyRangeAttackState.cpp" />
     <ClCompile Include="Application\Object\EnemyShot.cpp" />
     <ClCompile Include="Application\BlinkSpotLightObject.cpp" />
+    <ClCompile Include="Application\CircleGauge.cpp" />
     <ClCompile Include="Engine\Collision\AABBCollider.cpp" />
     <ClCompile Include="Application\Chara\Enemy\EnemySpawner.cpp" />
     <ClCompile Include="Application\InstantDrawer.cpp" />
@@ -299,6 +300,22 @@
     <ClCompile Include="Application\Object\Tank.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <FxCompile Include="Shader\Radial360\Radial360PS.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='DebugIT|x64'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='DebugIT|x64'">5.0</ShaderModel>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
+    </FxCompile>
+    <FxCompile Include="Shader\Radial360\Radial360VS.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='DebugIT|x64'">Vertex</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='DebugIT|x64'">5.0</ShaderModel>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
+    </FxCompile>
     <FxCompile Include="Shader\PaintedBright\PaintedBrightPS.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='DebugIT|x64'">Pixel</ShaderType>
@@ -784,6 +801,7 @@
     <ClInclude Include="Application\Object\EnemyRangeAttackState.h" />
     <ClInclude Include="Application\Object\EnemyShot.h" />
     <ClInclude Include="Application\BlinkSpotLightObject.h" />
+    <ClInclude Include="Application\CircleGauge.h" />
     <ClInclude Include="Engine\Collision\AABBCollider.h" />
     <ClInclude Include="Application\Chara\Enemy\EnemySpawner.h" />
     <ClInclude Include="Application\InstantDrawer.h" />
@@ -923,6 +941,7 @@
     <ClInclude Include="Application\LightObject.h" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Shader\Radial360\Radial360.hlsli" />
     <None Include="Shader\GameObject\GameObject.hlsli" />
     <None Include="Shader\Billboard\Billboard.hlsli" />
     <None Include="Shader\Bloom\Bloom.hlsli" />

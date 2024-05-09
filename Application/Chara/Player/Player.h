@@ -10,6 +10,7 @@
 #include <stdint.h>
 #include "CollectPart.h"
 #include "WaxUI.h"
+#include "CircleGauge.h"
 
 class Boss;
 
@@ -95,6 +96,8 @@ public:
 
 	int32_t waxCollectAmount;			//ロウ回収量
 	
+	CircleGauge waxCircleGauge;	//ロウの量を示すゲージ(円形)
+
 	//----------- 新攻撃(パブロ攻撃)関連 -------------//
 	float pabloSideRange;		//横の射程
 	float pabloSeparator;		//射程の分割数
