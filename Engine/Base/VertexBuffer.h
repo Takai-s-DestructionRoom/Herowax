@@ -31,9 +31,9 @@ public:
 	VertexBuffer(std::vector<VertexPNU> list);
 
 	//Vertex(Particle)の配列とその大きさで頂点バッファを作る
-	VertexBuffer(VertexParticle* list, uint32_t size);
+	VertexBuffer(VertexParticle3D* list, uint32_t size);
 	//Vertex(Particle)のvectorで頂点バッファを作る
-	VertexBuffer(std::vector<VertexParticle> list);
+	VertexBuffer(std::vector<VertexParticle3D> list);
 
 	//Vertex(Pos)の配列とその大きさで頂点バッファを作る
 	void Init(VertexP* list, uint32_t size);
@@ -46,9 +46,9 @@ public:
 	void Init(std::vector<VertexPNU> list);
 
 	//Vertex(Particle)の配列とその大きさで頂点バッファを作る
-	void Init(VertexParticle* list, uint32_t size);
+	void Init(VertexParticle3D* list, uint32_t size);
 	//Vertex(Particle)のvectorで頂点バッファを作る
-	void Init(std::vector<VertexParticle> list);
+	void Init(std::vector<VertexParticle3D> list);
 
 	//Vertex(PosNormalUv)の配列とその大きさで頂点バッファを更新する
 	void Update(VertexPNU* list, uint32_t size);

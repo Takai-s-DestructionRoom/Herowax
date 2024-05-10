@@ -7,6 +7,7 @@
 // エミッターを登録して更新処理をまとめてかけてる //
 
 class IEmitter3D;
+class IEmitter2D;
 
 class ParticleManager final
 {

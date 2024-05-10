@@ -203,7 +203,9 @@ public:
 	Vector3 GetOriginPos();
 	//移動速度を取得
 	float GetMoveSpeed() { return moveSpeed; };
-	
+	//出現済みかどうかを取得
+	bool GetIsSpawn();
+
 	// セッター //
 	//減速率設定
 	void SetSlowMag(float mag) { slowMag = mag; }

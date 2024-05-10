@@ -10,8 +10,7 @@ class Player;
 
 enum class UIType
 {
-	waxGauge,
-	fireGauge,
+	hpGauge,
 
 	max
 };
@@ -19,10 +18,10 @@ enum class UIType
 class PlayerUI
 {
 public:
-	std::array<Vector3, 2> position;
-	std::array<Vector2, 2> size;
-	std::array<Vector2, 2> maxSize;
-	std::array<Color, 2> gaugeColor;
+	std::array<Vector3, 1> position;
+	std::array<Vector2, 1> size;
+	std::array<Vector2, 1> maxSize;
+	std::array<Color, 1> gaugeColor;
 
 	Vector2 screenPos;
 	Vector2 iconSize;

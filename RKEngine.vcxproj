@@ -298,8 +298,34 @@
     <ClCompile Include="Application\Scene\SceneTrance.cpp" />
     <ClCompile Include="Application\WaxUI.cpp" />
     <ClCompile Include="Application\Object\Tank.cpp" />
+    <ClCompile Include="Engine\Particle\Particle2D.cpp" />
+    <ClCompile Include="Engine\Particle\SimpleParticle2D.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <FxCompile Include="Shader\Particle2D\Particle2DGS.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Geometry</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='DebugIT|x64'">Geometry</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='DebugIT|x64'">5.0</ShaderModel>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Geometry</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
+    </FxCompile>
+    <FxCompile Include="Shader\Particle2D\Particle2DPS.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='DebugIT|x64'">Pixel</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='DebugIT|x64'">5.0</ShaderModel>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
+    </FxCompile>
+    <FxCompile Include="Shader\Particle2D\Particle2DVS.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='DebugIT|x64'">Vertex</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='DebugIT|x64'">5.0</ShaderModel>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
+    </FxCompile>
     <FxCompile Include="Shader\Radial360\Radial360PS.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='DebugIT|x64'">Pixel</ShaderType>
@@ -939,8 +965,11 @@
     <ClInclude Include="Application\WaxUI.h" />
     <ClInclude Include="Application\Object\Tank.h" />
     <ClInclude Include="Application\LightObject.h" />
+    <ClInclude Include="Engine\Particle\Particle2D.h" />
+    <ClInclude Include="Engine\Particle\SimpleParticle2D.h" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Shader\Particle2D\Particle2D.hlsli" />
     <None Include="Shader\Radial360\Radial360.hlsli" />
     <None Include="Shader\GameObject\GameObject.hlsli" />
     <None Include="Shader\Billboard\Billboard.hlsli" />

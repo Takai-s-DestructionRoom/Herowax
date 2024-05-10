@@ -16,8 +16,10 @@ public:
 	float x;
 	float y;
 
+
 	//ゼロベクトル
 	Vector2(); 
+	const static Vector2 ZERO;
 	
 	//任意の成分ベクトル
 	Vector2(int32_t x, int32_t y);

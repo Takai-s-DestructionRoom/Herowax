@@ -8,24 +8,24 @@
 #include "Easing.h"
 #include "Util.h"
 
-// 3Dのパーティクル //
+// 2Dのパーティクル //
 //粒子1粒
-struct Particle3D
+struct Particle2D
 {
 	//座標
-	Vector3 pos;
-	Vector3 startPos;
+	Vector2 pos;
+	Vector2 startPos;
 	//大きさ
 	float scale;
 	float startScale;	//開始時の大きさ
 	float endScale;		//終了時の大きさ
 	//角度
-	Vector3 rot;
-	Vector3 plusRot;	//更新処理で回転させるときに使う用
+	float rot;
+	float plusRot;	//更新処理で回転させるときに使う用
 	//速度
-	Vector3 velo;
+	Vector2 velo;
 	//加速度
-	Vector3 accel;
+	Vector2 accel;
 	//重力
 	float gravity = 0.098f;
 
@@ -45,24 +45,21 @@ struct Particle3D
 };
 
 // エミッター //
-class IEmitter3D
+class IEmitter2D
 {
 protected:
 	Transform transform;
 	SRConstBuffer<TransformBuffer> transformBuff;
 	SRConstBuffer<ViewProjectionBuffer> viewProjectionBuff;
 
-	Matrix4 billboardMat;			//ビルボード行列
-	SRConstBuffer<TransformBuffer> billboardBuff;
-
 	//頂点群
-	std::vector<VertexParticle3D> vertices;
+	std::vector<VertexParticle2D> vertices;
 	SRVertexBuffer vertBuff;
 
 	float minScale_;	//パーティクルの最小サイズ
 	float maxScale_;	//パーティクルの最大サイズ
 	//元の大きさ
-	Vector3 originalScale_;
+	Vector2 originalScale_;
 	//拡縮用倍率
 	float scaling_;
 	//拡縮用タイマー
@@ -77,20 +74,19 @@ protected:
 	float elapseSpeed_;
 
 	const uint32_t maxParticle_ = 64;		//最大数
-	std::vector<Particle3D> particles_;		//パーティクル配列
+	std::vector<Particle2D> particles_;		//パーティクル配列
 
 	bool isActive_ = true;					//有効にするかフラグ
 
 	bool isGravity_ = false;				//重力の影響受けるかフラグ
-	bool isBillboard_ = false;				//ビルボード描画するかフラグ
 
 	Texture texture;						//割り当てるテクスチャ
 
 public:
 	//コンストラクタ
-	IEmitter3D();
+	IEmitter2D();
 	//デストラクタ
-	virtual ~IEmitter3D() = default;
+	virtual ~IEmitter2D() = default;
 
 	//初期化
 	//このままの処理を呼びたいなら継承先でこれを呼ぶ
@@ -107,24 +103,24 @@ public:
 	//パーティクル追加(固有処理にしたかったらoverrideで上書きする)
 	//life:秒数指定なので注意
 	virtual void Add(uint32_t addNum, float life, Color color, TextureHandle tex, float minScale, float maxScale,
-		Vector3 minVelo, Vector3 maxVelo, float accelPower = 0.f, Vector3 minRot = {}, Vector3 maxRot = {},
-		float growingTimer = 0.f, float endScale = 0.f, bool isGravity = false, bool isBillboard = false, float rejectRadius = 0.f);
+		Vector2 minVelo, Vector2 maxVelo, float accelPower = 0.f, float minRot = 0.f,float maxRot = 0.f,
+		float growingTimer = 0.f, float endScale = 0.f, bool isGravity = false, float rejectRadius = 0.f);
 
-	//リング状パーティクル追加(固有処理にしたかったらoverrideで上書きする)
-	//life:秒数指定なので注意
-	virtual void AddRing(uint32_t addNum, float life, Color color, TextureHandle tex,
-		float startRadius, float endRadius, float minScale, float maxScale,
-		float minVeloY, float maxVeloY, Vector3 minRot = {}, Vector3 maxRot = {},
-		float growingTimer = 0.f, float endScale = 0.f, bool isGravity = false, bool isBillboard = false);
+	////リング状パーティクル追加(固有処理にしたかったらoverrideで上書きする)
+	////life:秒数指定なので注意
+	//virtual void AddRing(uint32_t addNum, float life, Color color, TextureHandle tex,
+	//	float startRadius, float endRadius, float minScale, float maxScale,
+	//	float minVeloY, float maxVeloY, Vector2 minRot = {}, Vector2 maxRot = {},
+	//	float growingTimer = 0.f, float endScale = 0.f, bool isGravity = false, bool isBillboard = false);
 
 	//パーティクル全消し
 	void ClearParticles() { particles_.clear(); }
 
 	//ゲッター//
 	//座標取得
-	Vector3 GetPos()const { return transform.position; }
+	Vector2 GetPos()const { return transform.position; }
 	//大きさ取得
-	Vector3 GetScale()const { return transform.scale; }
+	Vector2 GetScale()const { return transform.scale; }
 	//パーティクル全部死んだか取得
 	bool GetParticlesDead()const { return particles_.empty(); }
 	//何個パーティクルあるか取得
@@ -136,17 +132,15 @@ public:
 	//座標設定
 	void SetPos(float x, float y, float z) { transform.position = { x,y,z }; }
 	//座標設定
-	void SetPos(const Vector3& pos) { transform.position = pos; }
+	void SetPos(const Vector2& pos) { transform.position = pos; }
 	//大きさ設定
-	void SetScale(const Vector3& scale);
+	void SetScale(const Vector2& scale);
 	////角度設定
 	//void SetRot(float rot) { rot_ = rot; }
 	//有効フラグ設定
 	void SetIsActive(bool isActive) { isActive_ = isActive; }
 	//重力フラグ設定
 	void SetIsGravity(bool isGravity) { isGravity_ = isGravity; }
-	//ビルボードフラグ設定
-	void SetIsBillboard(bool isBillboard) { isBillboard_ = isBillboard; }
 
 	//拡縮用タイマーが切り替わる時間設定(秒)
 	void SetScalingTimer(float timer);
