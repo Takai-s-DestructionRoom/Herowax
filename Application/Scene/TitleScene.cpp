@@ -2,6 +2,7 @@
 #include "ProtoScene.h"
 #include "RInput.h"
 #include "SceneManager.h"
+#include "ParticleManager.h"
 #include "InstantDrawer.h"
 #include "SimpleSceneTransition.h"
 #include <RAudio.h>
@@ -50,6 +51,8 @@ void TitleScene::Init()
 	flashingTimer.Reset();
 	cameraRotTimer.Reset();
 
+	ParticleManager::GetInstance()->Init();
+
 	SpotLightManager::GetInstance()->Init(&light);
 }
 
@@ -70,6 +73,15 @@ void TitleScene::Update()
 	camera.mViewProjection.mEye = { vec2.x,30.f,vec2.y };
 
 	Level::Get()->Update();
+
+	if (RInput::GetInstance()->GetKey(DIK_C))
+	{
+		ParticleManager::GetInstance()->AddSimple2D(
+			{ 640.f,360.f }, { 1,1 }, 10, 1.f,
+			Color::kWhite, "", 3.f, 5.f, { -1.f,-1.f }, { 1.f,1.f });
+	}
+
+	ParticleManager::GetInstance()->Update();
 
 	//F6かメニューボタン押されたらプロトシーンへ
 	bool button = RInput::GetInstance()->GetKeyDown(DIK_F6) ||
@@ -121,6 +133,8 @@ void TitleScene::Draw()
 			buttonUIPos.x, buttonUIPos.y,
 			0.8f, 0.8f, 0.f, TextureManager::Load("./Resources/UI/A_normal.png", "Abutton"));
 	}
+
+	ParticleManager::GetInstance()->Draw();
 
 	//更新
 	InstantDrawer::AllUpdate();

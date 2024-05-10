@@ -3,6 +3,7 @@
 #include "RImGui.h"
 #include "RingParticle.h"
 #include "SimpleParticle.h"
+#include "SimpleParticle2D.h"
 #include "HomingParticle.h"
 
 ParticleManager* ParticleManager::GetInstance()
@@ -17,6 +18,12 @@ void ParticleManager::Init()
 	{
 		emitter->ClearParticles();
 		emitter->Init();
+	}
+
+	for (auto& emitter2D : emitters2D_)
+	{
+		emitter2D->ClearParticles();
+		emitter2D->Init();
 	}
 }
 
@@ -37,6 +44,24 @@ void ParticleManager::Update()
 			//更新処理して次の要素へ
 			emit->get()->Update();
 			++emit;
+		}
+	}
+
+	//エミッター群のイテレーター
+	std::list<std::unique_ptr<IEmitter2D>>::iterator emit2D = emitters2D_.begin();
+
+	//イテレーターが最後になるまで回す
+	while (emit2D != emitters2D_.end()) {
+		//パーティクルがもうなくなってたら
+		if (emit2D->get()->GetParticlesDead()) {
+			emit2D = emitters2D_.erase(emit2D);	//殺す
+		}
+		//パーティクルが生きてるなら
+		else
+		{
+			//更新処理して次の要素へ
+			emit2D->get()->Update();
+			++emit2D;
 		}
 	}
 
@@ -67,6 +92,11 @@ void ParticleManager::Draw()
 	for (auto& emitter : emitters_)
 	{
 		emitter->Draw();
+	}
+
+	for (auto& emitter2D : emitters2D_)
+	{
+		emitter2D->Draw();
 	}
 }
 
@@ -99,6 +129,22 @@ void ParticleManager::AddSimple(
 		addNum, life, color, tex, minScale, maxScale,
 		minVelo, maxVelo, accelPower, minRot, maxRot,
 		growingTimer, endScale, isGravity, isBillboard);
+}
+
+void ParticleManager::AddSimple2D(
+	Vector2 emitPos, Vector2 emitScale, uint32_t addNum, float life,
+	Color color, TextureHandle tex, float minScale, float maxScale,
+	Vector2 minVelo, Vector2 maxVelo, float accelPower,
+	float minRot, float maxRot, float growingTimer, float endScale, bool isGravity)
+{
+	emitters2D_.emplace_back();
+	emitters2D_.back() = std::make_unique<SimpleParticle2D>();
+	emitters2D_.back()->SetPos(emitPos);
+	emitters2D_.back()->SetScale(emitScale);
+	emitters2D_.back()->Add(
+		addNum, life, color, tex, minScale, maxScale,
+		minVelo, maxVelo, accelPower, minRot, maxRot,
+		growingTimer, endScale, isGravity);
 }
 
 void ParticleManager::AddSimple(Vector3 emitPos, std::string pDataHandle)

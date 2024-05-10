@@ -107,8 +107,8 @@ void IEmitter2D::Update()
 	vertBuff.Update(vertices);
 
 	//バッファにデータ送信
-	TransferBuffer(Camera::sNowCamera->mViewProjection);
 	transform.UpdateMatrix();
+	TransferBuffer();
 }
 
 void IEmitter2D::Draw()
@@ -122,6 +122,14 @@ void IEmitter2D::Draw()
 	pipedesc.RasterizerState.CullMode = D3D12_CULL_MODE_NONE;
 	pipedesc.RasterizerState.FillMode = D3D12_FILL_MODE_SOLID;
 	pipedesc.BlendState.AlphaToCoverageEnable = false;
+
+	//加算合成
+	pipedesc.BlendState.RenderTarget[0].BlendOpAlpha = D3D12_BLEND_OP_ADD;
+	pipedesc.BlendState.RenderTarget[0].SrcBlendAlpha = D3D12_BLEND_SRC_ALPHA;
+	pipedesc.BlendState.RenderTarget[0].DestBlendAlpha = D3D12_BLEND_ONE;
+	pipedesc.BlendState.RenderTarget[0].BlendOp = D3D12_BLEND_OP_ADD;
+	pipedesc.BlendState.RenderTarget[0].SrcBlend = D3D12_BLEND_SRC_ALPHA;
+	pipedesc.BlendState.RenderTarget[0].DestBlend = D3D12_BLEND_ONE;
 
 	RootSignature mRootSignature = RDirectX::GetDefRootSignature();
 
@@ -144,9 +152,9 @@ void IEmitter2D::Draw()
 	rootParams[1].Descriptor.RegisterSpace = 0; //デフォルト値
 	rootParams[1].ShaderVisibility = D3D12_SHADER_VISIBILITY_ALL; //全シェーダから見える
 	//テクスチャ
-	rootParams[3].ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;
-	rootParams[3].DescriptorTable = DescriptorRanges{ descriptorRange };
-	rootParams[3].ShaderVisibility = D3D12_SHADER_VISIBILITY_ALL;
+	rootParams[2].ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;
+	rootParams[2].DescriptorTable = DescriptorRanges{ descriptorRange };
+	rootParams[2].ShaderVisibility = D3D12_SHADER_VISIBILITY_ALL;
 
 	mRootSignature.mDesc.RootParamaters = rootParams;
 	mRootSignature.Create();
@@ -203,14 +211,20 @@ void IEmitter2D::Draw()
 		{texture.mGpuHandle}
 	};
 
-	Renderer::DrawCall("Opaque", order);
+	Renderer::DrawCall("Transparent", order);
 }
 
-void IEmitter2D::TransferBuffer(ViewProjection viewprojection)
+void IEmitter2D::TransferBuffer()
 {
 	transform.Transfer(transformBuff.Get());
-	viewProjectionBuff->matrix = viewprojection.mMatrix;
-	viewProjectionBuff->cameraPos = viewprojection.mEye;
+
+	Matrix4 matProjection = Matrix4::OrthoGraphicProjection(
+		0.0f, (float)RWindow::GetWidth(),
+		0.0f, (float)RWindow::GetHeight(),
+		0.0f, 1.0f
+	);
+
+	viewProjectionBuff->matrix = matProjection;
 }
 
 void IEmitter2D::Add(uint32_t addNum, float life, Color color, TextureHandle tex,

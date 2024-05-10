@@ -13,6 +13,7 @@ class ParticleManager final
 {
 public:
 	std::list<std::unique_ptr<IEmitter3D>> emitters_;			//パーティクルエミッター群
+	std::list<std::unique_ptr<IEmitter2D>> emitters2D_;			//パーティクルエミッター群
 
 	Vector3 playerPos;
 
@@ -38,6 +39,12 @@ public:
 		Color color, TextureHandle tex, float minScale, float maxScale, Vector3 minVelo, Vector3 maxVelo,
 		float accelPower = 0.f, Vector3 minRot = {}, Vector3 maxRot = {},
 		float growingTimer = 0.f, float endScale = 0.f, bool isGravity = false, bool isBillboard = false);
+
+	//パーティクルの追加
+	void AddSimple2D(Vector2 emitPos, Vector2 emitScale, uint32_t addNum, float life,
+		Color color, TextureHandle tex, float minScale, float maxScale, Vector2 minVelo, Vector2 maxVelo,
+		float accelPower = 0.f, float minRot = 0.f, float maxRot = 0.f,
+		float growingTimer = 0.f, float endScale = 0.f, bool isGravity = false);
 
 	//パーティクルの追加(外部データを使用)
 	void AddSimple(Vector3 emitPos, std::string pDataHandle);

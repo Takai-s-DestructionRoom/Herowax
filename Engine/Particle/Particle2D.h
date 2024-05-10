@@ -98,7 +98,7 @@ public:
 	void Draw();
 
 	//定数バッファへ送信
-	void TransferBuffer(ViewProjection viewprojection);
+	void TransferBuffer();
 
 	//パーティクル追加(固有処理にしたかったらoverrideで上書きする)
 	//life:秒数指定なので注意
