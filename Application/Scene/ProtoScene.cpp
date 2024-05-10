@@ -41,6 +41,7 @@ ProtoScene::ProtoScene()
 	RAudio::Load("Resources/Sounds/SE/P_attackHit.wav", "Hit");
 
 	ControlUI::LoadResource();
+	TimerUI::LoadResource();
 }
 
 void ProtoScene::Init()
@@ -85,7 +86,11 @@ void ProtoScene::Init()
 
 	CollectPartManager::GetInstance()->SetPlayer(&player);*/
 
+	extract = Parameter::Extract("Boss");
 	controlUI.Init();
+	bossAppTimerUI.Init();
+	bossAppTimerUI.SetMaxTime(Parameter::GetParam(extract, "ボスが出現するまでの時間", 60.0f));
+	bossAppTimerUI.Start();
 
 	SpotLightManager::GetInstance()->Init(&light);
 }
@@ -552,11 +557,12 @@ void ProtoScene::Update()
 	}
 
 	controlUI.Update();
+	bossAppTimerUI.Imgui();
+	bossAppTimerUI.Update();
 
 #pragma region ImGui
 	if (RImGui::showImGui)
 	{
-
 		ImGui::SetNextWindowSize({ 400, 200 }, ImGuiCond_FirstUseEver);
 
 		// デバッグモード //
@@ -599,6 +605,11 @@ void ProtoScene::Draw()
 	//なんのイベントも呼ばれていないならUIを描画
 	if (EventCaller::GetNowEventStr() == "") {
 		controlUI.Draw();
+		
+		if (!bossAppTimerUI.GetEnd()) 
+		{
+			bossAppTimerUI.Draw();
+		}
 	}
 
 	//更新
