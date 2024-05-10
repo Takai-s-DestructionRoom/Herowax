@@ -41,6 +41,7 @@ ProtoScene::ProtoScene()
 	RAudio::Load("Resources/Sounds/SE/P_attackHit.wav", "Hit");
 
 	ControlUI::LoadResource();
+	TimerUI::LoadResource();
 }
 
 void ProtoScene::Init()
@@ -85,7 +86,11 @@ void ProtoScene::Init()
 
 	CollectPartManager::GetInstance()->SetPlayer(&player);*/
 
+	extract = Parameter::Extract("Boss");
 	controlUI.Init();
+	bossAppTimerUI.Init();
+	bossAppTimerUI.SetMaxTime(Parameter::GetParam(extract, "ボスが出現するまでの時間", 60.0f));
+	bossAppTimerUI.Start();
 
 	SpotLightManager::GetInstance()->Init(&light);
 }
@@ -403,17 +408,23 @@ void ProtoScene::Update()
 		//未出現なら処理しない
 		if (!enemy1->GetIsSpawn())continue;
 
-		//プレイヤーと判定、当たってるなら押し戻す
-		if (ColPrimitive3D::CheckSphereToSphere(enemy1->collider, player.collider)) {
-			Vector3 repulsionVec = player.GetPos() - enemy1->GetPos();
-			repulsionVec.Normalize();
-			repulsionVec.y = 0;
+		//攻撃中と回収され中はこの判定をなくす
+		if (enemy1->GetAttackState() != EnemyNowAttackState::GetStateStr() &&
+			enemy1->GetState() != EnemyCollect::GetStateStr()) 
+		{	
+			//プレイヤーと判定、当たってるなら押し戻す
+			if (ColPrimitive3D::CheckSphereToSphere(enemy1->collider, player.collider)) 
+			{
+				Vector3 repulsionVec = player.GetPos() - enemy1->GetPos();
+				repulsionVec.Normalize();
+				repulsionVec.y = 0;
 
-			//一旦これだけ無理やり足す
-			player.obj.mTransform.position += repulsionVec;
+				//一旦これだけ無理やり足す
+				player.obj.mTransform.position += repulsionVec;
 
-			//コライダーがもう一度当たらないようにコライダー更新
-			player.UpdateCollider();
+				//コライダーがもう一度当たらないようにコライダー更新
+				player.UpdateCollider();
+			}
 		}
 
 		for (auto& enemy2 : EnemyManager::GetInstance()->enemys)
@@ -546,11 +557,12 @@ void ProtoScene::Update()
 	}
 
 	controlUI.Update();
+	bossAppTimerUI.Imgui();
+	bossAppTimerUI.Update();
 
 #pragma region ImGui
 	if (RImGui::showImGui)
 	{
-
 		ImGui::SetNextWindowSize({ 400, 200 }, ImGuiCond_FirstUseEver);
 
 		// デバッグモード //
@@ -593,6 +605,11 @@ void ProtoScene::Draw()
 	//なんのイベントも呼ばれていないならUIを描画
 	if (EventCaller::GetNowEventStr() == "") {
 		controlUI.Draw();
+		
+		if (!bossAppTimerUI.GetEnd()) 
+		{
+			bossAppTimerUI.Draw();
+		}
 	}
 
 	//更新

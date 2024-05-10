@@ -20,6 +20,7 @@
 
 #include "IEventScene.h"
 #include "ControlUI.h"
+#include "BossAppUI.h"
 
 class ProtoScene : public IScene
 {
@@ -43,6 +44,7 @@ private:
 	LightGroup light;
 	
 	ControlUI controlUI;
+	BossAppUI bossAppTimerUI;
 
 	float rot[3] = { 0, 0, 0 };
 	float scale[3] = { 1, 1, 1 };

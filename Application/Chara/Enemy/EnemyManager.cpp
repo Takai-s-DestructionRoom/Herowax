@@ -238,6 +238,9 @@ void EnemyManager::Update()
 			if (ImGui::Button("敵出現(ボスの位置)")) {
 				CreateEnemy<Enemy>(Vector3(0, 0, 0), { 3,3,3 }, { 0,0,0 }, "test", "Debug");
 			}
+			
+			ImGui::Checkbox("Tankの表示/非表示", &tankSwitch);
+			ImGui::Checkbox("BombSoliderの表示/非表示", &bombSoliderSwitch);
 
 			ImGui::TreePop();
 		}
@@ -318,6 +321,11 @@ void EnemyManager::Draw()
 {
 	for (auto& enemy : enemys)
 	{
+		//タンクを描画しようとしてるときにスイッチがオフになってたら飛ばす
+		if (!tankSwitch && enemy->enemyTag == Tank::GetEnemyTag()) continue;
+		//ボム兵を描画しようとしてるときにスイッチがオフになってたら飛ばす
+		if (!bombSoliderSwitch && enemy->enemyTag == BombSolider::GetEnemyTag()) continue;
+		
 		enemy->Draw();
 	}
 	for (auto& shot : enemyShots)
