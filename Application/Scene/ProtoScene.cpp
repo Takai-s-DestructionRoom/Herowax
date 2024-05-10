@@ -560,7 +560,10 @@ void ProtoScene::Draw()
 
 	EventCaller::Draw();
 
-	controlUI.Draw();
+	//なんのイベントも呼ばれていないならUIを描画
+	if (EventCaller::GetNowEventStr() == "") {
+		controlUI.Draw();
+	}
 
 	//更新
 	InstantDrawer::AllUpdate();

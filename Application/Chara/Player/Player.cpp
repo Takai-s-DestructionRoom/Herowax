@@ -608,7 +608,11 @@ void Player::Draw()
 		{
 			collectRangeModel.Draw();
 		}
-		ui.Draw();
+		
+		//なんのイベントも呼ばれていないならUIを描画
+		if (EventCaller::GetNowEventStr() == "") {
+			ui.Draw();
+		}
 
 		DrawAttackCollider(); 
 		
