@@ -400,8 +400,25 @@ void ProtoScene::Update()
 	//敵同士の押し戻し
 	for (auto& enemy1 : EnemyManager::GetInstance()->enemys)
 	{
+		//未出現なら処理しない
+		if (!enemy1->GetIsSpawn())continue;
+
+		//プレイヤーと判定、当たってるなら押し戻す
+		if (ColPrimitive3D::CheckSphereToSphere(enemy1->collider, player.collider)) {
+			Vector3 repulsionVec = player.GetPos() - enemy1->GetPos();
+			repulsionVec.Normalize();
+			repulsionVec.y = 0;
+
+			//一旦これだけ無理やり足す
+			player.obj.mTransform.position += repulsionVec;
+
+			//コライダーがもう一度当たらないようにコライダー更新
+			player.UpdateCollider();
+		}
+
 		for (auto& enemy2 : EnemyManager::GetInstance()->enemys)
 		{
+			//同個体なら処理しない
 			if (enemy1 == enemy2)continue;
 
 			if (ColPrimitive3D::CheckSphereToSphere(enemy1->collider, enemy2->collider)) {
@@ -422,7 +439,7 @@ void ProtoScene::Update()
 				{
 					enemy1->BehaviorOrigenPosPlus(e1RepulsionVec);
 				}
-				if (enemy1->GetAttackState() == EnemyNormalState::GetStateStr())
+				if (enemy2->GetAttackState() == EnemyNormalState::GetStateStr())
 				{
 					enemy2->BehaviorOrigenPosPlus(e2RepulsionVec);
 				}
@@ -432,6 +449,19 @@ void ProtoScene::Update()
 				enemy2->UpdateCollider();
 			}
 		}
+	}
+
+	//プレイヤーを押し戻す(ボス)
+	if (ColPrimitive3D::CheckSphereToSphere(Boss::GetInstance()->collider, player.collider)) {
+		Vector3 repulsionVec = player.GetPos() - Boss::GetInstance()->GetPos();
+		repulsionVec.Normalize();
+		repulsionVec.y = 0;
+
+		//一旦これだけ無理やり足す
+		player.obj.mTransform.position += repulsionVec;
+
+		//コライダーがもう一度当たらないようにコライダー更新
+		player.UpdateCollider();
 	}
 
 	//ロウグループ周りの話は無くなったはずなのでコメントアウト
@@ -560,7 +590,10 @@ void ProtoScene::Draw()
 
 	EventCaller::Draw();
 
-	controlUI.Draw();
+	//なんのイベントも呼ばれていないならUIを描画
+	if (EventCaller::GetNowEventStr() == "") {
+		controlUI.Draw();
+	}
 
 	//更新
 	InstantDrawer::AllUpdate();

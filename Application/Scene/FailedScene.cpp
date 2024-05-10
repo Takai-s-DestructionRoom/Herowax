@@ -8,6 +8,7 @@
 #include "Boss.h"
 #include "Level.h"
 #include <RAudio.h>
+#include "LightObject.h"
 
 FailedScene::FailedScene()
 {
@@ -50,6 +51,8 @@ void FailedScene::Init()
 	flashingTimer.Reset();
 
 	Boss::GetInstance()->SetTarget(&bossTarget);
+
+	SpotLightManager::GetInstance()->Init(&light);
 }
 
 void FailedScene::Update()
@@ -89,11 +92,15 @@ void FailedScene::Update()
 
 	skydome.TransferBuffer(Camera::sNowCamera->mViewProjection);
 	bossTarget.TransferBuffer(Camera::sNowCamera->mViewProjection);
+
+	SpotLightManager::GetInstance()->Imgui();
+	SpotLightManager::GetInstance()->Update();
 }
 
 void FailedScene::Draw()
 {
 	skydome.Draw();
+	SpotLightManager::GetInstance()->Draw();
 
 	Level::Get()->Draw();
 	Boss::GetInstance()->Draw();

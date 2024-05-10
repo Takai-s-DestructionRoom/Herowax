@@ -765,9 +765,6 @@
     <ClCompile Include="Application\EventScene\BossDeadScene.cpp">
       <Filter>ソース ファイル\Application\EventScene</Filter>
     </ClCompile>
-    <ClCompile Include="Application\Scene\FailedScene.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
     <ClCompile Include="Application\ControlUI.cpp">
       <Filter>ソース ファイル\Application\ControlUI</Filter>
     </ClCompile>
@@ -791,6 +788,9 @@
     </ClCompile>
     <ClCompile Include="Application\CircleGauge.cpp">
       <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Application\Scene\FailedScene.cpp">
+      <Filter>ソース ファイル\Application\Scene</Filter>
     </ClCompile>
     <ClCompile Include="Engine\Particle\Particle2D.cpp">
       <Filter>ソース ファイル</Filter>
@@ -1442,9 +1442,6 @@
     <ClInclude Include="Application\Chara\Boss\BossDead.h">
       <Filter>ヘッダー ファイル\Application\Object\Chara\Boss</Filter>
     </ClInclude>
-    <ClInclude Include="Application\Scene\FailedScene.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
     <ClInclude Include="Application\ControlUI.h">
       <Filter>ヘッダー ファイル\Application\ControlUI</Filter>
     </ClInclude>
@@ -1468,6 +1465,9 @@
     </ClInclude>
     <ClInclude Include="Application\CircleGauge.h">
       <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Application\Scene\FailedScene.h">
+      <Filter>ヘッダー ファイル\Application\Scene</Filter>
     </ClInclude>
     <ClInclude Include="Engine\Particle\Particle2D.h">
       <Filter>ヘッダー ファイル</Filter>

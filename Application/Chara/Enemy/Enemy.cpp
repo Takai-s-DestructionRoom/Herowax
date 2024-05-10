@@ -107,7 +107,7 @@ void Enemy::BaseUpdate()
 
 	//こっから下は出現してからなので
 	//出現タイマーが終わるまで通さない
-	if (!spawnTimer.GetEnd())return;
+	if (!GetIsSpawn())return;
 
 	Reset();
 
@@ -367,6 +367,11 @@ Vector3 Enemy::GetOriginPos()
 		return basis + loadBehaviorData.points[0];
 	}
 	return basis;
+}
+
+bool Enemy::GetIsSpawn()
+{
+	return spawnTimer.GetEnd();
 }
 
 void Enemy::BehaviorReset()

@@ -20,6 +20,7 @@
 #include "RAudio.h"
 #include "EnemyManager.h"
 #include "EventCaller.h"
+#include "FailedScene.h"
 
 Player::Player() :GameObject(),
 moveSpeed(1.f), moveAccelAmount(0.05f), isGround(true), hp(0), maxHP(10.f),
@@ -85,8 +86,8 @@ isFireStock(false), isWaxStock(true), isCollectFan(false), waxCollectAmount(0)
 	collectScale = Parameter::GetParam(extract,"回収中の大きさ", collectScale);
 
 	initWaxStock = (int32_t)Parameter::GetParam(extract,"ロウの初期最大ストック数", (float)initWaxStock);
-	maxWaxStock = (int32_t)Parameter::GetParam(extract,"ロウの初期最大ストック数", (float)initWaxStock);
-	waxStock = (int32_t)Parameter::GetParam(extract,"ロウの初期最大ストック数", (float)initWaxStock);
+	maxWaxStock = initWaxStock;
+	waxStock = initWaxStock;
 }
 
 void Player::Init()
@@ -266,7 +267,7 @@ void Player::Update()
 		//死んだ瞬間なら遷移を呼ぶ
 		if (isAlive && !Util::debugBool) {
 			//シーン遷移
-			SceneManager::GetInstance()->Change<TitleScene, SimpleSceneTransition>();
+			SceneManager::GetInstance()->Change<FailedScene, SimpleSceneTransition>();
 		}
 		isAlive = false;
 	}
@@ -582,24 +583,6 @@ void Player::Update()
 		}
 
 		ImGui::End();
-
-		//	//円形ロウゲージの位置
-		//	ImGui::SetNextWindowSize({ 300, 250 }, ImGuiCond_FirstUseEver);
-
-		//	ImGui::Begin("CircleGauge");
-
-		//	ImGui::DragFloat3("位置", &waxCircleGauge.sprite.mTransform.position.x);
-		//	ImGui::DragFloat3("大きさ", &waxCircleGauge.sprite.mTransform.scale.x);
-
-		//	if (ImGui::Button("セーブ")) {
-		//		Parameter::Begin("waxCircleGauge");
-		//		Parameter::SaveVector3("ゲージの位置",waxCircleGauge.sprite.mTransform.position);
-		//		Parameter::SaveVector3("ゲージの大きさ",waxCircleGauge.sprite.mTransform.scale);
-		//		Parameter::End();
-		//	}
-
-		//	ImGui::End();
-		//}
 	}
 #pragma endregion
 }
@@ -630,7 +613,11 @@ void Player::Draw()
 		{
 			collectRangeModel.Draw();
 		}
-		ui.Draw();
+		
+		//なんのイベントも呼ばれていないならUIを描画
+		if (EventCaller::GetNowEventStr() == "") {
+			ui.Draw();
+		}
 
 		DrawAttackCollider(); 
 		
