@@ -68,6 +68,10 @@ private:
 	//攻撃していない時に敵と当たった場合でもダメージを入れる
 	bool isContactDamage = false;
 
+	//表示、非表示
+	bool tankSwitch = true;
+	bool bombSoliderSwitch = true;
+	
 public:
 	static EnemyManager* GetInstance();
 
