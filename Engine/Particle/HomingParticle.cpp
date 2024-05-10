@@ -52,7 +52,7 @@ void HomingParticle::Update()
 	{
 		if (particles_.size() > i)
 		{
-			VertexParticle vertex;
+			VertexParticle3D vertex;
 
 			//座標
 			vertex.pos = particles_[i].pos;

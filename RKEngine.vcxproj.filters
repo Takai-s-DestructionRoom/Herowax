@@ -792,6 +792,12 @@
     <ClCompile Include="Application\CircleGauge.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
+    <ClCompile Include="Engine\Particle\Particle2D.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\Particle\SimpleParticle2D.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Shader\Basic\BasicPS.hlsl">
@@ -975,6 +981,9 @@
     <FxCompile Include="Shader\Radial360\Radial360PS.hlsl">
       <Filter>シェーダー ファイル\Radial360</Filter>
     </FxCompile>
+    <FxCompile Include="Shader\Particle2D\Particle2DGS.hlsl" />
+    <FxCompile Include="Shader\Particle2D\Particle2DPS.hlsl" />
+    <FxCompile Include="Shader\Particle2D\Particle2DVS.hlsl" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\2d\Sprite.h">
@@ -1460,6 +1469,12 @@
     <ClInclude Include="Application\CircleGauge.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
+    <ClInclude Include="Engine\Particle\Particle2D.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Particle\SimpleParticle2D.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="Shader\Bloom\Bloom.hlsli">
@@ -1549,6 +1564,7 @@
     <None Include="Shader\Radial360\Radial360.hlsli">
       <Filter>シェーダー ファイル\Radial360</Filter>
     </None>
+    <None Include="Shader\Particle2D\Particle2D.hlsli" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="hogehoge.txt" />

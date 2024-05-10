@@ -4,6 +4,7 @@
 #include "Float4.h"
 
 const float EPSILON = 0.000001f;
+const Vector2 Vector2::ZERO = Vector2();
 
 Vector2::Vector2() : x(0), y(0) {}
 

@@ -412,6 +412,11 @@ void Player::Update()
 		obj.mTuneMaterial.mColor = Color::kWhite;
 	}
 
+	/*if (RInput::GetInstance()->GetKey(DIK_C))
+	{
+		ParticleManager::GetInstance()->AddHoming(obj.mTransform.position,"wax_dead_homing",);
+	}*/
+
 	//更新してからバッファに送る
 	obj.mTransform.UpdateMatrix();
 	obj.mPaintDataBuff->dissolveVal = (float)waxStock / (float)maxWaxStock;;
