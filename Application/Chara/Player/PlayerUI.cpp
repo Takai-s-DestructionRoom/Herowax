@@ -17,9 +17,8 @@ void PlayerUI::LoadResource()
 PlayerUI::PlayerUI()
 {
 	//色指定
-	gaugeColor[(uint32_t)UIType::waxGauge] = Color::kWhite;
-	gaugeColor[(uint32_t)UIType::fireGauge] = Color::kGreen;
-
+	gaugeColor[(uint32_t)UIType::hpGauge] = Color::kGreen;
+	
 	//サイズ指定
 	for (uint32_t i = 0; i < (uint32_t)UIType::max; i++)
 	{
@@ -56,11 +55,8 @@ void PlayerUI::Update(Player* player)
 	}
 
 	//ゲージの割合を指定されたサイズとかける
-	size[(uint32_t)UIType::waxGauge].x =
-		maxSize[(uint32_t)UIType::waxGauge].x * ((float)player->waxStock / (float)player->maxWaxStock);
-
-	size[(uint32_t)UIType::fireGauge].x =
-		maxSize[(uint32_t)UIType::fireGauge].x * player->hp / player->maxHP;
+	size[(uint32_t)UIType::hpGauge].x =
+		maxSize[(uint32_t)UIType::hpGauge].x * player->hp / player->maxHP;
 
 	////スクリーン座標を求める
 	//screenPos = Minimap::GetInstance()->GetScreenPos(player->obj.mTransform.position);

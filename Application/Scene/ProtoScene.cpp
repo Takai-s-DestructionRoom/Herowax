@@ -403,17 +403,23 @@ void ProtoScene::Update()
 		//未出現なら処理しない
 		if (!enemy1->GetIsSpawn())continue;
 
-		//プレイヤーと判定、当たってるなら押し戻す
-		if (ColPrimitive3D::CheckSphereToSphere(enemy1->collider, player.collider)) {
-			Vector3 repulsionVec = player.GetPos() - enemy1->GetPos();
-			repulsionVec.Normalize();
-			repulsionVec.y = 0;
+		//攻撃中と回収され中はこの判定をなくす
+		if (enemy1->GetAttackState() != EnemyNowAttackState::GetStateStr() &&
+			enemy1->GetState() != EnemyCollect::GetStateStr()) 
+		{	
+			//プレイヤーと判定、当たってるなら押し戻す
+			if (ColPrimitive3D::CheckSphereToSphere(enemy1->collider, player.collider)) 
+			{
+				Vector3 repulsionVec = player.GetPos() - enemy1->GetPos();
+				repulsionVec.Normalize();
+				repulsionVec.y = 0;
 
-			//一旦これだけ無理やり足す
-			player.obj.mTransform.position += repulsionVec;
+				//一旦これだけ無理やり足す
+				player.obj.mTransform.position += repulsionVec;
 
-			//コライダーがもう一度当たらないようにコライダー更新
-			player.UpdateCollider();
+				//コライダーがもう一度当たらないようにコライダー更新
+				player.UpdateCollider();
+			}
 		}
 
 		for (auto& enemy2 : EnemyManager::GetInstance()->enemys)

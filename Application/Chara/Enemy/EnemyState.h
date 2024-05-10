@@ -1,6 +1,7 @@
 #pragma once
 #include "Easing.h"
 #include "Color.h"
+#include <string>
 
 class Enemy;
 
@@ -22,7 +23,9 @@ class EnemyNormal : public EnemyState
 {
 public:
 	EnemyNormal();
-	void Update(Enemy* enemy)override;
+	void Update(Enemy* enemy)override; 
+
+	static std::string GetStateStr();
 };
 
 //蝋に足を取られて減速状態
@@ -31,6 +34,8 @@ class EnemySlow : public EnemyState
 public:
 	EnemySlow();
 	void Update(Enemy* enemy)override;
+
+	static std::string GetStateStr();
 };
 
 //全身硬化状態(全身に蝋がついているイメージ)
@@ -39,6 +44,8 @@ class EnemyAllStop : public EnemyState
 public:
 	EnemyAllStop();
 	void Update(Enemy* enemy)override;
+
+	static std::string GetStateStr();
 private:
 	Color saveColor;
 	Enemy* saveEnemy = nullptr;
@@ -50,17 +57,13 @@ class EnemyBurning : public EnemyState
 public:
 	EnemyBurning();
 	void Update(Enemy* enemy)override;
+
+	static std::string GetStateStr();
 private:
 	Easing::EaseTimer timer = 1.0f;
 
 	uint32_t fireAddFrame = 5;	//炎を何フレームに一回追加するか
 	uint32_t frameCount;		//フレームカウント
-};
-
-class EnemyPreAttack : public EnemyState
-{
-public:
-
 };
 
 //回収中
@@ -70,6 +73,7 @@ public:
 	EnemyCollect();
 	void Update(Enemy* enemy)override;
 
+	static std::string GetStateStr();
 private:
 	float accel = 0.f;			//回収の加速度
 	bool isStart = true;
