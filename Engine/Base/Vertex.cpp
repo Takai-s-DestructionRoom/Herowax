@@ -53,13 +53,39 @@ void VertexPNU::CalcNormalVec(std::vector<VertexPNU> list, std::vector<uint32_t>
 	}
 }
 
-bool VertexParticle::operator==(const VertexParticle& a) const
+bool VertexParticle3D::operator==(const VertexParticle3D& a) const
 {
 	if (pos.x != a.pos.x || pos.y != a.pos.y || pos.z != a.pos.z)
 	{
 		return false;
 	}
 	else if (rot.x != a.rot.x || rot.y != a.rot.y || rot.z != a.rot.z)
+	{
+		return false;
+	}
+	else if (color != a.color)
+	{
+		return false;
+	}
+	else if (scale != a.scale)
+	{
+		return false;
+	}
+	else if (timer != a.timer)
+	{
+		return false;
+	}
+
+	return true;
+}
+
+bool VertexParticle2D::operator==(const VertexParticle2D& a) const
+{
+	if (pos.x != a.pos.x || pos.y != a.pos.y)
+	{
+		return false;
+	}
+	else if (rot != a.rot)
 	{
 		return false;
 	}
