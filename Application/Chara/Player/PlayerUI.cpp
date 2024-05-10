@@ -7,6 +7,7 @@
 #include "Minimap.h"
 #include "Camera.h"
 #include "Parameter.h"
+#include "RImGui.h"
 
 void PlayerUI::LoadResource()
 {
@@ -31,13 +32,8 @@ PlayerUI::PlayerUI()
 	basePos = Parameter::GetVector3Data(extract, "ゲージの位置", {0,0,0});
 	baseScale = Parameter::GetVector3Data(extract,"ゲージの大きさ", { 1,1,1 });
 
-	waxCircleGauge.Init();
-	//デフォルトと同じだけど明示的にしたいのでテクスチャ配置
-	waxCircleGauge.sprite.SetTexture(TextureManager::Load("./Resources/circleGauge.png", "circleGauge"));
-
-	waxCircleGaugeBack.Init();
-	//テクスチャを背景用のモノに変更
-	waxCircleGaugeBack.sprite.SetTexture(TextureManager::Load("./Resources/circleGaugeBack.png", "circleGaugeBack"));
+	GaugeReset();
+	GaugeAdd();
 
 	/*iconSize = { 0.25f,0.25f };
 	minimapIcon.SetTexture(TextureManager::Load("./Resources/minimap_icon.png", "minimapIcon"));
@@ -97,18 +93,41 @@ void PlayerUI::Update(Player* player)
 
 	//ボタンを一回押すごとに減る量
 	float onePushSize = (36.f / (float)player->waxNum);
-	onePushSize *= 2.f;
+	
+	//現在のロウの値を0.0f~1.0f~2.0f..で表したい
+	baseRadian = ((onePushSize * (float)player->waxStock)) / 360.f;
+	baseBackRadian = ((onePushSize * (float)player->maxWaxStock)) / 360.f;
 
-	waxCircleGauge.radian = 360.f * (1.0f - (float)player->waxStock / player->maxWaxStock);
-	waxCircleGaugeBack.radian = 0.0f;
+	baseRadian = max(0.0f, baseRadian);
+	baseBackRadian = max(0.0f, baseBackRadian);
 
-	waxCircleGauge.sprite.mTransform.position = basePos;
-	waxCircleGauge.sprite.mTransform.scale = baseScale;
-	waxCircleGaugeBack.sprite.mTransform.position = basePos;
-	waxCircleGaugeBack.sprite.mTransform.scale = baseScale;
+	//ゲージが必要になったら増やす(1.0fを超えたら2本目を生成、2.0fを超えたら3本目を生成...を繰り返す)
+	while (baseBackRadian > (float)waxCircleGauges.size())
+	{
+		GaugeAdd();
+	};
 
-	waxCircleGauge.Update();
-	waxCircleGaugeBack.Update();
+	GaugeUpdate();
+
+	if (RImGui::showImGui) {
+		//円形ロウゲージの位置
+		ImGui::SetNextWindowSize({ 300, 250 }, ImGuiCond_FirstUseEver);
+
+		ImGui::Begin("CircleGauge");
+
+		ImGui::Text("現在の割合:%f", baseRadian);
+		ImGui::DragFloat3("位置", &basePos.x);
+		ImGui::DragFloat3("大きさ", &baseScale.x);
+
+		if (ImGui::Button("セーブ")) {
+			Parameter::Begin("waxCircleGauge");
+			Parameter::SaveVector3("ゲージの位置", basePos);
+			Parameter::SaveVector3("ゲージの大きさ", baseScale);
+			Parameter::End();
+		}
+
+		ImGui::End();
+	}
 }
 
 void PlayerUI::Draw()
@@ -121,8 +140,8 @@ void PlayerUI::Draw()
 		InstantDrawer::DrawGraph3D(position[i], size[i].x, size[i].y, "white2x2", gaugeColor[i]);
 	}
 
-	waxCircleGaugeBack.Draw();
-	waxCircleGauge.Draw();
+	//描画は小さいものを後に描画(描画順を後ろから前に回していく)
+	GaugeDraw();
 
 	////描画範囲制限
 	//Renderer::SetScissorRects({ Minimap::GetInstance()->rect });
@@ -131,4 +150,87 @@ void PlayerUI::Draw()
 
 	////元の範囲に戻してあげる
 	//Renderer::SetScissorRects({ Minimap::GetInstance()->defaultRect });
+}
+
+void PlayerUI::GaugeReset()
+{
+	waxCircleGauges.clear();
+	waxCircleGaugeBacks.clear();
+}
+
+void PlayerUI::GaugeAdd()
+{
+	waxCircleGauges.emplace_back();
+	waxCircleGauges.back().Init();
+	//デフォルトと同じだけど明示的にしたいのでテクスチャ配置
+	waxCircleGauges.back().sprite.SetTexture(TextureManager::Load("./Resources/circleGauge.png", "circleGauge"));
+	waxCircleGauges.back().radian = 360.0f;
+	
+	waxCircleGaugeBacks.emplace_back();
+	waxCircleGaugeBacks.back().Init();
+	//デフォルトと同じだけど明示的にしたいのでテクスチャ配置
+	waxCircleGaugeBacks.back().sprite.SetTexture(TextureManager::Load("./Resources/circleGaugeBack.png", "circleGaugeBack"));
+	waxCircleGaugeBacks.back().radian = 360.0f;
+
+}
+
+void PlayerUI::GaugeUpdate()
+{
+	int32_t i = 0;//ここは1ゲージ目もこっちにしたら0にする
+	for (auto& gaugeOnce : waxCircleGauges)
+	{
+		float calRad = (baseRadian - i);//後ろの1.0fは変数化
+		gaugeOnce.radian = (360.f * calRad);
+
+		if (baseRadian <= i + 1)
+		{
+			gaugeOnce.radian -= 360.f;
+			gaugeOnce.radian = abs(gaugeOnce.radian);
+		}
+		else
+		{
+			gaugeOnce.radian = 0.0f;
+		}
+
+		gaugeOnce.sprite.mTransform.position = basePos;
+		gaugeOnce.sprite.mTransform.scale = baseScale * (sizeCoeff + sizeCoeffPlus * i);
+		gaugeOnce.Update();
+
+		i++;
+	}
+
+	i = 0;
+	for (auto& gaugeOnce : waxCircleGaugeBacks)
+	{
+		float calBackRad = (baseBackRadian - i);//後ろの1.0fは変数化
+		gaugeOnce.radian = (360.f * calBackRad);
+
+		if (baseBackRadian <= i + 1)
+		{
+			gaugeOnce.radian -= 360.f;
+			gaugeOnce.radian = abs(gaugeOnce.radian);
+		}
+		else
+		{
+			gaugeOnce.radian = 0.0f;
+		}
+
+		gaugeOnce.sprite.mTransform.position = basePos;
+		gaugeOnce.sprite.mTransform.scale = baseScale * (sizeCoeff + sizeCoeffPlus * i);
+		gaugeOnce.Update();
+		i++;
+	}
+}
+
+void PlayerUI::GaugeDraw()
+{	
+	for (int32_t i = (int32_t)waxCircleGauges.size() - 1;
+		i >= 0;
+		i--)
+	{
+		if (baseBackRadian >= i) {
+			waxCircleGaugeBacks[i].Draw();
+			waxCircleGauges[i].Draw();
+		}
+	}
 }
