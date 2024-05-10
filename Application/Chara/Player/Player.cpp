@@ -20,6 +20,7 @@
 #include "RAudio.h"
 #include "EnemyManager.h"
 #include "EventCaller.h"
+#include "FailedScene.h"
 
 Player::Player() :GameObject(),
 moveSpeed(1.f), moveAccelAmount(0.05f), isGround(true), hp(0), maxHP(10.f),
@@ -266,7 +267,7 @@ void Player::Update()
 		//死んだ瞬間なら遷移を呼ぶ
 		if (isAlive && !Util::debugBool) {
 			//シーン遷移
-			SceneManager::GetInstance()->Change<TitleScene, SimpleSceneTransition>();
+			SceneManager::GetInstance()->Change<FailedScene, SimpleSceneTransition>();
 		}
 		isAlive = false;
 	}

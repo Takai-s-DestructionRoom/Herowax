@@ -5,6 +5,7 @@
 #include "InstantDrawer.h"
 #include "SimpleSceneTransition.h"
 #include <RAudio.h>
+#include "LightObject.h"
 
 TitleScene::TitleScene()
 {
@@ -48,6 +49,8 @@ void TitleScene::Init()
 	floatingTimer.Reset();
 	flashingTimer.Reset();
 	cameraRotTimer.Reset();
+
+	SpotLightManager::GetInstance()->Init(&light);
 }
 
 void TitleScene::Update()
@@ -84,11 +87,15 @@ void TitleScene::Update()
 	light.Update();
 
 	skydome.TransferBuffer(Camera::sNowCamera->mViewProjection);
+
+	SpotLightManager::GetInstance()->Imgui();
+	SpotLightManager::GetInstance()->Update();
 }
 
 void TitleScene::Draw()
 {
-	skydome.Draw();
+	skydome.Draw();	
+	SpotLightManager::GetInstance()->Draw();
 
 	Level::Get()->Draw();
 
