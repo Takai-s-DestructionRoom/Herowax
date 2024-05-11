@@ -116,10 +116,10 @@ void TitleScene::Draw()
 		titleLogoPos.y + Easing::InQuad(floatingTimer.GetTimeRate()) * 15.f,
 		1.f, 1.f, 0.f, "title");
 	
-	InstantDrawer::DrawGraph(
+	/*InstantDrawer::DrawGraph(
 		320.f,
 		80.f,
-		0.6f, 0.6f, 0.f, "controller");
+		0.6f, 0.6f, 0.f, "controller");*/
 
 	if (flashingTimer.GetTimeRate() > 0.8f)
 	{
