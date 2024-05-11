@@ -112,9 +112,6 @@
     <Filter Include="ヘッダー ファイル\Application\Object">
       <UniqueIdentifier>{c8c44cc2-c2dd-4dcc-b6a1-d6fb23b8c015}</UniqueIdentifier>
     </Filter>
-    <Filter Include="ヘッダー ファイル\Application\Object\Tower">
-      <UniqueIdentifier>{1d506580-ad2a-47f4-aebd-9adddac14fdb}</UniqueIdentifier>
-    </Filter>
     <Filter Include="ヘッダー ファイル\Application\Object\EnemySpawner">
       <UniqueIdentifier>{65e2e1d4-60aa-4f58-a8a8-413f2ab72128}</UniqueIdentifier>
     </Filter>
@@ -330,6 +327,15 @@
     </Filter>
     <Filter Include="ソース ファイル\Application\UI">
       <UniqueIdentifier>{2327aeba-28e9-40b9-98bf-c4dbb26110b3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="シェーダー ファイル\Tiling">
+      <UniqueIdentifier>{d418b09a-778c-4300-8a63-e0fcd7b4a8e6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\Application\Object\Ground">
+      <UniqueIdentifier>{0d403815-a18b-46da-b467-b07099925a50}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\Application\Object\Ground">
+      <UniqueIdentifier>{35dc4136-2ebb-4ea1-b9b2-910d3ca9b8fa}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -780,9 +786,6 @@
     <ClCompile Include="Application\BlinkSpotLightObject.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Application\CircleGauge.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
     <ClCompile Include="Application\Scene\FailedScene.cpp">
       <Filter>ソース ファイル\Application\Scene</Filter>
     </ClCompile>
@@ -802,6 +805,12 @@
       <Filter>ソース ファイル\Application\UI</Filter>
     </ClCompile>
     <ClCompile Include="Application\UI\BossAppUI.cpp">
+      <Filter>ソース ファイル\Application\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="Application\Ground.cpp">
+      <Filter>ソース ファイル\Application\Object\Ground</Filter>
+    </ClCompile>
+    <ClCompile Include="Application\CircleGauge.cpp">
       <Filter>ソース ファイル\Application\UI</Filter>
     </ClCompile>
   </ItemGroup>
@@ -990,6 +999,12 @@
     <FxCompile Include="Shader\Particle2D\Particle2DGS.hlsl" />
     <FxCompile Include="Shader\Particle2D\Particle2DPS.hlsl" />
     <FxCompile Include="Shader\Particle2D\Particle2DVS.hlsl" />
+    <FxCompile Include="Shader\TilingBasic\TilingBasicVS.hlsl">
+      <Filter>シェーダー ファイル\Tiling</Filter>
+    </FxCompile>
+    <FxCompile Include="Shader\TilingBasic\TilingBasicPS.hlsl">
+      <Filter>シェーダー ファイル\Tiling</Filter>
+    </FxCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\2d\Sprite.h">
@@ -1463,9 +1478,6 @@
     <ClInclude Include="Application\BlinkSpotLightObject.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Application\CircleGauge.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
     <ClInclude Include="Application\Scene\FailedScene.h">
       <Filter>ヘッダー ファイル\Application\Scene</Filter>
     </ClInclude>
@@ -1485,6 +1497,12 @@
       <Filter>ヘッダー ファイル\Application\UI</Filter>
     </ClInclude>
     <ClInclude Include="Application\UI\BossAppUI.h">
+      <Filter>ヘッダー ファイル\Application\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="Application\Ground.h">
+      <Filter>ヘッダー ファイル\Application\Object\Ground</Filter>
+    </ClInclude>
+    <ClInclude Include="Application\CircleGauge.h">
       <Filter>ヘッダー ファイル\Application\UI</Filter>
     </ClInclude>
   </ItemGroup>
@@ -1577,6 +1595,9 @@
       <Filter>シェーダー ファイル\Radial360</Filter>
     </None>
     <None Include="Shader\Particle2D\Particle2D.hlsli" />
+    <None Include="Shader\TilingBasic\TilingBasic.hlsli">
+      <Filter>シェーダー ファイル\Tiling</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Text Include="hogehoge.txt" />

@@ -240,7 +240,7 @@ void Player::Update()
 		modelChange = false;
 	}
 	//ジャンプなくなったので、地面座標にピッタリくっつける
-	obj.mTransform.position.y = Level::Get()->ground.mTransform.position.y;
+	obj.mTransform.position.y = Level::Get()->ground.GetTransform().position.y;
 
 	//地面に埋ってたら
 	//if (obj.mTransform.position.y < Level::Get()->ground.mTransform.position.y)

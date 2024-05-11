@@ -1,0 +1,2 @@
+tilingX:100
+tilingY:100
