@@ -114,13 +114,13 @@ void FailedScene::Draw()
 	{
 		InstantDrawer::DrawGraph(
 			buttonUIPos.x, buttonUIPos.y,
-			0.8f, 0.8f, 0.f, TextureManager::Load("./Resources/UI/A_push.png", "AbuttonPush"));
+			0.12f, 0.12f, 0.f, TextureManager::Load("./Resources/UI/A_push.png", "AbuttonPush"));
 	}
 	else
 	{
 		InstantDrawer::DrawGraph(
 			buttonUIPos.x, buttonUIPos.y,
-			0.8f, 0.8f, 0.f, TextureManager::Load("./Resources/UI/A_normal.png", "Abutton"));
+			0.12f, 0.12f, 0.f, TextureManager::Load("./Resources/UI/A_normal.png", "Abutton"));
 	}
 
 	//更新
