@@ -46,22 +46,12 @@ void main(
         
         offset = mul(matZ, offset);
         
-        float4x4 rotMat = matWorld;
-        rotMat = mul(matZ, rotMat);
-        
-        matrix matFinal = mul(matViewProjection, matWorld);
-        
         //システム用頂点座標
         //オフセット分ずらす(ワールド座標)
-        float4 svpos = input[0].pos + offset;
-        
-        svpos = mul(matViewProjection, svpos);
-        float4 wpos = mul(matViewProjection, input[0].pos + offset);
-        //wpos = mul(matViewProjection, wpos);
+        float4 svpos = mul(matViewProjection, input[0].pos + offset);
         
         //ビュー、射影変換
-        //element.svpos = mul(matFinal, svpos);
-        element.svpos = wpos;
+        element.svpos = svpos;
         element.color = input[0].color;
         element.uv = kUV_array[i];
         

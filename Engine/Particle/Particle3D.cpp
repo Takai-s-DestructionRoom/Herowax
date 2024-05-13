@@ -449,6 +449,7 @@ void IEmitter3D::Add(uint32_t addNum, float life, Color color, TextureHandle tex
 
 		//決まった座標にエミッター自体の座標を足して正しい位置に
 		p.pos = randomPos + transform.position;
+		p.startPos = p.pos;
 		//飛んでく方向に合わせて回転
 		p.rot = randomRot;
 		p.plusRot = p.rot;

@@ -76,12 +76,12 @@ void TitleScene::Update()
 
 	if (RInput::GetInstance()->GetKey(DIK_C))
 	{
-		ParticleManager::GetInstance()->AddSimple2D(
-			{ 100.f,200.f }, { 0.1f,100.1f }, 20, 0.8f,
+		ParticleManager::GetInstance()->AddHoming2D(
+			{ 100.f,200.f }, { 20.1f,10.1f }, 20, 0.8f,
 			Color::kLightblue, "", 10.f, 15.f, { -1.f,-1.f }, { 1.f,1.f },
-			0.1f,
-			0.01f,0.05f,
-			0.f,0.f);
+			{ 0.f,0.f }, 0.f,
+			0.01f, 0.05f,
+			0.1f, 0.f);
 	}
 
 	ParticleManager::GetInstance()->Update();
@@ -109,7 +109,7 @@ void TitleScene::Update()
 
 void TitleScene::Draw()
 {
-	skydome.Draw();	
+	skydome.Draw();
 	SpotLightManager::GetInstance()->Draw();
 
 	Level::Get()->Draw();
@@ -118,7 +118,7 @@ void TitleScene::Draw()
 		titleLogoPos.x,
 		titleLogoPos.y + Easing::InQuad(floatingTimer.GetTimeRate()) * 15.f,
 		1.f, 1.f, 0.f, "title");
-	
+
 	/*InstantDrawer::DrawGraph(
 		320.f,
 		80.f,
