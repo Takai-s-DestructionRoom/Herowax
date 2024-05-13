@@ -240,7 +240,7 @@ void Player::Update()
 		modelChange = false;
 	}
 	//ジャンプなくなったので、地面座標にピッタリくっつける
-	obj.mTransform.position.y = Level::Get()->ground.mTransform.position.y;
+	obj.mTransform.position.y = Level::Get()->ground.GetTransform().position.y;
 
 	//地面に埋ってたら
 	//if (obj.mTransform.position.y < Level::Get()->ground.mTransform.position.y)
@@ -1033,16 +1033,8 @@ void Player::WaxCollect()
 			{
 				isCollectSuccess = true;
 
-				if (isCollectFan)
-				{
-					//ロウ回収
-					WaxManager::GetInstance()->CollectFan(collectColFan, GetFrontVec(), waxCollectAngle);
-				}
-				else
-				{
-					//ロウ回収
-					waxCollectAmount += WaxManager::GetInstance()->Collect(collectCol, waxCollectVertical);
-				}
+				//ロウ回収
+				waxCollectAmount += WaxManager::GetInstance()->Collect(collectCol, waxCollectVertical);
 			}
 			//腕吸収
 			if (boss->parts[(int32_t)PartsNum::LeftHand].isCollected && 

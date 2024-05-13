@@ -80,8 +80,7 @@ public:
 	/// <param name="waxCollectVertical"></param>
 	/// <returns>回収した数</returns>
 	int32_t Collect(ColPrimitive3D::Ray collider,float waxCollectVertical);
-	void CollectFan(ColPrimitive3D::Sphere collider,Vector3 vec, float angle);
-	
+
 	uint32_t GetWaxNum();
 
 	//満杯かどうか返す

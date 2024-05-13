@@ -1,5 +1,6 @@
 #pragma once
 #include <stdint.h>
+#include <string>
 #include "Vector3.h"
 #include "Easing.h"
 
@@ -15,33 +16,8 @@ public:
 class WaxNormal : public WaxState
 {
 public:
-
 	void Update(Wax* wax)override;
-};
-
-class WaxIgnite : public WaxState
-{
-public:
-	WaxIgnite();
-	void Update(Wax* wax)override;
-};
-
-class WaxBurning : public WaxState
-{
-public:
-	void Update(Wax* wax)override;
-
-private:
-	uint32_t fireAddFrame = 5;	//炎を何フレームに一回追加するか
-	uint32_t frameCount;		//フレームカウント
-};
-
-class WaxExtinguish : public WaxState
-{
-public:
-	void Update(Wax* wax)override;
-private:
-	Vector3 saveScale = { 0,0,0 };
+	static std::string GetStateStr();
 };
 
 class WaxCollect : public WaxState
@@ -49,19 +25,11 @@ class WaxCollect : public WaxState
 public:
 	WaxCollect();
 	void Update(Wax* wax)override;
+	static std::string GetStateStr();
 
 private:
 	float accel = 0.f;			//回収の加速度
 	bool isStart = true;
 	float oldTimeRate = 0.0f;
 	Vector3 startPos;
-};
-
-class WaxCollectFan : public WaxState
-{
-public:
-	void Update(Wax* wax)override;
-
-private:
-	float accel = 0.f;			//回収の加速度
 };

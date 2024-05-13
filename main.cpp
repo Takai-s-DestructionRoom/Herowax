@@ -62,7 +62,7 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 	}
 
 	//WindowsAPI
-	RWindow::SetWindowName(L"RKEngine");
+	RWindow::SetWindowName(L"ガチカケヒーロウ");
 	RWindow::Init();
 
 	//DirectX
