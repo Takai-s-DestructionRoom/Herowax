@@ -3,6 +3,12 @@
 #include "RImGui.h"
 #include "Parameter.h"
 
+Ground* Ground::GetInstance()
+{
+	static Ground instance;
+	return &instance;
+}
+
 void Ground::Init()
 {
 	obj = ModelObj(Model::Load("./Resources/Model/Ground/Ground.obj", "Ground"));

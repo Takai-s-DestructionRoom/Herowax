@@ -298,6 +298,16 @@ void Boss::Update()
 		ImGui::Checkbox("当たり判定描画", &isDrawCollider);
 		ImGui::Checkbox("バリアフラグ", &isBarrier);
 
+		if (ImGui::Button("腕にロウを追加")) {
+			parts[0].CreateWaxVisual();
+		}
+
+		for (auto& visual : parts[0].waxVisual)
+		{
+			ImGui::DragFloat3("腕のロウ",&visual.collider.pos.x);
+			ImGui::DragFloat3("腕のロウ",&visual.inter.x);
+		}
+
 		if (ImGui::TreeNode("調整項目_ボス")) {
 			ImGui::DragFloat("ボスが出現するまでの時間(最大)", &bossSpawnTimer.maxTime_, 0.1f);
 			if (ImGui::Button("出現タイマーリセット")) {

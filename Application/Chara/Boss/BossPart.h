@@ -2,6 +2,8 @@
 #include "GameObject.h"
 #include "Easing.h"
 #include "BossPartState.h"
+#include "ColPrimitive3D.h"
+#include "WaxVisual.h"
 
 class Parts : public GameObject
 {
@@ -15,6 +17,9 @@ public:
 	Vector3 collectPos = {0,0,0};
 
 	Easing::EaseTimer collectTimer;	//回収されるまでの時間(参照できるように外で管理)
+	
+	//見た目用のロウ
+	std::vector<WaxVisual> waxVisual;
 
 private:
 	//------------ HP関連 ------------//
@@ -62,6 +67,8 @@ public:
 	void SetMutekiMaxTime(float time) { mutekiTimer.maxTime_ = time; };
 
 	void DealDamage(int32_t damage);
+
+	void CreateWaxVisual();
 
 	//状態変更
 	template <typename ChangePartState>

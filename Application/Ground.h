@@ -11,6 +11,8 @@ struct TilingBuffer
 class Ground
 {
 public:
+	static Ground* GetInstance();
+
 	void Init();
 	void Update();
 	void Draw();
@@ -25,10 +27,10 @@ private:
 	Vector2 tiling = { 100,100 };
 
 	SRConstBuffer<TilingBuffer> tilingBuffer;
-	
+
 	RootSignature mRootSignature;
 	GraphicsPipeline mPipelineState;
-	
+
 	RootSignature GetRootSignature() {
 		return mRootSignature;
 	}
@@ -36,4 +38,7 @@ private:
 	GraphicsPipeline GetGraphicsPipeline() {
 		return mPipelineState;
 	}
+
+	Ground() {};
+	~Ground() {};
 };

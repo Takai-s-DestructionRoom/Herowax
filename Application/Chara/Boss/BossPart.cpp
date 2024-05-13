@@ -2,6 +2,8 @@
 #include "TimeManager.h"
 #include "Parameter.h"
 #include "ParticleManager.h"
+#include "WaxManager.h"
+#include "Boss.h"
 
 Parts::Parts() : GameObject()
 {
@@ -19,7 +21,6 @@ Parts::Parts() : GameObject()
 Parts::~Parts()
 {
 }
-
 
 void Parts::Init()
 {
@@ -123,6 +124,12 @@ void Parts::Update()
 	obj.mPaintDataBuff->dissolveVal = waxSolidCount >= requireWaxSolidCount ? 1.0f : 0.3f / (requireWaxSolidCount - 1) * waxSolidCount;
 	obj.mPaintDataBuff->color = Color(0.8f, 0.6f, 0.35f, 1.0f);
 	obj.mPaintDataBuff->slide += TimeManager::deltaTime;
+
+	for (auto& wax : waxVisual)
+	{
+		wax.SetTarget(obj.mTransform);
+		wax.Update();
+	}
 }
 
 void Parts::Draw()
@@ -162,4 +169,11 @@ void Parts::DealDamage(int32_t damage)
 		ParticleManager::GetInstance()->AddSimple(obj.mTransform.position,"part_solid");
 		ParticleManager::GetInstance()->AddHoming(obj.mTransform.position, "part_solid_homing");
 	}
+}
+
+void Parts::CreateWaxVisual()
+{
+	waxVisual.emplace_back();
+	//差分だけ保持
+	waxVisual.back().Init();
 }
