@@ -167,7 +167,7 @@ void IEmitter2D::Draw()
 		{
 			"POSITION",										//セマンティック名
 			0,												//同名のセマンティックがあるとき使うインデックス
-			DXGI_FORMAT_R32G32B32_FLOAT,					//要素数とビット数を表す
+			DXGI_FORMAT_R32G32_FLOAT,					//要素数とビット数を表す
 			0,												//入力スロットインデックス
 			D3D12_APPEND_ALIGNED_ELEMENT,					//データのオフセット地(左のは自動設定)
 			D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA,		//入力データ種別
@@ -191,6 +191,13 @@ void IEmitter2D::Draw()
 		//大きさ
 		{
 			"TEXCOORD", 0,
+			DXGI_FORMAT_R32_FLOAT, 0,
+			D3D12_APPEND_ALIGNED_ELEMENT,
+			D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0
+		},
+		//タイマー
+		{
+			"TIMER", 0,
 			DXGI_FORMAT_R32_FLOAT, 0,
 			D3D12_APPEND_ALIGNED_ELEMENT,
 			D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0
@@ -225,6 +232,7 @@ void IEmitter2D::TransferBuffer()
 	);
 
 	viewProjectionBuff->matrix = matProjection;
+	//viewProjectionBuff->cameraPos = Camera::sNowCamera->mViewProjection.mEye;
 }
 
 void IEmitter2D::Add(uint32_t addNum, float life, Color color, TextureHandle tex,
@@ -256,23 +264,24 @@ void IEmitter2D::Add(uint32_t addNum, float life, Color color, TextureHandle tex
 		pY = Util::GetRand(-transform.scale.y, transform.scale.y);
 		randomPos = { pX, pY };
 
-		//生成しない範囲があるなら
-		if (rejectRadius > 0.f)
-		{
-			//生成しない範囲外になるまで座標決めなおす
-			while ((randomPos - transform.position).Length() < rejectRadius)
-			{
-				pX = Util::GetRand(-transform.scale.x, transform.scale.x);
-				pY = Util::GetRand(-transform.scale.y, transform.scale.y);
+		rejectRadius;
+		////生成しない範囲があるなら
+		//if (rejectRadius > 0.f)
+		//{
+		//	//生成しない範囲外になるまで座標決めなおす
+		//	while ((randomPos - transform.position).Length() < rejectRadius)
+		//	{
+		//		pX = Util::GetRand(-transform.scale.x, transform.scale.x);
+		//		pY = Util::GetRand(-transform.scale.y, transform.scale.y);
 
-				randomPos = { pX, pY };
-			}
-		}
+		//		randomPos = { pX, pY };
+		//	}
+		//}
 
 		//引数の範囲から大きさランダムで決定
 		float sX = Util::GetRand(minScale, maxScale);
-		float sY = Util::GetRand(minScale, maxScale);
-		Vector2 randomScale(sX, sY);
+		/*float sY = Util::GetRand(minScale, maxScale);
+		Vector2 randomScale(sX, sY);*/
 		//引数の範囲から飛ばす方向ランダムで決定
 		float vX = Util::GetRand(minVelo.x, maxVelo.x);
 		float vY = Util::GetRand(minVelo.y, maxVelo.y);
