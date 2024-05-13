@@ -1,2 +1,2 @@
-tilingX:100
-tilingY:100
+tilingX:50
+tilingY:50
