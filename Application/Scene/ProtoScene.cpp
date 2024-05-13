@@ -328,8 +328,6 @@ void ProtoScene::Update()
 							enemy->collectPos = player.GetPos();
 							enemy->isCollect = true;
 							enemy->ChangeState<EnemyCollect>();
-
-							player.waxCollectAmount++;
 						}
 					}
 				}
@@ -378,10 +376,10 @@ void ProtoScene::Update()
 			enemy->collectPos = player.GetPos();
 			enemy->isCollect = true;
 			enemy->ChangeState<EnemyCollect>();
-
-			player.waxCollectAmount++;
 		}
 	}
+
+	player.waxCollectAmount += EnemyManager::GetInstance()->collectNum;
 
 	if (isHitSound && !player.soundFlag) {
 		//ここで攻撃のヒット音を鳴らす

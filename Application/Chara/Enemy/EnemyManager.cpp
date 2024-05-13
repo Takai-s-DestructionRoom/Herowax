@@ -336,6 +336,16 @@ void EnemyManager::Draw()
 
 void EnemyManager::Delete()
 {
+	collectNum = 0;
+
+	for (auto& enemy : enemys)
+	{
+		if (enemy->isAlive == false)
+		{
+			collectNum++;
+		}
+	}
+
 	//死んでるならリストから削除
 	enemys.remove_if([](std::unique_ptr<Enemy>& enemy) {
 		return !enemy->GetIsAlive();
