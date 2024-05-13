@@ -74,13 +74,6 @@ void TitleScene::Update()
 
 	Level::Get()->Update();
 
-	if (RInput::GetInstance()->GetKey(DIK_C))
-	{
-		ParticleManager::GetInstance()->AddSimple2D(
-			{ 640.f,360.f }, { 1,1 }, 10, 1.f,
-			Color::kWhite, "", 3.f, 5.f, { -1.f,-1.f }, { 1.f,1.f });
-	}
-
 	ParticleManager::GetInstance()->Update();
 
 	//F6かメニューボタン押されたらプロトシーンへ
@@ -106,7 +99,7 @@ void TitleScene::Update()
 
 void TitleScene::Draw()
 {
-	skydome.Draw();	
+	skydome.Draw();
 	SpotLightManager::GetInstance()->Draw();
 
 	Level::Get()->Draw();
@@ -115,7 +108,7 @@ void TitleScene::Draw()
 		titleLogoPos.x,
 		titleLogoPos.y + Easing::InQuad(floatingTimer.GetTimeRate()) * 15.f,
 		1.f, 1.f, 0.f, "title");
-	
+
 	/*InstantDrawer::DrawGraph(
 		320.f,
 		80.f,

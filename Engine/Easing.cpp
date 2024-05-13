@@ -295,6 +295,14 @@ Vector3 InQuadVec3(const Vector3& start, const Vector3& end, float timerate)
 	return result;
 }
 
+Vector2 InQuadVec2(const Vector2& start, const Vector2& end, float timerate)
+{
+	Vector2 result;
+	result.x = Easing::InQuad(start.x, end.x, timerate);
+	result.y = Easing::InQuad(start.y, end.y, timerate);
+	return result;
+}
+
 Vector3 OutQuadVec3(const Vector3& start, const Vector3& end, float timerate)
 {
 	Vector3 result;

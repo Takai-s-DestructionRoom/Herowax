@@ -5,6 +5,7 @@
 #include "SimpleParticle.h"
 #include "SimpleParticle2D.h"
 #include "HomingParticle.h"
+#include "HomingParticle2D.h"
 
 ParticleManager* ParticleManager::GetInstance()
 {
@@ -209,4 +210,16 @@ void ParticleManager::AddHoming(
 		addNum, life, color, tex, minScale, maxScale,
 		minVelo, maxVelo, accelPower, minRot, maxRot,
 		growingTimer, endScale, isGravity, isBillboard);
+}
+
+void ParticleManager::AddHoming2D(Vector2 emitPos, Vector2 emitScale, uint32_t addNum, float life, Color color, TextureHandle tex, float minScale, float maxScale, Vector2 minVelo, Vector2 maxVelo, Vector2 targetPos, float accelPower, float minRot, float maxRot, float growingTimer, float endScale, bool isGravity)
+{
+	emitters2D_.emplace_back();
+	emitters2D_.back() = std::make_unique<HomingParticle2D>(targetPos);
+	emitters2D_.back()->SetPos(emitPos);
+	emitters2D_.back()->SetScale(emitScale);
+	emitters2D_.back()->Add(
+		addNum, life, color, tex, minScale, maxScale,
+		minVelo, maxVelo, accelPower, minRot, maxRot,
+		growingTimer, endScale, isGravity);
 }

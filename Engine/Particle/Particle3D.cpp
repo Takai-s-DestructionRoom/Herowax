@@ -162,9 +162,7 @@ void IEmitter3D::Draw()
 		pipedesc.RasterizerState.CullMode = D3D12_CULL_MODE_NONE;
 		pipedesc.RasterizerState.FillMode = D3D12_FILL_MODE_SOLID;
 		pipedesc.DepthStencilState.DepthWriteMask = D3D12_DEPTH_WRITE_MASK_ZERO;
-		//pipedesc.RasterizerState.DepthClipEnable = false;
 		pipedesc.BlendState.AlphaToCoverageEnable = false;
-		//pipedesc.BlendState.IndependentBlendEnable = false;
 
 		//加算合成
 		pipedesc.BlendState.RenderTarget[0].BlendOpAlpha = D3D12_BLEND_OP_ADD;
@@ -449,6 +447,7 @@ void IEmitter3D::Add(uint32_t addNum, float life, Color color, TextureHandle tex
 
 		//決まった座標にエミッター自体の座標を足して正しい位置に
 		p.pos = randomPos + transform.position;
+		p.startPos = p.pos;
 		//飛んでく方向に合わせて回転
 		p.rot = randomRot;
 		p.plusRot = p.rot;

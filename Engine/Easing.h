@@ -121,6 +121,7 @@ namespace Easing
 
 //イージング関数
 Vector3 InQuadVec3(const Vector3& start, const Vector3& end, float timerate);
+Vector2 InQuadVec2(const Vector2& start, const Vector2& end, float timerate);
 //イージング関数
 Vector3 OutQuadVec3(const Vector3& start, const Vector3& end, float timerate);
 //イージング関数

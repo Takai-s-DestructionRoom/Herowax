@@ -121,6 +121,7 @@ void IEmitter2D::Draw()
 
 	pipedesc.RasterizerState.CullMode = D3D12_CULL_MODE_NONE;
 	pipedesc.RasterizerState.FillMode = D3D12_FILL_MODE_SOLID;
+	pipedesc.DepthStencilState.DepthWriteMask = D3D12_DEPTH_WRITE_MASK_ZERO;
 	pipedesc.BlendState.AlphaToCoverageEnable = false;
 
 	//加算合成
@@ -130,6 +131,13 @@ void IEmitter2D::Draw()
 	pipedesc.BlendState.RenderTarget[0].BlendOp = D3D12_BLEND_OP_ADD;
 	pipedesc.BlendState.RenderTarget[0].SrcBlend = D3D12_BLEND_SRC_ALPHA;
 	pipedesc.BlendState.RenderTarget[0].DestBlend = D3D12_BLEND_ONE;
+
+	/*pipedesc.BlendState.RenderTarget[0].BlendOpAlpha = D3D12_BLEND_OP_ADD;
+	pipedesc.BlendState.RenderTarget[0].SrcBlendAlpha = D3D12_BLEND_SRC_ALPHA;
+	pipedesc.BlendState.RenderTarget[0].DestBlendAlpha = D3D12_BLEND_ONE;
+	pipedesc.BlendState.RenderTarget[0].BlendOp = D3D12_BLEND_OP_ADD;
+	pipedesc.BlendState.RenderTarget[0].SrcBlend = D3D12_BLEND_SRC_ALPHA;
+	pipedesc.BlendState.RenderTarget[0].DestBlend = D3D12_BLEND_INV_SRC_ALPHA;*/
 
 	RootSignature mRootSignature = RDirectX::GetDefRootSignature();
 
@@ -167,7 +175,7 @@ void IEmitter2D::Draw()
 		{
 			"POSITION",										//セマンティック名
 			0,												//同名のセマンティックがあるとき使うインデックス
-			DXGI_FORMAT_R32G32B32_FLOAT,					//要素数とビット数を表す
+			DXGI_FORMAT_R32G32_FLOAT,					//要素数とビット数を表す
 			0,												//入力スロットインデックス
 			D3D12_APPEND_ALIGNED_ELEMENT,					//データのオフセット地(左のは自動設定)
 			D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA,		//入力データ種別
@@ -191,6 +199,13 @@ void IEmitter2D::Draw()
 		//大きさ
 		{
 			"TEXCOORD", 0,
+			DXGI_FORMAT_R32_FLOAT, 0,
+			D3D12_APPEND_ALIGNED_ELEMENT,
+			D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0
+		},
+		//タイマー
+		{
+			"TIMER", 0,
 			DXGI_FORMAT_R32_FLOAT, 0,
 			D3D12_APPEND_ALIGNED_ELEMENT,
 			D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0
@@ -225,6 +240,7 @@ void IEmitter2D::TransferBuffer()
 	);
 
 	viewProjectionBuff->matrix = matProjection;
+	//viewProjectionBuff->cameraPos = Camera::sNowCamera->mViewProjection.mEye;
 }
 
 void IEmitter2D::Add(uint32_t addNum, float life, Color color, TextureHandle tex,
@@ -256,23 +272,24 @@ void IEmitter2D::Add(uint32_t addNum, float life, Color color, TextureHandle tex
 		pY = Util::GetRand(-transform.scale.y, transform.scale.y);
 		randomPos = { pX, pY };
 
-		//生成しない範囲があるなら
-		if (rejectRadius > 0.f)
-		{
-			//生成しない範囲外になるまで座標決めなおす
-			while ((randomPos - transform.position).Length() < rejectRadius)
-			{
-				pX = Util::GetRand(-transform.scale.x, transform.scale.x);
-				pY = Util::GetRand(-transform.scale.y, transform.scale.y);
+		rejectRadius;
+		////生成しない範囲があるなら
+		//if (rejectRadius > 0.f)
+		//{
+		//	//生成しない範囲外になるまで座標決めなおす
+		//	while ((randomPos - transform.position).Length() < rejectRadius)
+		//	{
+		//		pX = Util::GetRand(-transform.scale.x, transform.scale.x);
+		//		pY = Util::GetRand(-transform.scale.y, transform.scale.y);
 
-				randomPos = { pX, pY };
-			}
-		}
+		//		randomPos = { pX, pY };
+		//	}
+		//}
 
 		//引数の範囲から大きさランダムで決定
 		float sX = Util::GetRand(minScale, maxScale);
-		float sY = Util::GetRand(minScale, maxScale);
-		Vector2 randomScale(sX, sY);
+		/*float sY = Util::GetRand(minScale, maxScale);
+		Vector2 randomScale(sX, sY);*/
 		//引数の範囲から飛ばす方向ランダムで決定
 		float vX = Util::GetRand(minVelo.x, maxVelo.x);
 		float vY = Util::GetRand(minVelo.y, maxVelo.y);
@@ -282,6 +299,7 @@ void IEmitter2D::Add(uint32_t addNum, float life, Color color, TextureHandle tex
 
 		//決まった座標にエミッター自体の座標を足して正しい位置に
 		p.pos = randomPos + transform.position;
+		p.startPos = p.pos;
 		//飛んでく方向に合わせて回転
 		p.rot = randomRot;
 		p.plusRot = p.rot;

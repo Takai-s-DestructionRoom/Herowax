@@ -186,4 +186,6 @@ namespace Util {
 
     //指定したファイル名から一行ずつ文字列として返す
     std::vector<std::string> GetFileData(const std::string& fullPath);
+
+    Vector2 GetScreenPos(Vector3 wpos);
 }

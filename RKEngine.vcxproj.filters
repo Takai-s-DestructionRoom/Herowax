@@ -822,6 +822,9 @@
     <ClCompile Include="Application\WaxVisual.cpp">
       <Filter>ソース ファイル\Application\Object\WaxVisual</Filter>
     </ClCompile>
+    <ClCompile Include="Engine\Particle\HomingParticle2D.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Shader\Basic\BasicPS.hlsl">
@@ -1516,6 +1519,9 @@
     </ClInclude>
     <ClInclude Include="Application\WaxVisual.h">
       <Filter>ヘッダー ファイル\Application\WaxVisual</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Particle\HomingParticle2D.h">
+      <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
