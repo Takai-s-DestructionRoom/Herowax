@@ -27,7 +27,7 @@ moveSpeed(1.f), moveAccelAmount(0.05f), isGround(true), hp(0), maxHP(10.f),
 isJumping(false), jumpTimer(0.2f), jumpHeight(0.f), maxJumpHeight(5.f), jumpPower(2.f), jumpSpeed(0.f),
 isAttack(false), atkSize(3.f), atkPower(1),
 atkCoolTimer(0.3f), atkTimer(0.5f), atkHeight(1.f), solidTimer(5.f),
-isFireStock(false), isWaxStock(true), isCollectFan(false), waxCollectAmount(0)
+isFireStock(false), isWaxStock(true), waxCollectAmount(0)
 {
 	std::map<std::string, std::string> extract = Parameter::Extract("Player");
 	moveSpeed = Parameter::GetParam(extract, "移動速度", 1.f);
@@ -61,14 +61,7 @@ isFireStock(false), isWaxStock(true), isCollectFan(false), waxCollectAmount(0)
 	collectRangeModel.mTuneMaterial.mDiffuse = Vector3::ZERO;
 	collectRangeModel.mTuneMaterial.mSpecular = Vector3::ZERO;
 
-	collectRangeModelCircle = ModelObj(Model::Load("./Resources/Model/wax/wax.obj", "Wax", true));
-	waxCollectDist = Parameter::GetParam(extract, "ロウ回収半径", 5.f);
-	waxCollectAngle = Parameter::GetParam(extract, "ロウ回収角度", 90.f);
 	waxCollectVertical = Parameter::GetParam(extract, "ロウ回収縦幅", 1000.f);
-	collectRangeModelCircle.mTuneMaterial.mColor.a = Parameter::GetParam(extract, "範囲(扇)objの透明度", 0.5f);
-
-	collectRangeModelRayLeft = ModelObj(Model::Load("./Resources/Model/Cube.obj", "Cube", true));
-	collectRangeModelRayRight = ModelObj(Model::Load("./Resources/Model/Cube.obj", "Cube", true));
 
 	attackState = std::make_unique<PlayerNormal>();
 
@@ -508,15 +501,7 @@ void Player::Update()
 			ImGui::SliderFloat("範囲objの透明度", &collectRangeModel.mTuneMaterial.mColor.a, 0.f, 1.f);
 			ImGui::InputFloat("ロウ回収範囲(縦幅)", &waxCollectVertical, 1.f);
 			ImGui::InputFloat("ロウ回収の時間", &WaxManager::GetInstance()->collectTime, 1.f);
-			if (ImGui::TreeNode("扇"))
-			{
-				ImGui::SliderFloat("ロウ回収半径", &waxCollectDist, 0.f, 100.f);
-				ImGui::SliderFloat("ロウ回収角度", &waxCollectAngle, 1.f, 180.f);
-				ImGui::SliderFloat("範囲(扇)objの透明度", &collectRangeModelCircle.mTuneMaterial.mColor.a, 0.f, 1.f);
-				ImGui::Text("回収できる状態か:%d", WaxManager::GetInstance()->isCollected);
-				ImGui::TreePop();
-			}
-
+			
 			ImGui::TreePop();
 		}
 		if (ImGui::TreeNode("当たり判定"))
@@ -598,16 +583,7 @@ void Player::Draw()
 			humanObj.Draw();
 		}
 
-		if (isCollectFan)
-		{
-			collectRangeModelCircle.Draw();
-			collectRangeModelRayLeft.Draw();
-			collectRangeModelRayRight.Draw();
-		}
-		else
-		{
-			collectRangeModel.Draw();
-		}
+		collectRangeModel.Draw();
 		
 		//なんのイベントも呼ばれていないならUIを描画
 		if (EventCaller::GetNowEventStr() == "") {
@@ -950,25 +926,9 @@ void Player::PabloAttack()
 
 void Player::WaxCollect()
 {
-	//扇の範囲表す用レイ
-	collectRangeModelRayLeft.mTransform = obj.mTransform;
-	collectRangeModelRayRight.mTransform = obj.mTransform;
-	collectRangeModelRayLeft.mTransform.scale = { 0.1f,0.1f,waxCollectDist * 2.f };
-	collectRangeModelRayRight.mTransform.scale = { 0.1f,0.1f,waxCollectDist * 2.f };
-	collectRangeModelRayLeft.mTransform.rotation.y += Util::AngleToRadian(-waxCollectAngle * 0.5f);
-	collectRangeModelRayRight.mTransform.rotation.y += Util::AngleToRadian(waxCollectAngle * 0.5f);
-	
-	collectRangeModelRayLeft.mTransform.UpdateMatrix();
-	collectRangeModelRayLeft.TransferBuffer(Camera::sNowCamera->mViewProjection);
-	collectRangeModelRayRight.mTransform.UpdateMatrix();
-	collectRangeModelRayRight.TransferBuffer(Camera::sNowCamera->mViewProjection);
-
 	//トランスフォームはプレイヤー基準に
 	collectRangeModel.mTransform = obj.mTransform;
 	collectRangeModel.mTransform.scale = { waxCollectRange,0.1f,waxCollectVertical };
-
-	collectRangeModelCircle.mTransform = obj.mTransform;
-	collectRangeModelCircle.mTransform.scale = { waxCollectDist,0.1f,waxCollectDist };
 
 	//当たり判定で使うレイの設定
 	//当たり判定で使うレイの設定
@@ -990,13 +950,6 @@ void Player::WaxCollect()
 	collectRangeModel.mTransform.UpdateMatrix();
 	collectRangeModel.TransferBuffer(Camera::sNowCamera->mViewProjection);
 
-	collectRangeModelCircle.mTransform.UpdateMatrix();
-	collectRangeModelCircle.TransferBuffer(Camera::sNowCamera->mViewProjection);
-
-	//当たり判定で使う球の設定
-	collectColFan.pos = GetFootPos();
-	collectColFan.r = waxCollectDist;
-
 	//イベント中でなければ入る
 	if (EventCaller::GetNowEventStr() == "") {
 		//回収したロウに応じてストック増やす
@@ -1005,9 +958,19 @@ void Player::WaxCollect()
 			if (waxCollectAmount > 0)
 			{
 				waxStock += waxCollectAmount;
-				waxCollectAmount = 0;
 				//音鳴らす
 				RAudio::Play("eCollect");
+
+				ParticleManager::GetInstance()->AddHoming2D(
+					Util::GetScreenPos(obj.mTransform.position), { 150.f,150.f }, waxCollectAmount, 0.8f,
+					Color::kWaxColor,
+					TextureManager::Load("./Resources/Particle/particle_simple.png", "particleSimple"),
+					150.f, 180.f, { -1.f,-1.f }, { 1.f,1.f },
+					{ 50.f,50.f }, 0.f,
+					0.01f, 0.05f,
+					0.1f, 0.f);
+
+				waxCollectAmount = 0;
 			}
 
 			//最大量を超えて回収してたら最大量を増やす
@@ -1016,6 +979,15 @@ void Player::WaxCollect()
 				maxWaxStock = waxStock;
 				//音鳴らす
 				RAudio::Play("eCollect");
+
+				/*ParticleManager::GetInstance()->AddHoming2D(
+					Util::GetScreenPos(obj.mTransform.position), { 150.f,150.f }, waxCollectAmount, 0.8f,
+					Color::kWaxColor,
+					TextureManager::Load("./Resources/Particle/particle_simple.png", "particleSimple"),
+					150.f, 180.f, { -1.f,-1.f }, { 1.f,1.f },
+					{ 50.f,50.f }, 0.f,
+					0.01f, 0.05f,
+					0.1f, 0.f);*/
 
 				waxUI.Start();
 			}

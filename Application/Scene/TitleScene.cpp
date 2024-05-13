@@ -74,16 +74,6 @@ void TitleScene::Update()
 
 	Level::Get()->Update();
 
-	if (RInput::GetInstance()->GetKey(DIK_C))
-	{
-		ParticleManager::GetInstance()->AddHoming2D(
-			{ 100.f,200.f }, { 20.1f,10.1f }, 20, 0.8f,
-			Color::kLightblue, "", 10.f, 15.f, { -1.f,-1.f }, { 1.f,1.f },
-			{ 0.f,0.f }, 0.f,
-			0.01f, 0.05f,
-			0.1f, 0.f);
-	}
-
 	ParticleManager::GetInstance()->Update();
 
 	//F6かメニューボタン押されたらプロトシーンへ

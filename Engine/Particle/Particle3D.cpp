@@ -162,9 +162,7 @@ void IEmitter3D::Draw()
 		pipedesc.RasterizerState.CullMode = D3D12_CULL_MODE_NONE;
 		pipedesc.RasterizerState.FillMode = D3D12_FILL_MODE_SOLID;
 		pipedesc.DepthStencilState.DepthWriteMask = D3D12_DEPTH_WRITE_MASK_ZERO;
-		//pipedesc.RasterizerState.DepthClipEnable = false;
 		pipedesc.BlendState.AlphaToCoverageEnable = false;
-		//pipedesc.BlendState.IndependentBlendEnable = false;
 
 		//加算合成
 		pipedesc.BlendState.RenderTarget[0].BlendOpAlpha = D3D12_BLEND_OP_ADD;

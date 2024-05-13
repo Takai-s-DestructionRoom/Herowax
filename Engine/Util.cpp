@@ -1,6 +1,7 @@
 #include "Util.h"
 #include <cassert>
 #include "PathUtil.h"
+#include "Camera.h"
 #include <fstream>
 
 using namespace std;
@@ -278,9 +279,22 @@ std::vector<std::string> Util::GetFileData(const std::string& fullPath)
 	std::string line = "";
 	while (getline(file, line)) {
 		std::istringstream line_stream(line);
-	
+
 		result.push_back(line);
 	}
 
 	return result;
+}
+
+Vector2 Util::GetScreenPos(Vector3 wpos)
+{
+	Vector2 screenPos =
+		Camera::sNowCamera->mViewProjection.WorldToScreen(
+			wpos,
+			0.f,
+			0.f,
+			(float)RWindow::GetInstance()->GetWidth(),
+			(float)RWindow::GetInstance()->GetHeight(), 0, 1);
+
+	return screenPos;
 }
