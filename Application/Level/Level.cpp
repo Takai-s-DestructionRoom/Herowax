@@ -8,6 +8,7 @@
 #include "Tank.h"
 #include "BombSolider.h"
 
+
 Level::Level()
 {
 }
@@ -24,6 +25,8 @@ void Level::Reset()
 	EnemyManager::GetInstance()->Init();
 	objects.clear();
 	wall.clear();
+
+	ground = Ground::GetInstance();
 }
 
 void Level::Reload()
@@ -56,7 +59,7 @@ void Level::Update()
 
 	EnemyManager::GetInstance()->Update();
 
-	ground.Update();
+	ground->Update();
 
 	for (auto& tempWall : Level::Get()->wall)
 	{
@@ -71,7 +74,7 @@ void Level::Draw()
 	//spawnerManager->Draw();
 	
 	EnemyManager::GetInstance()->Draw();
-	ground.Draw();
+	ground->Draw();
 
 	for (auto& tempWall : Level::Get()->wall)
 	{
@@ -97,8 +100,8 @@ void Level::Extract(const std::string& handle)
 	{
 		if (objectData->setObjectName == "Ground")
 		{
-			ground.Init();
-			ground.SetStatus(objectData->translation,
+			ground->Init();
+			ground->SetStatus(objectData->translation,
 				objectData->scaling,
 				objectData->rotation);
 		}

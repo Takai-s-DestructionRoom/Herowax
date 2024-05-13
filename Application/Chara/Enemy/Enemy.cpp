@@ -202,8 +202,8 @@ void Enemy::BaseUpdate()
 	obj.mTransform.position += moveVec;
 
 	//地面座標を下回るなら戻す
-	if (obj.mTransform.position.y <= Level::Get()->ground.GetTransform().position.y) {
-		obj.mTransform.position.y = Level::Get()->ground.GetTransform().position.y;
+	if (obj.mTransform.position.y <= Level::Get()->ground->GetTransform().position.y) {
+		obj.mTransform.position.y = Level::Get()->ground->GetTransform().position.y;
 		moveVec.y = 0;
 	}
 

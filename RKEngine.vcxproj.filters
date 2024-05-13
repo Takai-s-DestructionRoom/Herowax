@@ -337,6 +337,12 @@
     <Filter Include="ヘッダー ファイル\Application\Object\Ground">
       <UniqueIdentifier>{35dc4136-2ebb-4ea1-b9b2-910d3ca9b8fa}</UniqueIdentifier>
     </Filter>
+    <Filter Include="ソース ファイル\Application\Object\WaxVisual">
+      <UniqueIdentifier>{ad906080-49f0-44aa-998c-bb74e26cc9d0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\Application\WaxVisual">
+      <UniqueIdentifier>{8cd145cc-d945-4103-beac-a607148c8369}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Engine\2d\Sprite.cpp">
@@ -812,6 +818,9 @@
     </ClCompile>
     <ClCompile Include="Application\CircleGauge.cpp">
       <Filter>ソース ファイル\Application\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="Application\WaxVisual.cpp">
+      <Filter>ソース ファイル\Application\Object\WaxVisual</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -1504,6 +1513,9 @@
     </ClInclude>
     <ClInclude Include="Application\CircleGauge.h">
       <Filter>ヘッダー ファイル\Application\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="Application\WaxVisual.h">
+      <Filter>ヘッダー ファイル\Application\WaxVisual</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
