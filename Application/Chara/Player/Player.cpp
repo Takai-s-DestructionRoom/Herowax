@@ -1033,16 +1033,8 @@ void Player::WaxCollect()
 			{
 				isCollectSuccess = true;
 
-				if (isCollectFan)
-				{
-					//ロウ回収
-					WaxManager::GetInstance()->CollectFan(collectColFan, GetFrontVec(), waxCollectAngle);
-				}
-				else
-				{
-					//ロウ回収
-					waxCollectAmount += WaxManager::GetInstance()->Collect(collectCol, waxCollectVertical);
-				}
+				//ロウ回収
+				waxCollectAmount += WaxManager::GetInstance()->Collect(collectCol, waxCollectVertical);
 			}
 			//腕吸収
 			if (boss->parts[(int32_t)PartsNum::LeftHand].isCollected && 

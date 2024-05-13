@@ -6,7 +6,7 @@ atten0:0_0_0
 dir0:0_-1_0
 factorAngleX0:0.26
 factorAngleY0:0.46
-Color0:5_5_3_1
+Color0:10_10_6_1
 exist1:1
 lightType1:Blink
 active1:1
@@ -15,7 +15,7 @@ atten1:0_0_0
 dir1:0_-1_0.3
 factorAngleX1:0.12
 factorAngleY1:0.43
-Color1:3_3_2_1
+Color1:6_6_4_1
 exist2:1
 lightType2:Blink
 active2:1
@@ -24,7 +24,7 @@ atten2:0_0_0
 dir2:-0.3_-1_0
 factorAngleX2:0.13
 factorAngleY2:0.43
-Color2:3_3_2_1
+Color2:6_6_4_1
 exist3:1
 lightType3:Blink
 active3:1
@@ -33,7 +33,7 @@ atten3:0_0_0
 dir3:0_-1_-0.3
 factorAngleX3:0.13
 factorAngleY3:0.43
-Color3:3_3_2_1
+Color3:6_6_4_1
 exist4:1
 lightType4:Blink
 active4:1
@@ -42,4 +42,4 @@ atten4:0_0_0
 dir4:0.3_-1_0
 factorAngleX4:0.13
 factorAngleY4:0.43
-Color4:3_3_2_1
+Color4:6_6_4_1

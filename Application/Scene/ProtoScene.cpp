@@ -269,6 +269,8 @@ void ProtoScene::Update()
 					//一応1ダメージ(ダメージ量に応じてロウのかかり具合も進行)
 					Boss::GetInstance()->parts[i].DealDamage(player.GetAttackPower());
 					isHitSound = true;
+				
+					
 				}
 			}
 		}
@@ -309,7 +311,7 @@ void ProtoScene::Update()
 				}
 
 				//回収中ものと通常の状態なら
-				if (isCollision && wax->stateStr == "WaxCollect")
+				if (isCollision && wax->stateStr == WaxCollect::GetStateStr())
 				{
 					//固まってないならダメージ
 					if (!enemy->GetIsSolid())
