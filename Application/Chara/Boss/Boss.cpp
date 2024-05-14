@@ -302,10 +302,8 @@ void Boss::Update()
 			parts[0].CreateWaxVisual();
 		}
 
-		for (auto& visual : parts[0].waxVisual)
-		{
-			ImGui::DragFloat3("腕のロウ",&visual.collider.pos.x);
-			ImGui::DragFloat3("腕のロウ",&visual.inter.x);
+		if (ImGui::Button("腕にロウを全消し")) {
+			parts[0].waxVisual.clear();
 		}
 
 		if (ImGui::TreeNode("調整項目_ボス")) {

@@ -125,10 +125,33 @@ void Parts::Update()
 	obj.mPaintDataBuff->color = Color(0.8f, 0.6f, 0.35f, 1.0f);
 	obj.mPaintDataBuff->slide += TimeManager::deltaTime;
 
-	for (auto& wax : waxVisual)
+	for (int32_t i = 0; i < 1; i++)
 	{
+		waxVisualColliders[i].pos = collider.pos;
+		waxVisualColliders[i].r = collider.r / 3;
+	}
+
+	for (auto& wax : waxVisual)
+	{	
 		wax.SetTarget(obj.mTransform);
 		wax.Update();
+		for (int32_t i = 0; i < 1; i++)
+		{
+			//当たり判定
+			while (ColPrimitive3D::CheckSphereToSphere(wax.collider, waxVisualColliders[i]))
+			{
+				Vector3 repulsionVec = wax.collider.pos - waxVisualColliders[i].pos;
+				
+				wax.collider.pos += repulsionVec;
+				
+				//もしここが0になった場合無限ループするので抜ける
+				if (repulsionVec.LengthSq() == 0) {
+					break;
+				}
+			}
+		}
+
+		wax.TransferBuffer();
 	}
 }
 
@@ -175,5 +198,6 @@ void Parts::CreateWaxVisual()
 {
 	waxVisual.emplace_back();
 	//差分だけ保持
+	waxVisual.back().SetTarget(obj.mTransform);
 	waxVisual.back().Init();
 }

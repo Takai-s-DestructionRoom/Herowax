@@ -129,6 +129,24 @@ void GameObject::UpdateCollider()
 	drawerObj.TransferBuffer(Camera::sNowCamera->mViewProjection);
 }
 
+bool GameObject::GetHitBack(GameObject& back, const GameObject& hit)
+{
+	if (ColPrimitive3D::CheckSphereToSphere(back.collider, hit.collider)) {
+		Vector3 repulsionVec = back.GetPos() - hit.GetPos();
+		repulsionVec.Normalize();
+		repulsionVec.y = 0;
+
+		//一旦これだけ無理やり足す
+		back.obj.mTransform.position += repulsionVec;
+
+		//コライダーがもう一度当たらないようにコライダー更新
+		back.UpdateCollider();
+
+		return true;
+	}
+	return false;
+}
+
 void GameObject::BrightTransferBuffer(const ViewProjection& view)
 {
 	obj.TransferBuffer(view);

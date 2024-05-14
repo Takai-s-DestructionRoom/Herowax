@@ -399,7 +399,6 @@ void ProtoScene::Update()
 		}
 	}
 
-
 	player.Update();
 	Boss::GetInstance()->Update();
 	Level::Get()->Update();

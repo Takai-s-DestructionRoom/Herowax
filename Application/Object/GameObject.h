@@ -85,6 +85,13 @@ public:
 	//当たり判定の更新
 	void UpdateCollider();
 
+	/// <summary>
+	/// 押し戻しを作成
+	/// </summary>
+	/// <param name="back">押し戻す対象</param>
+	/// <param name="hit">押し戻しを行う判定(壁など)</param>
+	static bool GetHitBack(GameObject& back,const GameObject& hit);
+
 protected:
 	void InitCollider();
 	

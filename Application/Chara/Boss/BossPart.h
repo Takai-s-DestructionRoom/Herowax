@@ -50,6 +50,8 @@ private:
 	std::unique_ptr<BossPartState> nextState;
 	bool changingState = false;
 
+	std::array<ColPrimitive3D::Sphere, 1> waxVisualColliders;
+
 public:
 	Parts();
 	~Parts();

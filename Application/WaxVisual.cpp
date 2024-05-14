@@ -4,11 +4,12 @@
 
 void WaxVisual::Init()
 {
-	inter.x = Util::GetRand(-10.f, 10.f);
-	inter.y = Util::GetRand(-10.f, 10.f);
-	inter.z = Util::GetRand(-10.f, 10.f);
+	//最初のずらし
+	initInter.x = Util::GetRand(-10.f, 10.f);
+	initInter.y = Util::GetRand(-10.f, 10.f);
+	initInter.z = Util::GetRand(-10.f, 10.f);
 
-	collider.pos = inter;
+	collider.pos = targetTrans.position + initInter;
 	collider.r = 3;
 
 	ground = Ground::GetInstance()->GetTransform();
@@ -16,27 +17,41 @@ void WaxVisual::Init()
 
 void WaxVisual::Update()
 {
+	moveVec = { 0,0,0 };
+
 	gravity += gravityAccel;
-	inter.y -= Util::GetRand(gravity - gravity / 2, gravity + gravity / 2);
+	moveVec.y -= Util::GetRand(gravity - gravity / 2, gravity + gravity / 2);
 
-	inter.y *= 0.99f;
+	moveVec.y *= 0.99f;
 
-	collider.pos = targetTrans.position + inter;
+	//一旦張り付く
+	if (isCling) {
+		collider.pos = targetTrans.position + moveVec + initInter;
+	}
+	else
+	{
+		collider.pos += moveVec;
+	}
 
 	if (ground.position.y > collider.pos.y)
 	{
 		collider.pos.y = ground.position.y;
 		gravity = 0.0f;
-	}
 
-	WaxManager::GetInstance()->slimeWax.spheres.emplace_back();
-	WaxManager::GetInstance()->slimeWax.spheres.back().collider.pos = collider.pos;
-	WaxManager::GetInstance()->slimeWax.spheres.back().collider.r = collider.r;
+		isCling = false;
+	}
 }
 
 void WaxVisual::Draw()
 {
 
+}
+
+void WaxVisual::TransferBuffer()
+{
+	WaxManager::GetInstance()->slimeWax.spheres.emplace_back();
+	WaxManager::GetInstance()->slimeWax.spheres.back().collider.pos = collider.pos;
+	WaxManager::GetInstance()->slimeWax.spheres.back().collider.r = collider.r;
 }
 
 void WaxVisual::SetTarget(Transform target)
