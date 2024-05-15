@@ -5,6 +5,7 @@
 #include "Sprite.h"
 #include <array>
 #include "CircleGauge.h"
+#include "NumDrawer.h"
 
 class Player;
 
@@ -22,6 +23,8 @@ public:
 	std::array<Vector2, 1> size;
 	std::array<Vector2, 1> maxSize;
 	std::array<Color, 1> gaugeColor;
+
+	NumDrawer numDrawer;
 
 	Vector2 screenPos;
 	Vector2 iconSize;

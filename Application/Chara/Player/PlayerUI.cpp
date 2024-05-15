@@ -34,6 +34,8 @@ PlayerUI::PlayerUI()
 	GaugeReset();
 	GaugeAdd();
 
+	numDrawer.Init(3);
+
 	/*iconSize = { 0.25f,0.25f };
 	minimapIcon.SetTexture(TextureManager::Load("./Resources/minimap_icon.png", "minimapIcon"));
 	minimapIcon.mMaterial.mColor = Color::kWhite;
@@ -57,6 +59,11 @@ void PlayerUI::Update(Player* player)
 	//ゲージの割合を指定されたサイズとかける
 	size[(uint32_t)UIType::hpGauge].x =
 		maxSize[(uint32_t)UIType::hpGauge].x * player->hp / player->maxHP;
+
+	//ロウの残量を反映
+	numDrawer.SetNum(player->waxStock);
+	numDrawer.Imgui();
+	numDrawer.Update();
 
 	////スクリーン座標を求める
 	//screenPos = Minimap::GetInstance()->GetScreenPos(player->obj.mTransform.position);
@@ -159,13 +166,15 @@ void PlayerUI::GaugeAdd()
 	waxCircleGauges.emplace_back();
 	waxCircleGauges.back().Init();
 	//デフォルトと同じだけど明示的にしたいのでテクスチャ配置
-	waxCircleGauges.back().sprite.SetTexture(TextureManager::Load("./Resources/circleGauge.png", "circleGauge"));
+	//waxCircleGauges.back().sprite.SetTexture(TextureManager::Load("./Resources/circleGauge.png", "circleGauge"));
+	waxCircleGauges.back().sprite.SetTexture(TextureManager::Load("./Resources/UI/waxGauge.png", "waxGauge"));
 	waxCircleGauges.back().radian = 360.0f;
 	
 	waxCircleGaugeBacks.emplace_back();
 	waxCircleGaugeBacks.back().Init();
 	//デフォルトと同じだけど明示的にしたいのでテクスチャ配置
-	waxCircleGaugeBacks.back().sprite.SetTexture(TextureManager::Load("./Resources/circleGaugeBack.png", "circleGaugeBack"));
+	//waxCircleGaugeBacks.back().sprite.SetTexture(TextureManager::Load("./Resources/circleGaugeBack.png", "circleGaugeBack"));
+	waxCircleGaugeBacks.back().sprite.SetTexture(TextureManager::Load("./Resources/UI/circleGaugeBack.png", "circleGaugeBack"));
 	waxCircleGaugeBacks.back().radian = 360.0f;
 
 }
@@ -220,6 +229,14 @@ void PlayerUI::GaugeUpdate()
 
 void PlayerUI::GaugeDraw()
 {	
+	InstantDrawer::DrawGraph(
+		waxCircleGaugeBacks[0].sprite.mTransform.position.x,
+		waxCircleGaugeBacks[0].sprite.mTransform.position.y,
+		waxCircleGaugeBacks[0].sprite.mTransform.scale.x,
+		waxCircleGaugeBacks[0].sprite.mTransform.scale.y,
+		0.f,
+		TextureManager::Load("./Resources/UI/waxGaugeBack.png", "waxGaugeBack"));
+
 	for (int32_t i = (int32_t)waxCircleGauges.size() - 1;
 		i >= 0;
 		i--)
@@ -229,4 +246,6 @@ void PlayerUI::GaugeDraw()
 			waxCircleGauges[i].Draw();
 		}
 	}
+
+	numDrawer.Draw();
 }

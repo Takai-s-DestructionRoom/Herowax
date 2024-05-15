@@ -305,6 +305,7 @@
     <ClCompile Include="Engine\Particle\SimpleParticle2D.cpp" />
     <ClCompile Include="Application\UI\TimerUI.cpp" />
     <ClCompile Include="Application\WaxVisual.cpp" />
+    <ClCompile Include="Application\UI\NumDrawer.cpp" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Shader\Particle2D\Particle2DGS.hlsl">
@@ -993,6 +994,7 @@
     <ClInclude Include="Application\Ground.h" />
     <ClInclude Include="Engine\Particle\HomingParticle2D.h" />
     <ClInclude Include="Application\WaxVisual.h" />
+    <ClInclude Include="Application\UI\NumDrawer.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Shader\Particle2D\Particle2D.hlsli" />

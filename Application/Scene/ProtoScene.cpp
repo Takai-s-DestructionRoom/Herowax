@@ -21,6 +21,7 @@
 #include "RAudio.h"
 #include "Boss.h"
 #include "LightObject.h"
+#include "NumDrawer.h"
 
 ProtoScene::ProtoScene()
 {
@@ -42,6 +43,7 @@ ProtoScene::ProtoScene()
 
 	ControlUI::LoadResource();
 	TimerUI::LoadResource();
+	NumDrawer::LoadResource();
 }
 
 void ProtoScene::Init()
