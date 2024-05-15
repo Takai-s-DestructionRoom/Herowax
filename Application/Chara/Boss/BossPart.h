@@ -19,7 +19,10 @@ public:
 	Easing::EaseTimer collectTimer;	//回収されるまでの時間(参照できるように外で管理)
 	
 	//見た目用のロウ
-	std::vector<WaxVisual> waxVisual;
+	std::vector<std::unique_ptr<WaxVisual>> waxVisual;
+	
+	//見た目用ロウのテストフラグ
+	bool isWaxVisualTest = true;
 
 private:
 	//------------ HP関連 ------------//
@@ -50,8 +53,12 @@ private:
 	std::unique_ptr<BossPartState> nextState;
 	bool changingState = false;
 
+	const int32_t COLLIDER_NUM = 1;
 	std::array<ColPrimitive3D::Sphere, 1> waxVisualColliders;
 
+	Easing::EaseTimer createTimer = 0.25f;
+
+	
 public:
 	Parts();
 	~Parts();

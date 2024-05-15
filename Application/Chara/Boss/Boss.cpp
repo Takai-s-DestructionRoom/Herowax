@@ -298,12 +298,25 @@ void Boss::Update()
 		ImGui::Checkbox("当たり判定描画", &isDrawCollider);
 		ImGui::Checkbox("バリアフラグ", &isBarrier);
 
-		if (ImGui::Button("腕にロウを追加")) {
-			parts[0].CreateWaxVisual();
-		}
+		if (ImGui::TreeNode("腕から垂れるロウ関係")) {
+			ImGui::Checkbox("左腕のロウテストフラグ", &parts[0].isWaxVisualTest);
+			ImGui::Checkbox("右腕のロウテストフラグ", &parts[1].isWaxVisualTest);
 
-		if (ImGui::Button("腕にロウを全消し")) {
-			parts[0].waxVisual.clear();
+			if (ImGui::Button("左腕にロウを追加")) {
+				parts[0].CreateWaxVisual();
+			}
+
+			if (ImGui::Button("左腕のロウを全消し")) {
+				parts[0].waxVisual.clear();
+			}
+			if (ImGui::Button("右腕にロウを追加")) {
+				parts[1].CreateWaxVisual();
+			}
+
+			if (ImGui::Button("右腕のロウを全消し")) {
+				parts[1].waxVisual.clear();
+			}
+			ImGui::TreePop();
 		}
 
 		if (ImGui::TreeNode("調整項目_ボス")) {
@@ -332,6 +345,8 @@ void Boss::Update()
 		if (ImGui::TreeNode("調整項目_手")) {
 			ImGui::DragFloat3("右手スケール", &parts[(int32_t)PartsNum::LeftHand].obj.mTransform.scale.x, 0.1f);
 			ImGui::DragFloat3("左手スケール", &parts[(int32_t)PartsNum::RightHand].obj.mTransform.scale.x, 0.1f);
+			ImGui::DragFloat("右手当たり判定", &parts[(int32_t)PartsNum::LeftHand].colliderSize, 0.1f);
+			ImGui::DragFloat("左手当たり判定", &parts[(int32_t)PartsNum::RightHand].colliderSize, 0.1f);
 			ImGui::TreePop();
 		}
 

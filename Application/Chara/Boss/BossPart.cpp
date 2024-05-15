@@ -125,33 +125,81 @@ void Parts::Update()
 	obj.mPaintDataBuff->color = Color(0.8f, 0.6f, 0.35f, 1.0f);
 	obj.mPaintDataBuff->slide += TimeManager::deltaTime;
 
-	for (int32_t i = 0; i < 1; i++)
-	{
-		waxVisualColliders[i].pos = collider.pos;
-		waxVisualColliders[i].r = collider.r / 3;
-	}
+	if (isWaxVisualTest) {
 
-	for (auto& wax : waxVisual)
-	{	
-		wax.SetTarget(obj.mTransform);
-		wax.Update();
-		for (int32_t i = 0; i < 1; i++)
+		for (int32_t i = 0; i < COLLIDER_NUM; i++)
 		{
-			//当たり判定
-			while (ColPrimitive3D::CheckSphereToSphere(wax.collider, waxVisualColliders[i]))
+			int32_t hoge = COLLIDER_NUM / 2;
+			waxVisualColliders[i].pos = collider.pos - (GetFrontVec() * waxVisualColliders[i].r * (float)hoge);
+			waxVisualColliders[i].pos += GetFrontVec() * (waxVisualColliders[i].r * i);
+			waxVisualColliders[i].r = collider.r / 3;
+		}
+
+		createTimer.Update();
+		if (!createTimer.GetRun()) {
+			createTimer.Start();
+			CreateWaxVisual();
+		}
+
+		for (auto itr = waxVisual.begin(); itr != waxVisual.end();)
+		{
+			//死んでたら殺す
+			if (!(itr->get())->isAlive) {
+				itr = waxVisual.erase(itr);
+			}
+			else {
+				itr++;
+			}
+		}
+
+		for (auto& wax1 : waxVisual)
+		{
+			for (auto& wax2 : waxVisual)
 			{
-				Vector3 repulsionVec = wax.collider.pos - waxVisualColliders[i].pos;
-				
-				wax.collider.pos += repulsionVec;
-				
-				//もしここが0になった場合無限ループするので抜ける
-				if (repulsionVec.LengthSq() == 0) {
-					break;
+				if (wax1 == wax2)continue;
+
+				//重なりチェック
+				if (ColPrimitive3D::CheckSphereToSphere(wax1->collider, wax2->collider))
+				{
+					wax1->power++;
+					wax2->power++;
 				}
 			}
 		}
 
-		wax.TransferBuffer();
+		for (auto& wax : waxVisual)
+		{
+			bool check = false;
+			wax->Update();
+
+			for (int32_t i = 0; i < COLLIDER_NUM; i++)
+			{
+				//当たり判定
+				while (ColPrimitive3D::CheckSphereToSphere(wax->collider, waxVisualColliders[i]))
+				{
+					Vector3 repulsionVec = wax->collider.pos - waxVisualColliders[i].pos;
+					repulsionVec.Normalize();
+					repulsionVec.y = 0;
+
+					wax->collider.pos += repulsionVec;
+					//wax.obj.mTransform.position += repulsionVec;
+
+					//もしここが0になった場合無限ループするので抜ける
+					if (repulsionVec.LengthSq() == 0) {
+						break;
+					}
+					check = true;
+					wax->obj.SetParent(&obj);
+				}
+			}
+
+			wax->TransferBuffer();
+
+			////送った後、このフレームで当たっていないなら親子を解除
+			//if (!check) {
+			//	wax.obj.SetParent(nullptr);
+			//}
+		}
 	}
 }
 
@@ -198,6 +246,7 @@ void Parts::CreateWaxVisual()
 {
 	waxVisual.emplace_back();
 	//差分だけ保持
-	waxVisual.back().SetTarget(obj.mTransform);
-	waxVisual.back().Init();
+	waxVisual.back() = std::make_unique<WaxVisual>();
+	waxVisual.back()->obj.SetParent(&obj);
+	waxVisual.back()->Init();
 }

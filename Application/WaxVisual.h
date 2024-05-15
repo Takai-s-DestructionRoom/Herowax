@@ -2,10 +2,13 @@
 #include "ColPrimitive3D.h"
 #include "Vector3.h"
 #include "GameObject.h"
+#include "ModelObj.h"
 
 class WaxVisual
 {
 public:
+	ModelObj obj;
+
 	ColPrimitive3D::Sphere collider;
 	Vector3 moveVec;
 
@@ -15,11 +18,14 @@ public:
 
 	void TransferBuffer();
 
-	void SetTarget(Transform target);
 	void SetGround(Transform ground_);
 
+	bool isAlive = true;
+
+	int32_t power = 0;
+	const int32_t THRESHOLD_POWER = 60;
+
 private:
-	Transform targetTrans;
 	Transform ground;
 
 	//初期の位置ずらし
