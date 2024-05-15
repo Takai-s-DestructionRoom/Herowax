@@ -33,7 +33,7 @@ FailedScene::FailedScene()
 
 	failedPos = { RWindow::GetWidth() * 0.5f,RWindow::GetHeight() * 0.5f - 150.f };
 	buttonUIPos = failedPos;
-	buttonUIPos.y += 400.f;
+	buttonUIPos.y += 320.f;
 
 	RAudio::Load("Resources/Sounds/SE/A_select.wav", "Select");
 }

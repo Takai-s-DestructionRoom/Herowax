@@ -28,8 +28,22 @@ void WaxVisual::Update()
 	moveVec = { 0,0,0 };
 
 	if (power >= THRESHOLD_POWER) {
+		//タイマー開始
+		if (!accelerationTimer.GetStarted())
+		{
+			accelerationTimer.Start();
+		}
+		accelerationTimer.Update();
+
 		gravity += gravityAccel;
-		moveVec.y -= gravity * power * TimeManager::deltaTime;
+
+		//一応加速をかける
+		if (accelerationTimer.GetEnd()) {
+			moveVec.y -= gravity * (power * speedUp) * TimeManager::deltaTime;
+		}
+		else {
+			moveVec.y -= gravity * power * TimeManager::deltaTime;
+		}
 	}
 
 	moveVec.y *= 0.99f;
