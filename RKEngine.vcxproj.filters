@@ -343,6 +343,9 @@
     <Filter Include="ヘッダー ファイル\Application\WaxVisual">
       <UniqueIdentifier>{8cd145cc-d945-4103-beac-a607148c8369}</UniqueIdentifier>
     </Filter>
+    <Filter Include="シェーダー ファイル\BillboardRadial360">
+      <UniqueIdentifier>{bc4cc1a6-7ac1-4994-a290-d73c1aea5fa1}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Engine\2d\Sprite.cpp">
@@ -666,9 +669,6 @@
     <ClCompile Include="Application\Chara\Enemy\BombSolider.cpp">
       <Filter>ソース ファイル\Application\Object\Chara\Enemy</Filter>
     </ClCompile>
-    <ClCompile Include="Application\Chara\Player\PlayerUI.cpp">
-      <Filter>ソース ファイル\Application\Object\Chara\Player</Filter>
-    </ClCompile>
     <ClCompile Include="Application\Chara\Player\PlayerState.cpp">
       <Filter>ソース ファイル\Application\Object\Chara\Player</Filter>
     </ClCompile>
@@ -827,6 +827,12 @@
     </ClCompile>
     <ClCompile Include="Application\UI\NumDrawer.cpp">
       <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Application\Chara\Player\PlayerUI.cpp">
+      <Filter>ソース ファイル\Application\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="Application\UI\PlayerHpUI.cpp">
+      <Filter>ソース ファイル\Application\UI</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -1019,6 +1025,12 @@
     </FxCompile>
     <FxCompile Include="Shader\TilingBasic\TilingBasicPS.hlsl">
       <Filter>シェーダー ファイル\Tiling</Filter>
+    </FxCompile>
+    <FxCompile Include="Shader\BillboardRadial360\BillboardRadial360VS.hlsl">
+      <Filter>シェーダー ファイル\BillboardRadial360</Filter>
+    </FxCompile>
+    <FxCompile Include="Shader\BillboardRadial360\BillboardRadial360PS.hlsl">
+      <Filter>シェーダー ファイル\BillboardRadial360</Filter>
     </FxCompile>
   </ItemGroup>
   <ItemGroup>
@@ -1367,9 +1379,6 @@
     <ClInclude Include="Application\Chara\Enemy\BombSolider.h">
       <Filter>ヘッダー ファイル\Application\Object\Chara\Enemy</Filter>
     </ClInclude>
-    <ClInclude Include="Application\Chara\Player\PlayerUI.h">
-      <Filter>ヘッダー ファイル\Application\Object\Chara\Player</Filter>
-    </ClInclude>
     <ClInclude Include="Application\Chara\Player\PlayerState.h">
       <Filter>ヘッダー ファイル\Application\Object\Chara\Player</Filter>
     </ClInclude>
@@ -1529,6 +1538,12 @@
     <ClInclude Include="Application\UI\NumDrawer.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
+    <ClInclude Include="Application\Chara\Player\PlayerUI.h">
+      <Filter>ヘッダー ファイル\Application\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="Application\UI\PlayerHpUI.h">
+      <Filter>ヘッダー ファイル\Application\UI</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="Shader\Bloom\Bloom.hlsli">
@@ -1621,6 +1636,9 @@
     <None Include="Shader\Particle2D\Particle2D.hlsli" />
     <None Include="Shader\TilingBasic\TilingBasic.hlsli">
       <Filter>シェーダー ファイル\Tiling</Filter>
+    </None>
+    <None Include="Shader\BillboardRadial360\BillboardRadial360.hlsli">
+      <Filter>シェーダー ファイル\BillboardRadial360</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>

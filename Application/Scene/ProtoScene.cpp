@@ -96,6 +96,8 @@ void ProtoScene::Init()
 	bossAppTimerUI.Start();
 
 	SpotLightManager::GetInstance()->Init(&light);
+
+	playerHPUI.Init();
 }
 
 void ProtoScene::Update()
@@ -562,7 +564,9 @@ void ProtoScene::Update()
 	controlUI.Update();
 	bossAppTimerUI.Imgui();
 	bossAppTimerUI.Update();
-
+	playerHPUI.SetPlayer(&player);
+	playerHPUI.Update();
+	
 #pragma region ImGui
 	if (RImGui::showImGui)
 	{
@@ -625,7 +629,8 @@ void ProtoScene::Draw()
 	//なんのイベントも呼ばれていないならUIを描画
 	if (EventCaller::GetNowEventStr() == "") {
 		controlUI.Draw();
-		
+		playerHPUI.Draw();
+
 		if (!bossAppTimerUI.GetEnd()) 
 		{
 			bossAppTimerUI.Draw();

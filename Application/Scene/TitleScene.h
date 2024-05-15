@@ -9,7 +9,6 @@
 #include "Camera.h"
 #include "ModelObj.h"
 #include "Easing.h"
-#include "CircleGauge.h"
 
 class TitleScene : public IScene
 {
@@ -38,6 +37,4 @@ private:
 	Easing::EaseTimer cameraRotTimer;	//カメラ回転用タイマー
 
 	bool sceneChange = false;
-
-	std::vector<CircleGauge> circleGauges;
 };
