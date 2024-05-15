@@ -254,8 +254,8 @@ void ProtoScene::Update()
 			//ボス本体との判定
 			bool isCollision = ColPrimitive3D::CheckSphereToSphere(Boss::GetInstance()->collider, wax->collider);
 
-			//投げられてる蝋に当たった時はダメージと蝋蓄積
-			if (isCollision && wax->isSolid == false && wax->isGround == false)
+			//体だけになって投げられてる蝋に当たった時はダメージと蝋蓄積
+			if (isCollision && wax->isSolid == false && wax->isGround == false && Boss::GetInstance()->GetIsOnlyBody())
 			{
 				//一応1ダメージ(ダメージ量に応じてロウのかかり具合も進行)
 				Boss::GetInstance()->DealDamage(player.GetAttackPower());
@@ -354,15 +354,15 @@ void ProtoScene::Update()
 		//攻撃中に本体同士がぶつかったらプレイヤーにダメージ
 		if (enemy->GetAttackState() == EnemyNowAttackState::GetStateStr())
 		{
-			if (ColPrimitive3D::CheckSphereToSphere(enemy->collider, player.collider))
+			if (ColPrimitive3D::CheckSphereToSphere(enemy->collider, player.collider) && enemy->GetIsSolid() == false)
 			{
 				//ダメージ
 				player.DealDamage(EnemyManager::GetInstance()->GetNormalAttackPower());
 			}
 		}
-		//接触ダメージあり設定の場合、接触時にダメージ
+		//接触ダメージあり設定の場合、固まってないなら接触時にダメージ
 		if (EnemyManager::GetInstance()->GetIsContactDamage()) {
-			if (ColPrimitive3D::CheckSphereToSphere(enemy->collider, player.collider))
+			if (ColPrimitive3D::CheckSphereToSphere(enemy->collider, player.collider) && enemy->GetIsSolid() == false)
 			{
 				//ダメージ
 				player.DealDamage(EnemyManager::GetInstance()->GetContactAttackPower());

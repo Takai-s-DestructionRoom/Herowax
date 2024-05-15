@@ -223,6 +223,7 @@ void Player::Update()
 	//}
 	////ストックがおかしな値にならないように
 	//waxStock = Util::Clamp(waxStock, 0, maxWaxStock);
+	maxWaxStock = Util::Clamp(maxWaxStock, 0, 100);
 
 	//回収処理
 	WaxCollect();

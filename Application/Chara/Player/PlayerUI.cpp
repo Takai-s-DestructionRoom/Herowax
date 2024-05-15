@@ -95,7 +95,7 @@ void PlayerUI::Update(Player* player)
 	//minimapIconRange.TransferBuffer();
 
 	//ボタンを一回押すごとに減る量
-	float onePushSize = (36.f / (float)player->waxNum);
+	float onePushSize = (72.f / (float)player->waxNum);
 	
 	//現在のロウの値を0.0f~1.0f~2.0f..で表したい
 	baseRadian = ((onePushSize * (float)player->waxStock)) / 360.f;
