@@ -54,6 +54,7 @@ void ProtoScene::Init()
 	gameCamera.Init();
 
 	LightGroup::sNowLight = &light;
+	ambient = light.GetAmbientColor();
 
 	player.Init();
 	Boss::GetInstance()->Init();
@@ -544,6 +545,7 @@ void ProtoScene::Update()
 	SpotLightManager::GetInstance()->Imgui();
 	SpotLightManager::GetInstance()->Update();
 
+	light.SetAmbientColor(ambient);
 	light.Update();
 
 	skydome.TransferBuffer(Camera::sNowCamera->mViewProjection);
@@ -576,6 +578,23 @@ void ProtoScene::Update()
 		if (ImGui::Button("セーブ")) {
 			Parameter::Begin("DebugBool");
 			Parameter::Save("debugBool", Util::debugBool);
+			Parameter::End();
+		}
+
+		ImGui::End();
+
+		ImGui::SetNextWindowSize({ 400, 200 }, ImGuiCond_FirstUseEver);
+
+		// 平行光源 //
+		ImGui::Begin("平行光源");
+		
+		ImGui::DragFloat3("アンビエント", &ambient.x);
+
+		if (ImGui::Button("セーブ")) {
+			Parameter::Begin("DirLight");
+			Parameter::Save("ambient_R", ambient.x);
+			Parameter::Save("ambient_G", ambient.y);
+			Parameter::Save("ambient_B", ambient.z);
 			Parameter::End();
 		}
 

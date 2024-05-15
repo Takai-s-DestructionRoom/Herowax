@@ -42,6 +42,7 @@ private:
 	GameCamera gameCamera;
 
 	LightGroup light;
+	Vector3 ambient;
 	
 	ControlUI controlUI;
 	BossAppUI bossAppTimerUI;

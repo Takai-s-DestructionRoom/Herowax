@@ -1,0 +1,3 @@
+ambient_R:0.3
+ambient_G:0.3
+ambient_B:0.3
