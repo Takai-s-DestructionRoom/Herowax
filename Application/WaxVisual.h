@@ -3,6 +3,7 @@
 #include "Vector3.h"
 #include "GameObject.h"
 #include "ModelObj.h"
+#include "Easing.h"
 
 class WaxVisual
 {
@@ -36,5 +37,8 @@ private:
 
 	//張り付きフラグ(一度でも地面についたら外れる)
 	bool isCling = true;
+
+	Easing::EaseTimer accelerationTimer = 1.0f;
+	float speedUp = 1.5f;
 };
 
