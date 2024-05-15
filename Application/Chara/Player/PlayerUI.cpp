@@ -167,14 +167,14 @@ void PlayerUI::GaugeAdd()
 	waxCircleGauges.back().Init();
 	//デフォルトと同じだけど明示的にしたいのでテクスチャ配置
 	//waxCircleGauges.back().sprite.SetTexture(TextureManager::Load("./Resources/circleGauge.png", "circleGauge"));
-	waxCircleGauges.back().sprite.SetTexture(TextureManager::Load("./Resources/UI/waxGauge.png", "waxGauge"));
+	waxCircleGauges.back().SetTexture(TextureManager::Load("./Resources/UI/waxGauge.png", "waxGauge"));
 	waxCircleGauges.back().radian = 360.0f;
 	
 	waxCircleGaugeBacks.emplace_back();
 	waxCircleGaugeBacks.back().Init();
 	//デフォルトと同じだけど明示的にしたいのでテクスチャ配置
 	//waxCircleGaugeBacks.back().sprite.SetTexture(TextureManager::Load("./Resources/circleGaugeBack.png", "circleGaugeBack"));
-	waxCircleGaugeBacks.back().sprite.SetTexture(TextureManager::Load("./Resources/UI/circleGaugeBack.png", "circleGaugeBack"));
+	waxCircleGaugeBacks.back().SetTexture(TextureManager::Load("./Resources/UI/circleGaugeBack.png", "circleGaugeBack"));
 	waxCircleGaugeBacks.back().radian = 360.0f;
 
 }
@@ -197,8 +197,8 @@ void PlayerUI::GaugeUpdate()
 			gaugeOnce.radian = 0.0f;
 		}
 
-		gaugeOnce.sprite.mTransform.position = basePos;
-		gaugeOnce.sprite.mTransform.scale = baseScale * (sizeCoeff + sizeCoeffPlus * i);
+		gaugeOnce.baseTrans.position = basePos;
+		gaugeOnce.baseTrans.scale = baseScale * (sizeCoeff + sizeCoeffPlus * i);
 		gaugeOnce.Update();
 
 		i++;
@@ -220,8 +220,8 @@ void PlayerUI::GaugeUpdate()
 			gaugeOnce.radian = 0.0f;
 		}
 
-		gaugeOnce.sprite.mTransform.position = basePos;
-		gaugeOnce.sprite.mTransform.scale = baseScale * (sizeCoeff + sizeCoeffPlus * i);
+		gaugeOnce.baseTrans.position = basePos;
+		gaugeOnce.baseTrans.scale = baseScale * (sizeCoeff + sizeCoeffPlus * i);
 		gaugeOnce.Update();
 		i++;
 	}
@@ -230,10 +230,10 @@ void PlayerUI::GaugeUpdate()
 void PlayerUI::GaugeDraw()
 {	
 	InstantDrawer::DrawGraph(
-		waxCircleGaugeBacks[0].sprite.mTransform.position.x,
-		waxCircleGaugeBacks[0].sprite.mTransform.position.y,
-		waxCircleGaugeBacks[0].sprite.mTransform.scale.x,
-		waxCircleGaugeBacks[0].sprite.mTransform.scale.y,
+		waxCircleGaugeBacks[0].baseTrans.position.x,
+		waxCircleGaugeBacks[0].baseTrans.position.y,
+		waxCircleGaugeBacks[0].baseTrans.scale.x,
+		waxCircleGaugeBacks[0].baseTrans.scale.y,
 		0.f,
 		TextureManager::Load("./Resources/UI/waxGaugeBack.png", "waxGaugeBack"));
 

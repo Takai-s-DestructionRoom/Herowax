@@ -41,8 +41,8 @@ public:
 
 	BlendMode mBlendMode = BlendMode::OpaqueAlpha;
 
-private:
 	GraphicsPipeline GetPipeline();
+private:
 
 public:
 	Material mMaterial;

@@ -306,8 +306,25 @@
     <ClCompile Include="Application\UI\TimerUI.cpp" />
     <ClCompile Include="Application\WaxVisual.cpp" />
     <ClCompile Include="Application\UI\NumDrawer.cpp" />
+    <ClCompile Include="Application\UI\PlayerHpUI.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <FxCompile Include="Shader\BillboardRadial360\BillboardRadial360PS.hlsl">
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='DebugIT|x64'">5.0</ShaderModel>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='DebugIT|x64'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
+    </FxCompile>
+    <FxCompile Include="Shader\BillboardRadial360\BillboardRadial360VS.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='DebugIT|x64'">Vertex</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='DebugIT|x64'">5.0</ShaderModel>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
+    </FxCompile>
     <FxCompile Include="Shader\Particle2D\Particle2DGS.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Geometry</ShaderType>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
@@ -995,8 +1012,10 @@
     <ClInclude Include="Engine\Particle\HomingParticle2D.h" />
     <ClInclude Include="Application\WaxVisual.h" />
     <ClInclude Include="Application\UI\NumDrawer.h" />
+    <ClInclude Include="Application\UI\PlayerHpUI.h" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Shader\BillboardRadial360\BillboardRadial360.hlsli" />
     <None Include="Shader\Particle2D\Particle2D.hlsli" />
     <None Include="Shader\Radial360\Radial360.hlsli" />
     <None Include="Shader\GameObject\GameObject.hlsli" />
