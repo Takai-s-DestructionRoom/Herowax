@@ -102,7 +102,8 @@ void Enemy::BaseUpdate()
 	if (spawnTimer.GetNowEnd()) {
 		//パーティクル出現
 		ParticleManager::GetInstance()->AddSimple(obj.mTransform.position, "smoke_red");
-		ParticleManager::GetInstance()->AddSimple(obj.mTransform.position, "smoke_black");
+		//ParticleManager::GetInstance()->AddSimple(obj.mTransform.position, "smoke_black");
+		ParticleManager::GetInstance()->AddRing(obj.mTransform.position, "enemy_pop_ring");
 	}
 
 	//こっから下は出現してからなので
