@@ -624,6 +624,7 @@ void Player::MovePad()
 		mVelo.Normalize();
 		emitterPos.x += mVelo.x * obj.mTransform.scale.x;
 		emitterPos.z += mVelo.y * obj.mTransform.scale.z;
+		emitterPos.y += obj.mTransform.scale.y;
 
 		ParticleManager::GetInstance()->AddSimple(
 			emitterPos, "player_move");
@@ -735,6 +736,7 @@ void Player::MoveKey()
 		mVelo.Normalize();
 		emitterPos.x += mVelo.x * obj.mTransform.scale.x;
 		emitterPos.z += mVelo.y * obj.mTransform.scale.z;
+		emitterPos.y += obj.mTransform.scale.y;
 
 		ParticleManager::GetInstance()->AddSimple(
 			emitterPos, "player_move");
