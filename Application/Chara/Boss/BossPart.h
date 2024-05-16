@@ -57,7 +57,6 @@ private:
 	std::array<ColPrimitive3D::Sphere, 1> waxVisualColliders;
 
 	Easing::EaseTimer createTimer = 0.25f;
-
 	
 public:
 	Parts();
