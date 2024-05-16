@@ -6,15 +6,28 @@
 void PlayerHpUI::Init()
 {
 	circleGauge.Init();
+	circleGauge.SetTexture(TextureManager::Load("./Resources/UI/hpGauge.png", "hpGauge"));
+	circleGauge.SetColor(Color::kGreen);
+
 	circleGaugeBack.Init();
-	circleGaugeBack.SetTexture(TextureManager::Load("./Resources/circleGaugeBack.png", "circleGaugeBack"));
+	circleGaugeBack.SetTexture(TextureManager::Load("./Resources/UI/hpGauge.png", "hpGauge"));
+	circleGaugeBack.SetColor({0.1f,0.1f, 0.1f, 1.0f});
+	
+	circleGaugeFrame.Init();
+	circleGaugeFrame.SetTexture(TextureManager::Load("./Resources/UI/hpGaugeFrame.png", "hpGaugeFrame"));
 
 	std::map<std::string, std::string> extract = Parameter::Extract("playerHPUI");
 	playerRangeXZ = Parameter::GetParam(extract,"ずらしXZ", playerRangeXZ);
 	playerRangeY = Parameter::GetParam(extract,"ずらしY", playerRangeY);
 	rate = Parameter::GetParam(extract,"レート", rate);
 	circleGauge.angle = Parameter::GetParam(extract,"角度", circleGauge.angle);
-	circleGauge.baseTrans.scale = Parameter::GetVector3Data(extract,"大きさ", circleGauge.baseTrans.scale);
+	circleGauge.baseTrans.scale = { 1,1,1 };
+	circleGaugeBack.baseTrans.scale = { 1,1,1 };
+
+	sizeFront.x = Parameter::GetParam(extract,"大きさ(本体)X", sizeFront.x);
+	sizeFront.y = Parameter::GetParam(extract,"大きさ(本体)Y", sizeFront.y);
+	sizeBack.x = Parameter::GetParam(extract,"大きさ(後ろ)X", sizeBack.x);
+	sizeBack.y = Parameter::GetParam(extract,"大きさ(後ろ)Y", sizeBack.y);
 }
 
 void PlayerHpUI::Update()
@@ -33,13 +46,22 @@ void PlayerHpUI::Update()
 		circleGauge.baseTrans.position.y += playerRangeY;
 	}
 
+	circleGauge.SetBillboardSize(sizeFront);
+	circleGaugeBack.SetBillboardSize(sizeFront);
+	circleGaugeFrame.SetBillboardSize(sizeBack);
+
 	circleGauge.radian = baseMin + baseRadian * rate;
 	circleGauge.Update();
 
 	circleGaugeBack.radian = baseMin;
-	circleGaugeBack.baseTrans = circleGauge.baseTrans;
+	circleGaugeBack.baseTrans.position = circleGauge.baseTrans.position;
 	circleGaugeBack.angle = circleGauge.angle;
 	circleGaugeBack.Update();
+	
+	circleGaugeFrame.radian = baseMin;
+	circleGaugeFrame.baseTrans.position = circleGauge.baseTrans.position;
+	circleGaugeFrame.angle = circleGauge.angle;
+	circleGaugeFrame.Update();
 
 	if (RImGui::showImGui) {
 		//円形ロウゲージの位置
@@ -52,8 +74,9 @@ void PlayerHpUI::Update()
 		ImGui::Text("現在の割合(ゲージ側):%f", circleGauge.radian);
 		ImGui::DragFloat3("位置", &circleGauge.baseTrans.position.x);
 		ImGui::DragFloat("角度", &circleGauge.angle ,0.01f);
-		ImGui::DragFloat3("大きさ", &circleGauge.baseTrans.scale.x,0.1f);
-		
+		ImGui::DragFloat2("大きさ(本体)", &sizeFront.x,0.1f);
+		ImGui::DragFloat2("大きさ(後ろ)", &sizeBack.x, 0.1f);
+
 		if (player) {
 			ImGui::Checkbox("プレイヤーの位置に配置", &checkBox);
 			if (checkBox)
@@ -70,7 +93,10 @@ void PlayerHpUI::Update()
 			Parameter::Save("ずらしY", playerRangeY);
 			Parameter::Save("レート", rate);
 			Parameter::Save("角度", circleGauge.angle);
-			Parameter::SaveVector3("大きさ", circleGauge.baseTrans.scale);
+			Parameter::Save("大きさ(本体)X", sizeFront.x);
+			Parameter::Save("大きさ(本体)Y", sizeFront.y);
+			Parameter::Save("大きさ(後ろ)X", sizeBack.x);
+			Parameter::Save("大きさ(後ろ)Y", sizeBack.y);
 			Parameter::End();
 		}
 
@@ -80,8 +106,10 @@ void PlayerHpUI::Update()
 
 void PlayerHpUI::Draw()
 {
-	circleGauge.Draw();
 	circleGaugeBack.Draw();
+	circleGauge.Draw();
+	
+	circleGaugeFrame.Draw();
 }
 
 void PlayerHpUI::SetPlayer(Player* player_)

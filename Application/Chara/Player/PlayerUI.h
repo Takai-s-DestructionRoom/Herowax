@@ -6,24 +6,13 @@
 #include <array>
 #include "CircleGauge.h"
 #include "NumDrawer.h"
+#include "PlayerHpUI.h"
 
 class Player;
-
-enum class UIType
-{
-	hpGauge,
-
-	max
-};
 
 class PlayerUI
 {
 public:
-	std::array<Vector3, 1> position;
-	std::array<Vector2, 1> size;
-	std::array<Vector2, 1> maxSize;
-	std::array<Color, 1> gaugeColor;
-
 	NumDrawer numDrawer;
 
 	Vector2 screenPos;
@@ -35,6 +24,8 @@ public:
 	Sprite minimapIconRange;	//ミニマップに表示する回収範囲
 
 private:
+	PlayerHpUI playerHpUI;
+
 	std::vector<CircleGauge> waxCircleGauges;	//最大値が増えたあとのロウゲージ
 	std::vector<CircleGauge> waxCircleGaugeBacks;	//最大値が増えたあとのロウゲージ
 

@@ -19,6 +19,8 @@ public:
 	void Draw();
 
 	void SetTexture(TextureHandle texture);
+	void SetBillboardSize(Vector2 size);
+	void SetColor(Color color);
 
 private:
 	RootSignature GetRootSignature() {

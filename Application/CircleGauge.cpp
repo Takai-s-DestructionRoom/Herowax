@@ -25,6 +25,9 @@ void CircleGauge::Init()
 		radial360RP.Descriptor.RegisterSpace = 0;
 		radial360RP.ShaderVisibility = D3D12_SHADER_VISIBILITY_ALL;
 		mRootSignature.mDesc.RootParamaters.push_back(radial360RP);
+		
+		//深度書き込みをしない(透過されるように)
+		mPipelineState.mDesc.DepthStencilState.DepthWriteMask = D3D12_DEPTH_WRITE_MASK_ZERO;
 
 		mRootSignature.Create();
 
@@ -93,7 +96,7 @@ void CircleGauge::Draw()
 			order.pipelineState = GetGraphicsPipeline().mPtr.Get();
 
 			order.rootData.push_back({ RootDataType::SRBUFFER_CBV, mRadianBuffer.mBuff });
-
+			
 			std::string stageID = "Transparent";
 			Renderer::DrawCall(stageID, order);
 		}
@@ -122,5 +125,20 @@ void CircleGauge::SetTexture(TextureHandle texture)
 	}
 	else {
 		sprite.SetTexture(texture);
+	}
+}
+
+void CircleGauge::SetBillboardSize(Vector2 size)
+{
+	billboard.mImage.SetSize(size);
+}
+
+void CircleGauge::SetColor(Color color)
+{
+	if (mode) {
+		billboard.mImage.mMaterial.mColor = color;
+	}
+	else {
+		sprite.mMaterial.mColor = color;
 	}
 }

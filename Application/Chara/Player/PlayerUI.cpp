@@ -16,16 +16,6 @@ void PlayerUI::LoadResource()
 
 PlayerUI::PlayerUI()
 {
-	//色指定
-	gaugeColor[(uint32_t)UIType::hpGauge] = Color::kGreen;
-	
-	//サイズ指定
-	for (uint32_t i = 0; i < (uint32_t)UIType::max; i++)
-	{
-		size[i] = { 5.f,0.2f };
-		maxSize[i] = size[i] * 1.1f;
-	}
-
 	std::map<std::string, std::string> extract = Parameter::Extract("waxCircleGauge");
 	
 	basePos = Parameter::GetVector3Data(extract, "ゲージの位置", {0,0,0});
@@ -35,6 +25,8 @@ PlayerUI::PlayerUI()
 	GaugeAdd();
 
 	numDrawer.Init(3);
+
+	playerHpUI.Init();
 
 	/*iconSize = { 0.25f,0.25f };
 	minimapIcon.SetTexture(TextureManager::Load("./Resources/minimap_icon.png", "minimapIcon"));
@@ -49,22 +41,6 @@ PlayerUI::PlayerUI()
 
 void PlayerUI::Update(Player* player)
 {
-	//座標を合わせ続ける
-	for (uint32_t i = 0; i < (uint32_t)UIType::max; i++)
-	{
-		position[i] = player->obj.mTransform.position;
-		position[i].y += player->GetScale().y * 4.f + (float)(i) * 0.5f;
-	}
-
-	//ゲージの割合を指定されたサイズとかける
-	size[(uint32_t)UIType::hpGauge].x =
-		maxSize[(uint32_t)UIType::hpGauge].x * player->hp / player->maxHP;
-
-	//ロウの残量を反映
-	numDrawer.SetNum(player->waxStock);
-	numDrawer.Imgui();
-	numDrawer.Update();
-
 	////スクリーン座標を求める
 	//screenPos = Minimap::GetInstance()->GetScreenPos(player->obj.mTransform.position);
 	//minimapIcon.mTransform.position = { screenPos.x,screenPos.y,0.f };
@@ -94,13 +70,22 @@ void PlayerUI::Update(Player* player)
 	//minimapIconRange.mTransform.UpdateMatrix();
 	//minimapIconRange.TransferBuffer();
 
+	//ロウの残量を反映
+	numDrawer.SetNum(player->waxStock);
+	numDrawer.Imgui();
+	numDrawer.Update();
+
+	playerHpUI.SetPlayer(player);
+	playerHpUI.Update();
+
 	//ボタンを一回押すごとに減る量
 	float onePushSize = (72.f / (float)player->waxNum);
 	
-	//現在のロウの値を0.0f~1.0f~2.0f..で表したい
+	//現在のロウの値を0.0f~1.0f~2.0f..で表す
 	baseRadian = ((onePushSize * (float)player->waxStock)) / 360.f;
 	baseBackRadian = ((onePushSize * (float)player->maxWaxStock)) / 360.f;
 
+	//0以下にならないように丸め
 	baseRadian = max(0.0f, baseRadian);
 	baseBackRadian = max(0.0f, baseBackRadian);
 
@@ -135,17 +120,9 @@ void PlayerUI::Update(Player* player)
 
 void PlayerUI::Draw()
 {
-	for (uint32_t i = 0; i < (uint32_t)UIType::max; i++)
-	{
-		Vector3 backPos = position[i];
-		backPos.z += 0.01f;
-		InstantDrawer::DrawGraph3D(backPos, maxSize[i].x, maxSize[i].y, "white2x2", Color::kBlack);
-		InstantDrawer::DrawGraph3D(position[i], size[i].x, size[i].y, "white2x2", gaugeColor[i]);
-	}
-
-	//描画は小さいものを後に描画(描画順を後ろから前に回していく)
 	GaugeDraw();
 
+	playerHpUI.Draw();
 	////描画範囲制限
 	//Renderer::SetScissorRects({ Minimap::GetInstance()->rect });
 	//minimapIconRange.Draw();

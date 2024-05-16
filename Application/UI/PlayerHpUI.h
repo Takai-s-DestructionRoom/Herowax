@@ -8,6 +8,7 @@ class PlayerHpUI
 public:
 	CircleGauge circleGauge = {true};
 	CircleGauge circleGaugeBack = {true};
+	CircleGauge circleGaugeFrame = {true};
 
 	void Init();
 	void Update();
@@ -26,5 +27,8 @@ private:
 	float playerRangeXZ = 3.0f;
 	float playerRangeY = 0.0f;
 	bool checkBox = false;
+
+	Vector2 sizeFront = {1,1};
+	Vector2 sizeBack = {1,1};
 };
 
