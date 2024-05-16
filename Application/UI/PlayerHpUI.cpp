@@ -15,8 +15,6 @@ void PlayerHpUI::Init()
 	rate = Parameter::GetParam(extract,"レート", rate);
 	circleGauge.angle = Parameter::GetParam(extract,"角度", circleGauge.angle);
 	circleGauge.baseTrans.scale = Parameter::GetVector3Data(extract,"大きさ", circleGauge.baseTrans.scale);
-
-	circleGaugeBack.angle = circleGauge.angle;
 }
 
 void PlayerHpUI::Update()
@@ -35,12 +33,12 @@ void PlayerHpUI::Update()
 		circleGauge.baseTrans.position.y += playerRangeY;
 	}
 
-	circleGaugeBack.baseTrans = circleGauge.baseTrans;
-
 	circleGauge.radian = baseMin + baseRadian * rate;
-	circleGaugeBack.radian = baseMin + baseMax;
-
 	circleGauge.Update();
+
+	circleGaugeBack.radian = baseMin;
+	circleGaugeBack.baseTrans = circleGauge.baseTrans;
+	circleGaugeBack.angle = circleGauge.angle;
 	circleGaugeBack.Update();
 
 	if (RImGui::showImGui) {
@@ -55,7 +53,7 @@ void PlayerHpUI::Update()
 		ImGui::DragFloat3("位置", &circleGauge.baseTrans.position.x);
 		ImGui::DragFloat("角度", &circleGauge.angle ,0.01f);
 		ImGui::DragFloat3("大きさ", &circleGauge.baseTrans.scale.x,0.1f);
-
+		
 		if (player) {
 			ImGui::Checkbox("プレイヤーの位置に配置", &checkBox);
 			if (checkBox)
@@ -82,8 +80,8 @@ void PlayerHpUI::Update()
 
 void PlayerHpUI::Draw()
 {
-	circleGaugeBack.Draw();
 	circleGauge.Draw();
+	circleGaugeBack.Draw();
 }
 
 void PlayerHpUI::SetPlayer(Player* player_)
