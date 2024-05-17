@@ -223,10 +223,12 @@ void Player::Update()
 	//}
 	////ストックがおかしな値にならないように
 	//waxStock = Util::Clamp(waxStock, 0, maxWaxStock);
-	maxWaxStock = Util::Clamp(maxWaxStock, 0, 100);
-
+	
 	//回収処理
 	WaxCollect();
+
+	maxWaxStock = Util::Clamp(maxWaxStock, 0, 100);
+	waxStock = Util::Clamp(waxStock, 0, 100);
 
 	//回収が終わったらモデルを戻す
 	if (WaxManager::GetInstance()->isCollected && modelChange) {
@@ -400,16 +402,11 @@ void Player::Update()
 	{
 		moveVec = -moveVec;
 		obj.mTransform.position += moveVec + slideVec;
-		obj.mTuneMaterial.mColor = Color::kPink;
-	}
-	else
-	{
-		obj.mTuneMaterial.mColor = Color::kWhite;
 	}
 
 	//更新してからバッファに送る
 	obj.mTransform.UpdateMatrix();
-	obj.mPaintDataBuff->dissolveVal = (float)waxStock / (float)maxWaxStock;;
+	obj.mPaintDataBuff->dissolveVal = (float)waxStock / (float)maxWaxStock;
 	obj.mPaintDataBuff->color = Color(0.8f, 0.6f, 0.35f, 1.0f);
 	obj.mPaintDataBuff->slide += TimeManager::deltaTime;
 	BrightTransferBuffer(Camera::sNowCamera->mViewProjection);

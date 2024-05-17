@@ -382,7 +382,7 @@ void ProtoScene::Update()
 		}
 	}
 
-	player.waxCollectAmount += EnemyManager::GetInstance()->collectNum;
+	player.waxCollectAmount += EnemyManager::GetInstance()->collectNum * 5;
 
 	if (isHitSound && !player.soundFlag) {
 		//ここで攻撃のヒット音を鳴らす
