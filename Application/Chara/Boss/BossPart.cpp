@@ -105,13 +105,13 @@ void Parts::Update()
 			waxScatterTimer.Start();
 			Transform spawnTrans = obj.mTransform;
 			spawnTrans.position.y -= spawnTrans.scale.y * 2;
-			//仕様変更に伴いいったん削除
-			//どうせもうちょい広がる感じに作り直す予定なのでヨシ
-			/*WaxManager::GetInstance()->Create(
-				spawnTrans, atkVec, atkSpeed,
-				atkRange, atkSize, atkTime, solidTime);*/
-			//シェイク中に自分が出したロウに当たらないように無敵にする
 			mutekiTimer.Start();
+
+			////ロウが落ちるように
+			//for (auto& waxVisualOnce : waxVisual)
+			//{
+			//	waxVisualOnce->power += waxVisualOnce->THRESHOLD_POWER;
+			//}
 		}
 	}
 
@@ -147,6 +147,11 @@ void Parts::Update()
 			//死んでたら殺す
 			if (!(itr->get())->isAlive) {
 				itr = waxVisual.erase(itr);
+				////代わりにその位置にロウを出現させる
+				//Transform spawnTrans;
+				//spawnTrans.position = itr->get()->collider.pos;
+				//spawnTrans.scale = { itr->get()->collider.r ,itr->get()->collider.r ,itr->get()->collider.r };
+				//WaxManager::GetInstance()->Create(spawnTrans, itr->get()->collider.pos,0, itr->get()->collider.r,0.0f,0.0f);
 			}
 			else {
 				itr++;
@@ -193,10 +198,10 @@ void Parts::Update()
 
 			wax->TransferBuffer();
 
-			////送った後、このフレームで当たっていないなら親子を解除
-			//if (!check) {
-			//	wax.obj.SetParent(nullptr);
-			//}
+			//送った後、このフレームで当たっていないなら親子を解除
+			if (!check) {
+				wax->obj.SetParent(nullptr);
+			}
 		}
 	}
 }
@@ -240,11 +245,15 @@ void Parts::DealDamage(int32_t damage)
 	}
 }
 
-void Parts::CreateWaxVisual()
+void Parts::CreateWaxVisual(Vector3 spawnPos)
 {
 	waxVisual.emplace_back();
 	//差分だけ保持
 	waxVisual.back() = std::make_unique<WaxVisual>();
 	waxVisual.back()->obj.SetParent(&obj);
 	waxVisual.back()->Init();
+	
+	if (spawnPos.LengthSq() != 0) {
+		waxVisual.back()->obj.mTransform.position = spawnPos - obj.mTransform.position;
+	}
 }

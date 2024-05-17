@@ -76,7 +76,7 @@ public:
 
 	void DealDamage(int32_t damage);
 
-	void CreateWaxVisual();
+	void CreateWaxVisual(Vector3 spawnPos = {0,0,0});
 
 	//状態変更
 	template <typename ChangePartState>
