@@ -272,8 +272,12 @@ void ProtoScene::Update()
 					//一応1ダメージ(ダメージ量に応じてロウのかかり具合も進行)
 					Boss::GetInstance()->parts[i].DealDamage(player.GetAttackPower());
 					isHitSound = true;
-				
-					
+
+					//当たった場所にロウを付着
+					if (wax->isSolid == false) {
+						Boss::GetInstance()->parts[i].CreateWaxVisual(wax->obj.mTransform.position);
+						wax->isSolid = true;
+					}
 				}
 			}
 		}
