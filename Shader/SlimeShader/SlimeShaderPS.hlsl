@@ -81,13 +81,12 @@ PS_OUT main(VSOutput input)
         {
             //リムライトをつける
             float3 norm = getNormal(pos);
-            float3 baseColor = float3(0.8f, 0.6f, 0.35f);
+            float3 baseColor = waxColor.rgb;
 
-            const float rimPower = 2; //リムライトの強さ(光ってる部分の大きさ)
+            //リムライトの強さ(光ってる部分の大きさ)
             const float rimRate = pow(1 - abs(dot(norm, rayDir)), rimPower); //輪郭っぽい部分の算出  
-            const float3 rimColor = float3(1.5f, 1.5f, 1.5f); //リムライトの色
-
-            float3 color = clamp(lerp(baseColor, rimColor, rimRate), 0, 1); //色
+            
+            float3 color = clamp(lerp(baseColor, rimColor.rgb, rimRate), 0, 1); //色
             
             PS_OUT output;
             output.color = float4(color, 1);

@@ -1,4 +1,7 @@
-sphereNum:8
+sphereNum:118
 slimeValue:1
 rayMatchNum:24
-clipValue:0.75
+clipValue:0.3
+waxColor:0.8_0.6_0.35_1
+rimColor:0.933333_0.803922_0.643137_1
+rimPower:2
