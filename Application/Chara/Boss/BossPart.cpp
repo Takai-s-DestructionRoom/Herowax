@@ -47,8 +47,6 @@ void Parts::Init()
 
 	obj.mTransform.UpdateMatrix();
 	BrightTransferBuffer(Camera::sNowCamera->mViewProjection);
-
-	boxColObj = ModelObj(Model::Load("./Resources/Model/Cube.obj", "Cube"));
 }
 
 void Parts::Update()
@@ -175,11 +173,10 @@ void Parts::Update()
 			bool check = false;
 			wax->Update();
 
-	
 			//当たり判定
-			while (ColPrimitive3D::CheckSphereToAABB(wax->collider, boxCol))
+			while (ColPrimitive3D::CheckSphereToSphere(wax->collider, waxVisualColliders[0]))
 			{
-				Vector3 repulsionVec = wax->collider.pos - boxCol.pos;
+				Vector3 repulsionVec = wax->collider.pos - waxVisualColliders[0].pos;
 				repulsionVec.Normalize();
 				repulsionVec.y = 0;
 
@@ -202,27 +199,12 @@ void Parts::Update()
 			//}
 		}
 	}
-	boxCol.pos = obj.mTransform.position;
-	boxColObj.mTransform.position = boxCol.pos;
-	boxColObj.mTransform.scale = boxCol.size;
-	boxColObj.mTransform.UpdateMatrix();
-	boxColObj.TransferBuffer(Camera::sNowCamera->mViewProjection);
 }
 
 void Parts::Draw()
 {
 	if (isAlive) {	
 		BrightDraw();
-	}
-
-	//パイプラインをワイヤーフレームに
-	PipelineStateDesc pipedesc = RDirectX::GetDefPipeline().mDesc;
-	pipedesc.RasterizerState.FillMode = D3D12_FILL_MODE_WIREFRAME;
-
-	GraphicsPipeline pipe = GraphicsPipeline::GetOrCreate("WireObject", pipedesc);
-	for (RenderOrder& order : boxColObj.GetRenderOrder()) {
-		order.pipelineState = pipe.mPtr.Get();
-		Renderer::DrawCall("Opaque", order);
 	}
 }
 

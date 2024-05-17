@@ -24,8 +24,6 @@ public:
 	//見た目用ロウのテストフラグ
 	bool isWaxVisualTest = false;
 	
-	ColPrimitive3D::AABB boxCol;
-
 private:
 	//------------ HP関連 ------------//
 	Easing::EaseTimer mutekiTimer;			//無敵時間さん
@@ -60,8 +58,6 @@ private:
 
 	Easing::EaseTimer createTimer = 0.25f;
 	
-	ModelObj boxColObj;
-
 public:
 	Parts();
 	~Parts();

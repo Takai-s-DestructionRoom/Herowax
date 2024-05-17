@@ -9,6 +9,8 @@
 #include "Renderer.h"
 #include <TimeManager.h>
 #include "InstantDrawer.h"
+#include "WaxManager.h"
+
 
 Enemy::Enemy(ModelObj* target_) : GameObject(),
 moveSpeed(0.1f), slowMag(0.8f),
@@ -47,6 +49,7 @@ gravity(0.2f)
 
 Enemy::~Enemy()
 {
+
 	////50%の確率でドロップ
 	//int32_t rand = Util::GetRand(0, 1);
 	//if (rand == 1) {
@@ -244,7 +247,7 @@ void Enemy::TransfarBuffer()
 	obj.mTransform.UpdateMatrix();
 	obj.mPaintDataBuff->dissolveVal = waxSolidCount >= requireWaxSolidCount ? 1.0f : 0.3f / (requireWaxSolidCount - 1) * waxSolidCount;
 	//obj.mPaintDataBuff->dissolveVal = 1.0f;
-	obj.mPaintDataBuff->color = Color(0.8f, 0.6f, 0.35f, 1.0f);
+	obj.mPaintDataBuff->color = WaxManager::GetInstance()->slimeWax.waxColor;
 	obj.mPaintDataBuff->slide += TimeManager::deltaTime;
 	BrightTransferBuffer(Camera::sNowCamera->mViewProjection);
 

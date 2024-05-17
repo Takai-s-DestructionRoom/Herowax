@@ -410,9 +410,11 @@ void ProtoScene::Update()
 		//未出現なら処理しない
 		if (!enemy1->GetIsSpawn())continue;
 
+		//回収中なら処理しない
+		if (enemy1->GetState() == EnemyCollect::GetStateStr())continue;
+
 		//攻撃中と回収され中はこの判定をなくす
-		if (enemy1->GetAttackState() != EnemyNowAttackState::GetStateStr() &&
-			enemy1->GetState() != EnemyCollect::GetStateStr()) 
+		if (enemy1->GetAttackState() != EnemyNowAttackState::GetStateStr()) 
 		{	
 			//プレイヤーと判定、当たってるなら押し戻す
 			if (ColPrimitive3D::CheckSphereToSphere(enemy1->collider, player.collider)) 
