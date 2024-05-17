@@ -28,7 +28,10 @@ void SlimeWax::Init()
 	slimeValue = Parameter::GetParam(extract,"slimeValue", slimeValue);
 	rayMatchNum = (int32_t)Parameter::GetParam(extract,"rayMatchNum", (float)rayMatchNum);
 	clipValue = Parameter::GetParam(extract,"clipValue", clipValue);
-	
+	waxColor = Parameter::GetColorData(extract,"waxColor", waxColor);
+	rimColor = Parameter::GetColorData(extract,"rimColor", rimColor);
+	rimPower = Parameter::GetParam(extract,"rimPower", rimPower);
+
 	spheres.clear();
 }
 
@@ -37,7 +40,6 @@ void SlimeWax::Update()
 	//死んでいるロウがあれば消す
 	for (auto itr = spheres.begin(); itr != spheres.end();)
 	{
-		
 		if (!&(*itr).isAlive)
 		{
 			itr = spheres.erase(itr);
@@ -171,13 +173,15 @@ void SlimeWax::TransferBuffer()
 	slimeBuff->slimeValue = slimeValue;
 	slimeBuff->rayMatchNum = rayMatchNum;
 	slimeBuff->clipValue = clipValue;
+	slimeBuff->waxColor = Float4(waxColor.r, waxColor.g, waxColor.b, waxColor.a);
+	slimeBuff->rimColor = Float4(rimColor.r, rimColor.g, rimColor.b, rimColor.a);
+	slimeBuff->rimPower = rimPower;
 }
 
 void SlimeWax::ImGui()
 {
 	if (RImGui::showImGui)
 	{
-
 		ImGui::SetNextWindowSize({ 300, 200 }, ImGuiCond_FirstUseEver);
 
 		ImGui::Begin("RayMarchTest");
@@ -205,13 +209,20 @@ void SlimeWax::ImGui()
 		ImGui::DragFloat3("rotation", &screen.mTransform.rotation.x, 0.01f);
 		ImGui::SliderFloat("slimeValue", &slimeValue, 0.01f, 1.0f);
 		ImGui::SliderInt("rayMatchNum", &rayMatchNum, 1, 64);
-		ImGui::InputFloat("clipValue", &clipValue, 0.001f);
+		ImGui::DragFloat("clipValue", &clipValue, 0.001f);
+		ImGui::ColorEdit4("waxColor", &waxColor.r);
+		ImGui::ColorEdit4("rimColor", &rimColor.r);
+		ImGui::DragFloat("rimPower", &rimPower, 0.1f);
+
 		if (ImGui::Button("セーブ")) {
 			Parameter::Begin("slimeWax");
 			Parameter::Save("sphereNum", sphereNum);
 			Parameter::Save("slimeValue", slimeValue);
 			Parameter::Save("rayMatchNum", rayMatchNum);
 			Parameter::Save("clipValue", clipValue);
+			Parameter::SaveColor("waxColor", waxColor);
+			Parameter::SaveColor("rimColor", rimColor);
+			Parameter::Save("rimPower", rimPower);
 			Parameter::End();
 		}
 		ImGui::End();

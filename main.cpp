@@ -36,6 +36,7 @@
 #include <DebugGUI.h>
 #include <PathUtil.h>
 #include "TitleScene.h"
+#include "RayMarchTestScene.h"
 
 using namespace std;
 using namespace DirectX;
@@ -111,7 +112,8 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 
 	//初期シーンセット
 	Util::debugBool = false;
-	SceneManager::Set<TitleScene>();
+	//SceneManager::Set<TitleScene>();
+	SceneManager::Set<RayMarchTestScene>();
 	
 	//////////////////////////////////////
 

@@ -78,4 +78,7 @@ cbuffer ConstBufferDataSlime : register(b4)
     int rayMatchNum;
     float clipValue;
     float4 Spheres[MAX_SPHERE_COUNT];
+    float4 waxColor;
+    float4 rimColor;
+    float rimPower;
 }
