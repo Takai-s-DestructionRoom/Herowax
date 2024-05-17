@@ -316,6 +316,10 @@ void Boss::Update()
 			if (ImGui::Button("右腕のロウを全消し")) {
 				parts[1].waxVisual.clear();
 			}
+
+			ImGui::DragFloat3("左腕のコライダーサイズ", &parts[0].boxCol.size.x);
+			ImGui::DragFloat3("右腕のコライダーサイズ", &parts[1].boxCol.size.x);
+
 			ImGui::TreePop();
 		}
 

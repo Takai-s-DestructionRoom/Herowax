@@ -22,7 +22,9 @@ public:
 	std::vector<std::unique_ptr<WaxVisual>> waxVisual;
 	
 	//見た目用ロウのテストフラグ
-	bool isWaxVisualTest = true;
+	bool isWaxVisualTest = false;
+	
+	ColPrimitive3D::AABB boxCol;
 
 private:
 	//------------ HP関連 ------------//
@@ -58,6 +60,8 @@ private:
 
 	Easing::EaseTimer createTimer = 0.25f;
 	
+	ModelObj boxColObj;
+
 public:
 	Parts();
 	~Parts();

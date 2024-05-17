@@ -4,6 +4,7 @@
 #include "ParticleManager.h"
 #include "WaxManager.h"
 #include "Boss.h"
+#include "Renderer.h"
 
 Parts::Parts() : GameObject()
 {
@@ -46,6 +47,8 @@ void Parts::Init()
 
 	obj.mTransform.UpdateMatrix();
 	BrightTransferBuffer(Camera::sNowCamera->mViewProjection);
+
+	boxColObj = ModelObj(Model::Load("./Resources/Model/Cube.obj", "Cube"));
 }
 
 void Parts::Update()
@@ -135,11 +138,11 @@ void Parts::Update()
 			waxVisualColliders[i].r = collider.r / 3;
 		}
 
-		createTimer.Update();
+		/*createTimer.Update();
 		if (!createTimer.GetRun()) {
 			createTimer.Start();
 			CreateWaxVisual();
-		}
+		}*/
 
 		for (auto itr = waxVisual.begin(); itr != waxVisual.end();)
 		{
@@ -172,25 +175,23 @@ void Parts::Update()
 			bool check = false;
 			wax->Update();
 
-			for (int32_t i = 0; i < COLLIDER_NUM; i++)
+	
+			//当たり判定
+			while (ColPrimitive3D::CheckSphereToAABB(wax->collider, boxCol))
 			{
-				//当たり判定
-				while (ColPrimitive3D::CheckSphereToSphere(wax->collider, waxVisualColliders[i]))
-				{
-					Vector3 repulsionVec = wax->collider.pos - waxVisualColliders[i].pos;
-					repulsionVec.Normalize();
-					repulsionVec.y = 0;
+				Vector3 repulsionVec = wax->collider.pos - boxCol.pos;
+				repulsionVec.Normalize();
+				repulsionVec.y = 0;
 
-					wax->collider.pos += repulsionVec;
-					//wax.obj.mTransform.position += repulsionVec;
+				wax->collider.pos += repulsionVec;
+				//wax.obj.mTransform.position += repulsionVec;
 
-					//もしここが0になった場合無限ループするので抜ける
-					if (repulsionVec.LengthSq() == 0) {
-						break;
-					}
-					check = true;
-					wax->obj.SetParent(&obj);
+				//もしここが0になった場合無限ループするので抜ける
+				if (repulsionVec.LengthSq() == 0) {
+					break;
 				}
+				check = true;
+				wax->obj.SetParent(&obj);
 			}
 
 			wax->TransferBuffer();
@@ -201,12 +202,27 @@ void Parts::Update()
 			//}
 		}
 	}
+	boxCol.pos = obj.mTransform.position;
+	boxColObj.mTransform.position = boxCol.pos;
+	boxColObj.mTransform.scale = boxCol.size;
+	boxColObj.mTransform.UpdateMatrix();
+	boxColObj.TransferBuffer(Camera::sNowCamera->mViewProjection);
 }
 
 void Parts::Draw()
 {
 	if (isAlive) {	
 		BrightDraw();
+	}
+
+	//パイプラインをワイヤーフレームに
+	PipelineStateDesc pipedesc = RDirectX::GetDefPipeline().mDesc;
+	pipedesc.RasterizerState.FillMode = D3D12_FILL_MODE_WIREFRAME;
+
+	GraphicsPipeline pipe = GraphicsPipeline::GetOrCreate("WireObject", pipedesc);
+	for (RenderOrder& order : boxColObj.GetRenderOrder()) {
+		order.pipelineState = pipe.mPtr.Get();
+		Renderer::DrawCall("Opaque", order);
 	}
 }
 
