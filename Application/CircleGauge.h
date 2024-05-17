@@ -36,6 +36,7 @@ public:
 	float radian = 0.0f;
 
 	float angle = 0.0f;
+	bool isOutside = false;
 
 private:
 	BillboardImage billboard;

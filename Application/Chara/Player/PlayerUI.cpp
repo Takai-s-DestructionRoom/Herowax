@@ -20,6 +20,7 @@ PlayerUI::PlayerUI()
 	
 	basePos = Parameter::GetVector3Data(extract, "ゲージの位置", {0,0,0});
 	baseScale = Parameter::GetVector3Data(extract,"ゲージの大きさ", { 1,1,1 });
+	sizeCoeffPlus = Parameter::GetParam(extract,"ゲージ間の幅", 0.2f);
 
 	GaugeReset();
 	GaugeAdd();
@@ -92,7 +93,7 @@ void PlayerUI::Update(Player* player)
 	//ゲージが必要になったら増やす(1.0fを超えたら2本目を生成、2.0fを超えたら3本目を生成...を繰り返す)
 	while (baseBackRadian > (float)waxCircleGauges.size())
 	{
-		GaugeAdd();
+		GaugeAdd(true);
 	};
 
 	GaugeUpdate();
@@ -106,11 +107,13 @@ void PlayerUI::Update(Player* player)
 		ImGui::Text("現在の割合:%f", baseRadian);
 		ImGui::DragFloat3("位置", &basePos.x);
 		ImGui::DragFloat3("大きさ", &baseScale.x);
+		ImGui::DragFloat("ゲージ間の幅", &sizeCoeffPlus);
 
 		if (ImGui::Button("セーブ")) {
 			Parameter::Begin("waxCircleGauge");
 			Parameter::SaveVector3("ゲージの位置", basePos);
 			Parameter::SaveVector3("ゲージの大きさ", baseScale);
+			Parameter::Save("ゲージ間の幅", sizeCoeffPlus);
 			Parameter::End();
 		}
 
@@ -138,22 +141,30 @@ void PlayerUI::GaugeReset()
 	waxCircleGaugeBacks.clear();
 }
 
-void PlayerUI::GaugeAdd()
+void PlayerUI::GaugeAdd(bool isOut)
 {
 	waxCircleGauges.emplace_back();
 	waxCircleGauges.back().Init();
-	//デフォルトと同じだけど明示的にしたいのでテクスチャ配置
-	//waxCircleGauges.back().sprite.SetTexture(TextureManager::Load("./Resources/circleGauge.png", "circleGauge"));
-	waxCircleGauges.back().SetTexture(TextureManager::Load("./Resources/UI/waxGauge.png", "waxGauge"));
 	waxCircleGauges.back().radian = 360.0f;
 	
 	waxCircleGaugeBacks.emplace_back();
 	waxCircleGaugeBacks.back().Init();
-	//デフォルトと同じだけど明示的にしたいのでテクスチャ配置
-	//waxCircleGaugeBacks.back().sprite.SetTexture(TextureManager::Load("./Resources/circleGaugeBack.png", "circleGaugeBack"));
-	waxCircleGaugeBacks.back().SetTexture(TextureManager::Load("./Resources/UI/circleGaugeBack.png", "circleGaugeBack"));
 	waxCircleGaugeBacks.back().radian = 360.0f;
 
+	if (isOut)
+	{
+		waxCircleGauges.back().SetTexture(TextureManager::Load("./Resources/UI/waxGaugeOut.png", "waxGaugeOut"));
+		waxCircleGaugeBacks.back().SetTexture(TextureManager::Load("./Resources/UI/waxGaugeOutBack.png", "waxGaugeOutBack"));
+	}
+	else
+	{
+		//デフォルトと同じだけど明示的にしたいのでテクスチャ配置
+		//waxCircleGauges.back().sprite.SetTexture(TextureManager::Load("./Resources/circleGauge.png", "circleGauge"));
+		waxCircleGauges.back().SetTexture(TextureManager::Load("./Resources/UI/waxGauge.png", "waxGauge"));
+		
+		//waxCircleGaugeBacks.back().sprite.SetTexture(TextureManager::Load("./Resources/circleGaugeBack.png", "circleGaugeBack"));
+		waxCircleGaugeBacks.back().SetTexture(TextureManager::Load("./Resources/UI/circleGaugeBack.png", "circleGaugeBack"));
+	}
 }
 
 void PlayerUI::GaugeUpdate()
