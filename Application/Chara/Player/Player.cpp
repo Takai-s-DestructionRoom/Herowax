@@ -134,7 +134,6 @@ void Player::Init()
 	obj.mTransform.UpdateMatrix();
 
 	isMove = true;
-
 }
 
 void Player::Reset()

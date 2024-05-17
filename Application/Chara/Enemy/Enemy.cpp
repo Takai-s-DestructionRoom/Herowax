@@ -488,7 +488,6 @@ void Enemy::UpdateAttackCollider()
 
 	attackDrawerObj.mTransform.UpdateMatrix();
 	attackDrawerObj.TransferBuffer(Camera::sNowCamera->mViewProjection);
-
 }
 
 void Enemy::DrawAttackCollider()

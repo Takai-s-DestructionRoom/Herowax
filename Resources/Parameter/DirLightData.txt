@@ -1,2 +1,2 @@
 dirLightActive:1
-dirLightColor:0.185654_0.185654_0.185654_1
+dirLightColor:0_0_0_1
