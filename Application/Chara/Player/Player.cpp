@@ -1023,7 +1023,7 @@ void Player::WaxCollect()
 						//とりあえず壊しちゃう
 						boss->parts[(int32_t)PartsNum::LeftHand].collectPos = collectCol.start;
 						boss->parts[(int32_t)PartsNum::LeftHand].ChangeState<BossPartCollect>();
-						waxCollectAmount += 1;
+						waxCollectAmount += 5;
 					}
 				}
 			}
@@ -1043,7 +1043,7 @@ void Player::WaxCollect()
 						boss->parts[(int32_t)PartsNum::RightHand].collectPos = collectCol.start;
 						boss->parts[(int32_t)PartsNum::RightHand].ChangeState<BossPartCollect>();
 						//腕の吸収値も変数化したい
-						waxCollectAmount += 1;
+						waxCollectAmount += 5;
 					}
 				}
 			}

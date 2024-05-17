@@ -382,7 +382,7 @@ void ProtoScene::Update()
 		}
 	}
 
-	player.waxCollectAmount += EnemyManager::GetInstance()->collectNum * 5;
+	player.waxCollectAmount += EnemyManager::GetInstance()->collectNum;
 
 	if (isHitSound && !player.soundFlag) {
 		//ここで攻撃のヒット音を鳴らす
@@ -467,7 +467,7 @@ void ProtoScene::Update()
 	}
 
 	//プレイヤーを押し戻す(ボス)
-	if (ColPrimitive3D::CheckSphereToSphere(Boss::GetInstance()->collider, player.collider)) {
+	if (ColPrimitive3D::CheckSphereToSphere(Boss::GetInstance()->collider, player.collider) && Boss::GetInstance()->isAppearance) {
 		Vector3 repulsionVec = player.GetPos() - Boss::GetInstance()->GetPos();
 		repulsionVec.Normalize();
 		repulsionVec.y = 0;
