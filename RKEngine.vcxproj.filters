@@ -834,6 +834,9 @@
     <ClCompile Include="Application\UI\PlayerHpUI.cpp">
       <Filter>ソース ファイル\Application\UI</Filter>
     </ClCompile>
+    <ClCompile Include="BossFallAttack.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Shader\Basic\BasicPS.hlsl">
@@ -1543,6 +1546,9 @@
     </ClInclude>
     <ClInclude Include="Application\UI\PlayerHpUI.h">
       <Filter>ヘッダー ファイル\Application\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="BossFallAttack.h">
+      <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
