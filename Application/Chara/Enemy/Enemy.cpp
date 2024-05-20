@@ -231,6 +231,8 @@ void Enemy::BaseUpdate()
 	brightColor.b = Easing::OutQuad(1, 0, whiteTimer.GetTimeRate());
 	brightColor.a = Easing::OutQuad(1, 0, whiteTimer.GetTimeRate());
 	if (!whiteTimer.GetStarted())brightColor = { 0,0,0,0 };
+
+	WaxVisualUpdate();
 }
 
 void Enemy::TransfarBuffer()
@@ -380,6 +382,75 @@ void Enemy::BehaviorReset()
 	//基準座標をリセット
 	BehaviorOrigenReset();
 }
+
+void Enemy::CreateWaxVisual(Vector3 spawnPos)
+{
+	waxVisual.emplace_back();
+	//差分だけ保持
+	waxVisual.back() = std::make_unique<WaxVisual>();
+	waxVisual.back()->obj.SetParent(&obj);
+	waxVisual.back()->Init();
+
+	if (spawnPos.LengthSq() != 0) {
+		waxVisual.back()->obj.mTransform.position = spawnPos - obj.mTransform.position;
+	}
+}
+
+
+void Enemy::WaxVisualUpdate()
+{
+	for (auto itr = waxVisual.begin(); itr != waxVisual.end();)
+	{
+		//死んでたら殺す
+		if (!(itr->get())->isAlive) {
+			itr = waxVisual.erase(itr);
+		}
+		else {
+			itr++;
+		}
+	}
+
+	/*for (auto& wax1 : waxVisual)
+	{
+		for (auto& wax2 : waxVisual)
+		{
+			if (wax1 == wax2)continue;
+
+			重なりチェック
+			if (ColPrimitive3D::CheckSphereToSphere(wax1->collider, wax2->collider))
+			{
+				wax1->power++;
+				wax2->power++;
+			}
+		}
+	}*/
+
+	for (auto& wax : waxVisual)
+	{
+		bool check = false;
+		wax->Update();
+
+		//当たり判定
+		while (ColPrimitive3D::CheckSphereToSphere(wax->collider, collider))
+		{
+			Vector3 repulsionVec = wax->collider.pos - collider.pos;
+			repulsionVec.Normalize();
+			repulsionVec.y = 0;
+
+			wax->collider.pos += repulsionVec;
+
+			//もしここが0になった場合無限ループするので抜ける
+			if (repulsionVec.LengthSq() == 0) {
+				break;
+			}
+			check = true;
+			wax->obj.SetParent(&obj);
+		}
+
+		wax->TransferBuffer();
+	}
+}
+
 
 void Enemy::DealDamage(uint32_t damage, const Vector3& dir, ModelObj* target_)
 {

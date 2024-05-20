@@ -142,67 +142,7 @@ void Parts::Update()
 			CreateWaxVisual();
 		}*/
 
-		for (auto itr = waxVisual.begin(); itr != waxVisual.end();)
-		{
-			//死んでたら殺す
-			if (!(itr->get())->isAlive) {
-				itr = waxVisual.erase(itr);
-				////代わりにその位置にロウを出現させる
-				//Transform spawnTrans;
-				//spawnTrans.position = itr->get()->collider.pos;
-				//spawnTrans.scale = { itr->get()->collider.r ,itr->get()->collider.r ,itr->get()->collider.r };
-				//WaxManager::GetInstance()->Create(spawnTrans, itr->get()->collider.pos,0, itr->get()->collider.r,0.0f,0.0f);
-			}
-			else {
-				itr++;
-			}
-		}
-
-		for (auto& wax1 : waxVisual)
-		{
-			for (auto& wax2 : waxVisual)
-			{
-				if (wax1 == wax2)continue;
-
-				//重なりチェック
-				if (ColPrimitive3D::CheckSphereToSphere(wax1->collider, wax2->collider))
-				{
-					wax1->power++;
-					wax2->power++;
-				}
-			}
-		}
-
-		for (auto& wax : waxVisual)
-		{
-			bool check = false;
-			wax->Update();
-
-			//当たり判定
-			while (ColPrimitive3D::CheckSphereToSphere(wax->collider, waxVisualColliders[0]))
-			{
-				Vector3 repulsionVec = wax->collider.pos - waxVisualColliders[0].pos;
-				repulsionVec.Normalize();
-				repulsionVec.y = 0;
-
-				wax->collider.pos += repulsionVec;
-				//wax.obj.mTransform.position += repulsionVec;
-
-				//もしここが0になった場合無限ループするので抜ける
-				if (repulsionVec.LengthSq() == 0) {
-					break;
-				}
-				check = true;
-				wax->obj.SetParent(&obj);
-			}
-
-			wax->TransferBuffer();
-
-			//送った後、このフレームで当たっていないなら親子を解除
-			if (!check) {
-				wax->obj.SetParent(nullptr);
-			}
-		}
+		WaxVisualUpdate();
 	}
 }
 
@@ -256,5 +196,64 @@ void Parts::CreateWaxVisual(Vector3 spawnPos)
 	
 	if (spawnPos.LengthSq() != 0) {
 		waxVisual.back()->obj.mTransform.position = spawnPos - obj.mTransform.position;
+	}
+}
+
+void Parts::WaxVisualUpdate()
+{
+	for (auto itr = waxVisual.begin(); itr != waxVisual.end();)
+	{
+		//死んでたら殺す
+		if (!(itr->get())->isAlive) {
+			itr = waxVisual.erase(itr);
+		}
+		else {
+			itr++;
+		}
+	}
+
+	for (auto& wax1 : waxVisual)
+	{
+		for (auto& wax2 : waxVisual)
+		{
+			if (wax1 == wax2)continue;
+
+			//重なりチェック
+			if (ColPrimitive3D::CheckSphereToSphere(wax1->collider, wax2->collider))
+			{
+				wax1->power++;
+				wax2->power++;
+			}
+		}
+	}
+
+	for (auto& wax : waxVisual)
+	{
+		bool check = false;
+		wax->Update();
+
+		//当たり判定
+		while (ColPrimitive3D::CheckSphereToSphere(wax->collider, waxVisualColliders[0]))
+		{
+			Vector3 repulsionVec = wax->collider.pos - waxVisualColliders[0].pos;
+			repulsionVec.Normalize();
+			repulsionVec.y = 0;
+
+			wax->collider.pos += repulsionVec;
+
+			//もしここが0になった場合無限ループするので抜ける
+			if (repulsionVec.LengthSq() == 0) {
+				break;
+			}
+			check = true;
+			wax->obj.SetParent(&obj);
+		}
+
+		wax->TransferBuffer();
+
+		//送った後、このフレームで当たっていないなら親子を解除
+		if (!check) {
+			wax->obj.SetParent(nullptr);
+		}
 	}
 }

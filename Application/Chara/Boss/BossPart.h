@@ -78,6 +78,8 @@ public:
 
 	void CreateWaxVisual(Vector3 spawnPos = {0,0,0});
 
+	void WaxVisualUpdate();
+
 	//状態変更
 	template <typename ChangePartState>
 	void ChangeState() {

@@ -66,9 +66,9 @@ void WaxVisual::Update()
 		collider.pos.y = ground.position.y;
 		gravity = 0.0f;
 
-		if (power >= THRESHOLD_POWER) {
+		/*if (power >= THRESHOLD_POWER) {
 			power = THRESHOLD_POWER;
-		}
+		}*/
 
 		isAlive = false;
 	}
