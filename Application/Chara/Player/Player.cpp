@@ -227,7 +227,7 @@ void Player::Update()
 	WaxCollect();
 
 	maxWaxStock = Util::Clamp(maxWaxStock, 0, 100);
-	waxStock = Util::Clamp(waxStock, 0, 100);
+	waxStock = Util::Clamp(waxStock, 0, maxWaxStock);
 
 	//回収が終わったらモデルを戻す
 	if (WaxManager::GetInstance()->isCollected && modelChange) {
