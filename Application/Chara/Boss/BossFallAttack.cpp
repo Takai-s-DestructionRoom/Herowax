@@ -22,16 +22,24 @@ void BossFallAttack::Update(Boss* boss)
 		boss->fallAtkTimer.Reset();
 		boss->fallAtkStayTimer.Reset();
 
-		boss->fallAtkTimer.Start();
+		boss->fallAtkShoutTimer.Start();
 
 		isStart = false;
 	}
 
+	//叫んでる時
+	if (boss->fallAtkShoutTimer.GetRun())
+	{
+		boss->Shake(boss->fallAtkShoutTimer.maxTime_, 1.f);
+	}
+
+	//叫び終わったら
 	if (boss->fallAtkShoutTimer.GetEnd() && boss->fallAtkTimer.GetStarted() == false)
 	{
 		boss->fallAtkTimer.Start();
 	}
 
+	//攻撃終わったら
 	if (boss->fallAtkTimer.GetEnd() && boss->fallAtkStayTimer.GetStarted() == false)
 	{
 		boss->fallAtkStayTimer.Start();
@@ -48,6 +56,7 @@ void BossFallAttack::Update(Boss* boss)
 		boss->warning[i].TransferBuffer(Camera::sNowCamera->mViewProjection);
 	}
 
+	//待機時間終わったら終了フラグ立てる
 	if (boss->fallAtkStayTimer.GetEnd())
 	{
 		isFinished = true;

@@ -17,13 +17,13 @@
 #include "BossAppearanceScene.h"
 
 Boss::Boss() : GameObject(),
-moveSpeed(0.1f), hp(0), maxHP(10.f)
+moveSpeed(0.1f), hp(0), maxHP(10.f),oriSize(6.f)
 {
 	state = std::make_unique<BossNormal>();
 	nextState = nullptr;
 	obj = PaintableModelObj(Model::Load("./Resources/Model/bossBody/bossBody.obj", "bossBody", true));
 	obj.mPaintDissolveMapTex = TextureManager::Load("./Resources/DissolveMap.png", "DissolveMapTex");
-	obj.mTransform.scale = Vector3(1, 1, 1) * 8.f;
+	obj.mTransform.scale = Vector3(1, 1, 1) * oriSize;
 
 	barrier = PaintableModelObj(Model::Load("./Resources/Model/Sphere.obj", "sphere", true));
 	barrier.SetParent(&obj);
@@ -52,9 +52,7 @@ moveSpeed(0.1f), hp(0), maxHP(10.f)
 	BossUI::LoadResource();
 
 	std::map<std::string, std::string> extract = Parameter::Extract("Boss");
-	obj.mTransform.scale.x = Parameter::GetParam(extract, "ボス本体のスケールX", obj.mTransform.scale.x);
-	obj.mTransform.scale.y = Parameter::GetParam(extract, "ボス本体のスケールY", obj.mTransform.scale.y);
-	obj.mTransform.scale.z = Parameter::GetParam(extract, "ボス本体のスケールZ", obj.mTransform.scale.z);
+	oriSize = Parameter::GetParam(extract, "ボス本体のスケール", oriSize);
 	colliderSize = Parameter::GetParam(extract, "ボス本体の当たり判定", colliderSize);
 	mutekiTimer.maxTime_ = Parameter::GetParam(extract, "無敵時間", mutekiTimer.maxTime_);
 
@@ -62,7 +60,7 @@ moveSpeed(0.1f), hp(0), maxHP(10.f)
 	punchTimer = Parameter::GetParam(extract, "パンチにかかる時間", 0.7f);
 	punchStayTimer = Parameter::GetParam(extract, "パンチ後留まる時間", 1.5f);
 
-	fallAtkShoutTimer = Parameter::GetParam(extract, "咆哮時間", 2.f);
+	fallAtkShoutTimer = Parameter::GetParam(extract, "さけぶ時間", 2.f);
 	fallAtkTimer = Parameter::GetParam(extract, "落下攻撃時間", 1.f);
 	fallAtkStayTimer = Parameter::GetParam(extract, "落下攻撃後留まる時間", 1.5f);
 
@@ -156,6 +154,9 @@ void Boss::AllStateUpdate()
 	obj.mTransform.position -= shake;
 	shake = { 0,0,0 };
 
+	//大きさを更新
+	obj.mTransform.scale = Vector3(1, 1, 1) * oriSize;
+
 	//タイマー更新
 	mutekiTimer.Update();
 	whiteTimer.Update();
@@ -177,16 +178,16 @@ void Boss::AllStateUpdate()
 
 			//体だけ残っているならシェイクも入れる
 			if (GetIsOnlyBody()) {
-				shakeTimer.Start();
+				Shake(0.5f,1.f);
 			}
 		}
 	}
 
 	//シェイク中なら適当な値を入れる
 	if (shakeTimer.GetRun()) {
-		shake.x = Util::GetRand(-1.0f, 1.0f);
-		shake.y = Util::GetRand(-1.0f, 1.0f);
-		shake.z = Util::GetRand(-1.0f, 1.0f);
+		shake.x = Util::GetRand(-shakePower, shakePower);
+		shake.y = Util::GetRand(-shakePower, shakePower);
+		shake.z = Util::GetRand(-shakePower, shakePower);
 
 		//本体はロウ出さない
 		//Vector3 atkVec = Util::GetRandVector3({ 0,0,0 }, -0.1f, 0.1f, { 1,0,1 });
@@ -267,26 +268,6 @@ void Boss::AllStateUpdate()
 
 	//座標加算
 	obj.mTransform.position += shake;
-
-	//更新してからバッファに送る
-	obj.mTransform.UpdateMatrix();
-	BrightTransferBuffer(Camera::sNowCamera->mViewProjection);
-	obj.mPaintDataBuff->dissolveVal = waxSolidCount >= requireWaxSolidCount ? 1.0f : 0.3f / (requireWaxSolidCount - 1) * waxSolidCount;
-	obj.mPaintDataBuff->color = Color(0.8f, 0.6f, 0.35f, 1.0f);
-	obj.mPaintDataBuff->slide += TimeManager::deltaTime;
-
-	barrier.mTransform.UpdateMatrix();
-	barrier.TransferBuffer(Camera::sNowCamera->mViewProjection);
-
-	for (size_t i = 0; i < parts.size(); i++)
-	{
-		//無敵時間をボス本体と合わせる
-		parts[i].SetMutekiMaxTime(mutekiTimer.maxTime_);
-		//描画フラグをボスと合わせて切り替える
-		parts[i].SetDrawCollider(isDrawCollider);
-		//更新
-		parts[i].Update();
-	}
 }
 
 void Boss::Update()
@@ -338,13 +319,13 @@ void Boss::Update()
 			if (ImGui::Button("出現タイマーリセット")) {
 				bossSpawnTimer.Start();
 			}
-			ImGui::DragFloat3("スケール", &obj.mTransform.scale.x, 0.1f);
+			ImGui::DragFloat("スケール", &oriSize, 0.1f);
 			ImGui::DragFloat("当たり判定", &colliderSize, 0.1f);
 			ImGui::InputFloat("無敵時間", &mutekiTimer.maxTime_, 0.1f);
 			ImGui::InputFloat("モーション待機時間", &standTimer.maxTime_, 0.1f);
 			ImGui::InputFloat("パンチにかかる時間", &punchTimer.maxTime_, 0.1f);
 			ImGui::InputFloat("パンチ後留まる時間", &punchStayTimer.maxTime_, 0.1f);
-			ImGui::InputFloat("咆哮時間", &fallAtkShoutTimer.maxTime_, 0.1f);
+			ImGui::InputFloat("さけぶ時間", &fallAtkShoutTimer.maxTime_, 0.1f);
 			ImGui::InputFloat("落下攻撃時間", &fallAtkTimer.maxTime_, 0.1f);
 			ImGui::InputFloat("落下攻撃後留まる時間", &fallAtkStayTimer.maxTime_, 0.1f);
 			ImGui::InputFloat("バリア割れるまでの時間", &barrierCrushTimer.maxTime_, 0.1f);
@@ -372,9 +353,7 @@ void Boss::Update()
 		}
 		if (ImGui::Button("セーブ")) {
 			Parameter::Begin("Boss");
-			Parameter::Save("ボス本体のスケールX", obj.mTransform.scale.x);
-			Parameter::Save("ボス本体のスケールY", obj.mTransform.scale.y);
-			Parameter::Save("ボス本体のスケールZ", obj.mTransform.scale.z);
+			Parameter::Save("ボス本体のスケール", oriSize);
 			Parameter::Save("ボス本体の当たり判定", colliderSize);
 			Parameter::Save("無敵時間", mutekiTimer.maxTime_);
 			Parameter::Save("左手スケールX", parts[(int32_t)PartsNum::LeftHand].obj.mTransform.scale.x);
@@ -386,7 +365,7 @@ void Boss::Update()
 			Parameter::Save("モーション待機時間", standTimer.maxTime_);
 			Parameter::Save("パンチにかかる時間", punchTimer.maxTime_);
 			Parameter::Save("パンチ後留まる時間", punchStayTimer.maxTime_);
-			Parameter::Save("ボスが出現するまでの時間", bossSpawnTimer.GetTimeRate());
+			Parameter::Save("ボスが出現するまでの時間", bossSpawnTimer.maxTime_);
 
 			Parameter::End();
 		}
@@ -403,11 +382,11 @@ void Boss::Update()
 
 	ai.Update(this);
 
-	//各ステート時の固有処理
-	state->Update(this);
-
 	//全ステートの共通処理
 	AllStateUpdate();
+
+	//各ステート時の固有処理
+	state->Update(this);
 
 	// モーションの変更(デバッグ用)
 	if (Util::debugBool) {
@@ -449,6 +428,26 @@ void Boss::Update()
 		std::swap(state, nextState);
 		changingState = false;
 		nextState = nullptr;
+	}
+
+	//更新してからバッファに送る
+	obj.mTransform.UpdateMatrix();
+	BrightTransferBuffer(Camera::sNowCamera->mViewProjection);
+	obj.mPaintDataBuff->dissolveVal = waxSolidCount >= requireWaxSolidCount ? 1.0f : 0.3f / (requireWaxSolidCount - 1) * waxSolidCount;
+	obj.mPaintDataBuff->color = Color(0.8f, 0.6f, 0.35f, 1.0f);
+	obj.mPaintDataBuff->slide += TimeManager::deltaTime;
+
+	barrier.mTransform.UpdateMatrix();
+	barrier.TransferBuffer(Camera::sNowCamera->mViewProjection);
+
+	for (size_t i = 0; i < parts.size(); i++)
+	{
+		//無敵時間をボス本体と合わせる
+		parts[i].SetMutekiMaxTime(mutekiTimer.maxTime_);
+		//描画フラグをボスと合わせて切り替える
+		parts[i].SetDrawCollider(isDrawCollider);
+		//更新
+		parts[i].Update();
 	}
 
 	targetCircle.mTransform.UpdateMatrix();
@@ -495,6 +494,14 @@ void Boss::Draw()
 	}
 
 	ui.Draw();
+}
+
+void Boss::Shake(float time, float power)
+{
+	shakeTimer = time;
+	shakeTimer.Start();
+
+	shakePower = power;
 }
 
 bool Boss::GetIsSolid(PartsNum num)

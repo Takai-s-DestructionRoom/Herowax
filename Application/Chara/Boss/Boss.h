@@ -23,6 +23,7 @@ private:
 	//------------ 移動関連 ------------//
 	Vector3 moveVec;			//移動ベクトル
 	float moveSpeed;			//移動速度
+	float oriSize;				//元の大きさ比率
 
 	//------------ HP関連 ------------//
 	float hp;				//現在のヒットポイント
@@ -67,6 +68,7 @@ private:
 	Easing::EaseTimer shakeTimer = 0.5f;
 	Easing::EaseTimer waxScatterTimer = 0.1f;
 	Vector3 shake{};
+	float shakePower;
 
 	//ロウを出すためのパラメータ(適当でもいい)
 	float solidTime = 0;
@@ -111,6 +113,8 @@ public:
 	void Update() override;
 	void Draw() override;
 
+	void Shake(float time,float power);
+
 	//状態変更
 	template <typename ChangePlayerState>
 	void ChangeState() {
@@ -123,6 +127,8 @@ public:
 	std::string GetStateStr() { return stateStr; }
 	//攻撃対象を取得
 	ModelObj* GetTarget() { return target; }
+	//元の大きさ比率取得
+	float GetOriSize() { return oriSize; }
 	/// <summary>
 	/// 固まっているかどうかを取得
 	/// </summary>
