@@ -309,6 +309,12 @@ void ProtoScene::Update()
 						enemy->DealDamage(player.GetAttackPower(),
 							knockVec, &player.obj);
 						isHitSound = true;
+					
+						//当たった場所にロウを付着
+						if (wax->isSolid == false) {
+							enemy->CreateWaxVisual(wax->obj.mTransform.position);
+							wax->isSolid = true;
+						}
 					}
 					//地面の蝋とぶつかってたら足盗られに
 					else
@@ -336,8 +342,16 @@ void ProtoScene::Update()
 							enemy->isCollect = true;
 							enemy->ChangeState<EnemyCollect>();
 						}
+
+						//当たった場所にロウを付着
+						if (wax->isSolid == false) {
+							enemy->CreateWaxVisual(wax->obj.mTransform.position);
+							wax->isSolid = true;
+						}
 					}
 				}
+			
+				
 			}
 		}
 	}

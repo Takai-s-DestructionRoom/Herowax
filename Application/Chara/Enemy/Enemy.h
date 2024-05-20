@@ -8,6 +8,7 @@
 #include "Vector2.h"
 #include "EnemyAttackState.h"
 #include "EnemyBehaviorEditor.h"
+#include "WaxVisual.h"
 
 //このEnemyは基底にしたい
 //ので、処理を分化して現状のタンクくんというクラスを別で作る
@@ -88,6 +89,9 @@ private:
 
 	bool forceRot = false;
 
+	//見た目用のロウ
+	std::vector<std::unique_ptr<WaxVisual>> waxVisual;
+
 public:
 	Easing::EaseTimer solidTimer;	//動けなくなっている時間
 
@@ -158,6 +162,10 @@ public:
 
 	//行動を初期化
 	void BehaviorReset();
+
+	void CreateWaxVisual(Vector3 spawnPos = {0,0,0});
+
+	void WaxVisualUpdate();
 
 	/// <summary>
 	/// 状態変更
