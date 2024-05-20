@@ -194,7 +194,7 @@ void EnemyCollect::Update(Enemy* enemy)
 	//到達したら殺す
 	if (enemy->collectTimer.GetEnd())
 	{
-		enemy->isAlive = false;
+		enemy->SetDeath();
 		accel = 0.f;
 
 		//enemyManager::GetInstance()->isCollected = true;

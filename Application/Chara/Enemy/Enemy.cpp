@@ -49,16 +49,11 @@ gravity(0.2f)
 
 Enemy::~Enemy()
 {
-
 	////50%の確率でドロップ
 	//int32_t rand = Util::GetRand(0, 1);
 	//if (rand == 1) {
 	//	CollectPartManager::GetInstance()->Craete(obj.mTransform.position);
 	//}
-
-	//死んだときパーティクル出す
-	ParticleManager::GetInstance()->AddSimple(
-		obj.mTransform.position, "enemy_dead");
 }
 
 void Enemy::Init()
@@ -445,6 +440,10 @@ void Enemy::DealDamage(uint32_t damage, const Vector3& dir, ModelObj* target_)
 void Enemy::SetDeath()
 {
 	isAlive = false;
+
+	//死んだときパーティクル出す
+	ParticleManager::GetInstance()->AddSimple(
+		obj.mTransform.position, "enemy_dead");
 }
 
 void Enemy::MoveVecPlus(const Vector3& plusVec)
