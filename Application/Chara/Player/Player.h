@@ -210,6 +210,8 @@ public:
 	//ダメージを与える
 	void DealDamage(float damage);
 
+	void MaxWaxPlus(int32_t plus);
+
 private:
 	void DamageBlink();	//被弾時の点滅(後々もっとリッチなのに置き換え予定)
 

@@ -70,7 +70,7 @@ void WaxVisual::Update()
 			power = THRESHOLD_POWER;
 		}
 
-		//isAlive = false;
+		isAlive = false;
 	}
 }
 

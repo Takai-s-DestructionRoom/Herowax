@@ -374,7 +374,6 @@ void ProtoScene::Update()
 			}
 		}
 		//回収ボタン押されたときに固まってるなら吸収
-		//今は範囲外でも吸収できちゃってる
 		//ここもプレイヤーの中に入れちゃう
 		if (isCollected2 && enemy->GetIsSolid() &&
 			ColPrimitive3D::RayToSphereCol(player.collectCol, enemy->collider))
@@ -386,7 +385,11 @@ void ProtoScene::Update()
 		}
 	}
 
-	player.waxCollectAmount += EnemyManager::GetInstance()->collectNum;
+	int32_t nowPlusNum = EnemyManager::GetInstance()->collectNum;
+	if (nowPlusNum > 0) {
+		player.waxCollectAmount += nowPlusNum;
+		player.MaxWaxPlus(nowPlusNum);
+	}
 
 	if (isHitSound && !player.soundFlag) {
 		//ここで攻撃のヒット音を鳴らす

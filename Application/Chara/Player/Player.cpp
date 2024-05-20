@@ -901,6 +901,8 @@ void Player::PabloAttack()
 
 	for (int32_t i = 0; i < waxNum; i++)
 	{
+		//ロウのストックが0になったら出ない
+		if (waxStock <= 0)break;
 		//ストック減らす
 		waxStock--;
 
@@ -971,16 +973,6 @@ void Player::WaxCollect()
 
 				waxCollectAmount = 0;
 			}
-
-			//最大量を超えて回収してたら最大量を増やす
-			if (waxStock > maxWaxStock)
-			{
-				maxWaxStock = waxStock;
-				//音鳴らす
-				RAudio::Play("eCollect");
-
-				waxUI.Start();
-			}
 		}
 	}
 
@@ -996,7 +988,8 @@ void Player::WaxCollect()
 				isCollectSuccess = true;
 
 				//ロウ回収
-				waxCollectAmount += WaxManager::GetInstance()->Collect(collectCol, waxCollectVertical);
+				int32_t temp = WaxManager::GetInstance()->Collect(collectCol, waxCollectVertical);
+				waxCollectAmount += temp;
 			}
 			//腕吸収
 			if (boss->parts[(int32_t)PartsNum::LeftHand].isCollected && 
@@ -1015,6 +1008,7 @@ void Player::WaxCollect()
 						boss->parts[(int32_t)PartsNum::LeftHand].collectPos = collectCol.start;
 						boss->parts[(int32_t)PartsNum::LeftHand].ChangeState<BossPartCollect>();
 						waxCollectAmount += 5;
+						MaxWaxPlus(5);
 					}
 				}
 			}
@@ -1035,6 +1029,7 @@ void Player::WaxCollect()
 						boss->parts[(int32_t)PartsNum::RightHand].ChangeState<BossPartCollect>();
 						//腕の吸収値も変数化したい
 						waxCollectAmount += 5;
+						MaxWaxPlus(5);
 					}
 				}
 			}
@@ -1093,6 +1088,13 @@ void Player::DealDamage(float damage)
 	//モーション遷移
 	backwardTimer.maxTime_ = damageCoolTimer.maxTime_ / 2;
 	backwardTimer.Start();
+}
+
+void Player::MaxWaxPlus(int32_t plus)
+{
+	maxWaxStock += plus;
+	
+	waxUI.Start();
 }
 
 Color Player::GamingColorUpdate()
