@@ -26,6 +26,8 @@ class NumDrawer
 		//図る時間を設定
 		void SetMaxTime(float maxTime_) { timer.maxTime_ = maxTime_; };
 
+		Vector2 GetPos() { return { basePos.x, basePos.y }; }
+
 	protected:
 		std::vector<Sprite> numberSprites;
 

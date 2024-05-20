@@ -965,7 +965,7 @@ void Player::WaxCollect()
 					Color::kWaxColor,
 					TextureManager::Load("./Resources/Particle/particle_simple.png", "particleSimple"),
 					150.f, 180.f, { -1.f,-1.f }, { 1.f,1.f },
-					{ 50.f,50.f }, 0.f,
+					ui.numDrawer.GetPos(), 0.f,
 					0.01f, 0.05f,
 					0.1f, 0.f);
 
@@ -978,15 +978,6 @@ void Player::WaxCollect()
 				maxWaxStock = waxStock;
 				//音鳴らす
 				RAudio::Play("eCollect");
-
-				/*ParticleManager::GetInstance()->AddHoming2D(
-					Util::GetScreenPos(obj.mTransform.position), { 150.f,150.f }, waxCollectAmount, 0.8f,
-					Color::kWaxColor,
-					TextureManager::Load("./Resources/Particle/particle_simple.png", "particleSimple"),
-					150.f, 180.f, { -1.f,-1.f }, { 1.f,1.f },
-					{ 50.f,50.f }, 0.f,
-					0.01f, 0.05f,
-					0.1f, 0.f);*/
 
 				waxUI.Start();
 			}
