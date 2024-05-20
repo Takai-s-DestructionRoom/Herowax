@@ -238,6 +238,7 @@ void Parts::DealDamage(int32_t damage)
 
 	waxScatterTimer.Reset();
 
+	//固まったら
 	if (waxSolidCount >= requireWaxSolidCount)
 	{
 		ParticleManager::GetInstance()->AddSimple(obj.mTransform.position,"part_solid");

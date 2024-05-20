@@ -2,7 +2,7 @@
 #include "Boss.h"
 #include "BossNormal.h"
 #include "BossPunch.h"
-#include "BossPunch.h"
+#include "BossFallAttack.h"
 #include "TimeManager.h"
 
 void BossAI::Init()
@@ -80,7 +80,7 @@ void BossAI::Update(Boss* boss)
 			}
 			//腕が無いなら待機モーションへ(今後別モーションへの遷移など実装)
 			if (situation == BossSituation::NoArms) {
-				boss->state = std::make_unique<BossNormal>();
+				boss->state = std::make_unique<BossFallAttack>();
 				return;
 			}
 		}

@@ -1,6 +1,7 @@
 #pragma once
 #include "BossState.h"
-#include <vector>
+#include "GameObject.h"
+#include <array>
 
 class BossFallAttack : public BossState
 {

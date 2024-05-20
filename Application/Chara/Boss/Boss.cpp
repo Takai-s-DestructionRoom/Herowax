@@ -40,6 +40,15 @@ moveSpeed(0.1f), hp(0), maxHP(10.f)
 
 	targetCircle = ModelObj(Model::Load("./Resources/Model/targetMark/targetMark.obj", "targetMark", true));
 
+	for (size_t i = 0; i < fallParts.size(); i++)
+	{
+		fallParts[i] = PaintableModelObj(Model::Load("./Resources/Model/Cube.obj", "Cube", true));
+		fallParts[i].mTransform.scale = { 10.f,1.f,10.f };
+		warning[i] = PaintableModelObj(Model::Load("./Resources/Model/Cube.obj", "Cube", true));
+		warning[i].mTransform.scale = { 10.f,1.f,10.f };
+		warning[i].mTuneMaterial.mColor = Color::kRed;
+	}
+
 	BossUI::LoadResource();
 
 	std::map<std::string, std::string> extract = Parameter::Extract("Boss");
@@ -52,6 +61,10 @@ moveSpeed(0.1f), hp(0), maxHP(10.f)
 	standTimer = Parameter::GetParam(extract, "モーション待機時間", 3.f);
 	punchTimer = Parameter::GetParam(extract, "パンチにかかる時間", 0.7f);
 	punchStayTimer = Parameter::GetParam(extract, "パンチ後留まる時間", 1.5f);
+
+	fallAtkShoutTimer = Parameter::GetParam(extract, "咆哮時間", 2.f);
+	fallAtkTimer = Parameter::GetParam(extract, "落下攻撃時間", 1.f);
+	fallAtkStayTimer = Parameter::GetParam(extract, "落下攻撃後留まる時間", 1.5f);
 
 	bossSpawnTimer = Parameter::GetParam(extract, "ボスが出現するまでの時間", 60.0f);
 
@@ -331,6 +344,9 @@ void Boss::Update()
 			ImGui::InputFloat("モーション待機時間", &standTimer.maxTime_, 0.1f);
 			ImGui::InputFloat("パンチにかかる時間", &punchTimer.maxTime_, 0.1f);
 			ImGui::InputFloat("パンチ後留まる時間", &punchStayTimer.maxTime_, 0.1f);
+			ImGui::InputFloat("咆哮時間", &fallAtkShoutTimer.maxTime_, 0.1f);
+			ImGui::InputFloat("落下攻撃時間", &fallAtkTimer.maxTime_, 0.1f);
+			ImGui::InputFloat("落下攻撃後留まる時間", &fallAtkStayTimer.maxTime_, 0.1f);
 			ImGui::InputFloat("バリア割れるまでの時間", &barrierCrushTimer.maxTime_, 0.1f);
 			ImGui::TreePop();
 		}
@@ -454,6 +470,15 @@ void Boss::Draw()
 		for (size_t i = 0; i < parts.size(); i++)
 		{
 			parts[i].Draw();
+		}
+
+		if (stateStr == "FallAttack")
+		{
+			for (size_t i = 0; i < fallParts.size(); i++)
+			{
+				fallParts[i].Draw();
+				warning[i].Draw();
+			}
 		}
 	}
 
