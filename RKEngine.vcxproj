@@ -167,7 +167,7 @@
     <ClCompile Include="Application\BlinkSpotLightObject.cpp" />
     <ClCompile Include="Application\CircleGauge.cpp" />
     <ClCompile Include="Application\UI\BossAppUI.cpp" />
-    <ClCompile Include="BossFallAttack.cpp" />
+    <ClCompile Include="Application\Chara\Boss\BossFallAttack.cpp" />
     <ClCompile Include="Engine\Collision\AABBCollider.cpp" />
     <ClCompile Include="Application\Chara\Enemy\EnemySpawner.cpp" />
     <ClCompile Include="Application\InstantDrawer.cpp" />
@@ -869,7 +869,7 @@
     <ClInclude Include="Application\BlinkSpotLightObject.h" />
     <ClInclude Include="Application\CircleGauge.h" />
     <ClInclude Include="Application\UI\BossAppUI.h" />
-    <ClInclude Include="BossFallAttack.h" />
+    <ClInclude Include="Application\Chara\Boss\BossFallAttack.h" />
     <ClInclude Include="Engine\Collision\AABBCollider.h" />
     <ClInclude Include="Application\Chara\Enemy\EnemySpawner.h" />
     <ClInclude Include="Application\InstantDrawer.h" />

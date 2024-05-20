@@ -88,6 +88,13 @@ public:
 	Easing::EaseTimer punchStayTimer;	//パンチ終わってからモーション終了までの時間
 	bool isAppearance = false;			//出現中かフラグ
 	bool isDead = false;				//撃破演出中かフラグ
+
+	std::array<PaintableModelObj, 32> fallParts;	//落ちてくるパーツ
+	std::array<ModelObj, 32> warning;			//警告
+	Easing::EaseTimer fallAtkShoutTimer;//落下攻撃前の咆哮時間
+	Easing::EaseTimer fallAtkTimer;		//落下攻撃にかかる時間
+	Easing::EaseTimer fallAtkStayTimer;	//落下攻撃終わってからモーション終了までの時間
+
 	//------------ 吸収対象の位置 ------//
 	Vector3 collectPos{};
 	
