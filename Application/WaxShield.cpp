@@ -26,6 +26,8 @@ void WaxShield::Update()
 void WaxShield::Draw()
 {
 	BrightDraw();
+	isDrawCollider = true;
+	DrawCollider();
 }
 
 void WaxShield::Hit(int32_t damage)

@@ -68,7 +68,7 @@ private:
 	float requireWaxShakeOffTime = 5.0f; //ロウを振り払うまでにかかる時間(秒)
 
 	Easing::EaseTimer whiteTimer = 0.5f;
-	
+
 	//------------ 出現関連 ------------//
 	Easing::EaseTimer warningTimer = 1.0f;
 	Easing::EaseTimer spawnTimer = 1.0f;
@@ -84,7 +84,7 @@ private:
 	std::unique_ptr<EnemyState> state;			//状態管理
 	std::unique_ptr<EnemyState> nextState;		//次のステート
 	std::string stateStr;			//状態を文字列で保存
-	
+
 	EnemyUI ui;	//HP表示
 
 	BehaviorData loadBehaviorData;
@@ -124,7 +124,7 @@ public:
 	std::vector<std::string> stateStrings;
 	//今何番のステートを実行しているかの管理番号
 	int32_t stateManageNumber = 0;
-	
+
 	//------ 識別関連 ------//
 	std::string enemyTag = "";	//識別用に、生成時に敵のタグを入れる
 
@@ -142,7 +142,7 @@ private:
 	void Rotation(const Vector3& pVec);
 	//Updateの最初で初期化するもの
 	void Reset();
-	
+
 	void UpdateAttackCollider();
 	void DrawAttackCollider();
 
@@ -166,7 +166,7 @@ public:
 	//行動を初期化
 	void BehaviorReset();
 
-	void CreateWaxVisual(Vector3 spawnPos = {0,0,0});
+	void CreateWaxVisual(Vector3 spawnPos = { 0,0,0 });
 
 	void WaxVisualUpdate();
 
@@ -207,7 +207,7 @@ public:
 	float GetHP() { return hp; };
 	float GetMaxHP() { return maxHP; };
 	//固まってるかどうか
-	bool GetIsSolid();	
+	bool GetIsSolid();
 	//移動量
 	Vector3 GetMoveVec() { return moveVec; };
 	//スポーン時の位置を取得
@@ -216,6 +216,8 @@ public:
 	float GetMoveSpeed() { return moveSpeed; };
 	//出現済みかどうかを取得
 	bool GetIsSpawn();
+	//
+	WaxShield* GetShield() { return &shield; };
 
 	// セッター //
 	//減速率設定

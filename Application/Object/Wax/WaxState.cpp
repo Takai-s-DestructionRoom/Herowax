@@ -22,6 +22,9 @@ WaxCollect::WaxCollect()
 
 void WaxCollect::Update(Wax* wax)
 {
+	//吸収状態になったら反転を解除
+	wax->isReverse = false;
+
 	oldTimeRate = wax->collectTimer.GetTimeRate();
 	wax->collectTimer.Update();
 	if (isStart) {
