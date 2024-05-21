@@ -83,18 +83,10 @@ void Wax::Update()
 		nextState = nullptr;
 	}
 
-	//if (GetState() == WaxCollect::GetStateStr()) {
-	//	//強制終了
-	//	atkTimer.SetEnd(true);
-	//	isReverse = false;
-	//}
-
-	if (atkTimer.GetRun()) {
-		moveVec += Util::Spline(spline, atkTimer.GetTimeRate()) - Util::Spline(spline, oldTime);	//飛んでいく
-	}
-	else {
-		gravity += addGravity;
-		moveVec.y += gravity;
+	if (GetState() == WaxCollect::GetStateStr()) {
+		//強制終了
+		atkTimer.SetEnd(true);
+		isReverse = false;
 	}
 
 	if (isReverse) {
@@ -104,8 +96,17 @@ void Wax::Update()
 		reverse = 1;
 	}
 
+	if (atkTimer.GetRun()) {
+		Vector3 plusVec = Util::Spline(spline, atkTimer.GetTimeRate()) - Util::Spline(spline, oldTime);	//飛んでいく
+		moveVec += plusVec * reverse;
+	}
+	else {
+		gravity -= addGravity;
+		moveVec.y += gravity;
+	}
+
 	//spline以外で動かす場合の足し算
-	obj.mTransform.position += moveVec * reverse;
+	obj.mTransform.position += moveVec;
 
 	//地面に埋ってたら
 	if (obj.mTransform.position.y - obj.mTransform.scale.y < 0.f)
