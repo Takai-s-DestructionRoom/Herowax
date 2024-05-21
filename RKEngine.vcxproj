@@ -308,6 +308,7 @@
     <ClCompile Include="Application\WaxVisual.cpp" />
     <ClCompile Include="Application\UI\NumDrawer.cpp" />
     <ClCompile Include="Application\UI\PlayerHpUI.cpp" />
+    <ClCompile Include="Application\WaxShield.cpp" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Shader\BillboardRadial360\BillboardRadial360PS.hlsl">
@@ -1015,6 +1016,7 @@
     <ClInclude Include="Application\WaxVisual.h" />
     <ClInclude Include="Application\UI\NumDrawer.h" />
     <ClInclude Include="Application\UI\PlayerHpUI.h" />
+    <ClInclude Include="Application\WaxShield.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Shader\BillboardRadial360\BillboardRadial360.hlsli" />

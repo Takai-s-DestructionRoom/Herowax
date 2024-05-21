@@ -9,6 +9,7 @@
 #include "EnemyAttackState.h"
 #include "EnemyBehaviorEditor.h"
 #include "WaxVisual.h"
+#include "WaxShield.h"
 
 //このEnemyは基底にしたい
 //ので、処理を分化して現状のタンクくんというクラスを別で作る
@@ -54,6 +55,8 @@ private:
 	std::unique_ptr<EnemyAttackState> nextAttackState;		//攻撃を管理するステートの次ステート
 
 	ModelObj attackDrawerObj;			//上記の当たり判定描画オブジェクト
+
+	WaxShield shield;
 
 	//------------ HP関連 ------------//
 	float hp;				//現在のヒットポイント

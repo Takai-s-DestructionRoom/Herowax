@@ -346,6 +346,12 @@
     <Filter Include="シェーダー ファイル\BillboardRadial360">
       <UniqueIdentifier>{bc4cc1a6-7ac1-4994-a290-d73c1aea5fa1}</UniqueIdentifier>
     </Filter>
+    <Filter Include="ソース ファイル\Application\Object\WaxShield">
+      <UniqueIdentifier>{9bb9ce3c-36ee-4e0a-b21a-b10ace3466da}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\Application\Object\WaxShield">
+      <UniqueIdentifier>{3aadd53d-74a5-4f99-bd4e-2b52b2eae293}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Engine\2d\Sprite.cpp">
@@ -836,6 +842,9 @@
     </ClCompile>
     <ClCompile Include="Application\Chara\Boss\BossFallAttack.cpp">
       <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Application\WaxShield.cpp">
+      <Filter>ソース ファイル\Application\Object\WaxShield</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -1549,6 +1558,9 @@
     </ClInclude>
     <ClInclude Include="Application\Chara\Boss\BossFallAttack.h">
       <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Application\WaxShield.h">
+      <Filter>ヘッダー ファイル\Application\Object\WaxShield</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

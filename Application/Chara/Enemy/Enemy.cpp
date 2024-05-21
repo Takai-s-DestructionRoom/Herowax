@@ -45,6 +45,9 @@ gravity(0.2f)
 	attackDrawerObj = ModelObj(Model::Load("./Resources/Model/Sphere.obj", "Sphere", true));
 
 	TextureManager::Load("./Resources/warning.png", "warning");
+
+	shield.Init();
+	//shield.obj.SetParent(&obj);
 }
 
 Enemy::~Enemy()
@@ -232,7 +235,15 @@ void Enemy::BaseUpdate()
 	brightColor.a = Easing::OutQuad(1, 0, whiteTimer.GetTimeRate());
 	if (!whiteTimer.GetStarted())brightColor = { 0,0,0,0 };
 
-	WaxVisualUpdate();
+	//WaxVisualUpdate();
+	
+	Vector3 frontVec = GetFrontVec().Normalize() * 5.f;
+	frontVec.y = 0;
+	shield.obj.mTransform.position = obj.mTransform.position + frontVec;
+	shield.obj.mTransform.rotation = Quaternion::LookAt(frontVec).ToEuler();
+	shield.obj.mTransform.rotation.y += Util::AngleToRadian(-90.f);
+	shield.obj.mTransform.scale = { 2,2,2 };
+	shield.Update();
 }
 
 void Enemy::TransfarBuffer()
@@ -275,6 +286,8 @@ void Enemy::Draw()
 
 		DrawCollider();
 		DrawAttackCollider();
+
+		shield.Draw();
 	}
 }
 
