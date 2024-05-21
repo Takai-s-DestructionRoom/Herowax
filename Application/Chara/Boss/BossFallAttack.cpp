@@ -44,6 +44,9 @@ void BossFallAttack::Update(Boss* boss)
 
 			boss->warning[i].mTransform.position = boss->fallParts[i].mTransform.position;
 			boss->warning[i].mTransform.position.y = 0.f;
+
+			boss->fallParts[i].mTransform.scale = Vector3(1,1,1) * boss->fallPartsSize;
+			boss->warning[i].mTransform.scale = Vector3(1,0.1f,1) * boss->fallPartsSize;
 		}
 
 		isStart = false;

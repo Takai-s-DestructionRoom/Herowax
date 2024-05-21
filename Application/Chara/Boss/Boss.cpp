@@ -68,6 +68,7 @@ moveSpeed(0.1f), hp(0), maxHP(10.f),oriSize(6.f)
 	fallRange = Parameter::GetParam(extract, "パーツの落下範囲", 0.5f);
 	fallSpeed = Parameter::GetParam(extract, "パーツの落下速度", 0.5f);
 	fallAccel = Parameter::GetParam(extract, "パーツの加速度", 0.05f);
+	fallPartsSize = Parameter::GetParam(extract, "パーツのサイズ", 10.f);
 
 	bossSpawnTimer = Parameter::GetParam(extract, "ボスが出現するまでの時間", 60.0f);
 
@@ -336,6 +337,7 @@ void Boss::Update()
 			ImGui::InputFloat("パーツの落下範囲", &fallRange, 0.1f);
 			ImGui::InputFloat("パーツの落下速度", &fallSpeed, 0.1f);
 			ImGui::InputFloat("パーツの加速度", &fallAccel, 0.01f);
+			ImGui::InputFloat("パーツのサイズ", &fallPartsSize, 0.1f);
 			ImGui::InputFloat("バリア割れるまでの時間", &barrierCrushTimer.maxTime_, 0.1f);
 			ImGui::TreePop();
 		}
