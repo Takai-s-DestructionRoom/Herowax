@@ -97,6 +97,11 @@ public:
 	Easing::EaseTimer fallAtkTimer;		//落下攻撃にかかる時間
 	Easing::EaseTimer fallAtkStayTimer;	//落下攻撃終わってからモーション終了までの時間
 
+	float fallRange;		//パーツの落下範囲
+	float fallSpeed;		//パーツの落下速度
+	float fallAccel;		//パーツの加速度
+	float fallPartsSize;	//落ちてくるパーツのサイズ
+
 	//------------ 吸収対象の位置 ------//
 	Vector3 collectPos{};
 	
