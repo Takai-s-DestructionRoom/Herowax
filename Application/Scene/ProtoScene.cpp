@@ -487,6 +487,18 @@ void ProtoScene::Update()
 		}
 	}
 
+	//ボスの落下攻撃との当たり判定
+	if (Boss::GetInstance()->fallAtkTimer.GetRun())
+	{
+		for (size_t i = 0; i < Boss::GetInstance()->fallParts.size();i++)
+		{
+			if (ColPrimitive3D::CheckSphereToSphere(Boss::GetInstance()->fallParts[i].collider, player.collider))
+			{
+				player.DealDamage(Boss::GetInstance()->fallAtkPower);
+			}
+		}
+	}
+
 	//プレイヤーを押し戻す(ボス)
 	if (ColPrimitive3D::CheckSphereToSphere(Boss::GetInstance()->collider, player.collider) && Boss::GetInstance()->isAppearance) {
 		Vector3 repulsionVec = player.GetPos() - Boss::GetInstance()->GetPos();

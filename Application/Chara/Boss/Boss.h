@@ -17,6 +17,18 @@ enum class PartsNum
 	Max			//2
 };
 
+class FallParts : public GameObject
+{
+public:
+	ModelObj warning;		//警告
+
+	FallParts();
+	~FallParts();
+	void Init();
+	void Update();
+	void Draw();
+};
+
 class Boss : public GameObject
 {
 private:
@@ -91,16 +103,18 @@ public:
 	bool isAppearance = false;			//出現中かフラグ
 	bool isDead = false;				//撃破演出中かフラグ
 
-	std::array<PaintableModelObj, 32> fallParts;	//落ちてくるパーツ
-	std::array<ModelObj, 32> warning;			//警告
-	Easing::EaseTimer fallAtkShoutTimer;//落下攻撃前の咆哮時間
-	Easing::EaseTimer fallAtkTimer;		//落下攻撃にかかる時間
-	Easing::EaseTimer fallAtkStayTimer;	//落下攻撃終わってからモーション終了までの時間
+	int32_t maxPartsNum = 32;
+	std::array<FallParts, 32> fallParts;	//落ちてくるパーツ
+	Easing::EaseTimer fallAtkShoutTimer;	//落下攻撃前の咆哮時間
+	Easing::EaseTimer fallAtkTimer;			//落下攻撃にかかる時間
+	Easing::EaseTimer fallAtkStayTimer;		//落下攻撃終わってからモーション終了までの時間
 
+	int32_t fallPartsNum;	//落とすパーツの数
 	float fallRange;		//パーツの落下範囲
 	float fallSpeed;		//パーツの落下速度
 	float fallAccel;		//パーツの加速度
-	float fallPartsSize;	//落ちてくるパーツのサイズ
+	float fallPartsSize;	//落とすパーツのサイズ
+	float fallAtkPower;		//落下攻撃の威力
 
 	//------------ 吸収対象の位置 ------//
 	Vector3 collectPos{};

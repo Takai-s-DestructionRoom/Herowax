@@ -29,24 +29,25 @@ void BossFallAttack::Update(Boss* boss)
 
 		speed = boss->fallSpeed;
 
-		for (size_t i = 0; i < boss->fallParts.size(); i++)
+		partsNum = boss->fallPartsNum;
+		for (size_t i = 0; i < partsNum; i++)
 		{
 			//地面より下に
-			boss->fallParts[i].mTransform.position.y = -boss->fallParts[i].mTransform.scale.y * 2.f;
+			boss->fallParts[i].obj.mTransform.position.y = -boss->fallParts[i].obj.mTransform.scale.y * 2.f;
 			//ランダムに配置
 			float dist = Util::GetRand(boss->obj.mTransform.scale.x,boss->fallRange);	//生成距離
 			float angle = Util::AngleToRadian(Util::GetRand(0.f,360.f));				//生成角度
 
 			Vector2 pos = Vector2(1, 1).Rotation(angle) * dist;
 
-			boss->fallParts[i].mTransform.position.x = pos.x;
-			boss->fallParts[i].mTransform.position.z = pos.y;
+			boss->fallParts[i].obj.mTransform.position.x = pos.x;
+			boss->fallParts[i].obj.mTransform.position.z = pos.y;
 
-			boss->warning[i].mTransform.position = boss->fallParts[i].mTransform.position;
-			boss->warning[i].mTransform.position.y = 0.f;
+			boss->fallParts[i].warning.mTransform.position = boss->fallParts[i].obj.mTransform.position;
+			boss->fallParts[i].warning.mTransform.position.y = 0.f;
 
-			boss->fallParts[i].mTransform.scale = Vector3(1,1,1) * boss->fallPartsSize;
-			boss->warning[i].mTransform.scale = Vector3(1,0.1f,1) * boss->fallPartsSize;
+			boss->fallParts[i].obj.mTransform.scale = Vector3(1,1,1) * boss->fallPartsSize;
+			boss->fallParts[i].warning.mTransform.scale = Vector3(1,0.1f,1) * boss->fallPartsSize;
 		}
 
 		isStart = false;
@@ -56,11 +57,11 @@ void BossFallAttack::Update(Boss* boss)
 	if (boss->fallAtkShoutTimer.GetRun())
 	{
 		//全てのパーツを上空に
-		for (size_t i = 0; i < boss->fallParts.size(); i++)
+		for (size_t i = 0; i < partsNum; i++)
 		{
-			boss->fallParts[i].mTransform.position.y =
+			boss->fallParts[i].obj.mTransform.position.y =
 				Easing::OutBack(
-					-boss->fallParts[i].mTransform.scale.y * 2.f,
+					-boss->fallParts[i].obj.mTransform.scale.y * 2.f,
 					maxHight,
 					boss->fallAtkShoutTimer.GetTimeRate());
 		}
@@ -76,14 +77,14 @@ void BossFallAttack::Update(Boss* boss)
 	{
 		speed += boss->fallAccel;
 
-		for (size_t i = 0; i < boss->fallParts.size(); i++)
+		for (size_t i = 0; i < partsNum; i++)
 		{
-			boss->fallParts[i].mTransform.position.y -= speed;
+			boss->fallParts[i].obj.mTransform.position.y -= speed;
 
 			//警告も一緒に落ちてく
-			if (boss->warning[i].mTransform.position.y > boss->fallParts[i].mTransform.position.y)
+			if (boss->fallParts[i].warning.mTransform.position.y > boss->fallParts[i].obj.mTransform.position.y)
 			{
-				boss->warning[i].mTransform.position.y = boss->fallParts[i].mTransform.position.y;
+				boss->fallParts[i].warning.mTransform.position.y = boss->fallParts[i].obj.mTransform.position.y;
 			}
 		}
 	}
@@ -101,11 +102,8 @@ void BossFallAttack::Update(Boss* boss)
 		boss->fallAtkStayTimer.Reset();
 	}
 
-	for (size_t i = 0; i < boss->fallParts.size(); i++)
+	for (size_t i = 0; i < partsNum; i++)
 	{
-		boss->fallParts[i].mTransform.UpdateMatrix();
-		boss->fallParts[i].TransferBuffer(Camera::sNowCamera->mViewProjection);
-		boss->warning[i].mTransform.UpdateMatrix();
-		boss->warning[i].TransferBuffer(Camera::sNowCamera->mViewProjection);
+		boss->fallParts[i].Update();
 	}
 }

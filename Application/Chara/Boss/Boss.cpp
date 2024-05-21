@@ -17,7 +17,7 @@
 #include "BossAppearanceScene.h"
 
 Boss::Boss() : GameObject(),
-moveSpeed(0.1f), hp(0), maxHP(10.f),oriSize(6.f)
+moveSpeed(0.1f), hp(0), maxHP(10.f), oriSize(6.f)
 {
 	state = std::make_unique<BossNormal>();
 	nextState = nullptr;
@@ -42,12 +42,12 @@ moveSpeed(0.1f), hp(0), maxHP(10.f),oriSize(6.f)
 
 	for (size_t i = 0; i < fallParts.size(); i++)
 	{
-		fallParts[i] = PaintableModelObj(Model::Load("./Resources/Model/Cube.obj", "Cube", true));
-		fallParts[i].mTransform.scale = { 10.f,10.f,10.f };
-		warning[i] = PaintableModelObj(Model::Load("./Resources/Model/Cube.obj", "Cube", true));
-		warning[i].mTransform.scale = { 10.f,1.f,10.f };
-		warning[i].mTuneMaterial.mColor = Color::kRed;
-		warning[i].mTuneMaterial.mColor.a = 0.7f;
+		fallParts[i].obj = PaintableModelObj(Model::Load("./Resources/Model/Sphere.obj", "Sphere", true));
+		fallParts[i].obj.mTransform.scale = { 10.f,10.f,10.f };
+		fallParts[i].warning = PaintableModelObj(Model::Load("./Resources/Model/wax/wax.obj", "wax", true));
+		fallParts[i].warning.mTransform.scale = { 10.f,1.f,10.f };
+		fallParts[i].warning.mTuneMaterial.mColor = Color::kRed;
+		fallParts[i].warning.mTuneMaterial.mColor.a = 0.7f;
 	}
 
 	BossUI::LoadResource();
@@ -65,10 +65,12 @@ moveSpeed(0.1f), hp(0), maxHP(10.f),oriSize(6.f)
 	fallAtkTimer = Parameter::GetParam(extract, "落下攻撃時間", 1.f);
 	fallAtkStayTimer = Parameter::GetParam(extract, "落下攻撃後留まる時間", 1.5f);
 
+	fallPartsNum = (int32_t)Parameter::GetParam(extract, "パーツの数", (float)maxPartsNum);
 	fallRange = Parameter::GetParam(extract, "パーツの落下範囲", 0.5f);
 	fallSpeed = Parameter::GetParam(extract, "パーツの落下速度", 0.5f);
 	fallAccel = Parameter::GetParam(extract, "パーツの加速度", 0.05f);
 	fallPartsSize = Parameter::GetParam(extract, "パーツのサイズ", 10.f);
+	fallAtkPower = Parameter::GetParam(extract, "落下攻撃の攻撃力", 1.f);
 
 	bossSpawnTimer = Parameter::GetParam(extract, "ボスが出現するまでの時間", 60.0f);
 
@@ -184,7 +186,7 @@ void Boss::AllStateUpdate()
 
 			//体だけ残っているならシェイクも入れる
 			if (GetIsOnlyBody()) {
-				Shake(0.5f,1.f);
+				Shake(0.5f, 1.f);
 			}
 		}
 	}
@@ -331,14 +333,19 @@ void Boss::Update()
 			ImGui::InputFloat("モーション待機時間", &standTimer.maxTime_, 0.1f);
 			ImGui::InputFloat("パンチにかかる時間", &punchTimer.maxTime_, 0.1f);
 			ImGui::InputFloat("パンチ後留まる時間", &punchStayTimer.maxTime_, 0.1f);
-			ImGui::InputFloat("さけぶ時間", &fallAtkShoutTimer.maxTime_, 0.1f);
-			ImGui::InputFloat("落下攻撃時間", &fallAtkTimer.maxTime_, 0.1f);
-			ImGui::InputFloat("落下攻撃後留まる時間", &fallAtkStayTimer.maxTime_, 0.1f);
-			ImGui::InputFloat("パーツの落下範囲", &fallRange, 0.1f);
-			ImGui::InputFloat("パーツの落下速度", &fallSpeed, 0.1f);
-			ImGui::InputFloat("パーツの加速度", &fallAccel, 0.01f);
-			ImGui::InputFloat("パーツのサイズ", &fallPartsSize, 0.1f);
 			ImGui::InputFloat("バリア割れるまでの時間", &barrierCrushTimer.maxTime_, 0.1f);
+			if (ImGui::TreeNode("調整項目_落下攻撃")) {
+				ImGui::InputFloat("さけぶ時間", &fallAtkShoutTimer.maxTime_, 0.1f);
+				ImGui::InputFloat("落下攻撃時間", &fallAtkTimer.maxTime_, 0.1f);
+				ImGui::InputFloat("落下攻撃後留まる時間", &fallAtkStayTimer.maxTime_, 0.1f);
+				ImGui::SliderInt("パーツの数", &fallPartsNum, 0, maxPartsNum);
+				ImGui::InputFloat("パーツの落下範囲", &fallRange, 0.1f);
+				ImGui::InputFloat("パーツの落下速度", &fallSpeed, 0.1f);
+				ImGui::InputFloat("パーツの加速度", &fallAccel, 0.01f);
+				ImGui::InputFloat("パーツのサイズ", &fallPartsSize, 0.1f);
+				ImGui::InputFloat("落下攻撃の攻撃力", &fallAtkPower, 0.1f);
+				ImGui::TreePop();
+			}
 			ImGui::TreePop();
 		}
 
@@ -376,6 +383,15 @@ void Boss::Update()
 			Parameter::Save("パンチにかかる時間", punchTimer.maxTime_);
 			Parameter::Save("パンチ後留まる時間", punchStayTimer.maxTime_);
 			Parameter::Save("ボスが出現するまでの時間", bossSpawnTimer.maxTime_);
+			Parameter::Save("さけぶ時間", fallAtkShoutTimer.maxTime_);
+			Parameter::Save("落下攻撃時間", fallAtkTimer.maxTime_);
+			Parameter::Save("落下攻撃後留まる時間", fallAtkStayTimer.maxTime_);
+			Parameter::Save("パーツの数", fallPartsNum);
+			Parameter::Save("パーツの落下範囲", fallRange);
+			Parameter::Save("パーツの落下速度", fallSpeed);
+			Parameter::Save("パーツの加速度", fallAccel);
+			Parameter::Save("パーツのサイズ", fallPartsSize);
+			Parameter::Save("落下攻撃の攻撃力", fallAtkPower);
 
 			Parameter::End();
 		}
@@ -486,7 +502,6 @@ void Boss::Draw()
 			for (size_t i = 0; i < fallParts.size(); i++)
 			{
 				fallParts[i].Draw();
-				warning[i].Draw();
 			}
 		}
 	}
@@ -576,4 +591,33 @@ void Boss::DealDamage(int32_t damage)
 	if (GetIsSolid(PartsNum::Max) && !isOldBodySolid) {
 		ChangeState<BossCollectStandState>();
 	}
+}
+
+FallParts::FallParts()
+{
+}
+
+FallParts::~FallParts()
+{
+}
+
+void FallParts::Init()
+{
+}
+
+void FallParts::Update()
+{
+	obj.mTransform.UpdateMatrix();
+	obj.TransferBuffer(Camera::sNowCamera->mViewProjection);
+
+	warning.mTransform.UpdateMatrix();
+	warning.TransferBuffer(Camera::sNowCamera->mViewProjection);
+
+	UpdateCollider();
+}
+
+void FallParts::Draw()
+{
+	obj.Draw();
+	warning.Draw();
 }

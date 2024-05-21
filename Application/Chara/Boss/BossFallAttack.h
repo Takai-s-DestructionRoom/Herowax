@@ -17,5 +17,7 @@ private:
 
 	float speed;	//落下速度
 	float maxHight;	//最高高度
+
+	int32_t partsNum;	//今回のパーツ数
 };
 
