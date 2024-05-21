@@ -14,5 +14,8 @@ public:
 
 private:
 	bool isStart;	//最初のフレームかフラグ
+
+	float speed;	//落下速度
+	float maxHight;	//最高高度
 };
 

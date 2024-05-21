@@ -43,10 +43,11 @@ moveSpeed(0.1f), hp(0), maxHP(10.f),oriSize(6.f)
 	for (size_t i = 0; i < fallParts.size(); i++)
 	{
 		fallParts[i] = PaintableModelObj(Model::Load("./Resources/Model/Cube.obj", "Cube", true));
-		fallParts[i].mTransform.scale = { 10.f,1.f,10.f };
+		fallParts[i].mTransform.scale = { 10.f,10.f,10.f };
 		warning[i] = PaintableModelObj(Model::Load("./Resources/Model/Cube.obj", "Cube", true));
 		warning[i].mTransform.scale = { 10.f,1.f,10.f };
 		warning[i].mTuneMaterial.mColor = Color::kRed;
+		warning[i].mTuneMaterial.mColor.a = 0.7f;
 	}
 
 	BossUI::LoadResource();
@@ -63,6 +64,10 @@ moveSpeed(0.1f), hp(0), maxHP(10.f),oriSize(6.f)
 	fallAtkShoutTimer = Parameter::GetParam(extract, "さけぶ時間", 2.f);
 	fallAtkTimer = Parameter::GetParam(extract, "落下攻撃時間", 1.f);
 	fallAtkStayTimer = Parameter::GetParam(extract, "落下攻撃後留まる時間", 1.5f);
+
+	fallRange = Parameter::GetParam(extract, "パーツの落下範囲", 0.5f);
+	fallSpeed = Parameter::GetParam(extract, "パーツの落下速度", 0.5f);
+	fallAccel = Parameter::GetParam(extract, "パーツの加速度", 0.05f);
 
 	bossSpawnTimer = Parameter::GetParam(extract, "ボスが出現するまでの時間", 60.0f);
 
@@ -328,6 +333,9 @@ void Boss::Update()
 			ImGui::InputFloat("さけぶ時間", &fallAtkShoutTimer.maxTime_, 0.1f);
 			ImGui::InputFloat("落下攻撃時間", &fallAtkTimer.maxTime_, 0.1f);
 			ImGui::InputFloat("落下攻撃後留まる時間", &fallAtkStayTimer.maxTime_, 0.1f);
+			ImGui::InputFloat("パーツの落下範囲", &fallRange, 0.1f);
+			ImGui::InputFloat("パーツの落下速度", &fallSpeed, 0.1f);
+			ImGui::InputFloat("パーツの加速度", &fallAccel, 0.01f);
 			ImGui::InputFloat("バリア割れるまでの時間", &barrierCrushTimer.maxTime_, 0.1f);
 			ImGui::TreePop();
 		}

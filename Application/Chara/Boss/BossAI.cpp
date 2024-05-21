@@ -8,7 +8,7 @@
 void BossAI::Init()
 {
 	isStart = true;
-	situation = BossSituation::All;
+	situation = BossSituation::NoArms;
 }
 
 void BossAI::Update(Boss* boss)
