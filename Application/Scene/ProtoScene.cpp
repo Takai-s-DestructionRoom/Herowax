@@ -298,6 +298,14 @@ void ProtoScene::Update()
 		for (auto& wax : group->waxs) {
 			for (auto& enemy : EnemyManager::GetInstance()->enemys)
 			{
+				bool isShieldCollision = ColPrimitive3D::CheckSphereToSphere(enemy->GetShield()->collider,
+					wax->collider);
+
+				//投げられてるロウと盾がぶつかったらロウを反射
+				if (isShieldCollision && wax->isSolid == false && wax->isGround == false) {
+					wax->isReverse = true;
+				}
+
 				bool isCollision = ColPrimitive3D::CheckSphereToSphere(enemy->collider, wax->collider);
 
 				if (isCollision && wax->isSolid == false) {
