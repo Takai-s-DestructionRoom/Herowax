@@ -15,6 +15,7 @@
 #include "EventCaller.h"
 #include "BossDeadScene.h"
 #include "BossAppearanceScene.h"
+#include "BossFallAttack.h"
 
 Boss::Boss() : GameObject(),
 moveSpeed(0.1f), hp(0), maxHP(10.f), oriSize(6.f)
@@ -295,7 +296,7 @@ void Boss::Update()
 		ImGui::Text("ボスが出現するまでの時間:%f", bossSpawnTimer.nowTime_);
 
 		ImGui::Text("ボス本体");
-		ImGui::Text("1:待機\n2:左パンチ\n3:右パンチ");
+		ImGui::Text("1:待機\n2:左パンチ\n3:右パンチ\n4:落下攻撃");
 		ImGui::Checkbox("オブジェクト描画", &isDrawObj);
 		ImGui::Checkbox("当たり判定描画", &isDrawCollider);
 		ImGui::Checkbox("バリアフラグ", &isBarrier);
@@ -428,6 +429,11 @@ void Boss::Update()
 		else if (RInput::GetInstance()->GetKeyDown(DIK_3))
 		{
 			nextState = std::make_unique<BossPunch>(false);
+			changingState = true;
+		}
+		else if (RInput::GetInstance()->GetKeyDown(DIK_4))
+		{
+			nextState = std::make_unique<BossFallAttack>();
 			changingState = true;
 		}
 	}
