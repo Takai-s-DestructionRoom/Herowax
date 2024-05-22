@@ -218,6 +218,15 @@ public:
 
 	void MaxWaxPlus(int32_t plus);
 
+	WaxWall* GetWaxWall() {
+		if (waxWall.isAlive) {
+			return &waxWall;
+		}
+		else {
+			return nullptr;
+		}
+	};
+
 private:
 	void DamageBlink();	//被弾時の点滅(後々もっとリッチなのに置き換え予定)
 

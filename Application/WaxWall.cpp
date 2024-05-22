@@ -5,7 +5,7 @@ void WaxWall::Init()
 	obj = PaintableModelObj(Model::Load("./Resources/Model/Shield/shield.obj", "shield"));
 	obj.mTransform.scale = { 2,2,2 };
 
-	colliderSize = 5;
+	colliderSize = 10;
 
 	isAlive = false;
 }

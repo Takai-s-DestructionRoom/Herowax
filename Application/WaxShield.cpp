@@ -68,6 +68,11 @@ bool WaxShield::IsSolid()
 	return waxSolidCount >= requireWaxSolidCount;
 }
 
+void WaxShield::Break()
+{
+	waxSolidCount = requireWaxSolidCount;
+}
+
 bool WaxShield::GetHitCollider(ColPrimitive3D::Sphere hit)
 {
 	return ColPrimitive3D::CheckSphereToSphere(collider, hit) && !IsSolid();

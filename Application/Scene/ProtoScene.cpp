@@ -387,6 +387,18 @@ void ProtoScene::Update()
 				//ダメージ
 				player.DealDamage(EnemyManager::GetInstance()->GetNormalAttackPower());
 			}
+			//攻撃中に本体と盾がぶつかったらそこで敵をストップ(Endに遷移)
+			if (player.GetWaxWall()) {
+				if (ColPrimitive3D::CheckSphereToSphere(enemy->collider, player.GetWaxWall()->collider) &&
+					enemy->GetIsSolid() == false)
+				{
+					enemy->ChangeAttackState<EnemyEndAttackState>();
+					//もしパリィ中なら盾を吹っ飛ばす
+					if (player.GetWaxWall()->GetParry()) {
+						enemy->GetShield()->Break();
+					}
+				}
+			}
 		}
 		//接触ダメージあり設定の場合、固まってないなら接触時にダメージ
 		if (EnemyManager::GetInstance()->GetIsContactDamage()) {
@@ -397,7 +409,6 @@ void ProtoScene::Update()
 			}
 		}
 		//回収ボタン押されたときに固まってるなら吸収
-		//ここもプレイヤーの中に入れちゃう
 		if (isCollected2 && enemy->GetIsSolid() &&
 			ColPrimitive3D::RayToSphereCol(player.collectCol, enemy->collider))
 		{
@@ -692,11 +703,11 @@ void ProtoScene::MinimapCameraUpdate()
 	//カメラの距離適応
 	mmCameraVec *= GameCamera::GetInstance()->mmCameraDist;
 
-	//アスペクト比1:1に
-	minimapCamera.mViewProjection.mAspect = 1.f / 1.f;
+	////アスペクト比1:1に
+	//minimapCamera.mViewProjection.mAspect = 1.f / 1.f;
 
-	minimapCamera.mViewProjection.mEye = mmCameraVec;
+	//minimapCamera.mViewProjection.mEye = mmCameraVec;
 
-	minimapCamera.mViewProjection.mTarget = Vector3::ZERO;
-	minimapCamera.mViewProjection.UpdateMatrix();
+	//minimapCamera.mViewProjection.mTarget = Vector3::ZERO;
+	//minimapCamera.mViewProjection.UpdateMatrix();
 }

@@ -15,6 +15,9 @@ public:
 	//固まっているかを取得
 	bool IsSolid();
 
+	//強制的に破壊
+	void Break();
+
 	bool GetHitCollider(ColPrimitive3D::Sphere hit);
 
 	int32_t waxSolidCount = 0;
