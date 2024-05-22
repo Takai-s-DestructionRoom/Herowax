@@ -64,6 +64,9 @@ public:
 		float growingTimer = 0.f, float endScale = 0.f, bool isGravity = false);
 	void SetPlayerPos(Vector3 pos) { playerPos = pos; }
 
+	//パーティクルの追加
+	void AddDirectional(Vector3 emitPos, std::string pDataHandle);
+
 private:
 	//コンストラクタ
 	ParticleManager() = default;

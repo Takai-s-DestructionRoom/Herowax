@@ -1,4 +1,4 @@
-addNum:10
+addNum:5
 life:0.5
 minscale:1
 maxscale:1
@@ -9,7 +9,7 @@ rejectradius:0
 isgravity:false
 isbillboard:true
 emitscale:0.000000_0.000000_0.000000
-minvelo:0.000000_0.000000_0.000000
-maxvelo:1.000000_1.000000_1.000000
-color:1.000000_1.000000_1.000000_1.000000
+minvelo:-0.100000_-0.100000_-0.100000
+maxvelo:0.100000_0.100000_0.100000
+color:0.717300_0.647305_0.102904_1.000000
 tex:directional_burst
