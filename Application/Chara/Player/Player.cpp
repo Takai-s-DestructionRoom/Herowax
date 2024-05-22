@@ -1068,11 +1068,24 @@ void Player::WaxCollect()
 		}
 	}
 
-	/*if (WaxManager::GetInstance()->isCollected)
+	if (WaxManager::GetInstance()->isCollected == false)
 	{
-		Vector3 emitPos = obj.mTransform.position + dir * waxCollectVertical;
-		ParticleManager::GetInstance()->AddHoming(emitPos, "collect_homing", obj.mTransform.position);
-	}*/
+		Vector3 emitPos = obj.mTransform.position + dir * (waxCollectVertical - waxCollectRange);
+		emitPos.y += obj.mTransform.scale.y;
+		ParticleManager::GetInstance()->AddHoming(emitPos, "collect_smoke_homing", GetFootPos());
+
+		static int32_t count = 0;
+		if (count % 3 == 0)
+		{
+			ParticleManager::GetInstance()->AddHoming(emitPos, "collect_homing", GetFootPos());
+		}
+
+		Vector3 emitPosFront = obj.mTransform.position + dir * waxCollectRange;
+		emitPosFront.y += obj.mTransform.scale.y;
+		ParticleManager::GetInstance()->AddHoming(emitPosFront, "front_collect_smoke_homing", GetFootPos());
+
+		count++;
+	}
 }
 
 Vector3 Player::GetFootPos()
