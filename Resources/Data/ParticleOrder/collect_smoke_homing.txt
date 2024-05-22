@@ -9,7 +9,7 @@ rejectradius:0
 isgravity:false
 isbillboard:true
 istargetemitter:false
-emitscale:20.000000_2.000000_20.000000
+emitscale:18.000000_2.000000_18.000000
 minvelo:-1.000000_-1.000000_-1.000000
 maxvelo:1.000000_1.000000_1.000000
 targetpos:10.000000_0.000000_0.000000
