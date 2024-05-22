@@ -74,6 +74,9 @@ private:
 	bool tankSwitch = true;
 	bool bombSoliderSwitch = true;
 	
+	//敵の盾
+	int32_t shieldRequireWaxCount = 60;
+
 public:
 	static EnemyManager* GetInstance();
 
