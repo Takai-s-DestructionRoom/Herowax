@@ -63,6 +63,11 @@ void ParticleEditorScene::Update()
 				ParticleManager::GetInstance()->AddHoming(emitPos, loadPartName);
 				drawEmitter.mTransform.scale = ParticleEditor::LoadHoming(loadPartName).emitScale * 2.f;
 			}
+			//ファイル名に以下略
+			else if (Util::ContainString(loadPartName, "_directional")) {
+				ParticleManager::GetInstance()->AddDirectional(emitPos, loadPartName);
+				drawEmitter.mTransform.scale = ParticleEditor::LoadDirectional(loadPartName).emitScale * 2.f;
+			}
 			//それ以外はシンプルパーティクルとみなす
 			else if (loadPartName != "") {
 				ParticleManager::GetInstance()->AddSimple(emitPos, loadPartName);

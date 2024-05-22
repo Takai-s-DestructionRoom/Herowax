@@ -80,6 +80,28 @@ struct HomingPData
 	std::string error = "";
 };
 
+//進行方向へ向くパーティクル
+struct DirectionalPData
+{
+	Vector3 emitScale = {};
+	int32_t addNum = 0;
+	float life = 0;
+	Color color = { 1,1,1,1 };
+	TextureHandle tex = "";
+	float minScale = 0;
+	float maxScale = 0;
+	Vector3 minVelo = {};
+	Vector3 maxVelo = {};
+	float accelPower = 0.f;
+	float growingTimer = 0.f;
+	float endScale = 0.f;
+	bool isGravity = false;
+	bool isBillboard = false;
+	float rejectRadius = 0.f;
+
+	std::string error = "";
+};
+
 class ParticleEditor
 {
 public:
@@ -96,11 +118,13 @@ public:
 	static SimplePData LoadSimple(const std::string& filename);
 	static RingPData LoadRing(const std::string& filename);
 	static HomingPData LoadHoming(const std::string& filename);
+	static DirectionalPData LoadDirectional(const std::string& filename);
 
 	//書き出し
 	static void SaveSimple(const SimplePData& saveData, const std::string& saveFileName_);
 	static void SaveRing(const RingPData& saveData, const std::string& saveFileName_);
 	static void SaveHoming(const HomingPData& saveData, const std::string& saveFileName_);
+	static void SaveDirectional(const DirectionalPData& saveData, const std::string& saveFileName_);
 
 private:
 	//読み込みで使うデータたち
@@ -110,6 +134,7 @@ private:
 	static SimplePData saveSimplePData;
 	static RingPData saveRingPData;
 	static HomingPData saveHomingPData;
+	static DirectionalPData saveDirectionalPData;
 
 	static bool isAlwaysUpdate;
 

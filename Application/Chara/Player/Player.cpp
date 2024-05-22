@@ -1115,7 +1115,9 @@ void Player::DealDamage(float damage)
 	backwardTimer.maxTime_ = damageCoolTimer.maxTime_ / 2;
 	backwardTimer.Start();
 
-	GameCamera::GetInstance()->Shake(0.15f, 1.f);
+	float shakeValue = damage;
+	shakeValue = max(shakeValue, 1.0f);//最低1.0f
+	GameCamera::GetInstance()->Shake(0.15f, shakeValue);
 }
 
 void Player::MaxWaxPlus(int32_t plus)
