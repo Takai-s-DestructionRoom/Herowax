@@ -1,6 +1,7 @@
 #include "ProtoScene.h"
 #include "FailedScene.h"
 #include "SceneManager.h"
+#include "GameCamera.h"
 #include "WaxManager.h"
 #include "ParticleManager.h"
 #include "RInput.h"
@@ -51,7 +52,7 @@ void ProtoScene::Init()
 	EventCaller::Init();
 	//Camera::sMinimapCamera = &minimapCamera;
 
-	gameCamera.Init();
+	GameCamera::GetInstance()->Init();
 
 	LightGroup::sNowLight = &light;
 	ambient = light.GetAmbientColor();
@@ -62,7 +63,7 @@ void ProtoScene::Init()
 	//色々入れる
 	player.SetBoss(Boss::GetInstance());
 	Boss::GetInstance()->SetTarget(&player.obj);
-	gameCamera.SetTarget(&player.obj);
+	GameCamera::GetInstance()->SetTarget(&player.obj);
 
 	ParticleManager::GetInstance()->Init();
 
@@ -169,7 +170,7 @@ void ProtoScene::Update()
 	//イベントシーンが終わりカメラが空っぽになったら
 	if (Camera::sNowCamera == nullptr)
 	{
-		gameCamera.Init();	//カメラ入れる
+		GameCamera::GetInstance()->Init();	//カメラ入れる
 		player.isMove = true;
 		EnemyManager::GetInstance()->isStop = false;
 
@@ -189,7 +190,7 @@ void ProtoScene::Update()
 		EventCaller::NowEventStrReset();
 	}
 
-	gameCamera.Update();
+	GameCamera::GetInstance()->Update();
 	//MinimapCameraUpdate();
 
 	//ここに無限に当たり判定増やしていくの嫌なのであとで何か作ります
@@ -198,6 +199,62 @@ void ProtoScene::Update()
 	//ボスの腕との判定
 	for (size_t i = 0; i < Boss::GetInstance()->parts.size(); i++)
 	{
+		if (player.GetWaxWall()) {
+			if (ColPrimitive3D::CheckSphereToSphere(Boss::GetInstance()->parts[i].collider,
+				player.GetWaxWall()->collider) &&
+				Boss::GetInstance()->punchTimer.GetRun())
+			{
+				while (ColPrimitive3D::CheckSphereToSphere(Boss::GetInstance()->parts[i].collider,
+					player.GetWaxWall()->collider))
+				{
+					//パリィが出来てるなら、攻撃を受けてのけぞってる間はパリィタイマーを更新し続ける
+					if (player.GetWaxWall()->parryTimer.GetRun()) {
+						player.GetWaxWall()->parryTimer.Start();
+					}
+
+					Vector3 repulsionVec = player.GetPos() - Boss::GetInstance()->parts[i].collider.pos;
+					repulsionVec.Normalize();
+					repulsionVec.y = 0;
+
+					//一旦これだけ無理やり足す
+					player.obj.mTransform.position += repulsionVec;
+					//コライダーがもう一度当たらないようにコライダー更新
+					player.UpdateCollider();
+
+					//盾も押し戻す
+					player.GetWaxWall()->obj.mTransform.position += repulsionVec;
+					player.GetWaxWall()->UpdateCollider();
+
+					//壁にめり込む場合は押し戻し
+					for (auto& wall : Level::Get()->wallCol)
+					{
+						if (ColPrimitive3D::CheckSphereToPlane(player.collider, wall))
+						{
+							repulsionVec = player.GetPos() - Boss::GetInstance()->parts[i].collider.pos;
+							repulsionVec.Normalize();
+							repulsionVec.y = 0;
+							repulsionVec = -repulsionVec;
+							//そのまま戻すと無限ループするので適当に弾き飛ばす
+							repulsionVec.x += Util::GetRand(-1.0f, 1.0f);
+							repulsionVec.z += Util::GetRand(-1.0f, 1.0f);
+
+							//一旦これだけ無理やり足す
+							player.obj.mTransform.position += repulsionVec;
+							//コライダーがもう一度当たらないようにコライダー更新
+							player.UpdateCollider();
+
+							//盾も押し戻す
+							player.GetWaxWall()->obj.mTransform.position += repulsionVec;
+							player.GetWaxWall()->UpdateCollider();
+						}
+					}
+				}
+				if (!player.GetWaxWall()->parryTimer.GetRun()) {
+					player.WaxLeakOut((int32_t)Boss::GetInstance()->GetDamage());
+				}
+			}
+		}
+
 		if (ColPrimitive3D::CheckSphereToSphere(Boss::GetInstance()->parts[i].collider,
 			player.collider))
 		{
@@ -205,7 +262,7 @@ void ProtoScene::Update()
 			if (Boss::GetInstance()->punchTimer.GetRun())
 			{
 				//1ダメージ(どっかに参照先作るべき)
-				player.DealDamage(1);
+				player.DealDamage(Boss::GetInstance()->GetDamage());
 			}
 		}
 	}
@@ -298,8 +355,7 @@ void ProtoScene::Update()
 		for (auto& wax : group->waxs) {
 			for (auto& enemy : EnemyManager::GetInstance()->enemys)
 			{
-				bool isShieldCollision = ColPrimitive3D::CheckSphereToSphere(enemy->GetShield()->collider,wax->collider) 
-					&& !enemy->GetShield()->IsSolid();
+				bool isShieldCollision = enemy->GetShield()->GetHitCollider(wax->collider);
 
 				//投げられてるロウと盾がぶつかったらロウを反射
 				if (isShieldCollision && wax->isSolid == false && wax->isGround == false) {
@@ -359,8 +415,6 @@ void ProtoScene::Update()
 						}
 					}
 				}
-			
-				
 			}
 		}
 	}
@@ -387,6 +441,25 @@ void ProtoScene::Update()
 				//ダメージ
 				player.DealDamage(EnemyManager::GetInstance()->GetNormalAttackPower());
 			}
+			//攻撃中に本体と盾がぶつかったらそこで敵をストップ(Endに遷移)
+			if (player.GetWaxWall()) {
+				if (ColPrimitive3D::CheckSphereToSphere(enemy->collider, player.GetWaxWall()->collider) &&
+					enemy->GetIsSolid() == false)
+				{
+					enemy->ChangeAttackState<EnemyEndAttackState>();
+					//もしパリィ中なら盾を吹っ飛ばす
+					if (player.GetWaxWall()->GetParry()) {
+						enemy->GetShield()->Break();
+					}
+					else
+					{
+						int32_t consum = (int32_t)EnemyManager::GetInstance()->GetNormalAttackPower();
+						consum = max(consum, 1);
+
+						player.WaxLeakOut(consum);
+					}
+				}
+			}
 		}
 		//接触ダメージあり設定の場合、固まってないなら接触時にダメージ
 		if (EnemyManager::GetInstance()->GetIsContactDamage()) {
@@ -397,7 +470,6 @@ void ProtoScene::Update()
 			}
 		}
 		//回収ボタン押されたときに固まってるなら吸収
-		//ここもプレイヤーの中に入れちゃう
 		if (isCollected2 && enemy->GetIsSolid() &&
 			ColPrimitive3D::RayToSphereCol(player.collectCol, enemy->collider))
 		{
@@ -683,20 +755,20 @@ void ProtoScene::Draw()
 	SceneTrance::GetInstance()->Draw();
 }
 
-void ProtoScene::MinimapCameraUpdate()
-{
-	Vector3 mmCameraVec = { 0, 0, 1 };
-	//カメラアングル適応
-	mmCameraVec *= Quaternion::AngleAxis(Vector3(1, 0, 0).Cross(mmCameraVec), 0.f);
-	mmCameraVec *= Quaternion::AngleAxis(Vector3(0, 1, 0).Cross(mmCameraVec), Util::AngleToRadian(89.9f));
-	//カメラの距離適応
-	mmCameraVec *= gameCamera.mmCameraDist;
-
-	//アスペクト比1:1に
-	minimapCamera.mViewProjection.mAspect = 1.f / 1.f;
-
-	minimapCamera.mViewProjection.mEye = mmCameraVec;
-
-	minimapCamera.mViewProjection.mTarget = Vector3::ZERO;
-	minimapCamera.mViewProjection.UpdateMatrix();
-}
+//void ProtoScene::MinimapCameraUpdate()
+//{
+//	Vector3 mmCameraVec = { 0, 0, 1 };
+//	//カメラアングル適応
+//	mmCameraVec *= Quaternion::AngleAxis(Vector3(1, 0, 0).Cross(mmCameraVec), 0.f);
+//	mmCameraVec *= Quaternion::AngleAxis(Vector3(0, 1, 0).Cross(mmCameraVec), Util::AngleToRadian(89.9f));
+//	//カメラの距離適応
+//	mmCameraVec *= GameCamera::GetInstance()->mmCameraDist;
+//
+//	//アスペクト比1:1に
+//	minimapCamera.mViewProjection.mAspect = 1.f / 1.f;
+//
+//	minimapCamera.mViewProjection.mEye = mmCameraVec;
+//
+//	minimapCamera.mViewProjection.mTarget = Vector3::ZERO;
+//	minimapCamera.mViewProjection.UpdateMatrix();
+//}

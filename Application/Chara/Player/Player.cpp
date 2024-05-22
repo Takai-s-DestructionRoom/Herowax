@@ -21,6 +21,7 @@
 #include "EnemyManager.h"
 #include "EventCaller.h"
 #include "FailedScene.h"
+#include "GameCamera.h"
 
 Player::Player() :GameObject(),
 moveSpeed(1.f), moveAccelAmount(0.05f), isGround(true), hp(0), maxHP(10.f),
@@ -134,6 +135,8 @@ void Player::Init()
 	obj.mTransform.UpdateMatrix();
 
 	isMove = true;
+
+	waxWall.Init();
 }
 
 void Player::Reset()
@@ -417,6 +420,8 @@ void Player::Update()
 
 	waxUI.Update(obj.mTransform.position);
 	
+	ShieldUp();
+
 	//残像
 	/*for (auto& once : afterimagesObj)
 	{
@@ -590,6 +595,7 @@ void Player::Draw()
 		DrawAttackCollider(); 
 		
 		waxUI.Draw();
+		waxWall.Draw();
 	}
 }
 
@@ -1034,6 +1040,7 @@ void Player::WaxCollect()
 				}
 			}
 
+
 			//本体吸収
 			//演出の都合上、いったん消す
 			//if (boss->GetStateStr() == "Collected") {
@@ -1059,6 +1066,25 @@ void Player::WaxCollect()
 				modelChange = true;
 			}
 		}
+	}
+
+	if (WaxManager::GetInstance()->isCollected == false)
+	{
+		Vector3 emitPos = obj.mTransform.position + dir * (waxCollectVertical - waxCollectRange);
+		emitPos.y += obj.mTransform.scale.y;
+		ParticleManager::GetInstance()->AddHoming(emitPos, "collect_smoke_homing", GetFootPos());
+
+		static int32_t count = 0;
+		if (count % 3 == 0)
+		{
+			ParticleManager::GetInstance()->AddHoming(emitPos, "collect_homing", GetFootPos());
+		}
+
+		Vector3 emitPosFront = obj.mTransform.position + dir * waxCollectRange;
+		emitPosFront.y += obj.mTransform.scale.y;
+		ParticleManager::GetInstance()->AddHoming(emitPosFront, "front_collect_smoke_homing", GetFootPos());
+
+		count++;
 	}
 }
 
@@ -1088,6 +1114,8 @@ void Player::DealDamage(float damage)
 	//モーション遷移
 	backwardTimer.maxTime_ = damageCoolTimer.maxTime_ / 2;
 	backwardTimer.Start();
+
+	GameCamera::GetInstance()->Shake(0.15f, 1.f);
 }
 
 void Player::MaxWaxPlus(int32_t plus)
@@ -1095,6 +1123,29 @@ void Player::MaxWaxPlus(int32_t plus)
 	maxWaxStock += plus;
 	
 	waxUI.Start();
+}
+
+void Player::WaxLeakOut(int32_t leakNum)
+{
+	for (int32_t i = 0; i < leakNum; i++)
+	{
+		if (waxStock > 0)
+		{
+			waxStock -= 1;
+
+			Vector3 endPos = waxWall.obj.mTransform.position;
+			endPos.x += Util::GetRand(-5.0f,5.0f);
+			endPos.z += Util::GetRand(-5.0f,5.0f);
+
+			WaxManager::GetInstance()->Create(
+				waxWall.obj.mTransform,
+				endPos,
+				atkHeight,
+				atkSize,
+				atkTimer.maxTime_,
+				solidTimer.maxTime_);
+		}
+	}
 }
 
 Color Player::GamingColorUpdate()
@@ -1161,6 +1212,49 @@ void Player::DamageBlink()
 	}
 }
 
+void Player::ShieldUp()
+{
+	//盾の位置をプレイヤーの正面へ
+	Vector3 frontVec = Camera::sNowCamera->mViewProjection.mTarget - Camera::sNowCamera->mViewProjection.mEye;
+	frontVec.y = 0;
+	frontVec.Normalize();
+	frontVec *= 10.0f;
+	
+	waxWall.obj.mTransform.position = obj.mTransform.position + frontVec;
+	waxWall.obj.mTransform.rotation = Quaternion::LookAt(frontVec).ToEuler();
+	waxWall.obj.mTransform.rotation.y += Util::AngleToRadian(-90.f);
+
+	if (RInput::GetInstance()->GetPadButtonDown(XINPUT_GAMEPAD_LEFT_SHOULDER) || 
+		RInput::GetKeyDown(DIK_Z)) {
+		//パリィ状態でなければ出現
+		if (!waxWall.GetParry()) {
+			if (waxWall.StartCheck(waxStock)) {
+
+				WaxLeakOut(waxWall.START_CHECK_WAXNUM);
+
+				waxWall.Start();
+			}
+		}
+	}
+
+	//毎フレーム放してるかチェック
+	if (RInput::GetInstance()->GetPadButtonUp(XINPUT_GAMEPAD_LEFT_SHOULDER) || RInput::GetKeyUp(DIK_Z)) {
+		//離したら終了
+		waxWall.End();
+	}
+
+	//ロウ漏れモードなら
+	if (waxWall.GetLeakOutMode()) {
+		//ロウが残っているかチェック
+		if (waxWall.ContinueCheck(waxStock)) {
+			
+			WaxLeakOut(waxWall.CONTINUE_CHECK_WAXNUM);
+		}
+	}
+
+	waxWall.Update();
+}
+
 void Player::UpdateAttackCollider()
 {
 	attackHitCollider.pos = GetPos();
@@ -1192,8 +1286,7 @@ void Player::DrawAttackCollider()
 
 bool Player::GetWaxCollectButtonDown()
 {
-	return (RInput::GetInstance()->GetPadButtonDown(XINPUT_GAMEPAD_LEFT_SHOULDER) ||
-		RInput::GetInstance()->GetLTriggerDown() ||
+	return (RInput::GetInstance()->GetLTriggerDown() ||
 		RInput::GetInstance()->GetKeyDown(DIK_Q));
 }
 

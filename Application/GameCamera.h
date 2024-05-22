@@ -1,6 +1,7 @@
 #pragma once
 #include "Camera.h"
 #include "ModelObj.h"
+#include "Easing.h"
 
 class GameCamera
 {
@@ -8,6 +9,9 @@ public:
 	void Init();
 	void Update();
 	
+	//カメラシェイク
+	void Shake(float time,float power);
+
 	void SetTarget(ModelObj* target_);
 
 	static GameCamera* GetInstance();
@@ -32,5 +36,9 @@ private:
 	bool changeFPS = false;
 
 	bool changeCamera = false;
+
+	Vector3 shake{};
+	Easing::EaseTimer shakeTimer;
+	float shakePower;
 };
 

@@ -9,6 +9,9 @@ void WaxShield::Init()
 	obj = PaintableModelObj(Model::Load("./Resources/Model/Shield/shield.obj", "shield"));
 	obj.mPaintDissolveMapTex = TextureManager::Load("./Resources/DissolveMap.png", "DissolveMapTex");
 
+	obj.mTransform.scale = { 2,2,2 };
+	
+	colliderSize = 5;
 }
 
 void WaxShield::Update()
@@ -31,16 +34,6 @@ void WaxShield::Update()
 		brightColor.g = Easing::OutQuad(1.0f, 0.0f, brightTimer.GetTimeRate());
 		brightColor.b = Easing::OutQuad(1.0f, 0.0f, brightTimer.GetTimeRate());
 	}
-	
-	//更新してからバッファに送る
-	obj.mTransform.UpdateMatrix();
-	obj.mPaintDataBuff->dissolveVal = IsSolid() ? 1.0f : 0.3f / (requireWaxSolidCount - 1) * waxSolidCount;
-	//obj.mPaintDataBuff->dissolveVal = 1.0f;
-	obj.mPaintDataBuff->color = WaxManager::GetInstance()->slimeWax.waxColor;
-	obj.mPaintDataBuff->slide += TimeManager::deltaTime;
-
-	obj.mTransform.UpdateMatrix();
-	BrightTransferBuffer(Camera::sNowCamera->mViewProjection);
 }
 
 void WaxShield::Draw()
@@ -50,6 +43,19 @@ void WaxShield::Draw()
 	BrightDraw();
 	/*isDrawCollider = true;
 	DrawCollider();*/
+}
+
+void WaxShield::TransfarBuffer()
+{
+	//更新してからバッファに送る
+	obj.mTransform.UpdateMatrix();
+	obj.mPaintDataBuff->dissolveVal = IsSolid() ? 1.0f : 0.3f / (requireWaxSolidCount - 1) * waxSolidCount;
+	//obj.mPaintDataBuff->dissolveVal = 1.0f;
+	obj.mPaintDataBuff->color = WaxManager::GetInstance()->slimeWax.waxColor;
+	obj.mPaintDataBuff->slide += TimeManager::deltaTime;
+
+	obj.mTransform.UpdateMatrix();
+	BrightTransferBuffer(Camera::sNowCamera->mViewProjection);
 }
 
 void WaxShield::Hit(int32_t damage)
@@ -63,4 +69,14 @@ void WaxShield::Hit(int32_t damage)
 bool WaxShield::IsSolid()
 {
 	return waxSolidCount >= requireWaxSolidCount;
+}
+
+void WaxShield::Break()
+{
+	waxSolidCount = requireWaxSolidCount;
+}
+
+bool WaxShield::GetHitCollider(ColPrimitive3D::Sphere hit)
+{
+	return ColPrimitive3D::CheckSphereToSphere(collider, hit) && !IsSolid();
 }

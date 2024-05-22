@@ -6,7 +6,6 @@
 #pragma once
 #include "IScene.h"
 #include "LightGroup.h"
-#include "Camera.h"
 #include "ModelObj.h"
 #include "Sprite.h"
 #include "Player.h"
@@ -16,7 +15,6 @@
 
 #include "Level.h"
 #include "Wave.h"
-#include "GameCamera.h"
 
 #include "IEventScene.h"
 #include "ControlUI.h"
@@ -31,15 +29,13 @@ public:
 	void Update() override;
 	void Draw() override;
 
-	void MinimapCameraUpdate();
+	//void MinimapCameraUpdate();
 
 private:
 	ModelObj skydome;	//天球
 	Player player;
 	
-	Camera minimapCamera = Camera();	//ミニマップ用の仮想カメラ
-
-	GameCamera gameCamera;
+	//Camera minimapCamera = Camera();	//ミニマップ用の仮想カメラ
 
 	LightGroup light;
 	Vector3 ambient;
