@@ -755,20 +755,20 @@ void ProtoScene::Draw()
 	SceneTrance::GetInstance()->Draw();
 }
 
-void ProtoScene::MinimapCameraUpdate()
-{
-	Vector3 mmCameraVec = { 0, 0, 1 };
-	//カメラアングル適応
-	mmCameraVec *= Quaternion::AngleAxis(Vector3(1, 0, 0).Cross(mmCameraVec), 0.f);
-	mmCameraVec *= Quaternion::AngleAxis(Vector3(0, 1, 0).Cross(mmCameraVec), Util::AngleToRadian(89.9f));
-	//カメラの距離適応
-	mmCameraVec *= GameCamera::GetInstance()->mmCameraDist;
-
-	////アスペクト比1:1に
-	//minimapCamera.mViewProjection.mAspect = 1.f / 1.f;
-
-	//minimapCamera.mViewProjection.mEye = mmCameraVec;
-
-	//minimapCamera.mViewProjection.mTarget = Vector3::ZERO;
-	//minimapCamera.mViewProjection.UpdateMatrix();
-}
+//void ProtoScene::MinimapCameraUpdate()
+//{
+//	Vector3 mmCameraVec = { 0, 0, 1 };
+//	//カメラアングル適応
+//	mmCameraVec *= Quaternion::AngleAxis(Vector3(1, 0, 0).Cross(mmCameraVec), 0.f);
+//	mmCameraVec *= Quaternion::AngleAxis(Vector3(0, 1, 0).Cross(mmCameraVec), Util::AngleToRadian(89.9f));
+//	//カメラの距離適応
+//	mmCameraVec *= GameCamera::GetInstance()->mmCameraDist;
+//
+//	//アスペクト比1:1に
+//	minimapCamera.mViewProjection.mAspect = 1.f / 1.f;
+//
+//	minimapCamera.mViewProjection.mEye = mmCameraVec;
+//
+//	minimapCamera.mViewProjection.mTarget = Vector3::ZERO;
+//	minimapCamera.mViewProjection.UpdateMatrix();
+//}
