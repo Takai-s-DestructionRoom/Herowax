@@ -1105,6 +1105,25 @@ void Player::MaxWaxPlus(int32_t plus)
 	waxUI.Start();
 }
 
+void Player::WaxLeakOut(int32_t leakNum)
+{
+	for (int32_t i = 0; i < leakNum; i++)
+	{
+		if (waxStock > 0)
+		{
+			waxStock -= 1;
+
+			WaxManager::GetInstance()->Create(
+				waxWall.obj.mTransform,
+				waxWall.obj.mTransform.position,
+				atkHeight,
+				atkSize,
+				atkTimer.maxTime_,
+				solidTimer.maxTime_);
+		}
+	}
+}
+
 Color Player::GamingColorUpdate()
 {
 	//タイマー更新
@@ -1186,18 +1205,7 @@ void Player::ShieldUp()
 		if (!waxWall.GetParry()) {
 			if (waxWall.StartCheck(waxStock)) {
 
-				waxStock -= waxWall.START_CHECK_WAXNUM;
-
-				for (int32_t i = 0; i < waxWall.START_CHECK_WAXNUM; i++)
-				{
-					WaxManager::GetInstance()->Create(
-						waxWall.obj.mTransform,
-						waxWall.obj.mTransform.position,
-						atkHeight,
-						atkSize,
-						atkTimer.maxTime_,
-						solidTimer.maxTime_);
-				}
+				WaxLeakOut(waxWall.START_CHECK_WAXNUM);
 
 				waxWall.Start();
 			}
@@ -1214,15 +1222,8 @@ void Player::ShieldUp()
 	if (waxWall.GetLeakOutMode()) {
 		//ロウが残っているかチェック
 		if (waxWall.ContinueCheck(waxStock)) {
-			waxStock--;
 			
-			WaxManager::GetInstance()->Create(
-				waxWall.obj.mTransform,
-				waxWall.obj.mTransform.position,
-				atkHeight,
-				atkSize,
-				atkTimer.maxTime_,
-				solidTimer.maxTime_);
+			WaxLeakOut(waxWall.CONTINUE_CHECK_WAXNUM);
 		}
 	}
 

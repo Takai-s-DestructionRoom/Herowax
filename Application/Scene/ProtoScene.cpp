@@ -359,8 +359,6 @@ void ProtoScene::Update()
 						}
 					}
 				}
-			
-				
 			}
 		}
 	}
@@ -396,6 +394,13 @@ void ProtoScene::Update()
 					//もしパリィ中なら盾を吹っ飛ばす
 					if (player.GetWaxWall()->GetParry()) {
 						enemy->GetShield()->Break();
+					}
+					else
+					{
+						int32_t consum = (int32_t)EnemyManager::GetInstance()->GetNormalAttackPower();
+						consum = max(consum, 1);
+
+						player.WaxLeakOut(consum);
 					}
 				}
 			}
