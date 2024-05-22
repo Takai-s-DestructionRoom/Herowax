@@ -1133,9 +1133,13 @@ void Player::WaxLeakOut(int32_t leakNum)
 		{
 			waxStock -= 1;
 
+			Vector3 endPos = waxWall.obj.mTransform.position;
+			endPos.x += Util::GetRand(-5.0f,5.0f);
+			endPos.z += Util::GetRand(-5.0f,5.0f);
+
 			WaxManager::GetInstance()->Create(
 				waxWall.obj.mTransform,
-				waxWall.obj.mTransform.position,
+				endPos,
 				atkHeight,
 				atkSize,
 				atkTimer.maxTime_,
