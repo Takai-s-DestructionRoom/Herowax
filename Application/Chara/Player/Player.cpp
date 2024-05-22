@@ -21,6 +21,7 @@
 #include "EnemyManager.h"
 #include "EventCaller.h"
 #include "FailedScene.h"
+#include "GameCamera.h"
 
 Player::Player() :GameObject(),
 moveSpeed(1.f), moveAccelAmount(0.05f), isGround(true), hp(0), maxHP(10.f),
@@ -1088,6 +1089,8 @@ void Player::DealDamage(float damage)
 	//モーション遷移
 	backwardTimer.maxTime_ = damageCoolTimer.maxTime_ / 2;
 	backwardTimer.Start();
+
+	GameCamera::GetInstance()->Shake(0.15f, 1.f);
 }
 
 void Player::MaxWaxPlus(int32_t plus)

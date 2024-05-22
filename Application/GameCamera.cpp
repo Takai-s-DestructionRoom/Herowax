@@ -25,10 +25,15 @@ void GameCamera::Init()
 	cameraUpOffset = Parameter::GetParam(extract, "プレイヤーからのYのオフセット", cameraUpOffset);
 	inverse.x = Parameter::GetParam(extract, "カメラ方向反転X", inverse.x);
 	inverse.y = Parameter::GetParam(extract, "カメラ方向反転Y", inverse.y);
+
+	shake = Vector3::ZERO;
+	shakeTimer.Reset();
 }
 
 void GameCamera::Update()
 {
+	shakeTimer.Update();
+
 	Vector2 stick = RInput::GetInstance()->GetRStick(false, true);
 
 	if (stick.LengthSq() > 0.0f) {
@@ -58,8 +63,20 @@ void GameCamera::Update()
 	//プレイヤーの方向いてくれる
 	camera.mViewProjection.mTarget = target->mTransform.position;
 	camera.mViewProjection.mTarget.y += cameraUpOffset;
-	camera.mViewProjection.UpdateMatrix();
 
+	if (shakeTimer.GetRun()) {
+		shake.x = Util::GetRand(-shakePower, shakePower);
+		shake.y = Util::GetRand(-shakePower, shakePower);
+		shake.z = Util::GetRand(-shakePower, shakePower);
+
+		camera.mViewProjection.mEye += shake;
+	}
+	else if (shakeTimer.GetEnd())
+	{
+		shake = Vector3(0,0,0);
+	}
+
+	camera.mViewProjection.UpdateMatrix();
 
 	// カメラ //
 	if (RImGui::showImGui) {
@@ -186,6 +203,14 @@ void GameCamera::Update()
 
 		ImGui::End();
 	}
+}
+
+void GameCamera::Shake(float time, float power)
+{
+	shakeTimer = time;
+	shakeTimer.Start();
+
+	shakePower = power;
 }
 
 void GameCamera::SetTarget(ModelObj* target_)
