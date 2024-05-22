@@ -22,7 +22,7 @@ moveSpeed(0.1f), hp(0), maxHP(10.f), oriSize(6.f)
 {
 	state = std::make_unique<BossNormal>();
 	nextState = nullptr;
-	obj = PaintableModelObj(Model::Load("./Resources/Model/bossBody/bossBody.obj", "bossBody", true));
+	obj = PaintableModelObj(Model::Load("./Resources/Model/NewBossBody/NewBossBody.obj", "bossBody", true));
 	obj.mPaintDissolveMapTex = TextureManager::Load("./Resources/DissolveMap.png", "DissolveMapTex");
 	obj.mTransform.scale = Vector3(1, 1, 1) * oriSize;
 
@@ -36,8 +36,8 @@ moveSpeed(0.1f), hp(0), maxHP(10.f), oriSize(6.f)
 	barrier.mTuneMaterial.mDiffuse = Vector3::ZERO;
 	barrier.mTuneMaterial.mSpecular = Vector3::ZERO;
 
-	parts[(size_t)PartsNum::LeftHand].oriPos = { 50.f,20.f,0.f };
-	parts[(size_t)PartsNum::RightHand].oriPos = { -50.f,20.f,0.f };
+	parts[(size_t)PartsNum::LeftHand].oriPos = { 30.f,25.f,10.f };
+	parts[(size_t)PartsNum::RightHand].oriPos = { -30.f,25.f,10.f };
 
 	targetCircle = ModelObj(Model::Load("./Resources/Model/targetMark/targetMark.obj", "targetMark", true));
 
@@ -137,8 +137,8 @@ void Boss::Init()
 	ai.Init();
 
 	//モデル設定
-	parts[(int32_t)PartsNum::RightHand].obj = PaintableModelObj(Model::Load("./Resources/Model/rightArm/rightArm.obj", "rightArm", true));
-	parts[(int32_t)PartsNum::LeftHand].obj = PaintableModelObj(Model::Load("./Resources/Model/leftArm/leftArm.obj", "leftArm", true));
+	parts[(int32_t)PartsNum::RightHand].obj = PaintableModelObj(Model::Load("./Resources/Model/NewBossArm/NewArm.obj", "bossArm", true));
+	parts[(int32_t)PartsNum::LeftHand].obj = PaintableModelObj(Model::Load("./Resources/Model/NewBossArm/NewArm.obj", "bossArm", true));
 
 	std::map<std::string, std::string> extract = Parameter::Extract("Boss");
 	parts[(int32_t)PartsNum::LeftHand].obj.mTransform.scale.x = Parameter::GetParam(extract, "左手スケールX", parts[(int32_t)PartsNum::LeftHand].obj.mTransform.scale.x);

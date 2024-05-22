@@ -87,6 +87,10 @@ void BossPunch::Update(Boss* boss)
 	boss->parts[(size_t)isLeft_].obj.mTransform.rotation = aLookat.ToEuler();
 	boss->obj.mTransform.rotation = aLookat.ToEuler();
 
+	//基準座標に回転をかけて親子っぽくしてる
+	boss->parts[(size_t)!isLeft_].obj.mTransform.position = boss->parts[(size_t)!isLeft_].oriPos * Matrix4::RotationY(aLookat.ToEuler().y);
+	boss->parts[(size_t)!isLeft_].obj.mTransform.rotation = aLookat.ToEuler();
+
 	if (boss->punchTimer.GetEnd() && boss->punchStayTimer.GetStarted() == false)
 	{
 		RAudio::Play("Punch");
