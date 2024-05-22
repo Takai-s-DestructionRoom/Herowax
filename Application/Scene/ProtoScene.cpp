@@ -1,6 +1,7 @@
 #include "ProtoScene.h"
 #include "FailedScene.h"
 #include "SceneManager.h"
+#include "GameCamera.h"
 #include "WaxManager.h"
 #include "ParticleManager.h"
 #include "RInput.h"
@@ -51,7 +52,7 @@ void ProtoScene::Init()
 	EventCaller::Init();
 	//Camera::sMinimapCamera = &minimapCamera;
 
-	gameCamera.Init();
+	GameCamera::GetInstance()->Init();
 
 	LightGroup::sNowLight = &light;
 	ambient = light.GetAmbientColor();
@@ -62,7 +63,7 @@ void ProtoScene::Init()
 	//色々入れる
 	player.SetBoss(Boss::GetInstance());
 	Boss::GetInstance()->SetTarget(&player.obj);
-	gameCamera.SetTarget(&player.obj);
+	GameCamera::GetInstance()->SetTarget(&player.obj);
 
 	ParticleManager::GetInstance()->Init();
 
@@ -169,7 +170,7 @@ void ProtoScene::Update()
 	//イベントシーンが終わりカメラが空っぽになったら
 	if (Camera::sNowCamera == nullptr)
 	{
-		gameCamera.Init();	//カメラ入れる
+		GameCamera::GetInstance()->Init();	//カメラ入れる
 		player.isMove = true;
 		EnemyManager::GetInstance()->isStop = false;
 
@@ -189,7 +190,7 @@ void ProtoScene::Update()
 		EventCaller::NowEventStrReset();
 	}
 
-	gameCamera.Update();
+	GameCamera::GetInstance()->Update();
 	//MinimapCameraUpdate();
 
 	//ここに無限に当たり判定増やしていくの嫌なのであとで何か作ります
@@ -689,7 +690,7 @@ void ProtoScene::MinimapCameraUpdate()
 	mmCameraVec *= Quaternion::AngleAxis(Vector3(1, 0, 0).Cross(mmCameraVec), 0.f);
 	mmCameraVec *= Quaternion::AngleAxis(Vector3(0, 1, 0).Cross(mmCameraVec), Util::AngleToRadian(89.9f));
 	//カメラの距離適応
-	mmCameraVec *= gameCamera.mmCameraDist;
+	mmCameraVec *= GameCamera::GetInstance()->mmCameraDist;
 
 	//アスペクト比1:1に
 	minimapCamera.mViewProjection.mAspect = 1.f / 1.f;
