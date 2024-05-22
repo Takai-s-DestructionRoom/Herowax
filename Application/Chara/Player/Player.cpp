@@ -1035,6 +1035,7 @@ void Player::WaxCollect()
 				}
 			}
 
+
 			//本体吸収
 			//演出の都合上、いったん消す
 			//if (boss->GetStateStr() == "Collected") {
@@ -1061,6 +1062,12 @@ void Player::WaxCollect()
 			}
 		}
 	}
+
+	/*if (WaxManager::GetInstance()->isCollected)
+	{
+		Vector3 emitPos = obj.mTransform.position + dir * waxCollectVertical;
+		ParticleManager::GetInstance()->AddHoming(emitPos, "collect_homing", obj.mTransform.position);
+	}*/
 }
 
 Vector3 Player::GetFootPos()

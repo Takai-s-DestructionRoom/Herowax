@@ -29,7 +29,7 @@ public:
 	void Update() override;
 	void Draw() override;
 
-	void MinimapCameraUpdate();
+	//void MinimapCameraUpdate();
 
 private:
 	ModelObj skydome;	//天球
