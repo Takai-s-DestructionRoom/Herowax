@@ -30,3 +30,11 @@ uiPosX7:988
 uiPosY7:265
 uiSizeX7:0.4
 uiSizeZ7:0.4
+uiPosX8:990
+uiPosY8:355
+uiSizeX8:0.55
+uiSizeZ8:0.55
+uiPosX9:996
+uiPosY9:402
+uiSizeX9:0.5
+uiSizeZ9:0.5

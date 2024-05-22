@@ -27,7 +27,7 @@ public:
 	void Draw();
 
 private:
-	std::array<UIOnce,8> uiOnces;
+	std::array<UIOnce,10> uiOnces;
 	Vector2 position;
 };
 

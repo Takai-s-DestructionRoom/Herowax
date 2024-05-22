@@ -10,11 +10,13 @@ void ControlUI::LoadResource()
 	TextureManager::Load("./Resources/UI/R_Stick.png", "R_Stick");
 	TextureManager::Load("./Resources/UI/RT.png", "RT");
 	TextureManager::Load("./Resources/UI/Stick_shaft.png", "Stick_shaft");
+	TextureManager::Load("./Resources/UI/LB.png", "LB");
 
 	TextureManager::Load("./Resources/UI/cameraText.png", "cameraText");
 	TextureManager::Load("./Resources/UI/collectText.png", "collectText");
 	TextureManager::Load("./Resources/UI/moveText.png", "moveText");
 	TextureManager::Load("./Resources/UI/shotText.png", "shotText");
+	TextureManager::Load("./Resources/UI/guardText.png", "guardText");
 }
 
 ControlUI::ControlUI()
@@ -46,6 +48,8 @@ void ControlUI::Init()
 	uiOnces[5].load_file = "shotText";
 	uiOnces[6].load_file = "LT";
 	uiOnces[7].load_file = "collectText";
+	uiOnces[8].load_file = "LB";
+	uiOnces[9].load_file = "guardText";
 }
 
 void ControlUI::Update()

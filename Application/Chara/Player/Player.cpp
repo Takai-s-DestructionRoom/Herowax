@@ -195,7 +195,7 @@ void Player::Update()
 		}
 
 		//回避
-		Avoidance();
+		//Avoidance();
 	}
 
 	//攻撃ボタン入力中で、実際にロウが出せたら攻撃フラグを立てる
