@@ -90,6 +90,8 @@ private:
 	float atkSpeed = 0;
 	float atkTime = 0;
 
+	const float bossPunchDamage = 2.f;
+
 public:
 	std::unique_ptr<BossState> state;	//状態管理
 
@@ -157,6 +159,8 @@ public:
 
 	//本体だけが残っているか取得
 	bool GetIsOnlyBody();
+
+	float GetDamage() {return bossPunchDamage;};
 
 	// セッター //
 	//状態文字情報を設定

@@ -29,12 +29,11 @@ public:
 	const int32_t START_CHECK_WAXNUM = 5;
 	const int32_t CONTINUE_CHECK_WAXNUM = 1;
 
-private:
-
-	bool endFlag = false;
-
 	//パリィ判定
 	Easing::EaseTimer parryTimer = 0.1f;
+
+private:
+	bool endFlag = false;
 
 	//この秒数のたびにロウが出現する
 	Easing::EaseTimer leakOutTimer = 0.5f;

@@ -199,6 +199,62 @@ void ProtoScene::Update()
 	//ボスの腕との判定
 	for (size_t i = 0; i < Boss::GetInstance()->parts.size(); i++)
 	{
+		if (player.GetWaxWall()) {
+			if (ColPrimitive3D::CheckSphereToSphere(Boss::GetInstance()->parts[i].collider,
+				player.GetWaxWall()->collider) &&
+				Boss::GetInstance()->punchTimer.GetRun())
+			{
+				while (ColPrimitive3D::CheckSphereToSphere(Boss::GetInstance()->parts[i].collider,
+					player.GetWaxWall()->collider))
+				{
+					//パリィが出来てるなら、攻撃を受けてのけぞってる間はパリィタイマーを更新し続ける
+					if (player.GetWaxWall()->parryTimer.GetRun()) {
+						player.GetWaxWall()->parryTimer.Start();
+					}
+
+					Vector3 repulsionVec = player.GetPos() - Boss::GetInstance()->parts[i].collider.pos;
+					repulsionVec.Normalize();
+					repulsionVec.y = 0;
+
+					//一旦これだけ無理やり足す
+					player.obj.mTransform.position += repulsionVec;
+					//コライダーがもう一度当たらないようにコライダー更新
+					player.UpdateCollider();
+
+					//盾も押し戻す
+					player.GetWaxWall()->obj.mTransform.position += repulsionVec;
+					player.GetWaxWall()->UpdateCollider();
+
+					//壁にめり込む場合は押し戻し
+					for (auto& wall : Level::Get()->wallCol)
+					{
+						if (ColPrimitive3D::CheckSphereToPlane(player.collider, wall))
+						{
+							repulsionVec = player.GetPos() - Boss::GetInstance()->parts[i].collider.pos;
+							repulsionVec.Normalize();
+							repulsionVec.y = 0;
+							repulsionVec = -repulsionVec;
+							//そのまま戻すと無限ループするので適当に弾き飛ばす
+							repulsionVec.x += Util::GetRand(-1.0f, 1.0f);
+							repulsionVec.z += Util::GetRand(-1.0f, 1.0f);
+
+							//一旦これだけ無理やり足す
+							player.obj.mTransform.position += repulsionVec;
+							//コライダーがもう一度当たらないようにコライダー更新
+							player.UpdateCollider();
+
+							//盾も押し戻す
+							player.GetWaxWall()->obj.mTransform.position += repulsionVec;
+							player.GetWaxWall()->UpdateCollider();
+						}
+					}
+				}
+				if (!player.GetWaxWall()->parryTimer.GetRun()) {
+					player.WaxLeakOut((int32_t)Boss::GetInstance()->GetDamage());
+				}
+			}
+		}
+
 		if (ColPrimitive3D::CheckSphereToSphere(Boss::GetInstance()->parts[i].collider,
 			player.collider))
 		{
@@ -206,7 +262,7 @@ void ProtoScene::Update()
 			if (Boss::GetInstance()->punchTimer.GetRun())
 			{
 				//1ダメージ(どっかに参照先作るべき)
-				player.DealDamage(1);
+				player.DealDamage(Boss::GetInstance()->GetDamage());
 			}
 		}
 	}
