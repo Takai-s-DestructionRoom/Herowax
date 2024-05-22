@@ -299,8 +299,7 @@ void ProtoScene::Update()
 		for (auto& wax : group->waxs) {
 			for (auto& enemy : EnemyManager::GetInstance()->enemys)
 			{
-				bool isShieldCollision = ColPrimitive3D::CheckSphereToSphere(enemy->GetShield()->collider,wax->collider) 
-					&& !enemy->GetShield()->IsSolid();
+				bool isShieldCollision = enemy->GetShield()->GetHitCollider(wax->collider);
 
 				//投げられてるロウと盾がぶつかったらロウを反射
 				if (isShieldCollision && wax->isSolid == false && wax->isGround == false) {
@@ -388,6 +387,18 @@ void ProtoScene::Update()
 				//ダメージ
 				player.DealDamage(EnemyManager::GetInstance()->GetNormalAttackPower());
 			}
+			//攻撃中に本体と盾がぶつかったらそこで敵をストップ(Endに遷移)
+			if (player.GetWaxWall()) {
+				if (ColPrimitive3D::CheckSphereToSphere(enemy->collider, player.GetWaxWall()->collider) &&
+					enemy->GetIsSolid() == false)
+				{
+					enemy->ChangeAttackState<EnemyEndAttackState>();
+					//もしパリィ中なら盾を吹っ飛ばす
+					if (player.GetWaxWall()->GetParry()) {
+						enemy->GetShield()->Break();
+					}
+				}
+			}
 		}
 		//接触ダメージあり設定の場合、固まってないなら接触時にダメージ
 		if (EnemyManager::GetInstance()->GetIsContactDamage()) {
@@ -398,7 +409,6 @@ void ProtoScene::Update()
 			}
 		}
 		//回収ボタン押されたときに固まってるなら吸収
-		//ここもプレイヤーの中に入れちゃう
 		if (isCollected2 && enemy->GetIsSolid() &&
 			ColPrimitive3D::RayToSphereCol(player.collectCol, enemy->collider))
 		{

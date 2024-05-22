@@ -117,6 +117,7 @@ void EnemyManager::Update()
 	for (auto& enemy : enemys)
 	{
 		enemy->TransfarBuffer();
+		enemy->GetShield()->TransfarBuffer();
 	}
 
 	for (auto& shot : enemyShots)
