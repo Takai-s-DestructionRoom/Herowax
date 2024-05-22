@@ -1,6 +1,7 @@
 #include "ProtoScene.h"
 #include "FailedScene.h"
 #include "SceneManager.h"
+#include "GameCamera.h"
 #include "WaxManager.h"
 #include "ParticleManager.h"
 #include "RInput.h"
