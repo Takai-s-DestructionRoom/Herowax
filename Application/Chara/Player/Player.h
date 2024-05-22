@@ -218,6 +218,8 @@ public:
 
 	void MaxWaxPlus(int32_t plus);
 
+	void WaxLeakOut(int32_t leakNum);
+
 	WaxWall* GetWaxWall() {
 		if (waxWall.isAlive) {
 			return &waxWall;
