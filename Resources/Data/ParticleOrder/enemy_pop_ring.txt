@@ -3,7 +3,7 @@ life:0.3
 startradius:1.5
 endradius:3
 minscale:1.5
-maxscale:2.5
+maxscale:3
 minveloY:0.1
 maxveloY:0.1
 growingTimer:0.05
@@ -12,5 +12,5 @@ isgravity:false
 isbillboard:true
 minrot:-0.010000_-0.010000_-0.010000
 maxrot:0.010000_0.010000_0.010000
-color:1.000000_1.000000_1.000000_1.000000
-tex:particle_simple
+color:1.000000_1.000000_1.000000_0.392157
+tex:smoke
