@@ -168,6 +168,7 @@
     <ClCompile Include="Application\CircleGauge.cpp" />
     <ClCompile Include="Application\UI\BossAppUI.cpp" />
     <ClCompile Include="Application\Chara\Boss\BossFallAttack.cpp" />
+    <ClCompile Include="Engine\Particle\DirectionalParticle.cpp" />
     <ClCompile Include="Engine\Collision\AABBCollider.cpp" />
     <ClCompile Include="Application\Chara\Enemy\EnemySpawner.cpp" />
     <ClCompile Include="Application\InstantDrawer.cpp" />
@@ -872,6 +873,7 @@
     <ClInclude Include="Application\CircleGauge.h" />
     <ClInclude Include="Application\UI\BossAppUI.h" />
     <ClInclude Include="Application\Chara\Boss\BossFallAttack.h" />
+    <ClInclude Include="Engine\Particle\DirectionalParticle.h" />
     <ClInclude Include="Engine\Collision\AABBCollider.h" />
     <ClInclude Include="Application\Chara\Enemy\EnemySpawner.h" />
     <ClInclude Include="Application\InstantDrawer.h" />

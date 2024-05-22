@@ -855,6 +855,9 @@
     <ClCompile Include="Application\WaxWall.cpp">
       <Filter>ソース ファイル\Application\Object\WaxWall</Filter>
     </ClCompile>
+    <ClCompile Include="Engine\Particle\DirectionalParticle.cpp">
+      <Filter>ソース ファイル\Engine\Particle</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Shader\Basic\BasicPS.hlsl">
@@ -1573,6 +1576,9 @@
     </ClInclude>
     <ClInclude Include="Application\WaxWall.h">
       <Filter>ヘッダー ファイル\Application\Object\WaxWall</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Particle\DirectionalParticle.h">
+      <Filter>ヘッダー ファイル\Engine\Particle</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

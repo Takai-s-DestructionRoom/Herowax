@@ -6,6 +6,7 @@
 #include "SimpleParticle2D.h"
 #include "HomingParticle.h"
 #include "HomingParticle2D.h"
+#include "DirectionalParticle.h"
 
 ParticleManager* ParticleManager::GetInstance()
 {
@@ -222,4 +223,17 @@ void ParticleManager::AddHoming2D(Vector2 emitPos, Vector2 emitScale, uint32_t a
 		addNum, life, color, tex, minScale, maxScale,
 		minVelo, maxVelo, accelPower, minRot, maxRot,
 		growingTimer, endScale, isGravity);
+}
+
+void ParticleManager::AddDirectional(Vector3 emitPos, std::string pDataHandle)
+{
+	emitters_.emplace_back();
+	emitters_.back() = std::make_unique<DirectionalParticle>();
+	emitters_.back()->SetPos(emitPos);
+	DirectionalPData pdata = ParticleEditor::LoadDirectional(pDataHandle);
+	emitters_.back()->SetScale(pdata.emitScale);
+	emitters_.back()->Add(
+		pdata.addNum, pdata.life, pdata.color, pdata.tex, pdata.minScale, pdata.maxScale,
+		pdata.minVelo, pdata.maxVelo, pdata.accelPower, {0,0,0},{0,0,0},
+		pdata.growingTimer, pdata.endScale, pdata.isGravity, pdata.isBillboard, pdata.rejectRadius);
 }

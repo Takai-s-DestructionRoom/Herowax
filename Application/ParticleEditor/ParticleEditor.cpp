@@ -12,6 +12,7 @@ std::string ParticleEditor::loadFileName = "";
 SimplePData ParticleEditor::saveSimplePData;
 RingPData ParticleEditor::saveRingPData;
 HomingPData ParticleEditor::saveHomingPData;
+DirectionalPData ParticleEditor::saveDirectionalPData;
 bool ParticleEditor::isAlwaysUpdate = false;
 std::vector<std::string> ParticleEditor::file_names;
 
@@ -83,6 +84,11 @@ void ParticleEditor::OrderCreateGUI()
 			else if (Util::ContainString(loadFileName, "_homing"))
 			{
 				saveHomingPData = LoadHoming(loadFileName);
+			}
+			//ファイル名に以下略
+			else if (Util::ContainString(loadFileName, "_directional")) 
+			{
+				saveDirectionalPData = LoadDirectional(loadFileName);
 			}
 			else
 			{
@@ -210,6 +216,46 @@ void ParticleEditor::OrderCreateGUI()
 				}
 
 				SaveHoming(saveHomingPData, saveFileName);
+			}
+
+			ImGui::TreePop();
+		}
+		if (ImGui::TreeNode("Directionalパーティクル"))
+		{
+			ImGui::Text("テクスチャは/Particle/の中に入れてください");
+			ImGui::InputText("使用するテクスチャ", &saveDirectionalPData.tex);
+			ImGui::ColorEdit4("パーティクルの色", &saveDirectionalPData.color.r);
+			ImGui::Text("------------------------------------------");
+			ImGui::InputInt("生成数", &saveDirectionalPData.addNum, 1);
+			ImGui::InputFloat("パーティクルの生存時間", &saveDirectionalPData.life);
+			ImGui::Text("------------------------------------------");
+			ImGui::InputFloat3("エミッターサイズ", &saveDirectionalPData.emitScale.x);
+			ImGui::InputFloat("生成しない範囲", &saveDirectionalPData.rejectRadius);
+			ImGui::InputFloat("最小の大きさ(ランダムのmin)", &saveDirectionalPData.minScale);
+			ImGui::InputFloat("最大の大きさ(ランダムのmax)", &saveDirectionalPData.maxScale);
+			ImGui::InputFloat3("最小の方向(ランダムのmin)", &saveDirectionalPData.minVelo.x);
+			ImGui::InputFloat3("最大の方向(ランダムのmax)", &saveDirectionalPData.maxVelo.x);
+			ImGui::InputFloat("最終スケール", &saveDirectionalPData.endScale);
+			ImGui::Text("------------------------------------------");
+			ImGui::InputFloat("大きくなるまでの時間", &saveDirectionalPData.growingTimer, 0.05f);
+			ImGui::InputFloat("加速度", &saveDirectionalPData.accelPower, 0.05f);
+			ImGui::Text("------------------------------------------");
+			ImGui::Checkbox("重力を適用するか", &saveDirectionalPData.isGravity);
+			ImGui::Checkbox("Y軸ビルボード化するか", &saveDirectionalPData.isBillboard);
+			ImGui::Text("------------------------------------------");
+			ImGui::InputText("セーブするファイル名", &saveFileName);
+
+			if (ImGui::Button("セーブ") || isAlwaysUpdate) {
+				if (Util::ContainString(saveFileName, "_directional"))
+				{
+					SaveDirectional(saveDirectionalPData, saveFileName + "_directional");
+				}
+				else
+				{
+					SaveDirectional(saveDirectionalPData, saveFileName + "_directional");
+				}
+
+				SaveDirectional(saveDirectionalPData, saveFileName);
 			}
 
 			ImGui::TreePop();
@@ -586,6 +632,109 @@ HomingPData ParticleEditor::LoadHoming(const std::string& filename)
 	return result;
 }
 
+DirectionalPData ParticleEditor::LoadDirectional(const std::string& filename)
+{
+	std::string outputName = "";
+	outputName = "./Resources/Data/ParticleOrder/" + filename + ".txt";
+
+	std::filesystem::path path = PathUtil::ConvertAbsolute(
+		Util::ConvertStringToWString(outputName));
+
+	DirectionalPData result;
+
+	//ファイルストリーム
+	std::ifstream file;
+	//ファイルを開く
+	file.open(path.c_str());
+	if (file.fail()) {
+		result.error = "error_ファイルの展開に失敗しました";
+		return result;
+	}
+
+	std::string line = "";
+	while (getline(file, line)) {
+		std::istringstream line_stream(line);
+
+		//intとかfloatとか
+		if (Util::ContainString(line, "addNum")) {
+			std::vector<std::string> strs = Util::StringSplit(line, ":");
+			result.addNum = std::stoi(strs[1]);
+		}
+		if (Util::ContainString(line, "life")) {
+			std::vector<std::string> strs = Util::StringSplit(line, ":");
+			result.life = std::stof(strs[1]);
+		}
+		if (Util::ContainString(line, "minscale")) {
+			std::vector<std::string> strs = Util::StringSplit(line, ":");
+			result.minScale = std::stof(strs[1]);
+		}
+		if (Util::ContainString(line, "maxscale")) {
+			std::vector<std::string> strs = Util::StringSplit(line, ":");
+			result.maxScale = std::stof(strs[1]);
+		}
+		if (Util::ContainString(line, "accelpower")) {
+			std::vector<std::string> strs = Util::StringSplit(line, ":");
+			result.accelPower = std::stof(strs[1]);
+		}
+		if (Util::ContainString(line, "growingTimer")) {
+			std::vector<std::string> strs = Util::StringSplit(line, ":");
+			result.growingTimer = std::stof(strs[1]);
+		}
+		if (Util::ContainString(line, "endscale")) {
+			std::vector<std::string> strs = Util::StringSplit(line, ":");
+			result.endScale = std::stof(strs[1]);
+		}
+		if (Util::ContainString(line, "rejectradius")) {
+			std::vector<std::string> strs = Util::StringSplit(line, ":");
+			result.rejectRadius = std::stof(strs[1]);
+		}
+
+		//boolども
+		if (Util::ContainString(line, "isgravity")) {
+			std::vector<std::string> strs = Util::StringSplit(line, ":");
+			result.isGravity = false;
+			if (Util::ContainString(strs[1], "true")) {
+				result.isGravity = true;
+			}
+		}
+		if (Util::ContainString(line, "isbillboard")) {
+			std::vector<std::string> strs = Util::StringSplit(line, ":");
+			result.isBillboard = false;
+			if (Util::ContainString(strs[1], "true")) {
+				result.isBillboard = true;
+			}
+		}
+
+		//Vector3ども
+		if (Util::ContainString(line, "emitscale")) {
+			std::vector<std::string> strs = Util::StringSplit(line, ":");
+			result.emitScale = GetVector3Data(strs[1]);
+		}
+		if (Util::ContainString(line, "minvelo")) {
+			std::vector<std::string> strs = Util::StringSplit(line, ":");
+			result.minVelo = GetVector3Data(strs[1]);
+		}
+		if (Util::ContainString(line, "maxvelo")) {
+			std::vector<std::string> strs = Util::StringSplit(line, ":");
+			result.maxVelo = GetVector3Data(strs[1]);
+		}
+		//色とテクスチャ
+		if (Util::ContainString(line, "color")) {
+			std::vector<std::string> strs = Util::StringSplit(line, ":");
+			result.color = GetColorData(strs[1]);
+		}
+		if (Util::ContainString(line, "tex")) {
+			std::vector<std::string> strs = Util::StringSplit(line, ":");
+
+			TextureManager::Load("./Resources/Particle/" + strs[1] + ".png", strs[1]);
+
+			result.tex = strs[1].c_str();
+		}
+	}
+
+	return result;
+}
+
 void ParticleEditor::SaveSimple(const SimplePData& saveData, const std::string& saveFileName_)
 {
 	std::string outputName = "";
@@ -698,6 +847,42 @@ void ParticleEditor::SaveHoming(const HomingPData& saveData, const std::string& 
 	writing_file << "minrot:" << SaveVector3(saveData.minRot) << std::endl;
 	writing_file << "maxrot:" << SaveVector3(saveData.maxRot) << std::endl;
 
+	writing_file << "color:" << SaveColor(saveData.color) << std::endl;
+	writing_file << "tex:" << saveData.tex << std::endl;
+
+	writing_file.close();
+}
+
+void ParticleEditor::SaveDirectional(const DirectionalPData& saveData, const std::string& saveFileName_)
+{
+	std::string outputName = "";
+	outputName = "./Resources/Data/ParticleOrder/" + saveFileName_ + ".txt";
+
+	std::filesystem::path path = PathUtil::ConvertAbsolute(Util::ConvertStringToWString(outputName));
+
+	writing_file.open(path, std::ios::out);
+
+	writing_file << "addNum:" << saveData.addNum << std::endl;
+	writing_file << "life:" << saveData.life << std::endl;
+	writing_file << "minscale:" << saveData.minScale << std::endl;
+	writing_file << "maxscale:" << saveData.maxScale << std::endl;
+	writing_file << "accelpower:" << saveData.accelPower << std::endl;
+	writing_file << "growingTimer:" << saveData.growingTimer << std::endl;
+	writing_file << "endscale:" << saveData.endScale << std::endl;
+	writing_file << "rejectradius:" << saveData.rejectRadius << std::endl;
+
+	std::string tempGrab = "false";
+	if (saveData.isGravity)tempGrab = "true";
+	writing_file << "isgravity:" << tempGrab << std::endl;
+
+	std::string tempbill = "false";
+	if (saveData.isBillboard)tempbill = "true";
+	writing_file << "isbillboard:" << tempbill << std::endl;
+
+	writing_file << "emitscale:" << SaveVector3(saveData.emitScale) << std::endl;
+	writing_file << "minvelo:" << SaveVector3(saveData.minVelo) << std::endl;
+	writing_file << "maxvelo:" << SaveVector3(saveData.maxVelo) << std::endl;
+	
 	writing_file << "color:" << SaveColor(saveData.color) << std::endl;
 	writing_file << "tex:" << saveData.tex << std::endl;
 
