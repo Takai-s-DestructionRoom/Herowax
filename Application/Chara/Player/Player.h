@@ -10,6 +10,7 @@
 #include <stdint.h>
 #include "CollectPart.h"
 #include "WaxUI.h"
+#include "WaxWall.h"
 
 class Boss;
 
@@ -154,6 +155,8 @@ private:
 
 	WaxUI waxUI;
 
+	WaxWall waxWall;
+
 public:
 	Player();
 
@@ -176,6 +179,9 @@ public:
 
 	//ロウを回収
 	void WaxCollect();
+
+	//壁を作る
+	void ShieldUp();
 
 	//ゲーミングカラーの更新処理
 	//ゲーミングカラー返す

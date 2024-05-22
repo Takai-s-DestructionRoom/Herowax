@@ -9,6 +9,9 @@ void WaxShield::Init()
 	obj = PaintableModelObj(Model::Load("./Resources/Model/Shield/shield.obj", "shield"));
 	obj.mPaintDissolveMapTex = TextureManager::Load("./Resources/DissolveMap.png", "DissolveMapTex");
 
+	obj.mTransform.scale = { 2,2,2 };
+	
+	colliderSize = 5;
 }
 
 void WaxShield::Update()
@@ -63,4 +66,9 @@ void WaxShield::Hit(int32_t damage)
 bool WaxShield::IsSolid()
 {
 	return waxSolidCount >= requireWaxSolidCount;
+}
+
+bool WaxShield::GetHitCollider(ColPrimitive3D::Sphere hit)
+{
+	return ColPrimitive3D::CheckSphereToSphere(collider, hit) && !IsSolid();
 }

@@ -15,12 +15,13 @@ public:
 	//固まっているかを取得
 	bool IsSolid();
 
+	bool GetHitCollider(ColPrimitive3D::Sphere hit);
+
 	int32_t waxSolidCount = 0;
 	int32_t requireWaxSolidCount = 60;
 
 private:
 	bool oldIsSolid = false;
 	Easing::EaseTimer brightTimer = 0.5f;
-
 };
 

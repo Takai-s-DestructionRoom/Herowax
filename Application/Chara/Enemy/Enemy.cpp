@@ -242,9 +242,7 @@ void Enemy::BaseUpdate()
 	shield.obj.mTransform.position = obj.mTransform.position + frontVec;
 	shield.obj.mTransform.rotation = Quaternion::LookAt(frontVec).ToEuler();
 	shield.obj.mTransform.rotation.y += Util::AngleToRadian(-90.f);
-	shield.obj.mTransform.scale = { 2,2,2 };
-	
-	shield.colliderSize = 5;
+
 	shield.Update();
 }
 

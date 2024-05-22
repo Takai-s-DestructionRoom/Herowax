@@ -134,6 +134,8 @@ void Player::Init()
 	obj.mTransform.UpdateMatrix();
 
 	isMove = true;
+
+	waxWall.Init();
 }
 
 void Player::Reset()
@@ -417,6 +419,8 @@ void Player::Update()
 
 	waxUI.Update(obj.mTransform.position);
 	
+	ShieldUp();
+
 	//残像
 	/*for (auto& once : afterimagesObj)
 	{
@@ -590,6 +594,7 @@ void Player::Draw()
 		DrawAttackCollider(); 
 		
 		waxUI.Draw();
+		waxWall.Draw();
 	}
 }
 
@@ -1161,6 +1166,66 @@ void Player::DamageBlink()
 	}
 }
 
+void Player::ShieldUp()
+{
+	//盾の位置をプレイヤーの正面へ
+	Vector3 frontVec = Camera::sNowCamera->mViewProjection.mTarget - Camera::sNowCamera->mViewProjection.mEye;
+	frontVec.y = 0;
+	frontVec.Normalize();
+	frontVec *= 10.0f;
+	
+	waxWall.obj.mTransform.position = obj.mTransform.position + frontVec;
+	waxWall.obj.mTransform.rotation = Quaternion::LookAt(frontVec).ToEuler();
+	waxWall.obj.mTransform.rotation.y += Util::AngleToRadian(-90.f);
+
+	if (RInput::GetInstance()->GetLTriggerDown() || RInput::GetKeyDown(DIK_Z)) {
+		//パリィ状態でなければ出現
+		if (!waxWall.GetParry()) {
+			if (waxWall.StartCheck(waxStock)) {
+
+				waxStock -= waxWall.START_CHECK_WAXNUM;
+
+				for (int32_t i = 0; i < waxWall.START_CHECK_WAXNUM; i++)
+				{
+					WaxManager::GetInstance()->Create(
+						waxWall.obj.mTransform,
+						waxWall.obj.mTransform.position,
+						atkHeight,
+						atkSize,
+						atkTimer.maxTime_,
+						solidTimer.maxTime_);
+				}
+
+				waxWall.Start();
+			}
+		}
+	}
+
+	//毎フレーム放してるかチェック
+	if (RInput::GetInstance()->GetLTriggerUp() || RInput::GetKeyUp(DIK_Z)) {
+		//離したら終了
+		waxWall.End();
+	}
+
+	//ロウ漏れモードなら
+	if (waxWall.GetLeakOutMode()) {
+		//ロウが残っているかチェック
+		if (waxWall.ContinueCheck(waxStock)) {
+			waxStock--;
+			
+			WaxManager::GetInstance()->Create(
+				waxWall.obj.mTransform,
+				waxWall.obj.mTransform.position,
+				atkHeight,
+				atkSize,
+				atkTimer.maxTime_,
+				solidTimer.maxTime_);
+		}
+	}
+
+	waxWall.Update();
+}
+
 void Player::UpdateAttackCollider()
 {
 	attackHitCollider.pos = GetPos();
@@ -1193,7 +1258,6 @@ void Player::DrawAttackCollider()
 bool Player::GetWaxCollectButtonDown()
 {
 	return (RInput::GetInstance()->GetPadButtonDown(XINPUT_GAMEPAD_LEFT_SHOULDER) ||
-		RInput::GetInstance()->GetLTriggerDown() ||
 		RInput::GetInstance()->GetKeyDown(DIK_Q));
 }
 
