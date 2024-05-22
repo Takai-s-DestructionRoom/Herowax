@@ -1220,7 +1220,8 @@ void Player::ShieldUp()
 	waxWall.obj.mTransform.rotation = Quaternion::LookAt(frontVec).ToEuler();
 	waxWall.obj.mTransform.rotation.y += Util::AngleToRadian(-90.f);
 
-	if (RInput::GetInstance()->GetLTriggerDown() || RInput::GetKeyDown(DIK_Z)) {
+	if (RInput::GetInstance()->GetPadButtonDown(XINPUT_GAMEPAD_LEFT_SHOULDER) || 
+		RInput::GetKeyDown(DIK_Z)) {
 		//パリィ状態でなければ出現
 		if (!waxWall.GetParry()) {
 			if (waxWall.StartCheck(waxStock)) {
@@ -1233,7 +1234,7 @@ void Player::ShieldUp()
 	}
 
 	//毎フレーム放してるかチェック
-	if (RInput::GetInstance()->GetLTriggerUp() || RInput::GetKeyUp(DIK_Z)) {
+	if (RInput::GetInstance()->GetPadButtonUp(XINPUT_GAMEPAD_LEFT_SHOULDER) || RInput::GetKeyUp(DIK_Z)) {
 		//離したら終了
 		waxWall.End();
 	}
@@ -1281,7 +1282,7 @@ void Player::DrawAttackCollider()
 
 bool Player::GetWaxCollectButtonDown()
 {
-	return (RInput::GetInstance()->GetPadButtonDown(XINPUT_GAMEPAD_LEFT_SHOULDER) ||
+	return (RInput::GetInstance()->GetLTriggerDown() ||
 		RInput::GetInstance()->GetKeyDown(DIK_Q));
 }
 
