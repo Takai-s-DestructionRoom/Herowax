@@ -9,6 +9,8 @@ public:
 	void Update()override;
 	void Draw()override;
 
+	void TransfarBuffer();
+
 	//当たったときに呼ぶ処理
 	void Hit(int32_t damage);
 
