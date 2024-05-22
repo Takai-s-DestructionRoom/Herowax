@@ -40,8 +40,8 @@ void WaxWall::Draw()
 
 	BrightDraw();
 
-	isDrawCollider = true;
-	DrawCollider();
+	/*isDrawCollider = true;
+	DrawCollider();*/
 }
 
 bool WaxWall::GetParry()
