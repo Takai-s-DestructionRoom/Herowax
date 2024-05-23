@@ -440,7 +440,10 @@ TextureHandle TextureManager::LoadInternal(const std::string filepath, const std
 	}
 
 	std::vector<D3D12_SUBRESOURCE_DATA> subResources;
-	DirectX::PrepareUpload(RDirectX::GetDevice(), scratchImg.GetImages(), scratchImg.GetImageCount(), scratchImg.GetMetadata(), subResources);
+	result = DirectX::PrepareUpload(RDirectX::GetDevice(), scratchImg.GetImages(), scratchImg.GetImageCount(), scratchImg.GetMetadata(), subResources);
+	if (FAILED(result)) {
+		return "FailedTextureHandle";
+	}
 	uint64_t intermediateSize = GetRequiredIntermediateSize(texture.mResource.Get(), 0, UINT(subResources.size()));
 
 	D3D12_HEAP_PROPERTIES imHeapProp{};

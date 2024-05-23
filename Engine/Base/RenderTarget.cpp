@@ -94,7 +94,7 @@ void RenderTarget::SetToTexture(std::vector<std::string> names)
 	RDirectX::GetCommandList()->OMSetRenderTargets((UINT)names.size(), &rtvHandles[0], false, &dsvHandles[0]);
 }
 
-RenderTexture* RenderTarget::CreateRenderTexture(const uint32_t width, const uint32_t height, const Color clearColor, TextureHandle name)
+RenderTexture* RenderTarget::CreateRenderTexture(const uint32_t width, const uint32_t height, const Color clearColor, TextureHandle name, bool highColorRange)
 {
 	RenderTarget* manager = GetInstance();
 
@@ -148,6 +148,7 @@ RenderTexture* RenderTarget::CreateRenderTexture(const uint32_t width, const uin
 	D3D12_RESOURCE_DESC textureResourceDesc{};
 	textureResourceDesc.Dimension = D3D12_RESOURCE_DIMENSION_TEXTURE2D;
 	textureResourceDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM_SRGB;
+	if (highColorRange) textureResourceDesc.Format = DXGI_FORMAT_R32G32B32A32_FLOAT;
 	textureResourceDesc.Width = width;
 	textureResourceDesc.Height = height;
 	textureResourceDesc.DepthOrArraySize = 1;
@@ -156,6 +157,7 @@ RenderTexture* RenderTarget::CreateRenderTexture(const uint32_t width, const uin
 	textureResourceDesc.Flags = D3D12_RESOURCE_FLAG_ALLOW_RENDER_TARGET;
 	D3D12_CLEAR_VALUE textureClearValue{};
 	textureClearValue.Format = DXGI_FORMAT_R8G8B8A8_UNORM_SRGB;
+	if (highColorRange) textureClearValue.Format = DXGI_FORMAT_R32G32B32A32_FLOAT;
 	textureClearValue.Color[0] = clearColor.r;
 	textureClearValue.Color[1] = clearColor.g;
 	textureClearValue.Color[2] = clearColor.b;
@@ -215,6 +217,7 @@ RenderTexture* RenderTarget::CreateRenderTexture(const uint32_t width, const uin
 
 	D3D12_RENDER_TARGET_VIEW_DESC rtvDesc{};
 	rtvDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM_SRGB;
+	if (highColorRange) rtvDesc.Format = DXGI_FORMAT_R32G32B32A32_FLOAT;
 	rtvDesc.ViewDimension = D3D12_RTV_DIMENSION_TEXTURE2D;
 
 	size_t rtvincrementSize = RDirectX::GetDevice()->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV);
