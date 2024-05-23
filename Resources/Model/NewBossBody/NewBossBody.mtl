@@ -9,7 +9,7 @@ Ke 0.000000 0.000000 0.000000
 Ni 1.450000
 d 1.000000
 illum 2
-map_Kd texture.png
+map_Kd bodyTexture.png
 
 newmtl マテリアル.1561
 Ns 250.000000
@@ -19,4 +19,4 @@ Ke 0.000000 0.000000 0.000000
 Ni 1.450000
 d 1.000000
 illum 2
-map_Kd C:/Users/User/Desktop/Herowax/Resources/Model/NewBosshead/texture.png
+map_Kd headTexture.png
