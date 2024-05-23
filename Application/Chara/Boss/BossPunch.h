@@ -16,6 +16,7 @@ private:
 	bool isLeft_;						//左で攻撃するかフラグ
 	bool isStart;						//最初のフレームかフラグ
 	Vector3 handToTarget;				//こぶしから目標までのベクトル
+	Vector3 frontVec;					//ボスが攻撃開始時に向いてるベクトル保存用
 	float punchRadianX;
 	float punchRadianY;
 };
