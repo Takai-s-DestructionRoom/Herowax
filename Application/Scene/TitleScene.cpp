@@ -54,6 +54,8 @@ void TitleScene::Init()
 	ParticleManager::GetInstance()->Init();
 
 	SpotLightManager::GetInstance()->Init(&light);
+
+	
 }
 
 void TitleScene::Update()
@@ -95,6 +97,7 @@ void TitleScene::Update()
 
 	SpotLightManager::GetInstance()->Imgui();
 	SpotLightManager::GetInstance()->Update();
+
 }
 
 void TitleScene::Draw()
@@ -104,11 +107,12 @@ void TitleScene::Draw()
 
 	Level::Get()->Draw();
 
+	
 	InstantDrawer::DrawGraph(
 		titleLogoPos.x,
 		titleLogoPos.y + Easing::InQuad(floatingTimer.GetTimeRate()) * 15.f,
 		1.f, 1.f, 0.f, "title");
-
+	
 	/*InstantDrawer::DrawGraph(
 		320.f,
 		80.f,
