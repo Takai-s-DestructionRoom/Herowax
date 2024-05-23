@@ -32,6 +32,7 @@ struct CameraData {
 	Matrix4 matInvView;
 	Matrix4 matInvProj;
 	Matrix4 matInvViewport;
+	Matrix4 matBill;
 };
 
 struct BlurData {
@@ -57,7 +58,10 @@ private:
 	ModelObj testObj;
 	Sprite sprite;
 
-	RenderTexture* rtTex;
+	RenderTexture* distanceBuffTexA;
+	RenderTexture* distanceBuffTexB;
+	RenderTexture* bridgeBuffTex;
+	RenderTexture* potentialBuffTex;
 	std::vector<Float4> spheres;
 	int32_t sphereCreateNum = 10;
 
@@ -69,9 +73,17 @@ private:
 	SRConstBuffer<WaxData> constBuff;
 	SRConstBuffer<BlurData> blurBuff;
 
+	void SetVert();
+
 	RootSignature* GetRootSig();
 	GraphicsPipeline* GetPipeline();
 
 	RootSignature* GetRootSigB();
 	GraphicsPipeline* GetPipelineB();
+
+	RootSignature* GetRootSigC();
+	GraphicsPipeline* GetPipelineC();
+
+	RootSignature* GetRootSigD();
+	GraphicsPipeline* GetPipelineD();
 };

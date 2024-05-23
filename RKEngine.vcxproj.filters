@@ -1068,11 +1068,26 @@
     <FxCompile Include="Shader\BillboardRadial360\BillboardRadial360PS.hlsl">
       <Filter>シェーダー ファイル\BillboardRadial360</Filter>
     </FxCompile>
-    <FxCompile Include="Shader\MetaballRenderer\MetaballRendererVS.hlsl">
-      <Filter>シェーダー ファイル\MetaballRenderer</Filter>
+    <FxCompile Include="Shader\SlimeShader\WaxShader2PS.hlsl">
+      <Filter>シェーダー ファイル\SlimeShader</Filter>
     </FxCompile>
-    <FxCompile Include="Shader\MetaballRenderer\MetaballRendererPS.hlsl">
-      <Filter>シェーダー ファイル\MetaballRenderer</Filter>
+    <FxCompile Include="Shader\SlimeShader\WaxShader2VS.hlsl">
+      <Filter>シェーダー ファイル\SlimeShader</Filter>
+    </FxCompile>
+    <FxCompile Include="Shader\SlimeShader\WaxShader2GS.hlsl">
+      <Filter>シェーダー ファイル\SlimeShader</Filter>
+    </FxCompile>
+    <FxCompile Include="Shader\SlimeShader\WaxShader4PS.hlsl">
+      <Filter>シェーダー ファイル\SlimeShader</Filter>
+    </FxCompile>
+    <FxCompile Include="Shader\SlimeShader\WaxShader3GS.hlsl">
+      <Filter>シェーダー ファイル\SlimeShader</Filter>
+    </FxCompile>
+    <FxCompile Include="Shader\SlimeShader\WaxShader3PS.hlsl">
+      <Filter>シェーダー ファイル\SlimeShader</Filter>
+    </FxCompile>
+    <FxCompile Include="Shader\SlimeShader\WaxShader3VS.hlsl">
+      <Filter>シェーダー ファイル\SlimeShader</Filter>
     </FxCompile>
   </ItemGroup>
   <ItemGroup>
@@ -1697,8 +1712,11 @@
     <None Include="Shader\BillboardRadial360\BillboardRadial360.hlsli">
       <Filter>シェーダー ファイル\BillboardRadial360</Filter>
     </None>
-    <None Include="Shader\MetaballRenderer\MetaballRenderer.hlsli">
-      <Filter>シェーダー ファイル\MetaballRenderer</Filter>
+    <None Include="Shader\SlimeShader\WaxShader2.hlsli">
+      <Filter>シェーダー ファイル\SlimeShader</Filter>
+    </None>
+    <None Include="Shader\SlimeShader\WaxShader3.hlsli">
+      <Filter>シェーダー ファイル\SlimeShader</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>

@@ -47,7 +47,7 @@ public:
 	static void SetToTexture(std::string name);
 	static void SetToTexture(std::vector<std::string> names);
 
-	static RenderTexture* CreateRenderTexture(const uint32_t width, const uint32_t height, const Color clearColor, TextureHandle name = "");
+	static RenderTexture* CreateRenderTexture(const uint32_t width, const uint32_t height, const Color clearColor, TextureHandle name = "", bool highColorRange = false);
 	static void DeleteRenderTexture(std::string name);
 	static void DeleteRenderTexture(RenderTexture* tex);
 	static void DeleteRenderTextureAtEndFrame(std::string name);
