@@ -1,0 +1,2 @@
+tilingX:50
+tilingY:50

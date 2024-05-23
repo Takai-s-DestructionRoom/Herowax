@@ -17,12 +17,25 @@ enum class PartsNum
 	Max			//2
 };
 
+class FallParts : public GameObject
+{
+public:
+	ModelObj warning;		//警告
+
+	FallParts();
+	~FallParts();
+	void Init();
+	void Update();
+	void Draw();
+};
+
 class Boss : public GameObject
 {
 private:
 	//------------ 移動関連 ------------//
 	Vector3 moveVec;			//移動ベクトル
 	float moveSpeed;			//移動速度
+	float oriSize;				//元の大きさ比率
 
 	//------------ HP関連 ------------//
 	float hp;				//現在のヒットポイント
@@ -67,6 +80,7 @@ private:
 	Easing::EaseTimer shakeTimer = 0.5f;
 	Easing::EaseTimer waxScatterTimer = 0.1f;
 	Vector3 shake{};
+	float shakePower;
 
 	//ロウを出すためのパラメータ(適当でもいい)
 	float solidTime = 0;
@@ -75,6 +89,8 @@ private:
 	float atkSize = 0;
 	float atkSpeed = 0;
 	float atkTime = 0;
+
+	const float bossPunchDamage = 2.f;
 
 public:
 	std::unique_ptr<BossState> state;	//状態管理
@@ -88,6 +104,20 @@ public:
 	Easing::EaseTimer punchStayTimer;	//パンチ終わってからモーション終了までの時間
 	bool isAppearance = false;			//出現中かフラグ
 	bool isDead = false;				//撃破演出中かフラグ
+
+	int32_t maxPartsNum = 32;
+	std::array<FallParts, 32> fallParts;	//落ちてくるパーツ
+	Easing::EaseTimer fallAtkShoutTimer;	//落下攻撃前の咆哮時間
+	Easing::EaseTimer fallAtkTimer;			//落下攻撃にかかる時間
+	Easing::EaseTimer fallAtkStayTimer;		//落下攻撃終わってからモーション終了までの時間
+
+	int32_t fallPartsNum;	//落とすパーツの数
+	float fallRange;		//パーツの落下範囲
+	float fallSpeed;		//パーツの落下速度
+	float fallAccel;		//パーツの加速度
+	float fallPartsSize;	//落とすパーツのサイズ
+	float fallAtkPower;		//落下攻撃の威力
+
 	//------------ 吸収対象の位置 ------//
 	Vector3 collectPos{};
 	
@@ -104,6 +134,8 @@ public:
 	void Update() override;
 	void Draw() override;
 
+	void Shake(float time,float power);
+
 	//状態変更
 	template <typename ChangePlayerState>
 	void ChangeState() {
@@ -116,6 +148,8 @@ public:
 	std::string GetStateStr() { return stateStr; }
 	//攻撃対象を取得
 	ModelObj* GetTarget() { return target; }
+	//元の大きさ比率取得
+	float GetOriSize() { return oriSize; }
 	/// <summary>
 	/// 固まっているかどうかを取得
 	/// </summary>
@@ -125,6 +159,8 @@ public:
 
 	//本体だけが残っているか取得
 	bool GetIsOnlyBody();
+
+	float GetDamage() {return bossPunchDamage;};
 
 	// セッター //
 	//状態文字情報を設定

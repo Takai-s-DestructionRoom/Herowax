@@ -56,7 +56,7 @@ protected:
 	SRConstBuffer<TransformBuffer> billboardBuff;
 
 	//頂点群
-	std::vector<VertexParticle> vertices;
+	std::vector<VertexParticle3D> vertices;
 	SRVertexBuffer vertBuff;
 
 	float minScale_;	//パーティクルの最小サイズ

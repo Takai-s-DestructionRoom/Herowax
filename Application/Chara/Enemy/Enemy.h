@@ -8,6 +8,8 @@
 #include "Vector2.h"
 #include "EnemyAttackState.h"
 #include "EnemyBehaviorEditor.h"
+#include "WaxVisual.h"
+#include "WaxShield.h"
 
 //このEnemyは基底にしたい
 //ので、処理を分化して現状のタンクくんというクラスを別で作る
@@ -54,6 +56,8 @@ private:
 
 	ModelObj attackDrawerObj;			//上記の当たり判定描画オブジェクト
 
+	WaxShield shield;
+
 	//------------ HP関連 ------------//
 	float hp;				//現在のヒットポイント
 	float maxHP;			//最大HP
@@ -65,6 +69,13 @@ private:
 
 	Easing::EaseTimer whiteTimer = 0.5f;
 
+	//------------ 出現関連 ------------//
+	Easing::EaseTimer warningTimer = 1.0f;
+	Easing::EaseTimer spawnTimer = 1.0f;
+
+	Easing::EaseTimer warningRoop = 1.0f;
+	Color warningColor = { 1,1,1,0 };
+
 	//------------ その他 ------------//
 	ModelObj* target = nullptr;
 	//攻撃してきた対象
@@ -73,13 +84,16 @@ private:
 	std::unique_ptr<EnemyState> state;			//状態管理
 	std::unique_ptr<EnemyState> nextState;		//次のステート
 	std::string stateStr;			//状態を文字列で保存
-	
+
 	EnemyUI ui;	//HP表示
 
 	BehaviorData loadBehaviorData;
 	std::string loadFileName = "";
 
 	bool forceRot = false;
+
+	//見た目用のロウ
+	std::vector<std::unique_ptr<WaxVisual>> waxVisual;
 
 public:
 	Easing::EaseTimer solidTimer;	//動けなくなっている時間
@@ -110,7 +124,7 @@ public:
 	std::vector<std::string> stateStrings;
 	//今何番のステートを実行しているかの管理番号
 	int32_t stateManageNumber = 0;
-	
+
 	//------ 識別関連 ------//
 	std::string enemyTag = "";	//識別用に、生成時に敵のタグを入れる
 
@@ -128,7 +142,7 @@ private:
 	void Rotation(const Vector3& pVec);
 	//Updateの最初で初期化するもの
 	void Reset();
-	
+
 	void UpdateAttackCollider();
 	void DrawAttackCollider();
 
@@ -151,6 +165,10 @@ public:
 
 	//行動を初期化
 	void BehaviorReset();
+
+	void CreateWaxVisual(Vector3 spawnPos = { 0,0,0 });
+
+	void WaxVisualUpdate();
 
 	/// <summary>
 	/// 状態変更
@@ -189,14 +207,18 @@ public:
 	float GetHP() { return hp; };
 	float GetMaxHP() { return maxHP; };
 	//固まってるかどうか
-	bool GetIsSolid();	
+	bool GetIsSolid();
 	//移動量
 	Vector3 GetMoveVec() { return moveVec; };
 	//スポーン時の位置を取得
 	Vector3 GetOriginPos();
 	//移動速度を取得
 	float GetMoveSpeed() { return moveSpeed; };
-	
+	//出現済みかどうかを取得
+	bool GetIsSpawn();
+	//
+	WaxShield* GetShield() { return &shield; };
+
 	// セッター //
 	//減速率設定
 	void SetSlowMag(float mag) { slowMag = mag; }
@@ -225,6 +247,8 @@ public:
 	void SetDeath();
 	//行動ファイルを設定、読み込み
 	void SetBehaviorOrder(const std::string& order);
+	//敵の出現タイミングなど、敵の情報を設定
+	void SetEnemyOrder(const std::string& order);
 	//別の回転を使う場合に立てるフラグ
 	void SetForceRot(bool forceRot_) { forceRot = forceRot_; };
 	//移動量に足す

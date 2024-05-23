@@ -1,13 +1,17 @@
 #include "LightGroup.h"
+#include "Parameter.h"
 
 LightGroup* LightGroup::sNowLight = nullptr;
 
 void LightGroup::SetDefault()
 {
+	std::map<std::string, std::string> extract = Parameter::Extract("DirLight");
+	mAmbientColor.x = Parameter::GetParam(extract, "ambient_R", 1.f);
+	mAmbientColor.y = Parameter::GetParam(extract, "ambient_G", 1.f);
+	mAmbientColor.z = Parameter::GetParam(extract, "ambient_B", 1.f);
+
 	mChangeFlag = true;
 
-	mAmbientColor = { 1, 1, 1 };
-	
 	mDirectionalLights[0].mIsActive = true;
 	mDirectionalLights[0].mLightVec = { 1, -1, 1 };
 	mDirectionalLights[0].mColor = { 1, 1, 1, 1 };

@@ -4,6 +4,7 @@
 #include "SpawnerManager.h"
 #include "ColPrimitive3D.h"
 #include "Singleton.h"
+#include "Ground.h"
 
 //ステージの単位(ウェーブとかそういうやつ)
 class Level : public Singleton
@@ -31,7 +32,7 @@ public:
 	LevelData* nowLevel = nullptr;
 
 	std::list<ModelObj> objects;				//オブジェクトたち
-	ModelObj ground;							//地面
+	Ground* ground = nullptr;					//地面
 	std::vector<ModelObj> wall;					//壁
 	std::vector<ColPrimitive3D::Plane> wallCol;	//壁の当たり判定
 	SpawnerManager* spawnerManager = SpawnerManager::GetInstance();	//スポナー

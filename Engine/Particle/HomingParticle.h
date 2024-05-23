@@ -6,8 +6,10 @@ class HomingParticle :
 private:
 	Vector3 targetPos_;		//向かう場所
 
+	bool isUseSlimeWax = false;
+
 public:
-	HomingParticle(Vector3 targetPos);
+	HomingParticle(Vector3 targetPos, bool useSlimeWax = false);
 
 	//初期化
 	void Init() override;

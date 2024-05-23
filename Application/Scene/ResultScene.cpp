@@ -3,6 +3,7 @@
 #include "RInput.h"
 #include "SceneManager.h"
 #include "SimpleSceneTransition.h"
+#include "LightObject.h"
 
 ResultScene::ResultScene()
 {
@@ -15,6 +16,8 @@ void ResultScene::Init()
 	LightGroup::sNowLight = nullptr;
 
 	ResultLogo.SetAnchor({ 0.f, 0.f });
+	
+	SpotLightManager::GetInstance()->Init(&light);
 }
 
 void ResultScene::Update()
@@ -32,9 +35,14 @@ void ResultScene::Update()
 	camera.mViewProjection.UpdateMatrix();
 
 	light.Update();
+	
+	SpotLightManager::GetInstance()->Imgui();
+	SpotLightManager::GetInstance()->Update();
 }
 
 void ResultScene::Draw()
 {
 	ResultLogo.Draw();
+	SpotLightManager::GetInstance()->Draw();
+
 }

@@ -9,8 +9,17 @@
 #include "ColPrimitive3D.h"
 #include "Float4.h"
 #include "Easing.h"
-#include "SlimeWax.h"
 #include "Vector3.h"
+#include "WaxVisual.h"
+#include "GameObject.h"
+
+class DebugObject : public GameObject
+{
+public:
+	void Init()override;
+	void Update()override;
+	void Draw()override;
+};
 
 class RayMarchTestScene : public IScene
 {
@@ -22,26 +31,21 @@ public:
 	void Draw();
 	void Finalize();
 
-public:
+private:
+	void CreateWaxVisual();
 
 private:
-	SlimeWax slimeWax;
-
-	std::vector<Vector3> spline;
-	Easing::EaseTimer timer = 1.0f;
+	DebugObject debugObj;
 
 	ModelObj skydome;
 	ModelObj plane;
 	
-	ModelObj wasdKeyObj;
-	ModelObj arrowKeyObj;
-
 	DebugCamera camera = DebugCamera({ 0, 0, -5 });
 	LightGroup light;
 
-	float oldTime = 0;
-	float delay1 = 0.1f;
-	float delay2 = 0.2f;
+	//見た目用のロウ
+	std::vector<std::unique_ptr<WaxVisual>> waxVisual;
+	Easing::EaseTimer createTimer = 0.25f;
 
 	bool autoView = false;
 };

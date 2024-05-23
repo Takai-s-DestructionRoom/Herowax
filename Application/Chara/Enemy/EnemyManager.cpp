@@ -61,6 +61,8 @@ EnemyManager::EnemyManager()
 	shotDamage = Parameter::GetParam(extract, "弾の威力", 1.f);
 	shotLifeTime = Parameter::GetParam(extract, "弾の生存時間", 2.0f);
 	shotMoveSpeed = Parameter::GetParam(extract,"弾の速度", 1.5f);
+
+	shieldRequireWaxCount = (int32_t)Parameter::GetParam(extract,"盾の耐久力", 60.f);
 }
 
 void EnemyManager::CreateEnemyShot(Enemy* enemy)
@@ -106,6 +108,7 @@ void EnemyManager::Update()
 			enemy->SetKnockTime(knockTime);
 			enemy->SetMutekiTime(mutekiTime);
 			enemy->SetTarget(target);
+			enemy->GetShield()->requireWaxSolidCount = shieldRequireWaxCount;
 
 			enemy->Update();
 		}
@@ -114,6 +117,7 @@ void EnemyManager::Update()
 	for (auto& enemy : enemys)
 	{
 		enemy->TransfarBuffer();
+		enemy->GetShield()->TransfarBuffer();
 	}
 
 	for (auto& shot : enemyShots)
@@ -222,6 +226,10 @@ void EnemyManager::Update()
 			ImGui::DragFloat("弾の速度",&shotMoveSpeed, 0.1f);
 			ImGui::TreePop();
 		}
+		if (ImGui::TreeNode("敵の盾")) {
+			ImGui::DragInt("盾の耐久力", &shieldRequireWaxCount);
+			ImGui::TreePop();
+		}
 		if (ImGui::TreeNode("デバッグ")) {
 			//敵のモデルをボタンで切り替えられるようにする
 			static bool changeModel = false;
@@ -238,6 +246,9 @@ void EnemyManager::Update()
 			if (ImGui::Button("敵出現(ボスの位置)")) {
 				CreateEnemy<Enemy>(Vector3(0, 0, 0), { 3,3,3 }, { 0,0,0 }, "test", "Debug");
 			}
+			
+			ImGui::Checkbox("Tankの表示/非表示", &tankSwitch);
+			ImGui::Checkbox("BombSoliderの表示/非表示", &bombSoliderSwitch);
 
 			ImGui::TreePop();
 		}
@@ -272,6 +283,7 @@ void EnemyManager::Update()
 			Parameter::Save("弾の威力", shotDamage);
 			Parameter::Save("弾の生存時間", shotLifeTime);
 			Parameter::Save("弾の速度",shotMoveSpeed);
+			Parameter::Save("盾の耐久力", shieldRequireWaxCount);
 
 			Parameter::End();
 		}
@@ -318,6 +330,11 @@ void EnemyManager::Draw()
 {
 	for (auto& enemy : enemys)
 	{
+		//タンクを描画しようとしてるときにスイッチがオフになってたら飛ばす
+		if (!tankSwitch && enemy->enemyTag == Tank::GetEnemyTag()) continue;
+		//ボム兵を描画しようとしてるときにスイッチがオフになってたら飛ばす
+		if (!bombSoliderSwitch && enemy->enemyTag == BombSolider::GetEnemyTag()) continue;
+		
 		enemy->Draw();
 	}
 	for (auto& shot : enemyShots)
@@ -328,6 +345,16 @@ void EnemyManager::Draw()
 
 void EnemyManager::Delete()
 {
+	collectNum = 0;
+
+	for (auto& enemy : enemys)
+	{
+		if (enemy->isAlive == false)
+		{
+			collectNum++;
+		}
+	}
+
 	//死んでるならリストから削除
 	enemys.remove_if([](std::unique_ptr<Enemy>& enemy) {
 		return !enemy->GetIsAlive();

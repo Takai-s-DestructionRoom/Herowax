@@ -42,7 +42,8 @@ public:
 	bool isFlashing;				//点滅フラグ
 
 	//------------ その他 ------------//
-	float gravity = 0.098f;		//重力
+	float gravity = 0.0f;		//重力
+	float addGravity = 0.05f;		//重力
 	bool isGround;				//接地してるかフラグ
 	uint32_t groupNum;			//所属グループの要素番号
 	float disolveValue;			//ディゾルブの強さ
@@ -55,10 +56,18 @@ public:
 	//コレクトステート内で使用するタイマー(調整できるようにwaxが持つ)
 	Easing::EaseTimer collectTimer;
 
+	//反転用のフラグ
+	bool isReverse = false;
+
 private:
 	SRConstBuffer<DisolveBuffer> mDisolveBuff;
 
 	std::vector<Vector3> spline;
+
+	float reverse = false;
+
+	float oldTime = 0.0f;
+
 public:
 	Wax();
 	//生成時に必要な情報だけもらって独立

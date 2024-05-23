@@ -1,6 +1,7 @@
 #include "ProtoScene.h"
 #include "FailedScene.h"
 #include "SceneManager.h"
+#include "GameCamera.h"
 #include "WaxManager.h"
 #include "ParticleManager.h"
 #include "RInput.h"
@@ -20,6 +21,8 @@
 #include "SimpleSceneTransition.h"
 #include "RAudio.h"
 #include "Boss.h"
+#include "LightObject.h"
+#include "NumDrawer.h"
 
 ProtoScene::ProtoScene()
 {
@@ -40,6 +43,8 @@ ProtoScene::ProtoScene()
 	RAudio::Load("Resources/Sounds/SE/P_attackHit.wav", "Hit");
 
 	ControlUI::LoadResource();
+	TimerUI::LoadResource();
+	NumDrawer::LoadResource();
 }
 
 void ProtoScene::Init()
@@ -47,9 +52,10 @@ void ProtoScene::Init()
 	EventCaller::Init();
 	//Camera::sMinimapCamera = &minimapCamera;
 
-	gameCamera.Init();
+	GameCamera::GetInstance()->Init();
 
 	LightGroup::sNowLight = &light;
+	ambient = light.GetAmbientColor();
 
 	player.Init();
 	Boss::GetInstance()->Init();
@@ -57,7 +63,7 @@ void ProtoScene::Init()
 	//色々入れる
 	player.SetBoss(Boss::GetInstance());
 	Boss::GetInstance()->SetTarget(&player.obj);
-	gameCamera.SetTarget(&player.obj);
+	GameCamera::GetInstance()->SetTarget(&player.obj);
 
 	ParticleManager::GetInstance()->Init();
 
@@ -84,7 +90,13 @@ void ProtoScene::Init()
 
 	CollectPartManager::GetInstance()->SetPlayer(&player);*/
 
+	extract = Parameter::Extract("Boss");
 	controlUI.Init();
+	bossAppTimerUI.Init();
+	bossAppTimerUI.SetMaxTime(Parameter::GetParam(extract, "ボスが出現するまでの時間", 60.0f));
+	bossAppTimerUI.Start();
+
+	SpotLightManager::GetInstance()->Init(&light);
 }
 
 void ProtoScene::Update()
@@ -158,7 +170,7 @@ void ProtoScene::Update()
 	//イベントシーンが終わりカメラが空っぽになったら
 	if (Camera::sNowCamera == nullptr)
 	{
-		gameCamera.Init();	//カメラ入れる
+		GameCamera::GetInstance()->Init();	//カメラ入れる
 		player.isMove = true;
 		EnemyManager::GetInstance()->isStop = false;
 
@@ -178,7 +190,7 @@ void ProtoScene::Update()
 		EventCaller::NowEventStrReset();
 	}
 
-	gameCamera.Update();
+	GameCamera::GetInstance()->Update();
 	//MinimapCameraUpdate();
 
 	//ここに無限に当たり判定増やしていくの嫌なのであとで何か作ります
@@ -187,6 +199,62 @@ void ProtoScene::Update()
 	//ボスの腕との判定
 	for (size_t i = 0; i < Boss::GetInstance()->parts.size(); i++)
 	{
+		if (player.GetWaxWall()) {
+			if (ColPrimitive3D::CheckSphereToSphere(Boss::GetInstance()->parts[i].collider,
+				player.GetWaxWall()->collider) &&
+				Boss::GetInstance()->punchTimer.GetRun())
+			{
+				while (ColPrimitive3D::CheckSphereToSphere(Boss::GetInstance()->parts[i].collider,
+					player.GetWaxWall()->collider))
+				{
+					//パリィが出来てるなら、攻撃を受けてのけぞってる間はパリィタイマーを更新し続ける
+					if (player.GetWaxWall()->parryTimer.GetRun()) {
+						player.GetWaxWall()->parryTimer.Start();
+					}
+
+					Vector3 repulsionVec = player.GetPos() - Boss::GetInstance()->parts[i].collider.pos;
+					repulsionVec.Normalize();
+					repulsionVec.y = 0;
+
+					//一旦これだけ無理やり足す
+					player.obj.mTransform.position += repulsionVec;
+					//コライダーがもう一度当たらないようにコライダー更新
+					player.UpdateCollider();
+
+					//盾も押し戻す
+					player.GetWaxWall()->obj.mTransform.position += repulsionVec;
+					player.GetWaxWall()->UpdateCollider();
+
+					//壁にめり込む場合は押し戻し
+					for (auto& wall : Level::Get()->wallCol)
+					{
+						if (ColPrimitive3D::CheckSphereToPlane(player.collider, wall))
+						{
+							repulsionVec = player.GetPos() - Boss::GetInstance()->parts[i].collider.pos;
+							repulsionVec.Normalize();
+							repulsionVec.y = 0;
+							repulsionVec = -repulsionVec;
+							//そのまま戻すと無限ループするので適当に弾き飛ばす
+							repulsionVec.x += Util::GetRand(-1.0f, 1.0f);
+							repulsionVec.z += Util::GetRand(-1.0f, 1.0f);
+
+							//一旦これだけ無理やり足す
+							player.obj.mTransform.position += repulsionVec;
+							//コライダーがもう一度当たらないようにコライダー更新
+							player.UpdateCollider();
+
+							//盾も押し戻す
+							player.GetWaxWall()->obj.mTransform.position += repulsionVec;
+							player.GetWaxWall()->UpdateCollider();
+						}
+					}
+				}
+				if (!player.GetWaxWall()->parryTimer.GetRun()) {
+					player.WaxLeakOut((int32_t)Boss::GetInstance()->GetDamage());
+				}
+			}
+		}
+
 		if (ColPrimitive3D::CheckSphereToSphere(Boss::GetInstance()->parts[i].collider,
 			player.collider))
 		{
@@ -194,7 +262,7 @@ void ProtoScene::Update()
 			if (Boss::GetInstance()->punchTimer.GetRun())
 			{
 				//1ダメージ(どっかに参照先作るべき)
-				player.DealDamage(1);
+				player.DealDamage(Boss::GetInstance()->GetDamage());
 			}
 		}
 	}
@@ -244,8 +312,8 @@ void ProtoScene::Update()
 			//ボス本体との判定
 			bool isCollision = ColPrimitive3D::CheckSphereToSphere(Boss::GetInstance()->collider, wax->collider);
 
-			//投げられてる蝋に当たった時はダメージと蝋蓄積
-			if (isCollision && wax->isSolid == false && wax->isGround == false)
+			//体だけになって投げられてる蝋に当たった時はダメージと蝋蓄積
+			if (isCollision && wax->isSolid == false && wax->isGround == false && Boss::GetInstance()->GetIsOnlyBody())
 			{
 				//一応1ダメージ(ダメージ量に応じてロウのかかり具合も進行)
 				Boss::GetInstance()->DealDamage(player.GetAttackPower());
@@ -261,6 +329,12 @@ void ProtoScene::Update()
 					//一応1ダメージ(ダメージ量に応じてロウのかかり具合も進行)
 					Boss::GetInstance()->parts[i].DealDamage(player.GetAttackPower());
 					isHitSound = true;
+
+					//当たった場所にロウを付着
+					if (wax->isSolid == false) {
+						Boss::GetInstance()->parts[i].CreateWaxVisual(wax->obj.mTransform.position);
+						wax->isSolid = true;
+					}
 				}
 			}
 		}
@@ -281,6 +355,14 @@ void ProtoScene::Update()
 		for (auto& wax : group->waxs) {
 			for (auto& enemy : EnemyManager::GetInstance()->enemys)
 			{
+				bool isShieldCollision = enemy->GetShield()->GetHitCollider(wax->collider);
+
+				//投げられてるロウと盾がぶつかったらロウを反射
+				if (isShieldCollision && wax->isSolid == false && wax->isGround == false) {
+					wax->isReverse = true;
+					enemy->GetShield()->Hit(1);
+				}
+
 				bool isCollision = ColPrimitive3D::CheckSphereToSphere(enemy->collider, wax->collider);
 
 				if (isCollision && wax->isSolid == false) {
@@ -292,6 +374,12 @@ void ProtoScene::Update()
 						enemy->DealDamage(player.GetAttackPower(),
 							knockVec, &player.obj);
 						isHitSound = true;
+					
+						//当たった場所にロウを付着
+						if (wax->isSolid == false) {
+							enemy->CreateWaxVisual(wax->obj.mTransform.position);
+							wax->isSolid = true;
+						}
 					}
 					//地面の蝋とぶつかってたら足盗られに
 					else
@@ -301,7 +389,7 @@ void ProtoScene::Update()
 				}
 
 				//回収中ものと通常の状態なら
-				if (isCollision && wax->stateStr == "WaxCollect")
+				if (isCollision && wax->stateStr == WaxCollect::GetStateStr())
 				{
 					//固まってないならダメージ
 					if (!enemy->GetIsSolid())
@@ -318,8 +406,12 @@ void ProtoScene::Update()
 							enemy->collectPos = player.GetPos();
 							enemy->isCollect = true;
 							enemy->ChangeState<EnemyCollect>();
+						}
 
-							player.waxCollectAmount++;
+						//当たった場所にロウを付着
+						if (wax->isSolid == false) {
+							enemy->CreateWaxVisual(wax->obj.mTransform.position);
+							wax->isSolid = true;
 						}
 					}
 				}
@@ -344,23 +436,40 @@ void ProtoScene::Update()
 		//攻撃中に本体同士がぶつかったらプレイヤーにダメージ
 		if (enemy->GetAttackState() == EnemyNowAttackState::GetStateStr())
 		{
-			if (ColPrimitive3D::CheckSphereToSphere(enemy->collider, player.collider))
+			if (ColPrimitive3D::CheckSphereToSphere(enemy->collider, player.collider) && enemy->GetIsSolid() == false)
 			{
 				//ダメージ
 				player.DealDamage(EnemyManager::GetInstance()->GetNormalAttackPower());
 			}
+			//攻撃中に本体と盾がぶつかったらそこで敵をストップ(Endに遷移)
+			if (player.GetWaxWall()) {
+				if (ColPrimitive3D::CheckSphereToSphere(enemy->collider, player.GetWaxWall()->collider) &&
+					enemy->GetIsSolid() == false)
+				{
+					enemy->ChangeAttackState<EnemyEndAttackState>();
+					//もしパリィ中なら盾を吹っ飛ばす
+					if (player.GetWaxWall()->GetParry()) {
+						enemy->GetShield()->Break();
+					}
+					else
+					{
+						int32_t consum = (int32_t)EnemyManager::GetInstance()->GetNormalAttackPower();
+						consum = max(consum, 1);
+
+						player.WaxLeakOut(consum);
+					}
+				}
+			}
 		}
-		//接触ダメージあり設定の場合、接触時にダメージ
+		//接触ダメージあり設定の場合、固まってないなら接触時にダメージ
 		if (EnemyManager::GetInstance()->GetIsContactDamage()) {
-			if (ColPrimitive3D::CheckSphereToSphere(enemy->collider, player.collider))
+			if (ColPrimitive3D::CheckSphereToSphere(enemy->collider, player.collider) && enemy->GetIsSolid() == false)
 			{
 				//ダメージ
 				player.DealDamage(EnemyManager::GetInstance()->GetContactAttackPower());
 			}
 		}
 		//回収ボタン押されたときに固まってるなら吸収
-		//今は範囲外でも吸収できちゃってる
-		//ここもプレイヤーの中に入れちゃう
 		if (isCollected2 && enemy->GetIsSolid() &&
 			ColPrimitive3D::RayToSphereCol(player.collectCol, enemy->collider))
 		{
@@ -368,9 +477,13 @@ void ProtoScene::Update()
 			enemy->collectPos = player.GetPos();
 			enemy->isCollect = true;
 			enemy->ChangeState<EnemyCollect>();
-
-			player.waxCollectAmount++;
 		}
+	}
+
+	int32_t nowPlusNum = EnemyManager::GetInstance()->collectNum;
+	if (nowPlusNum > 0) {
+		player.waxCollectAmount += nowPlusNum;
+		player.MaxWaxPlus(nowPlusNum);
 	}
 
 	if (isHitSound && !player.soundFlag) {
@@ -389,7 +502,6 @@ void ProtoScene::Update()
 		}
 	}
 
-
 	player.Update();
 	Boss::GetInstance()->Update();
 	Level::Get()->Update();
@@ -397,8 +509,33 @@ void ProtoScene::Update()
 	//敵同士の押し戻し
 	for (auto& enemy1 : EnemyManager::GetInstance()->enemys)
 	{
+		//未出現なら処理しない
+		if (!enemy1->GetIsSpawn())continue;
+
+		//回収中なら処理しない
+		if (enemy1->GetState() == EnemyCollect::GetStateStr())continue;
+
+		//攻撃中と回収され中はこの判定をなくす
+		if (enemy1->GetAttackState() != EnemyNowAttackState::GetStateStr()) 
+		{	
+			//プレイヤーと判定、当たってるなら押し戻す
+			if (ColPrimitive3D::CheckSphereToSphere(enemy1->collider, player.collider)) 
+			{
+				Vector3 repulsionVec = player.GetPos() - enemy1->GetPos();
+				repulsionVec.Normalize();
+				repulsionVec.y = 0;
+
+				//一旦これだけ無理やり足す
+				player.obj.mTransform.position += repulsionVec;
+
+				//コライダーがもう一度当たらないようにコライダー更新
+				player.UpdateCollider();
+			}
+		}
+
 		for (auto& enemy2 : EnemyManager::GetInstance()->enemys)
 		{
+			//同個体なら処理しない
 			if (enemy1 == enemy2)continue;
 
 			if (ColPrimitive3D::CheckSphereToSphere(enemy1->collider, enemy2->collider)) {
@@ -419,7 +556,7 @@ void ProtoScene::Update()
 				{
 					enemy1->BehaviorOrigenPosPlus(e1RepulsionVec);
 				}
-				if (enemy1->GetAttackState() == EnemyNormalState::GetStateStr())
+				if (enemy2->GetAttackState() == EnemyNormalState::GetStateStr())
 				{
 					enemy2->BehaviorOrigenPosPlus(e2RepulsionVec);
 				}
@@ -429,6 +566,31 @@ void ProtoScene::Update()
 				enemy2->UpdateCollider();
 			}
 		}
+	}
+
+	//ボスの落下攻撃との当たり判定
+	if (Boss::GetInstance()->fallAtkTimer.GetRun())
+	{
+		for (size_t i = 0; i < Boss::GetInstance()->fallParts.size();i++)
+		{
+			if (ColPrimitive3D::CheckSphereToSphere(Boss::GetInstance()->fallParts[i].collider, player.collider))
+			{
+				player.DealDamage(Boss::GetInstance()->fallAtkPower);
+			}
+		}
+	}
+
+	//プレイヤーを押し戻す(ボス)
+	if (ColPrimitive3D::CheckSphereToSphere(Boss::GetInstance()->collider, player.collider) && Boss::GetInstance()->isAppearance) {
+		Vector3 repulsionVec = player.GetPos() - Boss::GetInstance()->GetPos();
+		repulsionVec.Normalize();
+		repulsionVec.y = 0;
+
+		//一旦これだけ無理やり足す
+		player.obj.mTransform.position += repulsionVec;
+
+		//コライダーがもう一度当たらないようにコライダー更新
+		player.UpdateCollider();
 	}
 
 	//ロウグループ周りの話は無くなったはずなのでコメントアウト
@@ -496,6 +658,10 @@ void ProtoScene::Update()
 
 	//Minimap::GetInstance()->Update();
 
+	SpotLightManager::GetInstance()->Imgui();
+	SpotLightManager::GetInstance()->Update();
+
+	light.SetAmbientColor(ambient);
 	light.Update();
 
 	skydome.TransferBuffer(Camera::sNowCamera->mViewProjection);
@@ -510,11 +676,12 @@ void ProtoScene::Update()
 	}
 
 	controlUI.Update();
-
+	bossAppTimerUI.Imgui();
+	bossAppTimerUI.Update();
+	
 #pragma region ImGui
 	if (RImGui::showImGui)
 	{
-
 		ImGui::SetNextWindowSize({ 400, 200 }, ImGuiCond_FirstUseEver);
 
 		// デバッグモード //
@@ -531,6 +698,23 @@ void ProtoScene::Update()
 		}
 
 		ImGui::End();
+
+		ImGui::SetNextWindowSize({ 400, 200 }, ImGuiCond_FirstUseEver);
+
+		// 平行光源 //
+		ImGui::Begin("平行光源");
+		
+		ImGui::DragFloat3("アンビエント", &ambient.x);
+
+		if (ImGui::Button("セーブ")) {
+			Parameter::Begin("DirLight");
+			Parameter::Save("ambient_R", ambient.x);
+			Parameter::Save("ambient_G", ambient.y);
+			Parameter::Save("ambient_B", ambient.z);
+			Parameter::End();
+		}
+
+		ImGui::End();
 	}
 
 	SpawnDataLoader::OrderCreateGUI();
@@ -540,9 +724,11 @@ void ProtoScene::Update()
 
 void ProtoScene::Draw()
 {
+	SpotLightManager::GetInstance()->Draw();
+
 	//Minimap::GetInstance()->Draw();
-	ParticleManager::GetInstance()->Draw();
 	skydome.Draw();
+	ParticleManager::GetInstance()->Draw();
 	WaxManager::GetInstance()->Draw();
 	//CollectPartManager::GetInstance()->Draw();
 
@@ -552,7 +738,15 @@ void ProtoScene::Draw()
 
 	EventCaller::Draw();
 
-	controlUI.Draw();
+	//なんのイベントも呼ばれていないならUIを描画
+	if (EventCaller::GetNowEventStr() == "") {
+		controlUI.Draw();
+	
+		if (!bossAppTimerUI.GetEnd()) 
+		{
+			bossAppTimerUI.Draw();
+		}
+	}
 
 	//更新
 	InstantDrawer::AllUpdate();
@@ -561,20 +755,20 @@ void ProtoScene::Draw()
 	SceneTrance::GetInstance()->Draw();
 }
 
-void ProtoScene::MinimapCameraUpdate()
-{
-	Vector3 mmCameraVec = { 0, 0, 1 };
-	//カメラアングル適応
-	mmCameraVec *= Quaternion::AngleAxis(Vector3(1, 0, 0).Cross(mmCameraVec), 0.f);
-	mmCameraVec *= Quaternion::AngleAxis(Vector3(0, 1, 0).Cross(mmCameraVec), Util::AngleToRadian(89.9f));
-	//カメラの距離適応
-	mmCameraVec *= gameCamera.mmCameraDist;
-
-	//アスペクト比1:1に
-	minimapCamera.mViewProjection.mAspect = 1.f / 1.f;
-
-	minimapCamera.mViewProjection.mEye = mmCameraVec;
-
-	minimapCamera.mViewProjection.mTarget = Vector3::ZERO;
-	minimapCamera.mViewProjection.UpdateMatrix();
-}
+//void ProtoScene::MinimapCameraUpdate()
+//{
+//	Vector3 mmCameraVec = { 0, 0, 1 };
+//	//カメラアングル適応
+//	mmCameraVec *= Quaternion::AngleAxis(Vector3(1, 0, 0).Cross(mmCameraVec), 0.f);
+//	mmCameraVec *= Quaternion::AngleAxis(Vector3(0, 1, 0).Cross(mmCameraVec), Util::AngleToRadian(89.9f));
+//	//カメラの距離適応
+//	mmCameraVec *= GameCamera::GetInstance()->mmCameraDist;
+//
+//	//アスペクト比1:1に
+//	minimapCamera.mViewProjection.mAspect = 1.f / 1.f;
+//
+//	minimapCamera.mViewProjection.mEye = mmCameraVec;
+//
+//	minimapCamera.mViewProjection.mTarget = Vector3::ZERO;
+//	minimapCamera.mViewProjection.UpdateMatrix();
+//}

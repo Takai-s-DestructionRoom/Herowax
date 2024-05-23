@@ -6,7 +6,6 @@
 #pragma once
 #include "IScene.h"
 #include "LightGroup.h"
-#include "Camera.h"
 #include "ModelObj.h"
 #include "Sprite.h"
 #include "Player.h"
@@ -16,10 +15,10 @@
 
 #include "Level.h"
 #include "Wave.h"
-#include "GameCamera.h"
 
 #include "IEventScene.h"
 #include "ControlUI.h"
+#include "BossAppUI.h"
 
 class ProtoScene : public IScene
 {
@@ -30,24 +29,20 @@ public:
 	void Update() override;
 	void Draw() override;
 
-	void MinimapCameraUpdate();
+	//void MinimapCameraUpdate();
 
 private:
 	ModelObj skydome;	//天球
 	Player player;
 	
-	Camera minimapCamera = Camera();	//ミニマップ用の仮想カメラ
+	//Camera minimapCamera = Camera();	//ミニマップ用の仮想カメラ
 
-	GameCamera gameCamera;
-	//Camera camera = Camera();			//通常カメラ
-	//float cameraDist = -20.f;			//注視点からカメラの距離
-	//Vector2 cameraAngle{};				//カメラアングル
-	//Vector2 cameraSpeed{};				//カメラの移動速度
-	//Vector2 mAngle = { 0, 0 };
 	LightGroup light;
-
+	Vector3 ambient;
+	
 	ControlUI controlUI;
-
+	BossAppUI bossAppTimerUI;
+	
 	float rot[3] = { 0, 0, 0 };
 	float scale[3] = { 1, 1, 1 };
 };

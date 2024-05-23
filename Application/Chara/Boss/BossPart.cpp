@@ -1,6 +1,10 @@
 #include "BossPart.h"
 #include "TimeManager.h"
 #include "Parameter.h"
+#include "ParticleManager.h"
+#include "WaxManager.h"
+#include "Boss.h"
+#include "Renderer.h"
 
 Parts::Parts() : GameObject()
 {
@@ -18,7 +22,6 @@ Parts::Parts() : GameObject()
 Parts::~Parts()
 {
 }
-
 
 void Parts::Init()
 {
@@ -102,13 +105,13 @@ void Parts::Update()
 			waxScatterTimer.Start();
 			Transform spawnTrans = obj.mTransform;
 			spawnTrans.position.y -= spawnTrans.scale.y * 2;
-			//仕様変更に伴いいったん削除
-			//どうせもうちょい広がる感じに作り直す予定なのでヨシ
-			/*WaxManager::GetInstance()->Create(
-				spawnTrans, atkVec, atkSpeed,
-				atkRange, atkSize, atkTime, solidTime);*/
-			//シェイク中に自分が出したロウに当たらないように無敵にする
 			mutekiTimer.Start();
+
+			////ロウが落ちるように
+			//for (auto& waxVisualOnce : waxVisual)
+			//{
+			//	waxVisualOnce->power += waxVisualOnce->THRESHOLD_POWER;
+			//}
 		}
 	}
 
@@ -122,6 +125,25 @@ void Parts::Update()
 	obj.mPaintDataBuff->dissolveVal = waxSolidCount >= requireWaxSolidCount ? 1.0f : 0.3f / (requireWaxSolidCount - 1) * waxSolidCount;
 	obj.mPaintDataBuff->color = Color(0.8f, 0.6f, 0.35f, 1.0f);
 	obj.mPaintDataBuff->slide += TimeManager::deltaTime;
+
+	if (isWaxVisualTest) {
+
+		for (int32_t i = 0; i < COLLIDER_NUM; i++)
+		{
+			int32_t hoge = COLLIDER_NUM / 2;
+			waxVisualColliders[i].pos = collider.pos - (GetFrontVec() * waxVisualColliders[i].r * (float)hoge);
+			waxVisualColliders[i].pos += GetFrontVec() * (waxVisualColliders[i].r * i);
+			waxVisualColliders[i].r = collider.r / 3;
+		}
+
+		/*createTimer.Update();
+		if (!createTimer.GetRun()) {
+			createTimer.Start();
+			CreateWaxVisual();
+		}*/
+
+		WaxVisualUpdate();
+	}
 }
 
 void Parts::Draw()
@@ -138,8 +160,8 @@ bool Parts::GetIsSolid()
 
 void Parts::DealDamage(int32_t damage)
 {
-	//無敵時間さん中ならスキップ
-	if (mutekiTimer.GetRun())return;
+	//無敵時間さん中か固まってるならスキップ
+	if (mutekiTimer.GetRun() || waxSolidCount >= requireWaxSolidCount)return;
 
 	//無敵時間開始
 	mutekiTimer.Start();
@@ -155,4 +177,83 @@ void Parts::DealDamage(int32_t damage)
 	waxShakeOffTimer.Start();
 
 	waxScatterTimer.Reset();
+
+	//固まったら
+	if (waxSolidCount >= requireWaxSolidCount)
+	{
+		ParticleManager::GetInstance()->AddSimple(obj.mTransform.position,"part_solid");
+		ParticleManager::GetInstance()->AddHoming(obj.mTransform.position, "part_solid_homing");
+	}
+}
+
+void Parts::CreateWaxVisual(Vector3 spawnPos)
+{
+	waxVisual.emplace_back();
+	//差分だけ保持
+	waxVisual.back() = std::make_unique<WaxVisual>();
+	waxVisual.back()->obj.SetParent(&obj);
+	waxVisual.back()->Init();
+	
+	if (spawnPos.LengthSq() != 0) {
+		waxVisual.back()->obj.mTransform.position = spawnPos - obj.mTransform.position;
+	}
+}
+
+void Parts::WaxVisualUpdate()
+{
+	for (auto itr = waxVisual.begin(); itr != waxVisual.end();)
+	{
+		//死んでたら殺す
+		if (!(itr->get())->isAlive) {
+			itr = waxVisual.erase(itr);
+		}
+		else {
+			itr++;
+		}
+	}
+
+	for (auto& wax1 : waxVisual)
+	{
+		for (auto& wax2 : waxVisual)
+		{
+			if (wax1 == wax2)continue;
+
+			//重なりチェック
+			if (ColPrimitive3D::CheckSphereToSphere(wax1->collider, wax2->collider))
+			{
+				wax1->power++;
+				wax2->power++;
+			}
+		}
+	}
+
+	for (auto& wax : waxVisual)
+	{
+		bool check = false;
+		wax->Update();
+
+		//当たり判定
+		while (ColPrimitive3D::CheckSphereToSphere(wax->collider, waxVisualColliders[0]))
+		{
+			Vector3 repulsionVec = wax->collider.pos - waxVisualColliders[0].pos;
+			repulsionVec.Normalize();
+			repulsionVec.y = 0;
+
+			wax->collider.pos += repulsionVec;
+
+			//もしここが0になった場合無限ループするので抜ける
+			if (repulsionVec.LengthSq() == 0) {
+				break;
+			}
+			check = true;
+			wax->obj.SetParent(&obj);
+		}
+
+		wax->TransferBuffer();
+
+		//送った後、このフレームで当たっていないなら親子を解除
+		if (!check) {
+			wax->obj.SetParent(nullptr);
+		}
+	}
 }

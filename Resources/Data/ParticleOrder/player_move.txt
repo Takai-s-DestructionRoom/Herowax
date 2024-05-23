@@ -5,6 +5,7 @@ maxscale:2.5
 accelpower:0.01
 growingTimer:0.1
 endscale:0
+rejectradius:0
 isgravity:false
 isbillboard:true
 emitscale:0.500000_0.500000_0.500000
@@ -12,5 +13,5 @@ minvelo:-0.001000_0.010000_-0.001000
 maxvelo:0.001000_0.030000_0.001000
 minrot:-0.100000_-0.100000_-0.100000
 maxrot:0.100000_0.100000_0.100000
-color:1.000000_1.000000_1.000000_1.000000
-tex:particle_simple
+color:1.000000_1.000000_1.000000_0.196078
+tex:smoke

@@ -90,7 +90,7 @@ void IEmitter3D::Update()
 	{
 		if (particles_.size() > i)
 		{
-			VertexParticle vertex;
+			VertexParticle3D vertex;
 
 			//座標
 			vertex.pos = particles_[i].pos;
@@ -161,7 +161,8 @@ void IEmitter3D::Draw()
 
 		pipedesc.RasterizerState.CullMode = D3D12_CULL_MODE_NONE;
 		pipedesc.RasterizerState.FillMode = D3D12_FILL_MODE_SOLID;
-		//pipedesc.BlendState.AlphaToCoverageEnable = false;
+		pipedesc.DepthStencilState.DepthWriteMask = D3D12_DEPTH_WRITE_MASK_ZERO;
+		pipedesc.BlendState.AlphaToCoverageEnable = false;
 
 		//加算合成
 		pipedesc.BlendState.RenderTarget[0].BlendOpAlpha = D3D12_BLEND_OP_ADD;
@@ -170,6 +171,13 @@ void IEmitter3D::Draw()
 		pipedesc.BlendState.RenderTarget[0].BlendOp = D3D12_BLEND_OP_ADD;
 		pipedesc.BlendState.RenderTarget[0].SrcBlend = D3D12_BLEND_SRC_ALPHA;
 		pipedesc.BlendState.RenderTarget[0].DestBlend = D3D12_BLEND_ONE;
+
+		/*pipedesc.BlendState.RenderTarget[1].BlendOpAlpha = D3D12_BLEND_OP_ADD;
+		pipedesc.BlendState.RenderTarget[1].SrcBlendAlpha = D3D12_BLEND_SRC_ALPHA;
+		pipedesc.BlendState.RenderTarget[1].DestBlendAlpha = D3D12_BLEND_ONE;
+		pipedesc.BlendState.RenderTarget[1].BlendOp = D3D12_BLEND_OP_ADD;
+		pipedesc.BlendState.RenderTarget[1].SrcBlend = D3D12_BLEND_SRC_ALPHA;
+		pipedesc.BlendState.RenderTarget[1].DestBlend = D3D12_BLEND_INV_SRC_ALPHA;*/
 
 		RootSignature mRootSignature = RDirectX::GetDefRootSignature();
 
@@ -264,7 +272,7 @@ void IEmitter3D::Draw()
 			{texture.mGpuHandle}
 		};
 
-		Renderer::DrawCall("Opaque", order);
+		Renderer::DrawCall("Transparent", order);
 	}
 	else
 	{
@@ -439,6 +447,7 @@ void IEmitter3D::Add(uint32_t addNum, float life, Color color, TextureHandle tex
 
 		//決まった座標にエミッター自体の座標を足して正しい位置に
 		p.pos = randomPos + transform.position;
+		p.startPos = p.pos;
 		//飛んでく方向に合わせて回転
 		p.rot = randomRot;
 		p.plusRot = p.rot;

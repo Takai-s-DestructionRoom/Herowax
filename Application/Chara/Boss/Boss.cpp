@@ -15,15 +15,16 @@
 #include "EventCaller.h"
 #include "BossDeadScene.h"
 #include "BossAppearanceScene.h"
+#include "BossFallAttack.h"
 
 Boss::Boss() : GameObject(),
-moveSpeed(0.1f), hp(0), maxHP(10.f)
+moveSpeed(0.1f), hp(0), maxHP(10.f), oriSize(6.f)
 {
 	state = std::make_unique<BossNormal>();
 	nextState = nullptr;
 	obj = PaintableModelObj(Model::Load("./Resources/Model/bossBody/bossBody.obj", "bossBody", true));
 	obj.mPaintDissolveMapTex = TextureManager::Load("./Resources/DissolveMap.png", "DissolveMapTex");
-	obj.mTransform.scale = Vector3(1, 1, 1) * 8.f;
+	obj.mTransform.scale = Vector3(1, 1, 1) * oriSize;
 
 	barrier = PaintableModelObj(Model::Load("./Resources/Model/Sphere.obj", "sphere", true));
 	barrier.SetParent(&obj);
@@ -40,18 +41,37 @@ moveSpeed(0.1f), hp(0), maxHP(10.f)
 
 	targetCircle = ModelObj(Model::Load("./Resources/Model/targetMark/targetMark.obj", "targetMark", true));
 
+	for (size_t i = 0; i < fallParts.size(); i++)
+	{
+		fallParts[i].obj = PaintableModelObj(Model::Load("./Resources/Model/Sphere.obj", "Sphere", true));
+		fallParts[i].obj.mTransform.scale = { 10.f,10.f,10.f };
+		fallParts[i].warning = PaintableModelObj(Model::Load("./Resources/Model/wax/wax.obj", "wax", true));
+		fallParts[i].warning.mTransform.scale = { 10.f,1.f,10.f };
+		fallParts[i].warning.mTuneMaterial.mColor = Color::kRed;
+		fallParts[i].warning.mTuneMaterial.mColor.a = 0.7f;
+	}
+
 	BossUI::LoadResource();
 
 	std::map<std::string, std::string> extract = Parameter::Extract("Boss");
-	obj.mTransform.scale.x = Parameter::GetParam(extract, "ボス本体のスケールX", obj.mTransform.scale.x);
-	obj.mTransform.scale.y = Parameter::GetParam(extract, "ボス本体のスケールY", obj.mTransform.scale.y);
-	obj.mTransform.scale.z = Parameter::GetParam(extract, "ボス本体のスケールZ", obj.mTransform.scale.z);
+	oriSize = Parameter::GetParam(extract, "ボス本体のスケール", oriSize);
 	colliderSize = Parameter::GetParam(extract, "ボス本体の当たり判定", colliderSize);
 	mutekiTimer.maxTime_ = Parameter::GetParam(extract, "無敵時間", mutekiTimer.maxTime_);
 
 	standTimer = Parameter::GetParam(extract, "モーション待機時間", 3.f);
 	punchTimer = Parameter::GetParam(extract, "パンチにかかる時間", 0.7f);
 	punchStayTimer = Parameter::GetParam(extract, "パンチ後留まる時間", 1.5f);
+
+	fallAtkShoutTimer = Parameter::GetParam(extract, "さけぶ時間", 2.f);
+	fallAtkTimer = Parameter::GetParam(extract, "落下攻撃時間", 1.f);
+	fallAtkStayTimer = Parameter::GetParam(extract, "落下攻撃後留まる時間", 1.5f);
+
+	fallPartsNum = (int32_t)Parameter::GetParam(extract, "パーツの数", (float)maxPartsNum);
+	fallRange = Parameter::GetParam(extract, "パーツの落下範囲", 0.5f);
+	fallSpeed = Parameter::GetParam(extract, "パーツの落下速度", 0.5f);
+	fallAccel = Parameter::GetParam(extract, "パーツの加速度", 0.05f);
+	fallPartsSize = Parameter::GetParam(extract, "パーツのサイズ", 10.f);
+	fallAtkPower = Parameter::GetParam(extract, "落下攻撃の攻撃力", 1.f);
 
 	bossSpawnTimer = Parameter::GetParam(extract, "ボスが出現するまでの時間", 60.0f);
 
@@ -117,8 +137,8 @@ void Boss::Init()
 	ai.Init();
 
 	//モデル設定
-	parts[(int32_t)PartsNum::RightHand].obj = PaintableModelObj(Model::Load("./Resources/Model/leftArm/leftArm.obj", "leftArm", true));
-	parts[(int32_t)PartsNum::LeftHand].obj = PaintableModelObj(Model::Load("./Resources/Model/rightArm/rightArm.obj", "rightArm", true));
+	parts[(int32_t)PartsNum::RightHand].obj = PaintableModelObj(Model::Load("./Resources/Model/rightArm/rightArm.obj", "rightArm", true));
+	parts[(int32_t)PartsNum::LeftHand].obj = PaintableModelObj(Model::Load("./Resources/Model/leftArm/leftArm.obj", "leftArm", true));
 
 	std::map<std::string, std::string> extract = Parameter::Extract("Boss");
 	parts[(int32_t)PartsNum::LeftHand].obj.mTransform.scale.x = Parameter::GetParam(extract, "左手スケールX", parts[(int32_t)PartsNum::LeftHand].obj.mTransform.scale.x);
@@ -143,6 +163,9 @@ void Boss::AllStateUpdate()
 	obj.mTransform.position -= shake;
 	shake = { 0,0,0 };
 
+	//大きさを更新
+	obj.mTransform.scale = Vector3(1, 1, 1) * oriSize;
+
 	//タイマー更新
 	mutekiTimer.Update();
 	whiteTimer.Update();
@@ -164,16 +187,16 @@ void Boss::AllStateUpdate()
 
 			//体だけ残っているならシェイクも入れる
 			if (GetIsOnlyBody()) {
-				shakeTimer.Start();
+				Shake(0.5f, 1.f);
 			}
 		}
 	}
 
 	//シェイク中なら適当な値を入れる
 	if (shakeTimer.GetRun()) {
-		shake.x = Util::GetRand(-1.0f, 1.0f);
-		shake.y = Util::GetRand(-1.0f, 1.0f);
-		shake.z = Util::GetRand(-1.0f, 1.0f);
+		shake.x = Util::GetRand(-shakePower, shakePower);
+		shake.y = Util::GetRand(-shakePower, shakePower);
+		shake.z = Util::GetRand(-shakePower, shakePower);
 
 		//本体はロウ出さない
 		//Vector3 atkVec = Util::GetRandVector3({ 0,0,0 }, -0.1f, 0.1f, { 1,0,1 });
@@ -254,26 +277,6 @@ void Boss::AllStateUpdate()
 
 	//座標加算
 	obj.mTransform.position += shake;
-
-	//更新してからバッファに送る
-	obj.mTransform.UpdateMatrix();
-	BrightTransferBuffer(Camera::sNowCamera->mViewProjection);
-	obj.mPaintDataBuff->dissolveVal = waxSolidCount >= requireWaxSolidCount ? 1.0f : 0.3f / (requireWaxSolidCount - 1) * waxSolidCount;
-	obj.mPaintDataBuff->color = Color(0.8f, 0.6f, 0.35f, 1.0f);
-	obj.mPaintDataBuff->slide += TimeManager::deltaTime;
-
-	barrier.mTransform.UpdateMatrix();
-	barrier.TransferBuffer(Camera::sNowCamera->mViewProjection);
-
-	for (size_t i = 0; i < parts.size(); i++)
-	{
-		//無敵時間をボス本体と合わせる
-		parts[i].SetMutekiMaxTime(mutekiTimer.maxTime_);
-		//描画フラグをボスと合わせて切り替える
-		parts[i].SetDrawCollider(isDrawCollider);
-		//更新
-		parts[i].Update();
-	}
 }
 
 void Boss::Update()
@@ -293,23 +296,57 @@ void Boss::Update()
 		ImGui::Text("ボスが出現するまでの時間:%f", bossSpawnTimer.nowTime_);
 
 		ImGui::Text("ボス本体");
-		ImGui::Text("1:待機\n2:左パンチ\n3:右パンチ");
+		ImGui::Text("1:待機\n2:左パンチ\n3:右パンチ\n4:落下攻撃");
 		ImGui::Checkbox("オブジェクト描画", &isDrawObj);
 		ImGui::Checkbox("当たり判定描画", &isDrawCollider);
 		ImGui::Checkbox("バリアフラグ", &isBarrier);
+
+		if (ImGui::TreeNode("腕から垂れるロウ関係")) {
+			ImGui::Checkbox("左腕のロウテストフラグ", &parts[0].isWaxVisualTest);
+			ImGui::Checkbox("右腕のロウテストフラグ", &parts[1].isWaxVisualTest);
+
+			if (ImGui::Button("左腕にロウを追加")) {
+				parts[0].CreateWaxVisual();
+			}
+
+			if (ImGui::Button("左腕のロウを全消し")) {
+				parts[0].waxVisual.clear();
+			}
+			if (ImGui::Button("右腕にロウを追加")) {
+				parts[1].CreateWaxVisual();
+			}
+
+			if (ImGui::Button("右腕のロウを全消し")) {
+				parts[1].waxVisual.clear();
+			}
+
+			ImGui::TreePop();
+		}
 
 		if (ImGui::TreeNode("調整項目_ボス")) {
 			ImGui::DragFloat("ボスが出現するまでの時間(最大)", &bossSpawnTimer.maxTime_, 0.1f);
 			if (ImGui::Button("出現タイマーリセット")) {
 				bossSpawnTimer.Start();
 			}
-			ImGui::DragFloat3("スケール", &obj.mTransform.scale.x, 0.1f);
+			ImGui::DragFloat("スケール", &oriSize, 0.1f);
 			ImGui::DragFloat("当たり判定", &colliderSize, 0.1f);
 			ImGui::InputFloat("無敵時間", &mutekiTimer.maxTime_, 0.1f);
 			ImGui::InputFloat("モーション待機時間", &standTimer.maxTime_, 0.1f);
 			ImGui::InputFloat("パンチにかかる時間", &punchTimer.maxTime_, 0.1f);
 			ImGui::InputFloat("パンチ後留まる時間", &punchStayTimer.maxTime_, 0.1f);
 			ImGui::InputFloat("バリア割れるまでの時間", &barrierCrushTimer.maxTime_, 0.1f);
+			if (ImGui::TreeNode("調整項目_落下攻撃")) {
+				ImGui::InputFloat("さけぶ時間", &fallAtkShoutTimer.maxTime_, 0.1f);
+				ImGui::InputFloat("落下攻撃時間", &fallAtkTimer.maxTime_, 0.1f);
+				ImGui::InputFloat("落下攻撃後留まる時間", &fallAtkStayTimer.maxTime_, 0.1f);
+				ImGui::SliderInt("パーツの数", &fallPartsNum, 0, maxPartsNum);
+				ImGui::InputFloat("パーツの落下範囲", &fallRange, 0.1f);
+				ImGui::InputFloat("パーツの落下速度", &fallSpeed, 0.1f);
+				ImGui::InputFloat("パーツの加速度", &fallAccel, 0.01f);
+				ImGui::InputFloat("パーツのサイズ", &fallPartsSize, 0.1f);
+				ImGui::InputFloat("落下攻撃の攻撃力", &fallAtkPower, 0.1f);
+				ImGui::TreePop();
+			}
 			ImGui::TreePop();
 		}
 
@@ -324,6 +361,8 @@ void Boss::Update()
 		if (ImGui::TreeNode("調整項目_手")) {
 			ImGui::DragFloat3("右手スケール", &parts[(int32_t)PartsNum::LeftHand].obj.mTransform.scale.x, 0.1f);
 			ImGui::DragFloat3("左手スケール", &parts[(int32_t)PartsNum::RightHand].obj.mTransform.scale.x, 0.1f);
+			ImGui::DragFloat("右手当たり判定", &parts[(int32_t)PartsNum::LeftHand].colliderSize, 0.1f);
+			ImGui::DragFloat("左手当たり判定", &parts[(int32_t)PartsNum::RightHand].colliderSize, 0.1f);
 			ImGui::TreePop();
 		}
 
@@ -332,9 +371,7 @@ void Boss::Update()
 		}
 		if (ImGui::Button("セーブ")) {
 			Parameter::Begin("Boss");
-			Parameter::Save("ボス本体のスケールX", obj.mTransform.scale.x);
-			Parameter::Save("ボス本体のスケールY", obj.mTransform.scale.y);
-			Parameter::Save("ボス本体のスケールZ", obj.mTransform.scale.z);
+			Parameter::Save("ボス本体のスケール", oriSize);
 			Parameter::Save("ボス本体の当たり判定", colliderSize);
 			Parameter::Save("無敵時間", mutekiTimer.maxTime_);
 			Parameter::Save("左手スケールX", parts[(int32_t)PartsNum::LeftHand].obj.mTransform.scale.x);
@@ -346,7 +383,16 @@ void Boss::Update()
 			Parameter::Save("モーション待機時間", standTimer.maxTime_);
 			Parameter::Save("パンチにかかる時間", punchTimer.maxTime_);
 			Parameter::Save("パンチ後留まる時間", punchStayTimer.maxTime_);
-			Parameter::Save("ボスが出現するまでの時間", bossSpawnTimer.GetTimeRate());
+			Parameter::Save("ボスが出現するまでの時間", bossSpawnTimer.maxTime_);
+			Parameter::Save("さけぶ時間", fallAtkShoutTimer.maxTime_);
+			Parameter::Save("落下攻撃時間", fallAtkTimer.maxTime_);
+			Parameter::Save("落下攻撃後留まる時間", fallAtkStayTimer.maxTime_);
+			Parameter::Save("パーツの数", fallPartsNum);
+			Parameter::Save("パーツの落下範囲", fallRange);
+			Parameter::Save("パーツの落下速度", fallSpeed);
+			Parameter::Save("パーツの加速度", fallAccel);
+			Parameter::Save("パーツのサイズ", fallPartsSize);
+			Parameter::Save("落下攻撃の攻撃力", fallAtkPower);
 
 			Parameter::End();
 		}
@@ -363,11 +409,11 @@ void Boss::Update()
 
 	ai.Update(this);
 
-	//各ステート時の固有処理
-	state->Update(this);
-
 	//全ステートの共通処理
 	AllStateUpdate();
+
+	//各ステート時の固有処理
+	state->Update(this);
 
 	// モーションの変更(デバッグ用)
 	if (Util::debugBool) {
@@ -383,6 +429,11 @@ void Boss::Update()
 		else if (RInput::GetInstance()->GetKeyDown(DIK_3))
 		{
 			nextState = std::make_unique<BossPunch>(false);
+			changingState = true;
+		}
+		else if (RInput::GetInstance()->GetKeyDown(DIK_4))
+		{
+			nextState = std::make_unique<BossFallAttack>();
 			changingState = true;
 		}
 	}
@@ -411,6 +462,26 @@ void Boss::Update()
 		nextState = nullptr;
 	}
 
+	//更新してからバッファに送る
+	obj.mTransform.UpdateMatrix();
+	BrightTransferBuffer(Camera::sNowCamera->mViewProjection);
+	obj.mPaintDataBuff->dissolveVal = waxSolidCount >= requireWaxSolidCount ? 1.0f : 0.3f / (requireWaxSolidCount - 1) * waxSolidCount;
+	obj.mPaintDataBuff->color = Color(0.8f, 0.6f, 0.35f, 1.0f);
+	obj.mPaintDataBuff->slide += TimeManager::deltaTime;
+
+	barrier.mTransform.UpdateMatrix();
+	barrier.TransferBuffer(Camera::sNowCamera->mViewProjection);
+
+	for (size_t i = 0; i < parts.size(); i++)
+	{
+		//無敵時間をボス本体と合わせる
+		parts[i].SetMutekiMaxTime(mutekiTimer.maxTime_);
+		//描画フラグをボスと合わせて切り替える
+		parts[i].SetDrawCollider(isDrawCollider);
+		//更新
+		parts[i].Update();
+	}
+
 	targetCircle.mTransform.UpdateMatrix();
 	targetCircle.TransferBuffer(Camera::sNowCamera->mViewProjection);
 }
@@ -431,6 +502,14 @@ void Boss::Draw()
 		{
 			parts[i].Draw();
 		}
+
+		if (stateStr == "FallAttack")
+		{
+			for (size_t i = 0; i < fallParts.size(); i++)
+			{
+				fallParts[i].Draw();
+			}
+		}
 	}
 
 	DrawCollider();
@@ -446,6 +525,14 @@ void Boss::Draw()
 	}
 
 	ui.Draw();
+}
+
+void Boss::Shake(float time, float power)
+{
+	shakeTimer = time;
+	shakeTimer.Start();
+
+	shakePower = power;
 }
 
 bool Boss::GetIsSolid(PartsNum num)
@@ -510,4 +597,33 @@ void Boss::DealDamage(int32_t damage)
 	if (GetIsSolid(PartsNum::Max) && !isOldBodySolid) {
 		ChangeState<BossCollectStandState>();
 	}
+}
+
+FallParts::FallParts()
+{
+}
+
+FallParts::~FallParts()
+{
+}
+
+void FallParts::Init()
+{
+}
+
+void FallParts::Update()
+{
+	obj.mTransform.UpdateMatrix();
+	obj.TransferBuffer(Camera::sNowCamera->mViewProjection);
+
+	warning.mTransform.UpdateMatrix();
+	warning.TransferBuffer(Camera::sNowCamera->mViewProjection);
+
+	UpdateCollider();
+}
+
+void FallParts::Draw()
+{
+	obj.Draw();
+	warning.Draw();
 }

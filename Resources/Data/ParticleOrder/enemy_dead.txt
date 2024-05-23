@@ -5,6 +5,7 @@ maxscale:8
 accelpower:0.05
 growingTimer:0
 endscale:0
+rejectradius:0
 isgravity:false
 isbillboard:false
 emitscale:0.100000_0.100000_0.100000
@@ -12,5 +13,5 @@ minvelo:-0.500000_-0.500000_-0.500000
 maxvelo:0.500000_0.500000_0.500000
 minrot:0.100000_0.100000_0.100000
 maxrot:0.200000_0.200000_0.200000
-color:0.006765_0.080169_0.006765_1.000000
+color:0.966245_0.846847_0.517777_1.000000
 tex:white2x2

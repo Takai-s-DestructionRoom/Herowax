@@ -56,7 +56,7 @@ public:
 };
 
 //position,scale,colorの3要素
-struct VertexParticle
+struct VertexParticle3D
 {
 	Vector3 pos = { 0, 0, 0 };
 	Vector3 rot = { 0, 0, 0 };
@@ -65,9 +65,26 @@ struct VertexParticle
 	float timer = 0.0f;
 
 	//コンストラクタ
-	VertexParticle(Vector3 pos = { 0, 0, 0 }, Vector3 rot = { 0, 0, 0 },
+	VertexParticle3D(Vector3 pos = { 0, 0, 0 }, Vector3 rot = { 0, 0, 0 },
 		Color color = Color::kWhite, float scale = 0.0f)
 		: pos(pos), rot(rot), color(color), scale(scale),timer(timer) {}
 
-	bool operator==(const VertexParticle& a) const;
+	bool operator==(const VertexParticle3D& a) const;
+};
+
+//position,scale,colorの3要素
+struct VertexParticle2D
+{
+	Vector2 pos = { 0, 0 };
+	Vector3 rot = { 0, 0, 0 };
+	Color color = Color::kWhite;
+	float scale = 0.0f;
+	float timer = 0.0f;
+
+	//コンストラクタ
+	VertexParticle2D(Vector2 pos = { 0, 0 }, Vector3 rot = { 0, 0, 0 },
+		Color color = Color::kWhite, float scale = 0.0f)
+		: pos(pos), rot(rot), color(color), scale(scale), timer(timer) {}
+
+	bool operator==(const VertexParticle2D& a) const;
 };

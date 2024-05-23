@@ -8,6 +8,7 @@
 #include "Tank.h"
 #include "BombSolider.h"
 
+
 Level::Level()
 {
 }
@@ -24,6 +25,8 @@ void Level::Reset()
 	EnemyManager::GetInstance()->Init();
 	objects.clear();
 	wall.clear();
+
+	ground = Ground::GetInstance();
 }
 
 void Level::Reload()
@@ -56,8 +59,7 @@ void Level::Update()
 
 	EnemyManager::GetInstance()->Update();
 
-	ground.mTransform.UpdateMatrix();
-	ground.TransferBuffer(Camera::sNowCamera->mViewProjection);
+	ground->Update();
 
 	for (auto& tempWall : Level::Get()->wall)
 	{
@@ -68,9 +70,11 @@ void Level::Update()
 
 void Level::Draw()
 {
-	spawnerManager->Draw();
+	//本体は見えなくしちゃう
+	//spawnerManager->Draw();
+	
 	EnemyManager::GetInstance()->Draw();
-	ground.Draw();
+	ground->Draw();
 
 	for (auto& tempWall : Level::Get()->wall)
 	{
@@ -96,12 +100,10 @@ void Level::Extract(const std::string& handle)
 	{
 		if (objectData->setObjectName == "Ground")
 		{
-			ground = ModelObj(Model::Load("./Resources/Model/Ground/ground.obj", "Ground"));
-
-			//座標を設定
-			ground.mTransform.position = objectData->translation;
-			ground.mTransform.scale = objectData->scaling;
-			ground.mTransform.rotation = objectData->rotation;
+			ground->Init();
+			ground->SetStatus(objectData->translation,
+				objectData->scaling,
+				objectData->rotation);
 		}
 		if (objectData->setObjectName == "Enemy")
 		{

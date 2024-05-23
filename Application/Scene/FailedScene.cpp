@@ -8,6 +8,7 @@
 #include "Boss.h"
 #include "Level.h"
 #include <RAudio.h>
+#include "LightObject.h"
 
 FailedScene::FailedScene()
 {
@@ -32,7 +33,7 @@ FailedScene::FailedScene()
 
 	failedPos = { RWindow::GetWidth() * 0.5f,RWindow::GetHeight() * 0.5f - 150.f };
 	buttonUIPos = failedPos;
-	buttonUIPos.y += 400.f;
+	buttonUIPos.y += 320.f;
 
 	RAudio::Load("Resources/Sounds/SE/A_select.wav", "Select");
 }
@@ -50,6 +51,8 @@ void FailedScene::Init()
 	flashingTimer.Reset();
 
 	Boss::GetInstance()->SetTarget(&bossTarget);
+
+	SpotLightManager::GetInstance()->Init(&light);
 }
 
 void FailedScene::Update()
@@ -89,11 +92,15 @@ void FailedScene::Update()
 
 	skydome.TransferBuffer(Camera::sNowCamera->mViewProjection);
 	bossTarget.TransferBuffer(Camera::sNowCamera->mViewProjection);
+
+	SpotLightManager::GetInstance()->Imgui();
+	SpotLightManager::GetInstance()->Update();
 }
 
 void FailedScene::Draw()
 {
 	skydome.Draw();
+	SpotLightManager::GetInstance()->Draw();
 
 	Level::Get()->Draw();
 	Boss::GetInstance()->Draw();
@@ -107,13 +114,13 @@ void FailedScene::Draw()
 	{
 		InstantDrawer::DrawGraph(
 			buttonUIPos.x, buttonUIPos.y,
-			0.8f, 0.8f, 0.f, TextureManager::Load("./Resources/UI/A_push.png", "AbuttonPush"));
+			0.12f, 0.12f, 0.f, TextureManager::Load("./Resources/UI/A_push.png", "AbuttonPush"));
 	}
 	else
 	{
 		InstantDrawer::DrawGraph(
 			buttonUIPos.x, buttonUIPos.y,
-			0.8f, 0.8f, 0.f, TextureManager::Load("./Resources/UI/A_normal.png", "Abutton"));
+			0.12f, 0.12f, 0.f, TextureManager::Load("./Resources/UI/A_normal.png", "Abutton"));
 	}
 
 	//更新

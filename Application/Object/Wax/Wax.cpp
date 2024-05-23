@@ -20,7 +20,7 @@ Wax::Wax():GameObject(),
 
 void Wax::DeadParticle()
 {
-	ParticleManager::GetInstance()->AddHoming(obj.mTransform.position,"wax_dead_homing");
+	ParticleManager::GetInstance()->AddHoming(obj.mTransform.position, "wax_dead_homing", {},true);
 }
 
 bool Wax::GetIsSolidNow()
@@ -62,6 +62,7 @@ void Wax::Init(Transform transform, Vector3 endPos_, float height, float size, f
 void Wax::Update()
 {
 	moveVec = { 0,0,0 };
+	oldTime = atkTimer.GetTimeRate();
 	atkTimer.Update();
 	
 	isSolided = isSolid;	//1F前の状態を保存
@@ -71,19 +72,6 @@ void Wax::Update()
 	Vector3 waxScale = { atkSize,1.f,atkSize };	//蝋の大きさ
 	waxScale *= atkRange;
 	SetScale(waxScale);								//大きさを反映
-
-	if (atkTimer.GetRun()) {
-		obj.mTransform.position = Util::Spline(spline,atkTimer.GetTimeRate());	//飛んでいく
-	}
-
-	//地面に埋ってたら
-	if (obj.mTransform.position.y - obj.mTransform.scale.y < 0.f)
-	{
-		//地面に触れるとこまで移動
-		obj.mTransform.position.y = 0.f;
-		
-		isGround = true;
-	}
 
 	//燃焼周りのステートの更新
 	state->Update(this);
@@ -95,8 +83,40 @@ void Wax::Update()
 		nextState = nullptr;
 	}
 
+	if (GetState() == WaxCollect::GetStateStr()) {
+		//強制終了
+		atkTimer.SetEnd(true);
+		isReverse = false;
+	}
+
+	if (isReverse) {
+		reverse = -1;
+	}
+	else {
+		reverse = 1;
+	}
+
+	if (atkTimer.GetRun()) {
+		Vector3 plusVec = Util::Spline(spline, atkTimer.GetTimeRate()) - Util::Spline(spline, oldTime);	//飛んでいく
+		moveVec += plusVec * reverse;
+	}
+	else {
+		gravity -= addGravity;
+		moveVec.y += gravity;
+	}
+
 	//spline以外で動かす場合の足し算
 	obj.mTransform.position += moveVec;
+
+	//地面に埋ってたら
+	if (obj.mTransform.position.y - obj.mTransform.scale.y < 0.f)
+	{
+		//地面に触れるとこまで移動
+		obj.mTransform.position.y = 0.f;
+		gravity = 0.0f;
+
+		isGround = true;
+	}
 
 	UpdateCollider();
 
@@ -118,8 +138,6 @@ void Wax::Update()
 
 	obj.mTransform.UpdateMatrix();
 	obj.TransferBuffer(Camera::sNowCamera->mViewProjection);
-
-	
 }
 
 void Wax::Draw()

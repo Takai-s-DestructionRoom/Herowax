@@ -2,6 +2,8 @@
 #include <string>
 #include <map>
 #include <fstream>
+#include "Color.h"
+#include "Vector3.h"
 
 class Parameter
 {
@@ -26,7 +28,7 @@ public:
 
 	/// <summary>
 	/// BeginとEndの間で呼び出す
-	/// 保存したいデータを入れる。基本to_stringで変換して入れるのを想定
+	/// 保存したいデータを入れる。
 	/// :区切りでデータを保存しているので、handleに":"を使うとバグります
 	/// <param name="handle">ファイルの中で手前に付く名前。ImGuiのラベルと同じ感じで使ってください。</param>
 	/// <param name="data">保存したいデータ<</param>
@@ -34,7 +36,7 @@ public:
 
 	/// <summary>
 	/// BeginとEndの間で呼び出す
-	/// 保存したいデータを入れる。基本to_stringで変換して入れるのを想定
+	/// 保存したいデータを入れる。
 	/// :区切りでデータを保存しているので、handleに":"を使うとバグります
 	/// <param name="handle">ファイルの中で手前に付く名前。ImGuiのラベルと同じ感じで使ってください。</param>
 	/// <param name="data">保存したいデータ<</param>
@@ -63,6 +65,14 @@ public:
 	/// <param name="defaultData">データが存在しない場合に返す値</param>
 	/// <returns></returns>
 	static float GetParam(std::map<std::string, std::string>& extractData, const std::string& handle,float defaultData);
+
+	static std::string GetParamStr(std::map<std::string, std::string>& extractData, const std::string& handle, std::string defaultData);
+	
+	static Vector3 GetVector3Data(std::map<std::string, std::string>& extractData, const std::string& handle, Vector3 defaultData);
+	static Color GetColorData(std::map<std::string, std::string>& extractData, const std::string& handle, Color defaultData);
+
+	static void SaveVector3(const std::string& handle, Vector3 data);
+	static void SaveColor(const std::string& handle, Color data);
 
 private:
 	static std::ofstream writing_file;

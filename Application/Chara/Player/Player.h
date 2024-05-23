@@ -10,8 +10,19 @@
 #include <stdint.h>
 #include "CollectPart.h"
 #include "WaxUI.h"
+#include "WaxWall.h"
 
 class Boss;
+
+class AfterImage : public GameObject
+{
+public:
+	void Init()override;
+	void Update()override;
+	void Draw()override;
+private:
+	Easing::EaseTimer lifeTimer = 10.f;
+};
 
 class Player : public GameObject
 {
@@ -68,20 +79,12 @@ public:
 	int32_t maxWaxStock;		//ロウストック最大値
 	int32_t initWaxStock;		//ロウストック最大値(初期値)
 	bool isWaxStock;			//ストック性にするかフラグ
-	bool isCollectFan;			//回収範囲扇型にするかフラグ
 	bool isCollect;				//回収できるかフラグ
 
 	float waxCollectRange;				//ロウ回収するレイの範囲(横幅)
 	ColPrimitive3D::Ray collectCol;		//ロウ回収する範囲当たり判定
 	ModelObj collectRangeModel;			//ロウ回収範囲描画用
 	float waxCollectVertical;			//ロウ回収するレイの範囲(縦幅)
-
-	float waxCollectDist;					//ロウ回収する扇の距離
-	float waxCollectAngle;					//ロウ回収する扇の角度(180°以内)
-	ColPrimitive3D::Sphere collectColFan;	//ロウ回収する範囲当たり判定
-	ModelObj collectRangeModelCircle;		//ロウ回収範囲描画用
-	ModelObj collectRangeModelRayLeft;			//ロウ回収範囲描画用
-	ModelObj collectRangeModelRayRight;			//ロウ回収範囲描画用
 
 	int32_t waxCollectAmount;			//ロウ回収量
 	
@@ -92,6 +95,13 @@ public:
 	float shotDeadZone = 1.0f;
 	float pabloShotSpeedMag = 2.f;	//プレイヤーの正面に出すための係数
 	int32_t waxNum = 5;				//一度に出るロウの数
+
+	//----------- 回避関連 -------------//
+	Easing::EaseTimer avoidTimer = 0.1f;
+	Vector3 avoidVec = {};
+	float avoidSpeed = 1.25f;
+
+	//std::vector<std::unique_ptr<AfterImage>> afterimagesObj;
 
 	//------------ 炎関係 ------------//
 	FireUnit fireUnit;
@@ -145,6 +155,8 @@ private:
 
 	WaxUI waxUI;
 
+	WaxWall waxWall;
+
 public:
 	Player();
 
@@ -156,6 +168,9 @@ public:
 	void MovePad();
 	void MoveKey();
 
+	//回避
+	void Avoidance();
+
 	//回転関数
 	void Rotation();
 
@@ -164,6 +179,9 @@ public:
 
 	//ロウを回収
 	void WaxCollect();
+
+	//壁を作る
+	void ShieldUp();
 
 	//ゲーミングカラーの更新処理
 	//ゲーミングカラー返す
@@ -197,6 +215,19 @@ public:
 
 	//ダメージを与える
 	void DealDamage(float damage);
+
+	void MaxWaxPlus(int32_t plus);
+
+	void WaxLeakOut(int32_t leakNum);
+
+	WaxWall* GetWaxWall() {
+		if (waxWall.isAlive) {
+			return &waxWall;
+		}
+		else {
+			return nullptr;
+		}
+	};
 
 private:
 	void DamageBlink();	//被弾時の点滅(後々もっとリッチなのに置き換え予定)

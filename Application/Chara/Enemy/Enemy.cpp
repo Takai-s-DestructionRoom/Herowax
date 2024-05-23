@@ -8,6 +8,9 @@
 #include "RImGui.h"
 #include "Renderer.h"
 #include <TimeManager.h>
+#include "InstantDrawer.h"
+#include "WaxManager.h"
+
 
 Enemy::Enemy(ModelObj* target_) : GameObject(),
 moveSpeed(0.1f), slowMag(0.8f),
@@ -40,6 +43,11 @@ gravity(0.2f)
 	predictionLine.mTuneMaterial.mSpecular = Vector3::ZERO;
 
 	attackDrawerObj = ModelObj(Model::Load("./Resources/Model/Sphere.obj", "Sphere", true));
+
+	TextureManager::Load("./Resources/warning.png", "warning");
+
+	shield.Init();
+	//shield.obj.SetParent(&obj);
 }
 
 Enemy::~Enemy()
@@ -49,10 +57,6 @@ Enemy::~Enemy()
 	//if (rand == 1) {
 	//	CollectPartManager::GetInstance()->Craete(obj.mTransform.position);
 	//}
-
-	//死んだときパーティクル出す
-	ParticleManager::GetInstance()->AddSimple(
-		obj.mTransform.position, "enemy_dead");
 }
 
 void Enemy::Init()
@@ -85,6 +89,28 @@ void Enemy::Update()
 
 void Enemy::BaseUpdate()
 {
+	spawnTimer.Update();
+	warningTimer.Update();
+
+	if (warningTimer.GetEnd()) {
+		if(!spawnTimer.GetStarted())spawnTimer.Start();
+		
+		warningRoop.RoopReverse();
+		warningColor.a = Easing::OutQuad(0.f,1.f, warningRoop.GetTimeRate());
+	}
+
+
+	if (spawnTimer.GetNowEnd()) {
+		//パーティクル出現
+		ParticleManager::GetInstance()->AddSimple(obj.mTransform.position, "smoke_red");
+		//ParticleManager::GetInstance()->AddSimple(obj.mTransform.position, "smoke_black");
+		ParticleManager::GetInstance()->AddRing(obj.mTransform.position, "enemy_pop_ring");
+	}
+
+	//こっから下は出現してからなので
+	//出現タイマーが終わるまで通さない
+	if (!GetIsSpawn())return;
+
 	Reset();
 
 	//かかっているロウを振り払う
@@ -141,6 +167,7 @@ void Enemy::BaseUpdate()
 
 	if (hp <= 0 && isCollect == false) {
 		//hpが0になったら、自身の状態を固まり状態へ遷移
+		//現在毎フレーム通常状態に戻す処理を行っているので無意味
 		ChangeState<EnemyAllStop>();
 	}
 
@@ -177,8 +204,8 @@ void Enemy::BaseUpdate()
 	obj.mTransform.position += moveVec;
 
 	//地面座標を下回るなら戻す
-	if (obj.mTransform.position.y <= Level::Get()->ground.mTransform.position.y) {
-		obj.mTransform.position.y = Level::Get()->ground.mTransform.position.y;
+	if (obj.mTransform.position.y <= Level::Get()->ground->GetTransform().position.y) {
+		obj.mTransform.position.y = Level::Get()->ground->GetTransform().position.y;
 		moveVec.y = 0;
 	}
 
@@ -207,6 +234,16 @@ void Enemy::BaseUpdate()
 	brightColor.b = Easing::OutQuad(1, 0, whiteTimer.GetTimeRate());
 	brightColor.a = Easing::OutQuad(1, 0, whiteTimer.GetTimeRate());
 	if (!whiteTimer.GetStarted())brightColor = { 0,0,0,0 };
+
+	//WaxVisualUpdate();
+	
+	Vector3 frontVec = GetFrontVec().Normalize() * 5.f;
+	frontVec.y = 0;
+	shield.obj.mTransform.position = obj.mTransform.position + frontVec;
+	shield.obj.mTransform.rotation = Quaternion::LookAt(frontVec).ToEuler();
+	shield.obj.mTransform.rotation.y += Util::AngleToRadian(-90.f);
+
+	shield.Update();
 }
 
 void Enemy::TransfarBuffer()
@@ -218,7 +255,7 @@ void Enemy::TransfarBuffer()
 	obj.mTransform.UpdateMatrix();
 	obj.mPaintDataBuff->dissolveVal = waxSolidCount >= requireWaxSolidCount ? 1.0f : 0.3f / (requireWaxSolidCount - 1) * waxSolidCount;
 	//obj.mPaintDataBuff->dissolveVal = 1.0f;
-	obj.mPaintDataBuff->color = Color(0.8f, 0.6f, 0.35f, 1.0f);
+	obj.mPaintDataBuff->color = WaxManager::GetInstance()->slimeWax.waxColor;
 	obj.mPaintDataBuff->slide += TimeManager::deltaTime;
 	BrightTransferBuffer(Camera::sNowCamera->mViewProjection);
 
@@ -230,16 +267,27 @@ void Enemy::TransfarBuffer()
 
 void Enemy::Draw()
 {
+	//警告を表示
+	if (spawnTimer.GetRun()) {
+		Vector3 pos = obj.mTransform.position;
+		pos.y += obj.mTransform.scale.y;
+		InstantDrawer::DrawGraph3D(pos,10.f,10.f,"warning", warningColor);
+	}
+
+	if (!spawnTimer.GetEnd()) return;
+
 	if (isAlive)
 	{
 		BrightDraw();
-		
+
 		ui.Draw();
 
 		predictionLine.Draw();
 
 		DrawCollider();
 		DrawAttackCollider();
+
+		shield.Draw();
 	}
 }
 
@@ -335,18 +383,92 @@ Vector3 Enemy::GetOriginPos()
 	return basis;
 }
 
+bool Enemy::GetIsSpawn()
+{
+	return spawnTimer.GetEnd();
+}
+
 void Enemy::BehaviorReset()
 {
 	//タイマーなど初期化
-	loadBehaviorData.Reset();
+	loadBehaviorData.Init();
 	//基準座標をリセット
 	BehaviorOrigenReset();
 }
 
+void Enemy::CreateWaxVisual(Vector3 spawnPos)
+{
+	waxVisual.emplace_back();
+	//差分だけ保持
+	waxVisual.back() = std::make_unique<WaxVisual>();
+	waxVisual.back()->obj.SetParent(&obj);
+	waxVisual.back()->Init();
+
+	if (spawnPos.LengthSq() != 0) {
+		waxVisual.back()->obj.mTransform.position = spawnPos - obj.mTransform.position;
+	}
+}
+
+
+void Enemy::WaxVisualUpdate()
+{
+	for (auto itr = waxVisual.begin(); itr != waxVisual.end();)
+	{
+		//死んでたら殺す
+		if (!(itr->get())->isAlive) {
+			itr = waxVisual.erase(itr);
+		}
+		else {
+			itr++;
+		}
+	}
+
+	/*for (auto& wax1 : waxVisual)
+	{
+		for (auto& wax2 : waxVisual)
+		{
+			if (wax1 == wax2)continue;
+
+			重なりチェック
+			if (ColPrimitive3D::CheckSphereToSphere(wax1->collider, wax2->collider))
+			{
+				wax1->power++;
+				wax2->power++;
+			}
+		}
+	}*/
+
+	for (auto& wax : waxVisual)
+	{
+		bool check = false;
+		wax->Update();
+
+		//当たり判定
+		while (ColPrimitive3D::CheckSphereToSphere(wax->collider, collider))
+		{
+			Vector3 repulsionVec = wax->collider.pos - collider.pos;
+			repulsionVec.Normalize();
+			repulsionVec.y = 0;
+
+			wax->collider.pos += repulsionVec;
+
+			//もしここが0になった場合無限ループするので抜ける
+			if (repulsionVec.LengthSq() == 0) {
+				break;
+			}
+			check = true;
+			wax->obj.SetParent(&obj);
+		}
+
+		wax->TransferBuffer();
+	}
+}
+
+
 void Enemy::DealDamage(uint32_t damage, const Vector3& dir, ModelObj* target_)
 {
-	//無敵時間さん!?中なら攻撃を喰らわない
-	if (mutekiTimer.GetRun())return;
+	//無敵時間さん!?中かHP0なら攻撃を喰らわない
+	if (mutekiTimer.GetRun() || GetIsSolid())return;
 	//無敵時間さん!?を開始
 	mutekiTimer.Start();
 
@@ -390,11 +512,22 @@ void Enemy::DealDamage(uint32_t damage, const Vector3& dir, ModelObj* target_)
 	//かかりカウント加算
 	waxSolidCount++;
 	waxShakeOffTimer = 0;
+
+	if (GetIsSolid())
+	{
+		ParticleManager::GetInstance()->AddHoming(obj.mTransform.position, "enemy_solid_homing");
+		ParticleManager::GetInstance()->AddSimple(
+			obj.mTransform.position + Vector3::UP * obj.mTransform.scale.y,"enemy_solid");
+	}
 }
 
 void Enemy::SetDeath()
 {
 	isAlive = false;
+
+	//死んだときパーティクル出す
+	ParticleManager::GetInstance()->AddSimple(
+		obj.mTransform.position, "enemy_dead");
 }
 
 void Enemy::MoveVecPlus(const Vector3& plusVec)
@@ -412,7 +545,19 @@ void Enemy::SetBehaviorOrder(const std::string& order)
 {
 	loadFileName = order;
 	loadBehaviorData = EnemyBehaviorEditor::Load(loadFileName);
-	loadBehaviorData.Reset();
+	loadBehaviorData.Init();
+}
+
+void Enemy::SetEnemyOrder(const std::string& order)
+{
+	EnemyData data = EnemyBehaviorEditor::LoadEnemyData(order);
+
+	spawnTimer = data.spawnTime;
+	warningTimer = data.warningTime;
+
+	warningTimer.Start();
+
+	warningRoop.maxTime_ = spawnTimer.maxTime_ / 4;
 }
 
 void Enemy::UpdateAttackCollider()
@@ -426,7 +571,6 @@ void Enemy::UpdateAttackCollider()
 
 	attackDrawerObj.mTransform.UpdateMatrix();
 	attackDrawerObj.TransferBuffer(Camera::sNowCamera->mViewProjection);
-
 }
 
 void Enemy::DrawAttackCollider()

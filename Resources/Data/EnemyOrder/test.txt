@@ -1,0 +1,2 @@
+warningTime:3.0
+spawnTime:3.0

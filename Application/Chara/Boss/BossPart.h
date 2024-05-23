@@ -2,6 +2,8 @@
 #include "GameObject.h"
 #include "Easing.h"
 #include "BossPartState.h"
+#include "ColPrimitive3D.h"
+#include "WaxVisual.h"
 
 class Parts : public GameObject
 {
@@ -15,7 +17,13 @@ public:
 	Vector3 collectPos = {0,0,0};
 
 	Easing::EaseTimer collectTimer;	//回収されるまでの時間(参照できるように外で管理)
-
+	
+	//見た目用のロウ
+	std::vector<std::unique_ptr<WaxVisual>> waxVisual;
+	
+	//見た目用ロウのテストフラグ
+	bool isWaxVisualTest = false;
+	
 private:
 	//------------ HP関連 ------------//
 	Easing::EaseTimer mutekiTimer;			//無敵時間さん
@@ -45,6 +53,11 @@ private:
 	std::unique_ptr<BossPartState> nextState;
 	bool changingState = false;
 
+	const int32_t COLLIDER_NUM = 1;
+	std::array<ColPrimitive3D::Sphere, 1> waxVisualColliders;
+
+	Easing::EaseTimer createTimer = 0.25f;
+	
 public:
 	Parts();
 	~Parts();
@@ -62,6 +75,10 @@ public:
 	void SetMutekiMaxTime(float time) { mutekiTimer.maxTime_ = time; };
 
 	void DealDamage(int32_t damage);
+
+	void CreateWaxVisual(Vector3 spawnPos = {0,0,0});
+
+	void WaxVisualUpdate();
 
 	//状態変更
 	template <typename ChangePartState>

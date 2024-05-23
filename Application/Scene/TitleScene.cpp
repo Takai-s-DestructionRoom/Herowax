@@ -2,9 +2,11 @@
 #include "ProtoScene.h"
 #include "RInput.h"
 #include "SceneManager.h"
+#include "ParticleManager.h"
 #include "InstantDrawer.h"
 #include "SimpleSceneTransition.h"
 #include <RAudio.h>
+#include "LightObject.h"
 
 TitleScene::TitleScene()
 {
@@ -48,6 +50,10 @@ void TitleScene::Init()
 	floatingTimer.Reset();
 	flashingTimer.Reset();
 	cameraRotTimer.Reset();
+
+	ParticleManager::GetInstance()->Init();
+
+	SpotLightManager::GetInstance()->Init(&light);
 }
 
 void TitleScene::Update()
@@ -68,6 +74,8 @@ void TitleScene::Update()
 
 	Level::Get()->Update();
 
+	ParticleManager::GetInstance()->Update();
+
 	//F6かメニューボタン押されたらプロトシーンへ
 	bool button = RInput::GetInstance()->GetKeyDown(DIK_F6) ||
 		RInput::GetInstance()->GetKeyDown(DIK_SPACE) ||
@@ -84,11 +92,15 @@ void TitleScene::Update()
 	light.Update();
 
 	skydome.TransferBuffer(Camera::sNowCamera->mViewProjection);
+
+	SpotLightManager::GetInstance()->Imgui();
+	SpotLightManager::GetInstance()->Update();
 }
 
 void TitleScene::Draw()
 {
 	skydome.Draw();
+	SpotLightManager::GetInstance()->Draw();
 
 	Level::Get()->Draw();
 
@@ -96,24 +108,26 @@ void TitleScene::Draw()
 		titleLogoPos.x,
 		titleLogoPos.y + Easing::InQuad(floatingTimer.GetTimeRate()) * 15.f,
 		1.f, 1.f, 0.f, "title");
-	
-	InstantDrawer::DrawGraph(
+
+	/*InstantDrawer::DrawGraph(
 		320.f,
 		80.f,
-		0.6f, 0.6f, 0.f, "controller");
+		0.6f, 0.6f, 0.f, "controller");*/
 
 	if (flashingTimer.GetTimeRate() > 0.8f)
 	{
 		InstantDrawer::DrawGraph(
 			buttonUIPos.x, buttonUIPos.y,
-			0.8f, 0.8f, 0.f, TextureManager::Load("./Resources/UI/A_push.png", "AbuttonPush"));
+			0.12f, 0.12f, 0.f, TextureManager::Load("./Resources/UI/A_push.png", "AbuttonPush"));
 	}
 	else
 	{
 		InstantDrawer::DrawGraph(
 			buttonUIPos.x, buttonUIPos.y,
-			0.8f, 0.8f, 0.f, TextureManager::Load("./Resources/UI/A_normal.png", "Abutton"));
+			0.12f, 0.12f, 0.f, TextureManager::Load("./Resources/UI/A_normal.png", "Abutton"));
 	}
+
+	ParticleManager::GetInstance()->Draw();
 
 	//更新
 	InstantDrawer::AllUpdate();

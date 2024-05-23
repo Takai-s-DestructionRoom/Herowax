@@ -1,9 +1,10 @@
 #include "HomingParticle.h"
 #include "WaxManager.h"
 
-HomingParticle::HomingParticle(Vector3 targetPos)
+HomingParticle::HomingParticle(Vector3 targetPos, bool useSlimeWax)
 {
 	targetPos_ = targetPos;
+	isUseSlimeWax = useSlimeWax;
 }
 
 void HomingParticle::Init()
@@ -38,9 +39,11 @@ void HomingParticle::Update()
 			particle.scale = 0.f;
 		}
 
-		WaxManager::GetInstance()->slimeWax.spheres.emplace_back();
-		WaxManager::GetInstance()->slimeWax.spheres.back().collider.pos = particle.pos;
-		WaxManager::GetInstance()->slimeWax.spheres.back().collider.r = particle.scale;
+		if (isUseSlimeWax) {
+			WaxManager::GetInstance()->slimeWax.spheres.emplace_back();
+			WaxManager::GetInstance()->slimeWax.spheres.back().collider.pos = particle.pos;
+			WaxManager::GetInstance()->slimeWax.spheres.back().collider.r = particle.scale;
+		}
 	}
 
 	//頂点バッファへデータ転送
@@ -49,7 +52,7 @@ void HomingParticle::Update()
 	{
 		if (particles_.size() > i)
 		{
-			VertexParticle vertex;
+			VertexParticle3D vertex;
 
 			//座標
 			vertex.pos = particles_[i].pos;

@@ -94,6 +94,10 @@ void LevelLoader::ObjectLoad(LevelData& levelData,nlohmann::json& object)
 			objectData.behaviorOrder = object["behaviorOrder"];
 		}
 
+		if (object.contains("enemyOrder")) {
+			objectData.enemyOrder = object["enemyOrder"];
+		}
+
 		// JSONデータを文字列に変換
 		std::string jsonStr = object.dump();
 

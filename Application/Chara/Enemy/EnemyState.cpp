@@ -18,9 +18,14 @@ void EnemyNormal::Update(Enemy* enemy)
 	//減速率どちらも0%
 	enemy->SetSlowMag(0.f);
 	enemy->SetSlowCoatingMag(0.f);
-	enemy->SetStateStr("Normal");
+	enemy->SetStateStr(EnemyNormal::GetStateStr());
 
 	//ここからの遷移は当たり判定に任せる
+}
+
+std::string EnemyNormal::GetStateStr()
+{
+	return "Normal";
 }
 
 EnemySlow::EnemySlow()
@@ -30,10 +35,15 @@ EnemySlow::EnemySlow()
 
 void EnemySlow::Update(Enemy* enemy)
 {
-	enemy->SetStateStr("Slow");
+	enemy->SetStateStr(EnemySlow::GetStateStr());
 
 	//足とられた時の減速率はimguiでいじったものを基準とするのでここではいじらない
 	enemy->SetSlowCoatingMag(0.f);
+}
+
+std::string EnemySlow::GetStateStr()
+{
+	return "Slow";
 }
 
 EnemyAllStop::EnemyAllStop()
@@ -50,7 +60,7 @@ void EnemyAllStop::Update(Enemy* enemy)
 
 	enemy->solidTimer.Update();
 
-	enemy->SetStateStr("AllStop");
+	enemy->SetStateStr(EnemyAllStop::GetStateStr());
 
 	enemy->SetIsEscape(false);
 
@@ -76,6 +86,11 @@ void EnemyAllStop::Update(Enemy* enemy)
 	}
 }
 
+std::string EnemyAllStop::GetStateStr()
+{
+	return "AllStop";
+}
+
 EnemyBurning::EnemyBurning()
 {
 	priority = 1;
@@ -96,7 +111,7 @@ EnemyBurning::EnemyBurning()
 void EnemyBurning::Update(Enemy* enemy)
 {
 	timer.Update();
-	enemy->SetStateStr("Burning");
+	enemy->SetStateStr(EnemyBurning::GetStateStr());
 
 	enemy->SetSlowMag(1.f);
 	enemy->SetSlowCoatingMag(1.f);
@@ -131,6 +146,11 @@ void EnemyBurning::Update(Enemy* enemy)
 	}
 }
 
+std::string EnemyBurning::GetStateStr()
+{
+	return "Burning";
+}
+
 int32_t EnemyState::GetPriority()
 {
 	return priority;
@@ -152,7 +172,7 @@ void EnemyCollect::Update(Enemy* enemy)
 		isStart = false;
 		startPos = enemy->obj.mTransform.position;
 	}
-	enemy->SetStateStr("EnemyCollect");
+	enemy->SetStateStr(EnemyCollect::GetStateStr());
 
 	Vector3 now = OutQuadVec3(startPos, enemy->collectPos, enemy->collectTimer.GetTimeRate());
 	Vector3 old = OutQuadVec3(startPos, enemy->collectPos, oldTimeRate);
@@ -174,9 +194,14 @@ void EnemyCollect::Update(Enemy* enemy)
 	//到達したら殺す
 	if (enemy->collectTimer.GetEnd())
 	{
-		enemy->isAlive = false;
+		enemy->SetDeath();
 		accel = 0.f;
 
 		//enemyManager::GetInstance()->isCollected = true;
 	}
+}
+
+std::string EnemyCollect::GetStateStr()
+{
+	return "EnemyCollect";
 }

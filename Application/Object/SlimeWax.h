@@ -44,6 +44,11 @@ struct SlimeBuffer
 	float clipValue;
 
 	Float4 spheres[MAX_SPHERE_COUNT];
+
+	Float4 waxColor;
+	Float4 rimColor;
+	float rimPower;
+	float pad[3];
 };
 
 class SlimeWax : public GameObject
@@ -65,10 +70,11 @@ private:
 public:
 	std::vector<RandomSphere> spheres;		//シェーダーに送る球たち
 
+	Color waxColor = Color(0.8f, 0.6f, 0.35f, 1.0f);
+
 	Vector3 sphereCenter = {0,0,0};			//球の生成位置
 	Vector3 masterMoveVec = { 0,0,0 };		//これが動くとすべてのオブジェクトが動く
 private:
-
 	BillboardImage screen;			//球を映すスクリーンビルボード
 	//ModelObj cube;			//球を映すスクリーンビルボード
 	bool isPlaneDraw = false;	//テスト用 ビルボードを描画するか
@@ -80,7 +86,10 @@ private:
 	int32_t rayMatchNum = 16;	//1ピクセル当たりどのくらいレイを飛ばすか
 	float clipValue = 1.0f;		//計算結果がどのくらい近かったら描画するか
 								//(だいたいリムライトの強さと思ってもらって問題ない)
-	
+
+	Color rimColor = Color(1.5f, 1.5f, 1.5f, 1.0f);
+	float rimPower = 2;
+
 	int32_t changeNum = 0;
 
 	std::vector<Vector3> spline;

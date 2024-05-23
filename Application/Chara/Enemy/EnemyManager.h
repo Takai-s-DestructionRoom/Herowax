@@ -24,6 +24,8 @@ public:
 
 	bool isStop = false;
 
+	uint32_t collectNum;
+
 private:
 	uint32_t solidCombo;	//連続で固まった敵の数カウント(これが多いと抜け出すまでの時間減る)
 	uint32_t burningCombo;	//連続で燃えた敵の数カウント(これが多いと温度爆上げ↑)
@@ -68,6 +70,13 @@ private:
 	//攻撃していない時に敵と当たった場合でもダメージを入れる
 	bool isContactDamage = false;
 
+	//表示、非表示
+	bool tankSwitch = true;
+	bool bombSoliderSwitch = true;
+	
+	//敵の盾
+	int32_t shieldRequireWaxCount = 60;
+
 public:
 	static EnemyManager* GetInstance();
 
@@ -83,10 +92,8 @@ public:
 		enemys.back()->SetScale(scale);
 		enemys.back()->SetRota(rotation);
 		enemys.back()->SetBehaviorOrder(behaviorOrder);
+		enemys.back()->SetEnemyOrder("test");
 		enemys.back()->Init();
-
-		ParticleManager::GetInstance()->AddSimple(enemys.back()->GetPos(), "smoke_red");
-		ParticleManager::GetInstance()->AddSimple(enemys.back()->GetPos(), "smoke_black");
 	}
 
 	void CreateEnemyShot(Enemy* enemy);
