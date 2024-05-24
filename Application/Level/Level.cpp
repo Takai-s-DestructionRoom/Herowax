@@ -151,6 +151,10 @@ void Level::Extract(const std::string& handle)
 			wallCol.back().normal = normal.Normalize();
 			wallCol.back().distance = Vector2(wall.back().mTransform.position.x, wall.back().mTransform.position.z).Length();
 		}
+		if (objectData->setObjectName == "waveManage")
+		{
+			waveWaitTime = objectData->waveWaitTime;
+		}
 		//後ろに_Objがついているものであれば適用
 		//書式として[ハンドル名]+[_Obj]になっていないとエラーとなる
 		if (Util::ContainString(objectData->setObjectName, "_Obj"))

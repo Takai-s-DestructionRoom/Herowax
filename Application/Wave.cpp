@@ -2,109 +2,81 @@
 #include "SpawnerManager.h"
 #include "LevelLoader.h"
 #include "Level.h"
+#include "RImGui.h"
+#include "RInput.h"
+#include "EnemyManager.h"
 
-Wave::Wave() :
-	startPostponement(10),
-	endPostponement(10),
-	nowLevel(0),
-	waveTimer(0.0f),
-	transitionTimer(1.0f)
+WaveManager* WaveManager::Get()
 {
-	
+	static WaveManager instance;
+	return &instance;
 }
 
-void Wave::Load()
+void WaveManager::LoadLevelData()
 {
-	LevelLoader::Get()->Load("./Level/test.json", "test");
+	waves = {
+		"wave1",
+		"wave2",
+		"wave3",
+		"wave4",
+		"wave5",
+		"wave6",
+		"wave7",
+		"wave8",
+	};
 
-	levelFiles.push_back("test");
-	levelFiles.push_back("test");
-	levelFiles.push_back("test");
+	//ウェーブ読み込み
+	LevelLoader::Get()->Load("./Level/wave/wave1.json", waves[0]);
+	LevelLoader::Get()->Load("./Level/wave/wave2.json", waves[1]);
+	LevelLoader::Get()->Load("./Level/wave/wave3.json", waves[2]);
+	LevelLoader::Get()->Load("./Level/wave/wave4.json", waves[3]);
+	LevelLoader::Get()->Load("./Level/wave/wave5.json", waves[4]);
+	LevelLoader::Get()->Load("./Level/wave/wave6.json", waves[5]);
+	LevelLoader::Get()->Load("./Level/wave/wave7.json", waves[6]);
+	LevelLoader::Get()->Load("./Level/wave/wave8.json", waves[7]);
 }
 
-void Wave::Restart()
+void WaveManager::Update()
 {
-	isStartPost = false;
-	isEndPost = false;
-	isEndMain = false;
-	waveTimer.Start();
-}
+	waitTimer.Update();
 
-void Wave::SetWaveTime()
-{
-	spawnerMaxTime = 0;
-	for (auto& spawner : SpawnerManager::GetInstance()->spawners)
-	{
-		float spawnerTime = spawner.lifeTimer.maxTime_;
-		if (spawnerMaxTime <= spawnerTime) {
-			spawnerMaxTime = spawnerTime;
+	if (waitTimer.GetNowEnd()) {
+		
+		//敵全員を動かし始める
+		for (auto& enemy : EnemyManager::GetInstance()->enemys)
+		{
+			enemy->StartToMoving();
 		}
 	}
 
-	waveTimer.maxTime_ = spawnerMaxTime + startPostponement + endPostponement;
+	if (EnemyManager::GetInstance()->enemys.size() <= 0)
+	{
+		NextWave();
+	}
+
+	Imgui();
 }
 
-void Wave::Update()
+void WaveManager::Imgui()
 {
-	waveTimer.Update();
-	transitionTimer.Update();
-
-	//開始猶予を超えたら
-	if (GetStartPostponement()) {
-		//演出
-		
-	}
-
-	//終了時間の10秒前になったら
-	if (GetEndMainGame(10.f)) {
-		//カウントダウン演出
-
-	}
-
-	//終了猶予を超えたら
-	if (GetEndPostponement()) {
-		//演出
-
-
-		//遷移猶予開始
-		transitionTimer.Start();
-	}
-
-	//飛び上がり
-
-	//半分まで進んだタイミングで遷移
-	if (transitionTimer.GetTimeRate() > 0.5f) {
-		//次のウェーブ読み込み
-		nowLevel++;
-		nowLevel = Util::Clamp(nowLevel, 0, (int32_t)levelFiles.size());
-		//ここのハンドルをレベルに読み込ませる
-		Level::Get()->Extract(levelFiles[nowLevel]);
-	}
-
-	if (transitionTimer.GetEnd()) {
-		transitionTimer.Reset();
+	if (RImGui::showImGui) {
+		ImGui::Begin("WaveManager");
+		ImGui::Text("敵の数:%d", (int32_t)EnemyManager::GetInstance()->enemys.size());
+		ImGui::Text("waitTimer:%f", waitTimer.GetTimeRate());
+		if (ImGui::Button("敵を全消し(次のウェーブに進める)")) {
+			EnemyManager::GetInstance()->enemys.clear();
+		}
+		ImGui::End();
 	}
 }
 
-bool Wave::GetStartPostponement()
+void WaveManager::NextWave()
 {
-	if (isStartPost)return false;
-	isStartPost = true;
-	return waveTimer.nowTime_ < startPostponement;
-}
-
-bool Wave::GetEndPostponement()
-{
-	if (isEndPost)return false;
-	isEndPost = true;
-	return waveTimer.nowTime_ < 
-		endPostponement + spawnerMaxTime;
-}
-
-bool Wave::GetEndMainGame(float time)
-{
-	if (isEndMain)return false;
-	isEndMain = true;
-	return waveTimer.nowTime_ >= 
-		waveTimer.maxTime_ - endPostponement - time;
+	waveNum++;
+	if (waveNum >= MAX_NUM) {
+		waveNum = 0;
+	}
+	Level::Get()->Extract(waves[waveNum]);
+	waitTimer.maxTime_ = Level::Get()->waveWaitTime;
+	waitTimer.Start();
 }

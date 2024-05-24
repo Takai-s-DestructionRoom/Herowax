@@ -98,6 +98,10 @@ void LevelLoader::ObjectLoad(LevelData& levelData,nlohmann::json& object)
 			objectData.enemyOrder = object["enemyOrder"];
 		}
 
+		if (object.contains("waitTime")) {
+			objectData.waveWaitTime = (float)object["waitTime"];
+		}
+
 		// JSONデータを文字列に変換
 		std::string jsonStr = object.dump();
 

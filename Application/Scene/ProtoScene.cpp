@@ -23,6 +23,7 @@
 #include "Boss.h"
 #include "LightObject.h"
 #include "NumDrawer.h"
+#include "Wave.h"
 
 ProtoScene::ProtoScene()
 {
@@ -45,6 +46,8 @@ ProtoScene::ProtoScene()
 	ControlUI::LoadResource();
 	TimerUI::LoadResource();
 	NumDrawer::LoadResource();
+
+	WaveManager::Get()->LoadLevelData();
 }
 
 void ProtoScene::Init()
@@ -70,7 +73,7 @@ void ProtoScene::Init()
 	WaxManager::GetInstance()->Init();
 
 	//とりあえず最初のステージを設定しておく
-	Level::Get()->Extract("test");
+	Level::Get()->Extract("wave1");
 
 	EnemyManager::GetInstance()->SetTarget(&player.obj);
 
@@ -504,6 +507,7 @@ void ProtoScene::Update()
 
 	player.Update();
 	Boss::GetInstance()->Update();
+	WaveManager::Get()->Update();
 	Level::Get()->Update();
 
 	//敵同士の押し戻し

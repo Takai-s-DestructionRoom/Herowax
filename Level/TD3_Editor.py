@@ -176,6 +176,16 @@ class MYADDON_OT_add_enemyOrder(bpy.types.Operator):
 
 		return {"FINISHED"}
 
+class MYADDON_OT_add_waitTime(bpy.types.Operator):
+	bl_idname = "myaddon.myaddon_ot_add_waittime"
+	bl_label = "ウェーブが始まるまでの待ち時間 追加"
+	bl_description = "['ウェーブが始まるまでの待ち時間']カスタムプロパティを追加します"
+	bl_options = {"REGISTER","UNDO"}
+
+	def execute(self,context):
+		context.object["waitTime"] = mathutils.Vector((0.0))
+		return {"FINISHED"}
+
 #コライダーを追加するクラス
 class MYADDON_OT_add_collider(bpy.types.Operator):
 	bl_idname = "myaddon.myaddon_ot_add_collider"
@@ -249,6 +259,20 @@ class OBJECT_PT_enemyOrder(bpy.types.Panel):
 		if "enemyOrder" in context.object:
 			#すでにプロパティがあれば、プロパティを表示
 			self.layout.prop(context.object,'["enemyOrder"]',text=self.bl_label)
+
+class OBJECT_PT_waitTime(bpy.types.Panel):
+	"""オブジェクトのファイルネームパネル"""
+	bl_idname = "OBJECT_PT_waitTime"
+	bl_label = "waitTime"
+	bl_space_type = "PROPERTIES"
+	bl_region_type = "WINDOW"
+	bl_context = "object"
+
+	#サブメニューの描画
+	def draw(self,context):
+		if "waitTime" in context.object:
+			#すでにプロパティがあれば、プロパティを表示
+			self.layout.prop(context.object,'["waitTime"]',text=self.bl_label)
 
 class MYADDON_OT_export_scene(bpy.types.Operator,bpy_extras.io_utils.ExportHelper):
 	bl_idname = "myaddon.myaddon_ot_export_scene"
@@ -352,6 +376,9 @@ class MYADDON_OT_export_scene(bpy.types.Operator,bpy_extras.io_utils.ExportHelpe
 
 		if "enemyOrder" in object:
 			json_object["enemyOrder"] = object["enemyOrder"]
+
+		if "waitTime" in object:
+			json_object["waitTime"] = object["waitTime"]
 
 		#1個分のjsonオブジェクトを親オブジェクトに登録
 		data_parent.append(json_object)
@@ -502,6 +529,39 @@ class MYADDON_OT_Ground(bpy.types.Operator):
 		#オペレータの命令終了を通知
 		return {'FINISHED'}
 
+#
+class MYADDON_OT_WaitTime(bpy.types.Operator):
+	bl_idname = "myaddon.myaddon_ot_waittime"
+	bl_label = "ウェーブ管理オブジェクトを作成"
+	bl_description = "ウェーブ管理オブジェクトを3Dカーソルの位置に作成します。"
+	bl_options = {'REGISTER','UNDO'}
+
+	#メニューを実行した時に呼ばれる関数
+	def execute(self,context):
+		path = bpy.data.filepath
+		
+		print("path = " + path)
+
+		dirpath = os.path.dirname(path)
+		objpath = dirpath + "\Resources\Cube.obj"
+		print("objpath = " + objpath)
+		bpy.ops.wm.obj_import(filepath=objpath)
+
+		import_obj = bpy.context.selected_objects[0]
+		import_obj['setObject'] = 'waveManage'
+		
+		#軸変換による余計な回転が入っているので適用して解除
+		bpy.ops.object.transform_apply(rotation=True)
+		
+		import_obj['waitTime'] = 0.0
+
+		import_obj.name = "ウェーブ管理オブジェクト"
+
+		import_obj.location = context.scene.cursor.location
+		import_obj.scale = mathutils.Vector((1,1,1))
+
+		return {'FINISHED'}
+
 #トップバーの拡張メニュー
 class TOPBAR_MT_editor_menu(bpy.types.Menu):
 	bl_idname = "TOPBAR_MT_editor_menu"
@@ -520,6 +580,8 @@ class TOPBAR_MT_editor_menu(bpy.types.Menu):
 		       text=MYADDON_OT_Ground.bl_label)
 		self.layout.operator(MYADDON_OT_SetEnemy.bl_idname,
 		       text=MYADDON_OT_SetEnemy.bl_label)
+		self.layout.operator(MYADDON_OT_WaitTime.bl_idname,
+		       text=MYADDON_OT_WaitTime.bl_label)
 
 	def submenu(self,context):
 		self.layout.menu(TOPBAR_MT_editor_menu.bl_idname)
@@ -541,6 +603,9 @@ classes = (
 	MYADDON_OT_Birdnest,
 	MYADDON_OT_Ground,
 	MYADDON_OT_SetEnemy,
+	MYADDON_OT_WaitTime,
+	MYADDON_OT_add_waitTime,
+	OBJECT_PT_waitTime,
 )
 
 def register():
