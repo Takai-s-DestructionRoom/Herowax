@@ -43,12 +43,13 @@ moveSpeed(0.1f), hp(0), maxHP(10.f), oriSize(6.f)
 
 	for (size_t i = 0; i < fallParts.size(); i++)
 	{
-		fallParts[i].obj = PaintableModelObj(Model::Load("./Resources/Model/Sphere.obj", "Sphere", true));
+		fallParts[i].obj = PaintableModelObj(Model::Load("./Resources/Model/Meteor/Meteor.obj", "Meteor", true));
 		fallParts[i].obj.mTransform.scale = { 10.f,10.f,10.f };
-		fallParts[i].warning = PaintableModelObj(Model::Load("./Resources/Model/wax/wax.obj", "wax", true));
-		fallParts[i].warning.mTransform.scale = { 10.f,1.f,10.f };
-		fallParts[i].warning.mTuneMaterial.mColor = Color::kRed;
-		fallParts[i].warning.mTuneMaterial.mColor.a = 0.7f;
+		fallParts[i].warning = Image3D(TextureManager::Load("./Resources/meteorWarning.png", "meteorWarning"), { 2.f,2.f });
+		fallParts[i].warning.mTransform.rotation = {Util::AngleToRadian(90.f),0.f,0.f };
+		fallParts[i].warning.mBlendMode = Image3D::BlendMode::TransparentAlpha;
+		fallParts[i].warning.mMaterial.mColor = Color::kRed;
+		fallParts[i].warning.mMaterial.mColor.a = 0.6f;
 	}
 
 	BossUI::LoadResource();
