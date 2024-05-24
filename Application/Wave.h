@@ -44,5 +44,7 @@ private:
 	int32_t enemyNum = 0;
 
 	Easing::EaseTimer waitTimer = 1.0f;
+
+	bool zeroFlag = false;
 };
 

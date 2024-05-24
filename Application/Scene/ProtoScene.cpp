@@ -680,7 +680,7 @@ void ProtoScene::Update()
 	}
 
 	controlUI.Update();
-	bossAppTimerUI.Imgui();
+	//bossAppTimerUI.Imgui();
 	bossAppTimerUI.Update();
 	
 #pragma region ImGui

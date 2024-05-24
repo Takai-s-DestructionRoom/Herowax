@@ -765,7 +765,7 @@ void Player::Avoidance()
 	//}
 
 	//ボタンを押したら
-	if (RInput::GetPadButtonDown(XINPUT_GAMEPAD_A) &&
+	if ((RInput::GetPadButtonDown(XINPUT_GAMEPAD_A)|| RInput::GetKeyUp(DIK_X)) &&
 		!avoidTimer.GetRun()) {
 		//特定方向へ加速を加算
 
