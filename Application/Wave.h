@@ -33,7 +33,7 @@ private:
 	WaveManager() {};
 	~WaveManager() {};
 private:
-	int32_t debugNum = 0;
+	int32_t debugNum = 1;
 
 	std::vector<std::string> waves;
 
