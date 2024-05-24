@@ -53,29 +53,49 @@ void BossAI::Update(Boss* boss)
 		//待機モーションから遷移した場合
 		if (isStand)
 		{
-			if (situation == BossSituation::All) {
-				int32_t num = Util::GetRand(1, 100);	//確率用
+			int32_t num = Util::GetRand(1, 100);	//確率用
+			//int32_t maxDist = 
+			//int32_t dist = 
 
+			if (situation == BossSituation::All) {
 				//パンチに移行
-				//50%で右パンチ50%で左パンチ
-				if (num > 50)
+				//40%で右パンチ40%で左パンチ20%で落下攻撃
+				if (num > 40)
+				{
+					boss->state = std::make_unique<BossPunch>(true);
+				}
+				else if (num > 80)
+				{
+					boss->state = std::make_unique<BossPunch>(false);
+				}
+				else
+				{
+					boss->state = std::make_unique<BossFallAttack>();
+				}
+				return;
+			}
+			//左しか残ってないなら70%左パンチ
+			if (situation == BossSituation::OnlyLeft) {
+				if (num > 70)
 				{
 					boss->state = std::make_unique<BossPunch>(true);
 				}
 				else
 				{
-					boss->state = std::make_unique<BossPunch>(false);
+					boss->state = std::make_unique<BossFallAttack>();
 				}
-				return;
-			}
-			//左しか残ってないなら左パンチ
-			if (situation == BossSituation::OnlyLeft) {
-				boss->state = std::make_unique<BossPunch>(true);
 				return;
 			}
 			//右しか残ってないなら右パンチ
 			if (situation == BossSituation::OnlyRight) {
-				boss->state = std::make_unique<BossPunch>(false);
+				if (num > 70)
+				{
+					boss->state = std::make_unique<BossPunch>(false);
+				}
+				else
+				{
+					boss->state = std::make_unique<BossFallAttack>();
+				}
 				return;
 			}
 			//腕が無いなら待機モーションへ(今後別モーションへの遷移など実装)

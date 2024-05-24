@@ -60,6 +60,7 @@ moveSpeed(0.1f), hp(0), maxHP(10.f), oriSize(6.f)
 
 	standTimer = Parameter::GetParam(extract, "モーション待機時間", 3.f);
 	punchTimer = Parameter::GetParam(extract, "パンチにかかる時間", 0.7f);
+	punchImpactTimer = Parameter::GetParam(extract, "パンチの当たり判定有効時間", 0.2f);
 	punchStayTimer = Parameter::GetParam(extract, "パンチ後留まる時間", 1.5f);
 
 	fallAtkShoutTimer = Parameter::GetParam(extract, "さけぶ時間", 2.f);
@@ -108,6 +109,7 @@ void Boss::Init()
 
 	standTimer.Reset();
 	punchTimer.Reset();
+	punchImpactTimer.Reset();
 	punchStayTimer.Reset();
 
 	isAppearance = false;
@@ -333,6 +335,7 @@ void Boss::Update()
 			ImGui::InputFloat("無敵時間", &mutekiTimer.maxTime_, 0.1f);
 			ImGui::InputFloat("モーション待機時間", &standTimer.maxTime_, 0.1f);
 			ImGui::InputFloat("パンチにかかる時間", &punchTimer.maxTime_, 0.1f);
+			ImGui::InputFloat("パンチの当たり判定有効時間", &punchImpactTimer.maxTime_, 0.1f);
 			ImGui::InputFloat("パンチ後留まる時間", &punchStayTimer.maxTime_, 0.1f);
 			ImGui::InputFloat("バリア割れるまでの時間", &barrierCrushTimer.maxTime_, 0.1f);
 			if (ImGui::TreeNode("調整項目_落下攻撃")) {
@@ -382,6 +385,7 @@ void Boss::Update()
 			Parameter::Save("右手スケールZ", parts[(int32_t)PartsNum::RightHand].obj.mTransform.scale.z);
 			Parameter::Save("モーション待機時間", standTimer.maxTime_);
 			Parameter::Save("パンチにかかる時間", punchTimer.maxTime_);
+			Parameter::Save("パンチの当たり判定有効時間", punchImpactTimer.maxTime_);
 			Parameter::Save("パンチ後留まる時間", punchStayTimer.maxTime_);
 			Parameter::Save("ボスが出現するまでの時間", bossSpawnTimer.maxTime_);
 			Parameter::Save("さけぶ時間", fallAtkShoutTimer.maxTime_);

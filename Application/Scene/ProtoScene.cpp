@@ -202,7 +202,7 @@ void ProtoScene::Update()
 		if (player.GetWaxWall()) {
 			if (ColPrimitive3D::CheckSphereToSphere(Boss::GetInstance()->parts[i].collider,
 				player.GetWaxWall()->collider) &&
-				Boss::GetInstance()->punchTimer.GetRun())
+				Boss::GetInstance()->punchImpactTimer.GetRun())
 			{
 				while (ColPrimitive3D::CheckSphereToSphere(Boss::GetInstance()->parts[i].collider,
 					player.GetWaxWall()->collider))
@@ -259,7 +259,7 @@ void ProtoScene::Update()
 			player.collider))
 		{
 			//パンチタイマー進行中のみダメージ
-			if (Boss::GetInstance()->punchTimer.GetRun())
+			if (Boss::GetInstance()->punchImpactTimer.GetRun())
 			{
 				//1ダメージ(どっかに参照先作るべき)
 				player.DealDamage(Boss::GetInstance()->GetDamage());
@@ -324,7 +324,7 @@ void ProtoScene::Update()
 			{
 				//腕との判定
 				isCollision = ColPrimitive3D::CheckSphereToSphere(Boss::GetInstance()->parts[i].collider, wax->collider);
-				if (isCollision && wax->isSolid == false && wax->isGround == false)
+				if (isCollision && (wax->stateStr == WaxCollect::GetStateStr() || (wax->isSolid == false && wax->isGround == false)))
 				{
 					//一応1ダメージ(ダメージ量に応じてロウのかかり具合も進行)
 					Boss::GetInstance()->parts[i].DealDamage(player.GetAttackPower());

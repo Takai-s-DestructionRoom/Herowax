@@ -34,11 +34,21 @@ void BossFallAttack::Update(Boss* boss)
 		{
 			//地面より下に
 			boss->fallParts[i].obj.mTransform.position.y = -boss->fallParts[i].obj.mTransform.scale.y * 2.f;
-			//ランダムに配置
-			float dist = Util::GetRand(boss->obj.mTransform.scale.x,boss->fallRange);	//生成距離
-			float angle = Util::AngleToRadian(Util::GetRand(0.f,360.f));				//生成角度
+
+			//ある程度ランダムに配置
+			float dist = Util::GetRand(boss->obj.mTransform.scale.x + boss->fallPartsSize, boss->fallRange);	//生成距離
+			float ang = 360.f / (float)(partsNum);
+			float angle = Util::AngleToRadian(Util::GetRand(ang * (float)(i - 1), ang * (float)i));				//生成角度
 
 			Vector2 pos = Vector2(1, 1).Rotation(angle) * dist;
+
+			//最初の一個目は必ずプレイヤーの位置に出るように
+			if (i == 0)
+			{
+				pos =
+				{ boss->GetTarget()->mTransform.position.x,
+				boss->GetTarget()->mTransform.position.z };
+			}
 
 			boss->fallParts[i].obj.mTransform.position.x = pos.x;
 			boss->fallParts[i].obj.mTransform.position.z = pos.y;
@@ -46,8 +56,8 @@ void BossFallAttack::Update(Boss* boss)
 			boss->fallParts[i].warning.mTransform.position = boss->fallParts[i].obj.mTransform.position;
 			boss->fallParts[i].warning.mTransform.position.y = 0.f;
 
-			boss->fallParts[i].obj.mTransform.scale = Vector3(1,1,1) * boss->fallPartsSize;
-			boss->fallParts[i].warning.mTransform.scale = Vector3(1,0.1f,1) * boss->fallPartsSize;
+			boss->fallParts[i].obj.mTransform.scale = Vector3(1, 1, 1) * boss->fallPartsSize;
+			boss->fallParts[i].warning.mTransform.scale = Vector3(1, 0.1f, 1) * boss->fallPartsSize;
 		}
 
 		isStart = false;
