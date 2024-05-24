@@ -7,6 +7,7 @@
 #include "BossUI.h"
 #include "BossAI.h"
 #include "BossPart.h"
+#include "Image3D.h"
 #include <array>
 
 enum class PartsNum
@@ -20,7 +21,7 @@ enum class PartsNum
 class FallParts : public GameObject
 {
 public:
-	ModelObj warning;		//警告
+	Image3D warning;		//警告
 
 	FallParts();
 	~FallParts();

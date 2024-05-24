@@ -120,6 +120,7 @@ Image3D::Image3D()
 Image3D::Image3D(TextureHandle texture, Vector2 size, bool forceSize)
 {
 	mTexture = texture;
+	Texture tex = TextureManager::Get(texture);
 
 	if (forceSize) {
 		mSize.x = size.x;
@@ -127,10 +128,13 @@ Image3D::Image3D(TextureHandle texture, Vector2 size, bool forceSize)
 	}
 	else {
 		mImageScale = size;
-		Texture tex = TextureManager::Get(texture);
+		
 		mSize.x = tex.mResource->GetDesc().Width / (float)tex.mResource->GetDesc().Height * mImageScale.x;
 		mSize.y = mImageScale.y;
 	}
+
+	mSrcPos = { 0, 0 };
+	mTexRect = { static_cast<float>(tex.mResource->GetDesc().Width), static_cast<float>(tex.mResource->GetDesc().Height) };
 
 	Init();
 }

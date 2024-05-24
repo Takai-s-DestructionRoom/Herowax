@@ -54,10 +54,10 @@ void BossFallAttack::Update(Boss* boss)
 			boss->fallParts[i].obj.mTransform.position.z = pos.y;
 
 			boss->fallParts[i].warning.mTransform.position = boss->fallParts[i].obj.mTransform.position;
-			boss->fallParts[i].warning.mTransform.position.y = 0.f;
+			boss->fallParts[i].warning.mTransform.position.y = 0.5f;
 
 			boss->fallParts[i].obj.mTransform.scale = Vector3(1, 1, 1) * boss->fallPartsSize;
-			boss->fallParts[i].warning.mTransform.scale = Vector3(1, 0.1f, 1) * boss->fallPartsSize;
+			boss->fallParts[i].warning.mTransform.scale = Vector3(1, 1, 1) * boss->fallPartsSize;
 		}
 
 		isStart = false;
@@ -75,6 +75,8 @@ void BossFallAttack::Update(Boss* boss)
 					maxHight,
 					boss->fallAtkShoutTimer.GetTimeRate());
 		}
+
+		//叫ぶ音
 	}
 	//叫び終わったら
 	else if (boss->fallAtkShoutTimer.GetEnd() && boss->fallAtkTimer.GetStarted() == false)
@@ -95,6 +97,8 @@ void BossFallAttack::Update(Boss* boss)
 			if (boss->fallParts[i].warning.mTransform.position.y > boss->fallParts[i].obj.mTransform.position.y)
 			{
 				boss->fallParts[i].warning.mTransform.position.y = boss->fallParts[i].obj.mTransform.position.y;
+
+				//落ちた時の音(既になってるなら重複して鳴らさない)
 			}
 		}
 	}
