@@ -485,7 +485,7 @@
                 ]
             },
             "setObject": "waveManage",
-            "waitTime": 5.000003337860107
+            "waitTime": 0.0
         }
     ]
 }
