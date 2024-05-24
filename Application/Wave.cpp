@@ -66,6 +66,12 @@ void WaveManager::Imgui()
 		if (ImGui::Button("敵を全消し(次のウェーブに進める)")) {
 			EnemyManager::GetInstance()->enemys.clear();
 		}
+
+		ImGui::SliderInt("ウェーブを指定する", &debugNum, 1, MAX_NUM);
+		if (ImGui::Button("指定したウェーブへ移動")) {
+			MoveWave(debugNum - 1);
+		}
+
 		ImGui::End();
 	}
 }
@@ -77,6 +83,13 @@ void WaveManager::NextWave()
 		waveNum = 0;
 	}
 	Level::Get()->Extract(waves[waveNum]);
+	waitTimer.maxTime_ = Level::Get()->waveWaitTime;
+	waitTimer.Start();
+}
+
+void WaveManager::MoveWave(int32_t moveNum)
+{
+	Level::Get()->Extract(waves[moveNum]);
 	waitTimer.maxTime_ = Level::Get()->waveWaitTime;
 	waitTimer.Start();
 }

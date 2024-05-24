@@ -72,9 +72,6 @@ void ProtoScene::Init()
 
 	WaxManager::GetInstance()->Init();
 
-	//とりあえず最初のステージを設定しておく
-	Level::Get()->Extract("wave1");
-
 	EnemyManager::GetInstance()->SetTarget(&player.obj);
 
 	//Minimap::GetInstance()->Init();
@@ -100,6 +97,9 @@ void ProtoScene::Init()
 	bossAppTimerUI.Start();
 
 	SpotLightManager::GetInstance()->Init(&light);
+
+	//1ウェーブを読み込む
+	WaveManager::Get()->NextWave();
 }
 
 void ProtoScene::Update()
