@@ -358,6 +358,15 @@
     <Filter Include="ヘッダー ファイル\Application\Object\WaxWall">
       <UniqueIdentifier>{e00a976e-7a8e-4d92-be64-400381aba64a}</UniqueIdentifier>
     </Filter>
+    <Filter Include="ソース ファイル\Application\MetaBall2D">
+      <UniqueIdentifier>{8ff5eb40-b1c7-4b41-9c0a-98b999547e79}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="シェーダー ファイル\MetaballRenderer">
+      <UniqueIdentifier>{a048cb5f-3597-4622-ab43-47a88290c944}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\Application\Metaball2D">
+      <UniqueIdentifier>{93c68cb2-6afc-49b9-b52d-f93cee47f764}</UniqueIdentifier>
+    </Filter>
     <Filter Include="シェーダー ファイル\TankWater">
       <UniqueIdentifier>{b2dd8dfd-7d42-4483-95fe-e994fddfc039}</UniqueIdentifier>
     </Filter>
@@ -542,9 +551,6 @@
     </ClCompile>
     <ClCompile Include="Engine\Math\Float4.cpp">
       <Filter>ソース ファイル\Engine\Math</Filter>
-    </ClCompile>
-    <ClCompile Include="main.cpp">
-      <Filter>ソース ファイル\Application</Filter>
     </ClCompile>
     <ClCompile Include="Engine\PostEffect\MultiRenderTest.cpp">
       <Filter>ソース ファイル\Engine\PostEffect</Filter>
@@ -861,6 +867,12 @@
     <ClCompile Include="Engine\Particle\DirectionalParticle.cpp">
       <Filter>ソース ファイル\Engine\Particle</Filter>
     </ClCompile>
+    <ClCompile Include="Application\MetaBall2D.cpp">
+      <Filter>ソース ファイル\Application\MetaBall2D</Filter>
+    </ClCompile>
+    <ClCompile Include="main.cpp">
+      <Filter>ソース ファイル\Engine</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Shader\Basic\BasicPS.hlsl">
@@ -1080,6 +1092,8 @@
     <FxCompile Include="Shader\SlimeShader\WaxShader3VS.hlsl">
       <Filter>シェーダー ファイル\SlimeShader</Filter>
     </FxCompile>
+    <FxCompile Include="Shader\MetaballRenderer\MetaballRendererPS.hlsl" />
+    <FxCompile Include="Shader\MetaballRenderer\MetaballRendererVS.hlsl" />
     <FxCompile Include="Shader\TankWater\TankWaterPS.hlsl">
       <Filter>シェーダー ファイル\TankWater</Filter>
     </FxCompile>
@@ -1610,6 +1624,9 @@
     <ClInclude Include="Engine\Particle\DirectionalParticle.h">
       <Filter>ヘッダー ファイル\Engine\Particle</Filter>
     </ClInclude>
+    <ClInclude Include="Application\MetaBall2D.h">
+      <Filter>ヘッダー ファイル\Application\Metaball2D</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="Shader\Bloom\Bloom.hlsli">
@@ -1712,6 +1729,7 @@
     <None Include="Shader\SlimeShader\WaxShader3.hlsli">
       <Filter>シェーダー ファイル\SlimeShader</Filter>
     </None>
+    <None Include="Shader\MetaballRenderer\MetaballRenderer.hlsli" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="hogehoge.txt" />

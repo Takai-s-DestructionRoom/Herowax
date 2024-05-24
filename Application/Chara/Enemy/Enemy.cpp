@@ -99,7 +99,6 @@ void Enemy::BaseUpdate()
 		warningColor.a = Easing::OutQuad(0.f,1.f, warningRoop.GetTimeRate());
 	}
 
-
 	if (spawnTimer.GetNowEnd()) {
 		//パーティクル出現
 		ParticleManager::GetInstance()->AddSimple(obj.mTransform.position, "smoke_red");
@@ -464,6 +463,10 @@ void Enemy::WaxVisualUpdate()
 	}
 }
 
+void Enemy::StartToMoving()
+{
+	warningTimer.Start();
+}
 
 void Enemy::DealDamage(uint32_t damage, const Vector3& dir, ModelObj* target_)
 {
@@ -554,8 +557,6 @@ void Enemy::SetEnemyOrder(const std::string& order)
 
 	spawnTimer = data.spawnTime;
 	warningTimer = data.warningTime;
-
-	warningTimer.Start();
 
 	warningRoop.maxTime_ = spawnTimer.maxTime_ / 4;
 }

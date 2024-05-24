@@ -195,7 +195,7 @@ void Player::Update()
 		}
 
 		//回避
-		//Avoidance();
+		Avoidance();
 	}
 
 	//攻撃ボタン入力中で、実際にロウが出せたら攻撃フラグを立てる
@@ -792,7 +792,7 @@ void Player::Avoidance()
 	//}
 
 	//ボタンを押したら
-	if (RInput::GetPadButtonDown(XINPUT_GAMEPAD_RIGHT_SHOULDER) &&
+	if ((RInput::GetPadButtonDown(XINPUT_GAMEPAD_A)|| RInput::GetKeyDown(DIK_X)) &&
 		!avoidTimer.GetRun()) {
 		//特定方向へ加速を加算
 
@@ -1253,7 +1253,7 @@ void Player::ShieldUp()
 	waxWall.obj.mTransform.rotation = Quaternion::LookAt(frontVec).ToEuler();
 	waxWall.obj.mTransform.rotation.y += Util::AngleToRadian(-90.f);
 
-	if (RInput::GetInstance()->GetPadButtonDown(XINPUT_GAMEPAD_LEFT_SHOULDER) || 
+	if (RInput::GetInstance()->GetPadButtonDown(XINPUT_GAMEPAD_X) ||
 		RInput::GetKeyDown(DIK_Z)) {
 		//パリィ状態でなければ出現
 		if (!waxWall.GetParry()) {
@@ -1267,7 +1267,7 @@ void Player::ShieldUp()
 	}
 
 	//毎フレーム放してるかチェック
-	if (RInput::GetInstance()->GetPadButtonUp(XINPUT_GAMEPAD_LEFT_SHOULDER) || RInput::GetKeyUp(DIK_Z)) {
+	if (RInput::GetInstance()->GetPadButtonUp(XINPUT_GAMEPAD_X) || RInput::GetKeyUp(DIK_Z)) {
 		//離したら終了
 		waxWall.End();
 	}

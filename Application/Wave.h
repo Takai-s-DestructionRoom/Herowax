@@ -2,46 +2,49 @@
 #include <vector>
 #include <string>
 #include <Easing.h>
+#include <LevelData.h>
 
 class Wave
 {
 public:
-	//使用するレベルデータたち
-	std::vector<std::string> levelFiles;
-
-	int32_t nowLevel;	//現在参照しているレベル
-
 	//開始の猶予時間
-	float startPostponement;
+	float startPostponement = 0.0f;
+	//読み込むレベルデータのハンドル
+	std::string handle = "";
+};
 
-	//終了の猶予時間
-	float endPostponement;
-
-	//合計時間
-	Easing::EaseTimer waveTimer;
-
-	//遷移する時間
-	Easing::EaseTimer transitionTimer;
-
-private:
-	float spawnerMaxTime = 0;
-
-	bool isStartPost = false;
-	bool isEndPost = false;
-	bool isEndMain = false;
-
+class WaveManager
+{
 public:
-	Wave();
+	static WaveManager* Get();
 
-	void Load();
+	//レベルデータを先に読み込んでおく
+	void LoadLevelData();
 
-	void Restart();
-	void SetWaveTime();
-	
 	void Update();
 
-	bool GetStartPostponement();
-	bool GetEndPostponement();
-	bool GetEndMainGame(float time);
+	void Imgui();
+
+	//ウェーブを進める関数
+	void NextWave();
+	void MoveWave(int32_t moveNum);
+
+private:
+	WaveManager() {};
+	~WaveManager() {};
+private:
+	int32_t debugNum = 1;
+
+	std::vector<std::string> waves;
+
+	int32_t waveNum = -1;
+	const int32_t MAX_NUM = 8;
+
+	//倒す敵の数(読み込み時に敵を数える)
+	int32_t enemyNum = 0;
+
+	Easing::EaseTimer waitTimer = 1.0f;
+
+	bool zeroFlag = false;
 };
 

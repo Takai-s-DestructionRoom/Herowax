@@ -12,20 +12,19 @@ BossPunch::BossPunch(bool isLeft)
 
 	isLeft_ = isLeft;
 	isStart = true;
-
-	RAudio::Load("Resources/Sounds/SE/E_punch.wav", "Punch");
-	RAudio::Load("Resources/Sounds/SE/E_attention.wav", "Attention");
 }
 
 void BossPunch::Update(Boss* boss)
 {
 	boss->SetStateStr("Punch");	//ステートがわかるように設定しとく
 	boss->punchTimer.Update();
+	boss->punchImpactTimer.Update();
 	boss->punchStayTimer.Update();
 
 	if (isStart)
 	{
 		boss->punchTimer.Reset();
+		boss->punchImpactTimer.Reset();
 		boss->punchStayTimer.Reset();
 
 		boss->punchTimer.Start();
@@ -86,6 +85,20 @@ void BossPunch::Update(Boss* boss)
 	//euler軸へ変換
 	boss->parts[(size_t)isLeft_].obj.mTransform.rotation = aLookat.ToEuler();
 	boss->obj.mTransform.rotation = aLookat.ToEuler();
+
+	if (boss->punchTimer.GetEnd() && boss->punchImpactTimer.GetStarted() == false)
+	{
+		boss->punchImpactTimer.Start();
+	}
+
+	if (boss->punchImpactTimer.GetRun())
+	{
+		boss->parts[(size_t)isLeft_].obj.mTuneMaterial.mColor = Color::kRed;
+	}
+	else if (boss->punchImpactTimer.GetEnd())
+	{
+		boss->parts[(size_t)isLeft_].obj.mTuneMaterial.mColor = Color::kWhite;
+	}
 
 	if (boss->punchTimer.GetEnd() && boss->punchStayTimer.GetStarted() == false)
 	{

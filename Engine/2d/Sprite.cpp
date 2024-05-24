@@ -136,6 +136,7 @@ std::vector<RenderOrder> Sprite::GetRenderOrder()
 	order.indexBuff = mIndexBuff;
 	order.indexCount = 6;
 
+
 	order.rootData = {
 		{TextureManager::Get(mTexture).mGpuHandle},
 		{RootDataType::SRBUFFER_CBV, mMaterialBuff.mBuff},

@@ -43,12 +43,13 @@ moveSpeed(0.1f), hp(0), maxHP(10.f), oriSize(6.f)
 
 	for (size_t i = 0; i < fallParts.size(); i++)
 	{
-		fallParts[i].obj = PaintableModelObj(Model::Load("./Resources/Model/Sphere.obj", "Sphere", true));
+		fallParts[i].obj = PaintableModelObj(Model::Load("./Resources/Model/Meteor/Meteor.obj", "Meteor", true));
 		fallParts[i].obj.mTransform.scale = { 10.f,10.f,10.f };
-		fallParts[i].warning = PaintableModelObj(Model::Load("./Resources/Model/wax/wax.obj", "wax", true));
-		fallParts[i].warning.mTransform.scale = { 10.f,1.f,10.f };
-		fallParts[i].warning.mTuneMaterial.mColor = Color::kRed;
-		fallParts[i].warning.mTuneMaterial.mColor.a = 0.7f;
+		fallParts[i].warning = Image3D(TextureManager::Load("./Resources/meteorWarning.png", "meteorWarning"), { 2.f,2.f });
+		fallParts[i].warning.mTransform.rotation = {Util::AngleToRadian(90.f),0.f,0.f };
+		fallParts[i].warning.mBlendMode = Image3D::BlendMode::TransparentAlpha;
+		fallParts[i].warning.mMaterial.mColor = Color::kRed;
+		//fallParts[i].warning.mMaterial.mColor.a = 0.6f;
 	}
 
 	BossUI::LoadResource();
@@ -60,6 +61,7 @@ moveSpeed(0.1f), hp(0), maxHP(10.f), oriSize(6.f)
 
 	standTimer = Parameter::GetParam(extract, "モーション待機時間", 3.f);
 	punchTimer = Parameter::GetParam(extract, "パンチにかかる時間", 0.7f);
+	punchImpactTimer = Parameter::GetParam(extract, "パンチの当たり判定有効時間", 0.2f);
 	punchStayTimer = Parameter::GetParam(extract, "パンチ後留まる時間", 1.5f);
 
 	fallAtkShoutTimer = Parameter::GetParam(extract, "さけぶ時間", 2.f);
@@ -108,6 +110,7 @@ void Boss::Init()
 
 	standTimer.Reset();
 	punchTimer.Reset();
+	punchImpactTimer.Reset();
 	punchStayTimer.Reset();
 
 	isAppearance = false;
@@ -333,6 +336,7 @@ void Boss::Update()
 			ImGui::InputFloat("無敵時間", &mutekiTimer.maxTime_, 0.1f);
 			ImGui::InputFloat("モーション待機時間", &standTimer.maxTime_, 0.1f);
 			ImGui::InputFloat("パンチにかかる時間", &punchTimer.maxTime_, 0.1f);
+			ImGui::InputFloat("パンチの当たり判定有効時間", &punchImpactTimer.maxTime_, 0.1f);
 			ImGui::InputFloat("パンチ後留まる時間", &punchStayTimer.maxTime_, 0.1f);
 			ImGui::InputFloat("バリア割れるまでの時間", &barrierCrushTimer.maxTime_, 0.1f);
 			if (ImGui::TreeNode("調整項目_落下攻撃")) {
@@ -382,6 +386,7 @@ void Boss::Update()
 			Parameter::Save("右手スケールZ", parts[(int32_t)PartsNum::RightHand].obj.mTransform.scale.z);
 			Parameter::Save("モーション待機時間", standTimer.maxTime_);
 			Parameter::Save("パンチにかかる時間", punchTimer.maxTime_);
+			Parameter::Save("パンチの当たり判定有効時間", punchImpactTimer.maxTime_);
 			Parameter::Save("パンチ後留まる時間", punchStayTimer.maxTime_);
 			Parameter::Save("ボスが出現するまでの時間", bossSpawnTimer.maxTime_);
 			Parameter::Save("さけぶ時間", fallAtkShoutTimer.maxTime_);

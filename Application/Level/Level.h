@@ -36,6 +36,8 @@ public:
 	std::vector<ModelObj> wall;					//壁
 	std::vector<ColPrimitive3D::Plane> wallCol;	//壁の当たり判定
 	SpawnerManager* spawnerManager = SpawnerManager::GetInstance();	//スポナー
+	
+	float waveWaitTime = 1.0f;
 
 	Vector2 moveLimitMax = {0,0};	//移動制限
 	Vector2 moveLimitMin = {0,0};	//移動制限

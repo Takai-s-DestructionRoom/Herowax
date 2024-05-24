@@ -7,6 +7,7 @@
 #include "BossUI.h"
 #include "BossAI.h"
 #include "BossPart.h"
+#include "Image3D.h"
 #include <array>
 
 enum class PartsNum
@@ -20,7 +21,7 @@ enum class PartsNum
 class FallParts : public GameObject
 {
 public:
-	ModelObj warning;		//警告
+	Image3D warning;		//警告
 
 	FallParts();
 	~FallParts();
@@ -101,6 +102,7 @@ public:
 	//------------ 行動関連 ------------//
 	Easing::EaseTimer standTimer;		//待機時間
 	Easing::EaseTimer punchTimer;		//パンチにかかる時間
+	Easing::EaseTimer punchImpactTimer;	//パンチの当たり判定がある時間
 	Easing::EaseTimer punchStayTimer;	//パンチ終わってからモーション終了までの時間
 	bool isAppearance = false;			//出現中かフラグ
 	bool isDead = false;				//撃破演出中かフラグ
