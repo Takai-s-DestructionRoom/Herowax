@@ -764,27 +764,52 @@ void Player::Avoidance()
 	//	}
 	//}
 
+	
+
 	//ボタンを押したら
-	if ((RInput::GetPadButtonDown(XINPUT_GAMEPAD_A)|| RInput::GetKeyDown(DIK_X)) &&
-		!avoidTimer.GetRun()) {
-		//特定方向へ加速を加算
+	if (!avoidTimer.GetRun()) 
+	{
+		if (RInput::GetPadButtonDown(XINPUT_GAMEPAD_A)) {
+			//特定方向へ加速を加算
+			Vector2 stick = RInput::GetInstance()->GetPadLStick();
 
-		Vector2 stick = RInput::GetInstance()->GetPadLStick();
+			//スティックが倒されてたら回避開始
+			if (stick.LengthSq() > 0.f) {
+				//カメラから注視点へのベクトル
+				Vector3 cameraVec = Camera::sNowCamera->mViewProjection.mTarget - Camera::sNowCamera->mViewProjection.mEye;
+				//カメラの角度
+				float cameraRad = atan2f(cameraVec.x, cameraVec.z);
+				//スティックの角度
+				float stickRad = atan2f(stick.x, stick.y);
 
-		//スティックが倒されてたら回避開始
-		if (stick.LengthSq() > 0.f) {
-			//カメラから注視点へのベクトル
-			Vector3 cameraVec = Camera::sNowCamera->mViewProjection.mTarget - Camera::sNowCamera->mViewProjection.mEye;
-			//カメラの角度
-			float cameraRad = atan2f(cameraVec.x, cameraVec.z);
-			//スティックの角度
-			float stickRad = atan2f(stick.x, stick.y);
+				avoidVec = { 0, 0, 1 };									//正面を基準に
+				avoidVec *= Matrix4::RotationY(cameraRad + stickRad);	//カメラの角度から更にスティックの入力角度を足して
+				avoidVec.Normalize();									//方向だけの情報なので正規化して
 
-			avoidVec = { 0, 0, 1 };									//正面を基準に
-			avoidVec *= Matrix4::RotationY(cameraRad + stickRad);	//カメラの角度から更にスティックの入力角度を足して
-			avoidVec.Normalize();									//方向だけの情報なので正規化して
-			
-			avoidTimer.Start();
+				avoidTimer.Start();
+			}
+		}
+		if (RInput::GetKeyDown(DIK_X)) {
+			//特定方向へ加速を加算
+			Vector2 keyVec = {};
+			keyVec.x = (float)(RInput::GetInstance()->GetKey(DIK_D) - RInput::GetInstance()->GetKey(DIK_A));
+			keyVec.y = (float)(RInput::GetInstance()->GetKey(DIK_W) - RInput::GetInstance()->GetKey(DIK_S));
+
+			//スティックが倒されてたら回避開始
+			if (keyVec.LengthSq() > 0.f) {
+				//カメラから注視点へのベクトル
+				Vector3 cameraVec = Camera::sNowCamera->mViewProjection.mTarget - Camera::sNowCamera->mViewProjection.mEye;
+				//カメラの角度
+				float cameraRad = atan2f(cameraVec.x, cameraVec.z);
+				//キーの角度(?)
+				float keyRad = atan2f(keyVec.x, keyVec.y);
+
+				avoidVec = { 0, 0, 1 };									//正面を基準に
+				avoidVec *= Matrix4::RotationY(cameraRad + keyRad);	//カメラの角度から更にスティックの入力角度を足して
+				avoidVec.Normalize();									//方向だけの情報なので正規化して
+
+				avoidTimer.Start();
+			}
 		}
 	}
 
