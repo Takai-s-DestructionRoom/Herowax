@@ -5,6 +5,9 @@
 
 BossFallAttack::BossFallAttack()
 {
+	RAudio::Load("Resources/Sounds/SE/E_rockUp.wav", "RockUp");
+	RAudio::Load("Resources/Sounds/SE/E_fallAtkImpact.wav", "Impact");
+
 	isFinished = false;
 	isStart = true;
 
@@ -61,6 +64,9 @@ void BossFallAttack::Update(Boss* boss)
 		}
 
 		isStart = false;
+
+		//叫ぶ音
+		RAudio::Play("RockUp");
 	}
 
 	//叫んでる時
@@ -75,8 +81,6 @@ void BossFallAttack::Update(Boss* boss)
 					maxHight,
 					boss->fallAtkShoutTimer.GetTimeRate());
 		}
-
-		//叫ぶ音
 	}
 	//叫び終わったら
 	else if (boss->fallAtkShoutTimer.GetEnd() && boss->fallAtkTimer.GetStarted() == false)
@@ -99,6 +103,10 @@ void BossFallAttack::Update(Boss* boss)
 				boss->fallParts[i].warning.mTransform.position.y = boss->fallParts[i].obj.mTransform.position.y;
 
 				//落ちた時の音(既になってるなら重複して鳴らさない)
+				if (RAudio::IsPlaying("Impact") == false)
+				{
+					RAudio::Play("Impact");
+				}
 			}
 		}
 	}
