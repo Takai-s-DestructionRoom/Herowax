@@ -28,6 +28,7 @@ void SRIndexBuffer::Init(uint32_t* list, uint32_t size)
 	uint32_t dataSize = static_cast<uint32_t>(sizeof(uint32_t) * size);
 
 	mData->buff = SRBufferAllocator::Alloc(dataSize, 1);
+	mData->buff.SetName("SRIndexBuffer");
 
 	uint32_t* vertMap = reinterpret_cast<uint32_t*>(mData->buff.Get());
 	for (uint32_t i = 0; i < size; i++) {
@@ -54,6 +55,7 @@ void SRIndexBuffer::Init(std::vector<uint32_t> list)
 	uint32_t dataSize = static_cast<uint32_t>(sizeof(uint32_t) * list.size());
 
 	mData->buff = SRBufferAllocator::Alloc(dataSize, 1);
+	mData->buff.SetName("SRIndexBuffer");
 
 	uint32_t* vertMap = reinterpret_cast<uint32_t*>(mData->buff.Get());
 	for (uint32_t i = 0; i < list.size(); i++) {

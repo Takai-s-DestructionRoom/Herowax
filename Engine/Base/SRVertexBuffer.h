@@ -112,6 +112,7 @@ public:
 		uint32_t dataSize = static_cast<uint32_t>(sizeof(T) * size);
 
 		mData->buff = SRBufferAllocator::Alloc(dataSize, 1);
+		mData->buff.SetName("SRVertexBuffer");
 
 		T* vertMap = reinterpret_cast<T*>(mData->buff.Get());
 		for (uint32_t i = 0; i < size; i++) {
@@ -139,6 +140,7 @@ public:
 		uint32_t dataSize = static_cast<uint32_t>(sizeof(T) * list.size());
 
 		mData->buff = SRBufferAllocator::Alloc(dataSize, 1);
+		mData->buff.SetName("SRVertexBuffer");
 
 		T* vertMap = reinterpret_cast<T*>(mData->buff.Get());
 		for (uint32_t i = 0; i < list.size(); i++) {

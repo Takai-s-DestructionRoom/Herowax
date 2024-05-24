@@ -23,9 +23,14 @@ public:
 	static void Update();
 	static void Draw();
 
-	static std::unique_ptr<IEventScene> eventScene;
+	static EventCaller* GetInstance();
+	std::unique_ptr<IEventScene> eventScene;
 
 private:
+	EventCaller() = default;
+	EventCaller(EventCaller& a) = delete;
+	EventCaller& operator=(EventCaller& a) = delete;
+
 	//イベント呼び出しを管理する文字列
 	static std::string eventCallStr;
 

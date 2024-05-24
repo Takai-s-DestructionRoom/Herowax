@@ -48,6 +48,9 @@ public:
 	//自身が持っているobjのDrawを専用のシェーダーで描画するもの
 	void BrightDraw(std::string stageID = "Opaque");
 
+	//自身が持っているobjのDrawを専用のシェーダーで描画するもの
+	void BrightDrawTrans(std::string stageID = "Transparent");
+
 	//当たり判定の描画
 	void DrawCollider();
 
@@ -99,6 +102,7 @@ private:
 	RootSignature* GetRootSig();
 
 	GraphicsPipeline* GetPipeline();
+	GraphicsPipeline* GetPipelineTrans();
 
 	std::vector<RenderOrder> GameObject::GetRenderOrder();
 

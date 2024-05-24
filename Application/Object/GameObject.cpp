@@ -165,6 +165,16 @@ void GameObject::BrightDraw(std::string stageID)
 	}
 }
 
+void GameObject::BrightDrawTrans(std::string stageID)
+{
+	GraphicsPipeline pipe = *GetPipelineTrans();
+
+	for (RenderOrder order : GetRenderOrder()) {
+		order.pipelineState = pipe.mPtr.Get();
+		Renderer::DrawCall(stageID, order);
+	}
+}
+
 void GameObject::DrawCollider()
 {
 	//描画しないならスキップ
@@ -222,6 +232,18 @@ GraphicsPipeline* GameObject::GetPipeline()
 	pDesc.pRootSignature = GetRootSig()->mPtr.Get();
 
 	return &GraphicsPipeline::GetOrCreate("PaintedBright", pDesc);
+}
+
+GraphicsPipeline* GameObject::GetPipelineTrans()
+{
+	PipelineStateDesc pDesc = RDirectX::GetDefPipeline().mDesc;
+	pDesc.PS = Shader::GetOrCreate("PaintedBrightPS", "Shader/PaintedBright/PaintedBrightPS.hlsl",
+		"main", "ps_5_1");
+	pDesc.pRootSignature = GetRootSig()->mPtr.Get();
+
+	pDesc.DepthStencilState.DepthWriteMask = D3D12_DEPTH_WRITE_MASK_ZERO;
+
+	return &GraphicsPipeline::GetOrCreate("PaintedBrightTrans", pDesc);
 }
 
 std::vector<RenderOrder> GameObject::GetRenderOrder()

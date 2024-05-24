@@ -79,8 +79,8 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 
 	TimeManager::Init();
 	
-	RenderTarget::GetInstance();
 	SRBufferAllocator::GetInstance();
+	RenderTarget::GetInstance();
 	
 #ifdef _DEBUG
 	ComPtr<ID3D12InfoQueue> infoQueue;
@@ -169,6 +169,7 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 		bufferLockInDrawing.unlock();
 
 		TimeManager::Update();
+		//_CrtCheckMemory();
 	}
 
 	SceneManager::Finalize();

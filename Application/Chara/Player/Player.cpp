@@ -22,6 +22,7 @@
 #include "EventCaller.h"
 #include "FailedScene.h"
 #include "GameCamera.h"
+#include <SimpleDrawer.h>
 
 Player::Player() :GameObject(),
 moveSpeed(1.f), moveAccelAmount(0.05f), isGround(true), hp(0), maxHP(10.f),
@@ -91,16 +92,15 @@ void Player::Init()
 	Model::Load("./Resources/Model/collect/collect.obj", "collect", true);
 	Model::Load("./Resources/Model/playerHuman/playerHuman.obj", "playerHuman", true);
 	Model::Load("./Resources/Model/playerBag/playerBag.obj", "playerBag", true);
+	Model::Load("./Resources/Model/Sphere.obj", "TankWater", true);
 
 	RAudio::Load("Resources/Sounds/SE/P_attack.wav", "Attack");
 	RAudio::Load("Resources/Sounds/SE/P_attackHit.wav", "Hit");
 	RAudio::Load("Resources/Sounds/SE/P_enemyCollect.wav", "eCollect");
 
 	obj = PaintableModelObj("playerBag");
-	obj.mPaintDissolveMapTex = TextureManager::Load("./Resources/DissolveMap.png",
-		"DissolveMap");
-
 	humanObj = ModelObj("playerHuman");
+	tankWaterObj = ModelObj("TankWater");
 
 	std::map<std::string, std::string> extract = Parameter::Extract("Player");
 	defColor.r = Parameter::GetParam(extract, "プレイヤーの色R", 1);
@@ -408,13 +408,25 @@ void Player::Update()
 
 	//更新してからバッファに送る
 	obj.mTransform.UpdateMatrix();
-	obj.mPaintDataBuff->dissolveVal = (float)waxStock / (float)maxWaxStock;
-	obj.mPaintDataBuff->color = Color(0.8f, 0.6f, 0.35f, 1.0f);
-	obj.mPaintDataBuff->slide += TimeManager::deltaTime;
 	BrightTransferBuffer(Camera::sNowCamera->mViewProjection);
 
 	humanObj.mTransform.UpdateMatrix();
 	humanObj.TransferBuffer(Camera::sNowCamera->mViewProjection);
+
+	//タンクデータ
+	tankWaterObj.mTransform.position = obj.mTransform.position + Vector3(0, 1.0f + bagScale / 2.0f, 0);
+	tankWaterObj.mTransform.scale = Vector3(bagScale - 0.8f, bagScale - 0.8f, bagScale - 0.8f);
+	tankWaterObj.mTransform.UpdateMatrix();
+	tankWaterObj.TransferBuffer(Camera::sNowCamera->mViewProjection);
+	tankBuff->centerPos = tankWaterObj.mTransform.position;
+	tankBuff->amplitude = 0.04f;
+	tankBuff->frequency = 10.0f;
+	float tankRatio = waxStock / (float)maxWaxStock;
+	tankBuff->upper
+		= -(tankWaterObj.mTransform.scale.y + tankBuff->amplitude)
+		+ (tankWaterObj.mTransform.scale.y * 2.0f + tankBuff->amplitude) * tankRatio;
+	tankBuff->time += TimeManager::deltaTime;
+	SimpleDrawer::DrawString(0, 0, 10000, Util::StringFormat("ratio:%f, upper:%f", tankRatio, tankBuff->upper));
 
 	ui.Update(this);
 
@@ -578,7 +590,22 @@ void Player::Draw()
 			once->Draw();
 		}*/
 
-		BrightDraw();
+		BrightDrawTrans();
+
+		//タンク内描画
+		{
+			for (RenderOrder order : tankWaterObj.GetRenderOrder()) {
+				RenderOrder orderA = order;
+				orderA.mRootSignature = GetTankWaterRootSig()->mPtr.Get();
+				orderA.pipelineState = GetTankWaterPipeline()->mPtr.Get();
+				orderA.rootData.push_back(RootData(RootDataType::SRBUFFER_CBV, tankBuff.mBuff));
+
+				RenderOrder orderB = orderA;
+				orderB.pipelineState = GetTankWaterPipelineB()->mPtr.Get();
+				Renderer::DrawCall("Opaque", orderA);
+				Renderer::DrawCall("Opaque", orderB);
+			}
+		}
 
 		//回収中は別モデルに置き換えるので描画しない
 		if (WaxManager::GetInstance()->isCollected) {
@@ -1321,4 +1348,39 @@ void AfterImage::Draw()
 	if (isAlive) {
 		obj.Draw("Transparent");
 	}
+}
+
+RootSignature* Player::GetTankWaterRootSig()
+{
+	RootSignatureDesc desc = RDirectX::GetDefRootSignature().mDesc;
+
+	desc.RootParamaters.emplace_back();
+
+	desc.RootParamaters.back().ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;
+	desc.RootParamaters.back().Descriptor.ShaderRegister = 10;
+	desc.RootParamaters.back().Descriptor.RegisterSpace = 0;
+	desc.RootParamaters.back().ShaderVisibility = D3D12_SHADER_VISIBILITY_ALL;
+
+	desc.Flags = D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT;
+	return &RootSignature::GetOrCreate("TankWater", desc);
+}
+
+GraphicsPipeline* Player::GetTankWaterPipeline()
+{
+	PipelineStateDesc desc = RDirectX::GetDefPipeline().mDesc;
+	desc.pRootSignature = GetTankWaterRootSig()->mPtr.Get();
+	desc.PS = Shader::GetOrCreate("TankWaterPS", "./Shader/TankWater/TankWaterPS.hlsl", "main", "ps_5_1");
+
+	return &GraphicsPipeline::GetOrCreate("TankWater", desc);
+}
+
+GraphicsPipeline* Player::GetTankWaterPipelineB()
+{
+	PipelineStateDesc desc = RDirectX::GetDefPipeline().mDesc;
+	desc.pRootSignature = GetTankWaterRootSig()->mPtr.Get();
+	desc.VS = Shader::GetOrCreate("TankWaterVS", "./Shader/TankWater/TankWaterBackVS.hlsl", "main", "vs_5_1");
+	desc.PS = Shader::GetOrCreate("TankWaterPS", "./Shader/TankWater/TankWaterPS.hlsl", "main", "ps_5_1");
+
+	desc.RasterizerState.CullMode = D3D12_CULL_MODE_FRONT;
+	return &GraphicsPipeline::GetOrCreate("TankWaterBack", desc);
 }

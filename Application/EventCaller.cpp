@@ -4,7 +4,6 @@
 
 std::string EventCaller::eventCallStr = "";
 std::string EventCaller::nowEventStr = "";
-std::unique_ptr<IEventScene> EventCaller::eventScene;
 
 std::string EventCaller::GetEventCallStr()
 {
@@ -36,22 +35,28 @@ void EventCaller::NowEventStrReset()
 
 void EventCaller::Init()
 {
-    eventScene = std::make_unique<BossAppearanceScene>();
+    GetInstance()->eventScene = std::make_unique<BossAppearanceScene>();
 }
 
 void EventCaller::Update()
 {
 	//イベントシーン中なら
-	if (eventScene->isActive)
+	if (GetInstance()->eventScene->isActive)
 	{
-		eventScene->Update();
+        GetInstance()->eventScene->Update();
 	}
 }
 
 void EventCaller::Draw()
 {
-    if (eventScene->isActive)
+    if (GetInstance()->eventScene->isActive)
     {
-        eventScene->Draw();
+        GetInstance()->eventScene->Draw();
     }
+}
+
+EventCaller* EventCaller::GetInstance()
+{
+    static EventCaller instance;
+    return &instance;
 }

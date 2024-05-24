@@ -358,6 +358,9 @@
     <Filter Include="ヘッダー ファイル\Application\Object\WaxWall">
       <UniqueIdentifier>{e00a976e-7a8e-4d92-be64-400381aba64a}</UniqueIdentifier>
     </Filter>
+    <Filter Include="シェーダー ファイル\TankWater">
+      <UniqueIdentifier>{b2dd8dfd-7d42-4483-95fe-e994fddfc039}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Engine\2d\Sprite.cpp">
@@ -1076,6 +1079,12 @@
     </FxCompile>
     <FxCompile Include="Shader\SlimeShader\WaxShader3VS.hlsl">
       <Filter>シェーダー ファイル\SlimeShader</Filter>
+    </FxCompile>
+    <FxCompile Include="Shader\TankWater\TankWaterPS.hlsl">
+      <Filter>シェーダー ファイル\TankWater</Filter>
+    </FxCompile>
+    <FxCompile Include="Shader\TankWater\TankWaterBackVS.hlsl">
+      <Filter>シェーダー ファイル\TankWater</Filter>
     </FxCompile>
   </ItemGroup>
   <ItemGroup>
