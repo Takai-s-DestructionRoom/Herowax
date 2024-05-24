@@ -17,13 +17,23 @@ void WaveManager::LoadLevelData()
 	waves = {
 		"wave1",
 		"wave2",
-		"test2",
+		"wave3",
+		"wave4",
+		"wave5",
+		"wave6",
+		"wave7",
+		"wave8",
 	};
 
 	//ウェーブ読み込み
 	LevelLoader::Get()->Load("./Level/wave/wave1.json", waves[0]);
 	LevelLoader::Get()->Load("./Level/wave/wave2.json", waves[1]);
-	LevelLoader::Get()->Load("./Level/wave/test2.json", waves[2]);
+	LevelLoader::Get()->Load("./Level/wave/wave3.json", waves[2]);
+	LevelLoader::Get()->Load("./Level/wave/wave4.json", waves[3]);
+	LevelLoader::Get()->Load("./Level/wave/wave5.json", waves[4]);
+	LevelLoader::Get()->Load("./Level/wave/wave6.json", waves[5]);
+	LevelLoader::Get()->Load("./Level/wave/wave7.json", waves[6]);
+	LevelLoader::Get()->Load("./Level/wave/wave8.json", waves[7]);
 }
 
 void WaveManager::Update()

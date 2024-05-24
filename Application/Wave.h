@@ -35,7 +35,7 @@ private:
 	std::vector<std::string> waves;
 
 	int32_t waveNum = 0;
-	const int32_t MAX_NUM = 3;
+	const int32_t MAX_NUM = 8;
 
 	//倒す敵の数(読み込み時に敵を数える)
 	int32_t enemyNum = 0;
