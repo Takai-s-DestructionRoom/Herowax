@@ -40,13 +40,15 @@ void WaveManager::Update()
 {
 	waitTimer.Update();
 
-	if (waitTimer.GetNowEnd()) {
+	if (waitTimer.GetNowEnd() || zeroFlag) {
 		
 		//敵全員を動かし始める
 		for (auto& enemy : EnemyManager::GetInstance()->enemys)
 		{
 			enemy->StartToMoving();
 		}
+
+		zeroFlag = false;
 	}
 
 	if (EnemyManager::GetInstance()->enemys.size() <= 0)
@@ -83,13 +85,29 @@ void WaveManager::NextWave()
 		waveNum = 0;
 	}
 	Level::Get()->Extract(waves[waveNum]);
-	waitTimer.maxTime_ = Level::Get()->waveWaitTime;
-	waitTimer.Start();
+	//0より大きいなら入れる
+	if (Level::Get()->waveWaitTime > 0.0f) {
+		waitTimer.maxTime_ = Level::Get()->waveWaitTime;
+		waitTimer.Start();
+	}
+	//小さいなら別フラグを立てる
+	else {
+		zeroFlag = true;
+	}
 }
 
 void WaveManager::MoveWave(int32_t moveNum)
 {
 	Level::Get()->Extract(waves[moveNum]);
-	waitTimer.maxTime_ = Level::Get()->waveWaitTime;
-	waitTimer.Start();
+	//0より大きいなら入れる
+	
+	Level::Get()->waveWaitTime = 0.0f;
+	if (Level::Get()->waveWaitTime > 0.0f) {
+		waitTimer.maxTime_ = Level::Get()->waveWaitTime;
+		waitTimer.Start();
+	}
+	//小さいなら別フラグを立てる
+	else {
+		zeroFlag = true;
+	}
 }

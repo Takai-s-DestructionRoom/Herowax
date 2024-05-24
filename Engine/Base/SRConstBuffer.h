@@ -50,6 +50,7 @@ private:
 
 	void Init() {
 		mBuff = SRBufferAllocator::Alloc((sizeof(T) + 0xff) & ~0xff, D3D12_CONSTANT_BUFFER_DATA_PLACEMENT_ALIGNMENT);
+		mBuff.SetName("SRConstBuffer");
 		*reinterpret_cast<T*>(mBuff.Get()) = T();
 	}
 

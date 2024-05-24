@@ -12,6 +12,7 @@
 #include <wrl.h>
 #include <list>
 #include <mutex>
+#include <string>
 #pragma warning(pop)
 
 struct MemoryRegion {
@@ -29,6 +30,7 @@ struct MemoryRegion {
 struct MemoryRegionPtr {
 	MemoryRegion* region = nullptr;
 	std::list<MemoryRegionPtr>::iterator memItr;
+	std::string name = "";
 };
 
 class SRBufferPtr {
@@ -39,6 +41,10 @@ public:
 
 	const MemoryRegionPtr* GetRegionPtr() const {
 		return mPtr;
+	}
+
+	void SetName(std::string name) {
+		mPtr->name = name;
 	}
 
 	D3D12_GPU_VIRTUAL_ADDRESS GetGPUVirtualAddress() const;

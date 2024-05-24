@@ -134,8 +134,8 @@ void ProtoScene::Update()
 	if ((EventCaller::GetEventCallStr() == BossDeadScene::GetEventCallStr()) &&
 		SceneTrance::GetInstance()->GetIsChange())
 	{
-		EventCaller::eventScene = std::make_unique<BossDeadScene>();
-		EventCaller::eventScene->Init(Boss::GetInstance()->GetCenterPos() + Vector3::UP * 20.f);
+		EventCaller::GetInstance()->eventScene = std::make_unique<BossDeadScene>();
+		EventCaller::GetInstance()->eventScene->Init(Boss::GetInstance()->GetCenterPos() + Vector3::UP * 20.f);
 
 		RAudio::Stop("Boss");
 		RAudio::Stop("Normal");
@@ -151,8 +151,8 @@ void ProtoScene::Update()
 	if ((EventCaller::GetEventCallStr() == BossAppearanceScene::GetEventCallStr()) &&
 		SceneTrance::GetInstance()->GetIsChange())
 	{
-		EventCaller::eventScene = std::make_unique<BossAppearanceScene>();
-		EventCaller::eventScene->Init(Boss::GetInstance()->GetCenterPos() + Vector3::UP * 20.f);
+		EventCaller::GetInstance()->eventScene = std::make_unique<BossAppearanceScene>();
+		EventCaller::GetInstance()->eventScene->Init(Boss::GetInstance()->GetCenterPos() + Vector3::UP * 20.f);
 
 		RAudio::Stop("Boss");
 		RAudio::Stop("Normal");
@@ -680,7 +680,7 @@ void ProtoScene::Update()
 	}
 
 	controlUI.Update();
-	bossAppTimerUI.Imgui();
+	//bossAppTimerUI.Imgui();
 	bossAppTimerUI.Update();
 	
 #pragma region ImGui

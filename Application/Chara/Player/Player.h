@@ -151,6 +151,18 @@ private:
 	float collectScale = 0.0f;
 	bool modelChange = false;
 
+	//タンク内のロウ描画
+	ModelObj tankWaterObj;
+	float tankRadius = 1.0f;
+	struct TankWaterData {
+		Vector3 centerPos;
+		float upper;
+		float amplitude;
+		float frequency;
+		float time;
+	};
+	SRConstBuffer<TankWaterData> tankBuff;
+
 	Vector3 modelOffset;//描画位置をずらす
 
 	WaxUI waxUI;
@@ -236,4 +248,8 @@ private:
 
 	void UpdateAttackCollider();
 	void DrawAttackCollider();
+
+	RootSignature* GetTankWaterRootSig();
+	GraphicsPipeline* GetTankWaterPipeline();
+	GraphicsPipeline* GetTankWaterPipelineB();
 };

@@ -367,6 +367,9 @@
     <Filter Include="ヘッダー ファイル\Application\Metaball2D">
       <UniqueIdentifier>{93c68cb2-6afc-49b9-b52d-f93cee47f764}</UniqueIdentifier>
     </Filter>
+    <Filter Include="シェーダー ファイル\TankWater">
+      <UniqueIdentifier>{b2dd8dfd-7d42-4483-95fe-e994fddfc039}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Engine\2d\Sprite.cpp">
@@ -1091,6 +1094,12 @@
     </FxCompile>
     <FxCompile Include="Shader\MetaballRenderer\MetaballRendererPS.hlsl" />
     <FxCompile Include="Shader\MetaballRenderer\MetaballRendererVS.hlsl" />
+    <FxCompile Include="Shader\TankWater\TankWaterPS.hlsl">
+      <Filter>シェーダー ファイル\TankWater</Filter>
+    </FxCompile>
+    <FxCompile Include="Shader\TankWater\TankWaterBackVS.hlsl">
+      <Filter>シェーダー ファイル\TankWater</Filter>
+    </FxCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\2d\Sprite.h">
