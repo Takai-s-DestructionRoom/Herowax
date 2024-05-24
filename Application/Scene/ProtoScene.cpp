@@ -324,7 +324,7 @@ void ProtoScene::Update()
 			{
 				//腕との判定
 				isCollision = ColPrimitive3D::CheckSphereToSphere(Boss::GetInstance()->parts[i].collider, wax->collider);
-				if (isCollision && wax->isSolid == false && wax->isGround == false)
+				if (isCollision && (wax->stateStr == WaxCollect::GetStateStr() || (wax->isSolid == false && wax->isGround == false)))
 				{
 					//一応1ダメージ(ダメージ量に応じてロウのかかり具合も進行)
 					Boss::GetInstance()->parts[i].DealDamage(player.GetAttackPower());
