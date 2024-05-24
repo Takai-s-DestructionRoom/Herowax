@@ -170,6 +170,9 @@ public:
 
 	void WaxVisualUpdate();
 
+	//ウェーブタイマーを開始
+	void StartToMoving();
+
 	/// <summary>
 	/// 状態変更
 	/// 内部で設定している優先度を見て、同値以上であれば遷移、未満であれば何もしない

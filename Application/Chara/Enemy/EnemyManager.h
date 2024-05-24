@@ -91,7 +91,12 @@ public:
 		enemys.back()->SetPos(position);
 		enemys.back()->SetScale(scale);
 		enemys.back()->SetRota(rotation);
-		enemys.back()->SetBehaviorOrder(behaviorOrder);
+		if (behaviorOrder == "") {
+			enemys.back()->SetBehaviorOrder("test");
+		}
+		else{
+			enemys.back()->SetBehaviorOrder(behaviorOrder);
+		}
 		enemys.back()->SetEnemyOrder("test");
 		enemys.back()->Init();
 	}

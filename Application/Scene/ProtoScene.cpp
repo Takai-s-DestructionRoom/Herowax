@@ -23,6 +23,7 @@
 #include "Boss.h"
 #include "LightObject.h"
 #include "NumDrawer.h"
+#include "Wave.h"
 
 ProtoScene::ProtoScene()
 {
@@ -97,6 +98,8 @@ void ProtoScene::Init()
 	bossAppTimerUI.Start();
 
 	SpotLightManager::GetInstance()->Init(&light);
+
+	WaveManager::Get()->LoadLevelData();
 }
 
 void ProtoScene::Update()
@@ -504,6 +507,7 @@ void ProtoScene::Update()
 
 	player.Update();
 	Boss::GetInstance()->Update();
+	WaveManager::Get()->Update();
 	Level::Get()->Update();
 
 	//敵同士の押し戻し

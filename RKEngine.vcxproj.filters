@@ -549,9 +549,6 @@
     <ClCompile Include="Engine\Math\Float4.cpp">
       <Filter>ソース ファイル\Engine\Math</Filter>
     </ClCompile>
-    <ClCompile Include="main.cpp">
-      <Filter>ソース ファイル\Application</Filter>
-    </ClCompile>
     <ClCompile Include="Engine\PostEffect\MultiRenderTest.cpp">
       <Filter>ソース ファイル\Engine\PostEffect</Filter>
     </ClCompile>
@@ -870,6 +867,9 @@
     <ClCompile Include="Application\MetaBall2D.cpp">
       <Filter>ソース ファイル\Application\MetaBall2D</Filter>
     </ClCompile>
+    <ClCompile Include="main.cpp">
+      <Filter>ソース ファイル\Engine</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Shader\Basic\BasicPS.hlsl">
@@ -1089,6 +1089,8 @@
     <FxCompile Include="Shader\SlimeShader\WaxShader3VS.hlsl">
       <Filter>シェーダー ファイル\SlimeShader</Filter>
     </FxCompile>
+    <FxCompile Include="Shader\MetaballRenderer\MetaballRendererPS.hlsl" />
+    <FxCompile Include="Shader\MetaballRenderer\MetaballRendererVS.hlsl" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\2d\Sprite.h">
@@ -1718,6 +1720,7 @@
     <None Include="Shader\SlimeShader\WaxShader3.hlsli">
       <Filter>シェーダー ファイル\SlimeShader</Filter>
     </None>
+    <None Include="Shader\MetaballRenderer\MetaballRenderer.hlsli" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="hogehoge.txt" />

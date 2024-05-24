@@ -19,7 +19,8 @@ struct LevelData
 		std::string spawnerOrder;
 		std::string behaviorOrder;
 		std::string enemyOrder;
-		
+		float waveWaitTime;
+
 		Vector3 translation{};
 		Vector3 rotation{};
 		Vector3 scaling{};
