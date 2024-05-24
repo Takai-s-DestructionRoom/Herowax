@@ -28,7 +28,7 @@ void PaintScene::Init()
 {
 	Camera::sNowCamera = &camera;
 	LightGroup::sNowLight = &light;
-	MetaBall2D::GetInstance()->Init();
+	MetaBall2DManager::GetInstance()->Init();
 }
 
 void PaintScene::Update()
@@ -39,11 +39,11 @@ void PaintScene::Update()
 	/*skydome.mTransform.UpdateMatrix();
 	skydome.TransferBuffer(camera.mViewProjection);*/
 
-	MetaBall2D::GetInstance()->Update();
+	MetaBall2DManager::GetInstance()->Update();
 }
 
 void PaintScene::Draw()
 {
 	//skydome.Draw();
-	MetaBall2D::GetInstance()->Draw();
+	MetaBall2DManager::GetInstance()->Draw();
 }
