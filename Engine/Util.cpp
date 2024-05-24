@@ -298,3 +298,54 @@ Vector2 Util::GetScreenPos(Vector3 wpos)
 
 	return screenPos;
 }
+
+bool Util::OutOfScreen(Vector2 pos)
+{
+	return pos.x > Util::WIN_WIDTH || pos.x < 0 || pos.y > Util::WIN_HEIGHT || pos.y < 0;
+}
+
+bool Util::OutOfScreen(Vector2 pos,Vector2 size)
+{
+	return pos.x + size.x > Util::WIN_WIDTH ||
+		pos.x - size.x  < 0 ||
+		pos.y + size.y  > Util::WIN_HEIGHT ||
+		pos.y - size.y < 0;
+}
+
+Vector2 Util::ReturnScreen(Vector2 pos)
+{
+	Vector2 temp = pos;
+
+	if (pos.x > Util::WIN_WIDTH) {
+		temp.x = Util::WIN_WIDTH;
+	}
+	if (pos.x < 0) {
+		temp.x = 0;
+	}
+	if (pos.y > Util::WIN_HEIGHT) {
+		temp.y = Util::WIN_HEIGHT;
+	}
+	if (pos.y < 0) {
+		temp.y = 0;
+	}
+	return temp;
+}
+
+Vector2 Util::ReturnScreen(Vector2 pos, Vector2 size)
+{
+	Vector2 temp = pos;
+
+	if (pos.x + size.x > Util::WIN_WIDTH) {
+		temp.x = Util::WIN_WIDTH - size.x;
+	}
+	if (pos.x - size.x < 0) {
+		temp.x = size.x;
+	}
+	if (pos.y + size.y > Util::WIN_HEIGHT) {
+		temp.y = Util::WIN_HEIGHT - size.y;
+	}
+	if (pos.y - size.y < 0) {
+		temp.y = size.y;
+	}
+	return temp;
+}

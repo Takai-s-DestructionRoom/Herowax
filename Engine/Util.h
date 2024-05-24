@@ -188,4 +188,11 @@ namespace Util {
     std::vector<std::string> GetFileData(const std::string& fullPath);
 
     Vector2 GetScreenPos(Vector3 wpos);
+
+    bool OutOfScreen(Vector2 pos);
+    bool OutOfScreen(Vector2 pos,Vector2 size);
+
+    //画面外にいた場合、画面内へ戻す
+    Vector2 ReturnScreen(Vector2 pos);
+    Vector2 ReturnScreen(Vector2 pos, Vector2 size);
 }

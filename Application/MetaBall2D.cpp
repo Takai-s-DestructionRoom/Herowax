@@ -3,14 +3,17 @@
 #include "Renderer.h"
 #include "RImGui.h"
 #include "Util.h"
+#include "Parameter.h"
+#include "WaxManager.h"
+#include "ColPrimitive2D.h"
 
-MetaBall2D* MetaBall2D::GetInstance()
+MetaBall2DManager* MetaBall2DManager::GetInstance()
 {
-	static MetaBall2D instance;
+	static MetaBall2DManager instance;
 	return &instance;
 }
 
-void MetaBall2D::Imgui()
+void MetaBall2DManager::Imgui()
 {
 	if (RImGui::showImGui)
 	{
@@ -21,7 +24,10 @@ void MetaBall2D::Imgui()
 		ImGui::DragInt("生成個数", &createNum);
 		ImGui::DragFloat2("生成サイズ", &createSize.x, 0.1f);
 		if (ImGui::Button("ランダム生成")) {
-			metaballs.clear();
+			for (int32_t i = 0; i < METABALL_NUM; i++)
+			{
+				metaballs[i]->isUse = false;
+			}
 			for (int32_t i = 0; i < createNum; i++)
 			{
 				CraeteMetaBall();
@@ -34,34 +40,75 @@ void MetaBall2D::Imgui()
 		ImGui::ColorEdit4("外側の色", &strokecolor.r);
 		ImGui::SliderFloat("stroke", &stroke, 0.f, 1.0f);
 		ImGui::SliderFloat("cutoff", &cutoff, 0.f, 1.0f);
+		ImGui::DragFloat("移動速度", &moveSpeed, 0.1f);
+		ImGui::DragFloat("重力加速", &gravityAccel, 0.1f);
+		ImGui::DragFloat("跳ね返りパワー", &boundPower, 0.1f);
+
+		if (ImGui::Button("セーブ")) {
+			Parameter::Begin("metaball2D");
+			Parameter::SaveColor("内側の色", color);
+			Parameter::SaveColor("外側の色", strokecolor);
+			Parameter::Save("stroke", stroke);
+			Parameter::Save("cutoff", cutoff);
+			Parameter::End();
+		}
 
 		ImGui::End();
 	}
 }
 
-void MetaBall2D::CraeteMetaBall()
+void MetaBall2DManager::CraeteMetaBall()
 {
-	metaballs.emplace_back();
-	metaballs.back().Init();
-	metaballs.back().SetTexture(TextureManager::Load("./Resources/Particle/particle_simple.png", "particle_simple"));
-	metaballs.back().mTransform.position.x = Util::GetRand(0.f, (float)Util::WIN_WIDTH);
-	metaballs.back().mTransform.position.y = Util::GetRand(0.f, (float)Util::WIN_HEIGHT);
-	metaballs.back().mTransform.scale = { createSize.x,createSize.y,1 };
+	for (auto& instant : metaballs)
+	{
+		if (!instant->isUse)
+		{
+			instant->Init();
+			instant->sprite.Init();
+			instant->sprite.SetTexture(TextureManager::Load("./Resources/Particle/particle_simple.png", "particle_simple"));
+			instant->sprite.mTransform.position.x = Util::GetRand(0.f, (float)Util::WIN_WIDTH);
+			instant->sprite.mTransform.position.y = Util::GetRand(0.f, (float)Util::WIN_HEIGHT);
+			instant->sprite.mTransform.scale = { createSize.x,createSize.y,1 };
+			instant->isUse = true;
+		}
+	}
 }
 
-MetaBall2D::MetaBall2D()
+void MetaBall2DManager::CraeteMetaBall(Vector2 pos, Vector2 size)
+{
+	for (auto& instant : metaballs)
+	{
+		if (!instant->isUse)
+		{
+			instant->Init();
+			instant->sprite.Init();
+			instant->sprite.SetTexture(TextureManager::Load("./Resources/Particle/particle_simple.png", "particle_simple"));
+			instant->sprite.mTransform.position = pos;
+			instant->sprite.mTransform.scale = size;
+			instant->isUse = true;
+		}
+	}
+}
+
+MetaBall2DManager::MetaBall2DManager()
 {
 	//レンダーターゲットを生成(1回だけ、シーンが変わっても作り直さない)
 	RenderTarget::GetInstance()->CreateRenderTexture(Util::WIN_WIDTH, Util::WIN_HEIGHT,
 		{0,0,0,0}, "metaballRenderer");
+
+	for (int32_t i = 0; i < METABALL_NUM; i++)
+	{
+		metaballs.emplace_back();
+		metaballs.back() = std::make_unique<MetaBall2D>();
+	}
 }
 
-MetaBall2D::~MetaBall2D()
+MetaBall2DManager::~MetaBall2DManager()
 {
 
 }
 
-void MetaBall2D::Init()
+void MetaBall2DManager::Init()
 {
 	struct metaballVert 
 	{
@@ -136,28 +183,63 @@ void MetaBall2D::Init()
 
 	//書き換えたので作り直し
 	mPipelineState.Create();
+
+	std::map<std::string, std::string> extract = Parameter::Extract("metaball2D");
+
+	color = WaxManager::GetInstance()->slimeWax.waxColor;
+
+	color = Parameter::GetColorData(extract,"内側の色", color);
+	strokecolor = Parameter::GetColorData(extract, "外側の色", strokecolor);
+	stroke = Parameter::GetParam(extract,"stroke", stroke);
+	cutoff = Parameter::GetParam(extract,"cutoff", cutoff);
 }
 
-void MetaBall2D::Update()
+void MetaBall2DManager::Update()
 {
 	Imgui();
 
+	//for (auto& metaball1 : metaballs)
+	//{
+	//	for (auto& metaball2 : metaballs)
+	//	{
+	//		//同じやつなら飛ばす
+	//		if (metaball1 == metaball2)continue;
+
+	//		ColPrimitive3D::Sphere sphere1;
+	//		sphere1.pos = { metaball1->GetPos() };
+	//		sphere1.r = (metaball1->GetScale().x + metaball1->GetScale().y) / 2;
+
+	//		ColPrimitive3D::Sphere sphere2;
+	//		sphere2.pos = { metaball2->GetPos() };
+	//		sphere2.r = (metaball2->GetScale().x + metaball2->GetScale().y) / 2;
+
+	//		//当たってるならパワーを加算
+	//		if (ColPrimitive3D::CheckSphereToSphere(sphere1, sphere2)) {
+	//			metaball1->overlapPower += 0.1f;
+	//			metaball2->overlapPower += 0.1f;
+	//		}
+	//	}
+	//}
+
 	for (auto& metaball : metaballs)
 	{
-		metaball.mTransform.UpdateMatrix();
-		metaball.TransferBuffer();
+		metaball->moveSpeed = moveSpeed;
+		metaball->gravityAccel = gravityAccel;
+		metaball->boundPower = boundPower;
+				
+		metaball->Update();
 	}
 
 	TransfarBuffer();
 }
 
-void MetaBall2D::Draw()
+void MetaBall2DManager::Draw()
 {
 	if (renderTargetFlag)
 	{
 		for (auto& metaball : metaballs)
 		{
-			metaball.Draw();
+			metaball->sprite.Draw();
 		}
 	}
 	else {
@@ -167,14 +249,14 @@ void MetaBall2D::Draw()
 		//解像度が高い球を用意して、プログラム側でぼやけ具合を調整した方が良い
 		for (auto& metaball : metaballs)
 		{
-			for (auto& order : metaball.GetRenderOrder())
+			for (auto& order : metaball->sprite.GetRenderOrder())
 			{
 				//描画先をmetaballRendererへ
 				order.renderTargets = { "metaballRenderer" };
 
 				//以下スプライトの描画処理と同一
 				std::string stageID = "Sprite";
-				if (metaball.mTransform.position.z < 0) {
+				if (metaball->sprite.mTransform.position.z < 0) {
 					stageID = "BackSprite";
 				}
 				Renderer::DrawCall(stageID, order);
@@ -210,10 +292,62 @@ void MetaBall2D::Draw()
 	}
 }
 
-void MetaBall2D::TransfarBuffer()
+void MetaBall2DManager::TransfarBuffer()
 {
 	metaball2DBuffer->color_ = { color.r, color.g , color.b , color.a };
 	metaball2DBuffer->cutoff_ = cutoff;
 	metaball2DBuffer->strokecolor_ = { strokecolor.r, strokecolor.g , strokecolor.b , strokecolor.a };
 	metaball2DBuffer->stroke_ = stroke;
+}
+
+void MetaBall2D::Init()
+{
+	//velocity.x = Util::GetRand(-1.0f, 1.0f);
+	//velocity.y = Util::GetRand(-1.0f, 1.0f);
+
+	overlapPower = 0.00f;
+	gravity = 0.0f;
+}
+
+void MetaBall2D::Update()
+{
+	moveVec = { 0,0,0 };
+
+	gravity += gravityAccel;
+	
+	velocity.Normalize();
+	moveVec += velocity * moveSpeed;
+	
+	moveVec.y += gravity * overlapPower;
+	
+	sprite.mTransform.position += moveVec;
+
+	Vector2 pos = { sprite.mTransform.position.x, sprite.mTransform.position.y };
+	Vector2 size = { sprite.mTransform.scale.x, sprite.mTransform.scale.y };
+	
+	if (pos.y > Util::WIN_HEIGHT - size.y) {
+		
+		gravity -= boundPower;
+		
+		//重力が足しても+なら
+		if (gravity > 0){
+			gravity = 0;
+		}
+
+		pos = Util::ReturnScreen(pos, size);
+		sprite.mTransform.position.y = pos.y;
+	}
+
+	//if (Util::OutOfScreen(pos, size)) {
+	//	//はみ出してる部分を戻す
+	//	pos = Util::ReturnScreen(pos,size);
+	//	sprite.mTransform.position.x = pos.x;
+	//	sprite.mTransform.position.y = pos.y;
+
+	//	//反転
+	//	velocity = -velocity;
+	//}
+	
+	sprite.mTransform.UpdateMatrix();
+	sprite.TransferBuffer();
 }
