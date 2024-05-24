@@ -27,14 +27,17 @@ public:
 
 	//ウェーブを進める関数
 	void NextWave();
+	void MoveWave(int32_t moveNum);
 
 private:
 	WaveManager() {};
 	~WaveManager() {};
 private:
+	int32_t debugNum = 1;
+
 	std::vector<std::string> waves;
 
-	int32_t waveNum = 0;
+	int32_t waveNum = -1;
 	const int32_t MAX_NUM = 8;
 
 	//倒す敵の数(読み込み時に敵を数える)
