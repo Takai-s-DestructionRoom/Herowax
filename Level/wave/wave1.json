@@ -419,7 +419,7 @@
         },
         {
             "type": "MESH",
-            "name": "敵",
+            "name": "敵.001",
             "transform": {
                 "translation": [
                     -50.0,
@@ -437,11 +437,12 @@
                     1.0
                 ]
             },
-            "setObject": "Enemy"
+            "setObject": "Enemy",
+            "behaviorOrder": "roop_triangle"
         },
         {
             "type": "MESH",
-            "name": "敵.005",
+            "name": "敵",
             "transform": {
                 "translation": [
                     50.0,
@@ -459,7 +460,32 @@
                     1.0
                 ]
             },
-            "setObject": "Enemy"
+            "setObject": "Enemy",
+            "behaviorOrder": "",
+            "enemyOrder": ""
+        },
+        {
+            "type": "MESH",
+            "name": "ウェーブ管理オブジェクト",
+            "transform": {
+                "translation": [
+                    -16.629981994628906,
+                    9.42098617553711,
+                    0.5002517700195312
+                ],
+                "rotation": [
+                    0.0,
+                    -0.0,
+                    0.0
+                ],
+                "scaling": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            },
+            "setObject": "waveManage",
+            "waitTime": 5.000003337860107
         }
     ]
 }
