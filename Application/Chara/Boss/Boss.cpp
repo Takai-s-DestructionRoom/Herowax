@@ -49,7 +49,7 @@ moveSpeed(0.1f), hp(0), maxHP(10.f), oriSize(6.f)
 		fallParts[i].warning.mTransform.rotation = {Util::AngleToRadian(90.f),0.f,0.f };
 		fallParts[i].warning.mBlendMode = Image3D::BlendMode::TransparentAlpha;
 		fallParts[i].warning.mMaterial.mColor = Color::kRed;
-		fallParts[i].warning.mMaterial.mColor.a = 0.6f;
+		//fallParts[i].warning.mMaterial.mColor.a = 0.6f;
 	}
 
 	BossUI::LoadResource();
