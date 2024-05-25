@@ -96,7 +96,7 @@ void Boss::Init()
 {
 	hp = maxHP;
 	isAlive = false;
-	bossSpawnTimer.Start();
+	//bossSpawnTimer.Start();
 
 	mutekiTimer.Reset();
 
@@ -565,6 +565,14 @@ Boss* Boss::GetInstance()
 {
 	static Boss instance;
 	return &instance;
+}
+
+void Boss::BossApparance(float apptime)
+{
+	if (apptime > 0.0f) {
+		bossSpawnTimer.maxTime_ = apptime;
+	}
+	bossSpawnTimer.Start();
 }
 
 void Boss::DealDamage(int32_t damage)

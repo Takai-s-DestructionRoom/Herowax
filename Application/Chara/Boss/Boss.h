@@ -170,6 +170,12 @@ public:
 	//攻撃対象を設定
 	void SetTarget(ModelObj* target_) { target = target_; }
 
+	/// <summary>
+	/// ボスを出現させる
+	/// </summary>
+	/// <param name="apptime">時間を設定すると、出現前に猶予時間を付けられる</param>
+	void BossApparance(float apptime = 0.0f);
+
 	//ダメージを与える
 	void DealDamage(int32_t damage);
 };

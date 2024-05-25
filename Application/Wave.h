@@ -46,5 +46,6 @@ private:
 	Easing::EaseTimer waitTimer = 1.0f;
 
 	bool zeroFlag = false;
+	bool bossApp = false;
 };
 
