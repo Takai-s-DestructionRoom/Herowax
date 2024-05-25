@@ -296,7 +296,9 @@ void Boss::Update()
 		ImGui::SetNextWindowSize({ 300, 250 }, ImGuiCond_FirstUseEver);
 
 		ImGui::Begin("Boss");
-		ImGui::Text("ボスが出現するまでの時間:%f", bossSpawnTimer.nowTime_);
+		if (ImGui::Button("ボス出現")) {
+			BossApparance(0.1f);
+		}
 
 		ImGui::Text("ボス本体");
 		ImGui::Text("1:待機\n2:左パンチ\n3:右パンチ\n4:落下攻撃");
