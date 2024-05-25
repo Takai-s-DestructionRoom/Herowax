@@ -102,8 +102,8 @@ public:
 	Vector3 avoidVec = {};
 	int32_t avoidConsumWax = 5;	//回避時のロウの消費量
 	float avoidSpeed = 0.0f;
-	float maxAvoidSpeed = 0.5f;
-	float minAvoidSpeed = 0.25f;
+	float maxAvoidSpeed = 1.5f;
+	float minAvoidSpeed = 1.0f;
 
 	//std::vector<std::unique_ptr<AfterImage>> afterimagesObj;
 
