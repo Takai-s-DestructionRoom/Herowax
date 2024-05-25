@@ -454,6 +454,7 @@ void Player::Update()
 		ImGui::Text("WASD移動、スペースジャンプ、右クリで攻撃,Pでパブロ攻撃,Qでロウ回収");
 
 		ImGui::DragFloat("modelChangeOffset", &modelChangeOffset);
+		ImGui::DragFloat3("avoidVec", &avoidVec.x);
 		
 		if (ImGui::TreeNode("Transform系")) {
 
@@ -664,7 +665,7 @@ void Player::MovePad()
 	{
 		moveAccel -= moveAccelAmount;	//入力されてなければ徐々に減速
 	}
-
+	
 	moveAccel = Util::Clamp(moveAccel, 0.f, 1.f);			//無限に増減しないよう抑える
 
 	////接地してて回収中じゃない時にAボタン押すと
@@ -780,6 +781,7 @@ void Player::MoveKey()
 void Player::Avoidance()
 {
 	avoidTimer.Update();
+	avoidConsumTimer.Update();
 	
 	////削除
 	//for (auto itr = afterimagesObj.begin(); itr != afterimagesObj.end();)
@@ -793,64 +795,40 @@ void Player::Avoidance()
 	//	}
 	//}
 
-	
-
 	//ボタンを押したら
-	if (!avoidTimer.GetRun()) 
+	if (!avoidTimer.GetRun() && 
+		(RInput::GetPadButtonDown(XINPUT_GAMEPAD_A) || 
+		 RInput::GetKeyDown(DIK_X)))
 	{
-		if (RInput::GetPadButtonDown(XINPUT_GAMEPAD_A)) {
-			//特定方向へ加速を加算
-			Vector2 stick = RInput::GetInstance()->GetPadLStick();
-
-			//スティックが倒されてたら回避開始
-			if (stick.LengthSq() > 0.f) {
-				//カメラから注視点へのベクトル
-				Vector3 cameraVec = Camera::sNowCamera->mViewProjection.mTarget - Camera::sNowCamera->mViewProjection.mEye;
-				//カメラの角度
-				float cameraRad = atan2f(cameraVec.x, cameraVec.z);
-				//スティックの角度
-				float stickRad = atan2f(stick.x, stick.y);
-
-				avoidVec = { 0, 0, 1 };									//正面を基準に
-				avoidVec *= Matrix4::RotationY(cameraRad + stickRad);	//カメラの角度から更にスティックの入力角度を足して
-				avoidVec.Normalize();									//方向だけの情報なので正規化して
-
-				avoidTimer.Start();
-			}
-		}
-		if (RInput::GetKeyDown(DIK_X)) {
-			//特定方向へ加速を加算
-			Vector2 keyVec = {};
-			keyVec.x = (float)(RInput::GetInstance()->GetKey(DIK_D) - RInput::GetInstance()->GetKey(DIK_A));
-			keyVec.y = (float)(RInput::GetInstance()->GetKey(DIK_W) - RInput::GetInstance()->GetKey(DIK_S));
-
-			//スティックが倒されてたら回避開始
-			if (keyVec.LengthSq() > 0.f) {
-				//カメラから注視点へのベクトル
-				Vector3 cameraVec = Camera::sNowCamera->mViewProjection.mTarget - Camera::sNowCamera->mViewProjection.mEye;
-				//カメラの角度
-				float cameraRad = atan2f(cameraVec.x, cameraVec.z);
-				//キーの角度(?)
-				float keyRad = atan2f(keyVec.x, keyVec.y);
-
-				avoidVec = { 0, 0, 1 };									//正面を基準に
-				avoidVec *= Matrix4::RotationY(cameraRad + keyRad);	//カメラの角度から更にスティックの入力角度を足して
-				avoidVec.Normalize();									//方向だけの情報なので正規化して
-
-				avoidTimer.Start();
-			}
-		}
+		avoidVec = -GetFrontVec();
+		avoidTimer.Start();
+		avoidConsumTimer.maxTime_ = avoidTimer.maxTime_ / (float)avoidConsumWax;
+		avoidConsumTimer.Reset();
+		maxAvoidSpeed = moveSpeed / 2;
+		minAvoidSpeed = maxAvoidSpeed / 2.5f;
 	}
 
 	//回避中は方向を足し続ける
 	if (avoidTimer.GetRun() && waxStock > 0) {
+		//スピードを最初を早めに、最後を遅めに
+		avoidSpeed = Easing::OutQuad(maxAvoidSpeed,minAvoidSpeed, avoidTimer.GetTimeRate());
+		
+		moveAccel += moveAccelAmount;
+		moveAccel = Util::Clamp(moveAccel, 0.f, 1.f);			//無限に増減しないよう抑える
+
 		moveVec += avoidVec * avoidSpeed;
 
-		//ストック減らす
-		waxStock--;
+		ParticleManager::GetInstance()->AddSimple(GetFootPos(), "collect_smoke_avoid");
 
-		WaxManager::GetInstance()->Create(obj.mTransform, obj.mTransform.position, atkHeight,
-			atkSize, atkTimer.maxTime_, solidTimer.maxTime_);
+		//ロウを一定間隔で消費
+		if (!avoidConsumTimer.GetRun()) {
+			avoidConsumTimer.Start();
+			//ストック減らす
+			waxStock--;
+
+			WaxManager::GetInstance()->Create(obj.mTransform, obj.mTransform.position, atkHeight,
+				atkSize, atkTimer.maxTime_, solidTimer.maxTime_);
+		}
 
 		/*afterimagesObj.emplace_back();
 		afterimagesObj.back() = std::make_unique<AfterImage>();
@@ -1189,12 +1167,15 @@ void Player::WaxLeakOut(int32_t leakNum)
 		{
 			waxStock -= 1;
 
+			Transform startTrans = waxWall.obj.mTransform;
+			startTrans.position.y = atkHeight;
+
 			Vector3 endPos = waxWall.obj.mTransform.position;
-			endPos.x += Util::GetRand(-5.0f,5.0f);
-			endPos.z += Util::GetRand(-5.0f,5.0f);
+			endPos.x += Util::GetRand(-2.5f,2.5f);
+			endPos.z += Util::GetRand(-2.5f,2.5f);
 
 			WaxManager::GetInstance()->Create(
-				waxWall.obj.mTransform,
+				startTrans,
 				endPos,
 				atkHeight,
 				atkSize,

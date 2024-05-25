@@ -96,7 +96,7 @@ void Boss::Init()
 {
 	hp = maxHP;
 	isAlive = false;
-	bossSpawnTimer.Start();
+	//bossSpawnTimer.Start();
 
 	mutekiTimer.Reset();
 
@@ -296,7 +296,9 @@ void Boss::Update()
 		ImGui::SetNextWindowSize({ 300, 250 }, ImGuiCond_FirstUseEver);
 
 		ImGui::Begin("Boss");
-		ImGui::Text("ボスが出現するまでの時間:%f", bossSpawnTimer.nowTime_);
+		if (ImGui::Button("ボス出現")) {
+			BossApparance(0.1f);
+		}
 
 		ImGui::Text("ボス本体");
 		ImGui::Text("1:待機\n2:左パンチ\n3:右パンチ\n4:落下攻撃");
@@ -565,6 +567,14 @@ Boss* Boss::GetInstance()
 {
 	static Boss instance;
 	return &instance;
+}
+
+void Boss::BossApparance(float apptime)
+{
+	if (apptime > 0.0f) {
+		bossSpawnTimer.maxTime_ = apptime;
+	}
+	bossSpawnTimer.Start();
 }
 
 void Boss::DealDamage(int32_t damage)

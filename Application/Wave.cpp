@@ -5,6 +5,7 @@
 #include "RImGui.h"
 #include "RInput.h"
 #include "EnemyManager.h"
+#include "Boss.h"
 
 WaveManager* WaveManager::Get()
 {
@@ -34,6 +35,8 @@ void WaveManager::LoadLevelData()
 	LevelLoader::Get()->Load("./Level/wave/wave6.json", waves[5]);
 	LevelLoader::Get()->Load("./Level/wave/wave7.json", waves[6]);
 	LevelLoader::Get()->Load("./Level/wave/wave8.json", waves[7]);
+
+	bossApp = false;
 }
 
 void WaveManager::Update()
@@ -51,9 +54,17 @@ void WaveManager::Update()
 		zeroFlag = false;
 	}
 
-	if (EnemyManager::GetInstance()->enemys.size() <= 0)
+	if (EnemyManager::GetInstance()->enemys.size() <= 0 && !bossApp)
 	{
-		NextWave();
+		//ウェーブ終了時、進行管理の数値が最終ウェーブに到達しているなら、
+		//ボス出現に進める
+		if (waveNum >= MAX_NUM - 1) {
+			Boss::GetInstance()->BossApparance(0.1f);
+			bossApp = true;
+		}
+		else {
+			NextWave();
+		}
 	}
 
 	Imgui();
@@ -71,7 +82,7 @@ void WaveManager::Imgui()
 
 		ImGui::SliderInt("ウェーブを指定する", &debugNum, 1, MAX_NUM);
 		if (ImGui::Button("指定したウェーブへ移動")) {
-			MoveWave(debugNum - 1);
+			MoveWave(debugNum);
 		}
 
 		ImGui::End();
@@ -98,7 +109,9 @@ void WaveManager::NextWave()
 
 void WaveManager::MoveWave(int32_t moveNum)
 {
-	Level::Get()->Extract(waves[moveNum]);
+	waveNum = moveNum - 1;
+
+	Level::Get()->Extract(waves[waveNum]);
 	//0より大きいなら入れる
 	
 	Level::Get()->waveWaitTime = 0.0f;

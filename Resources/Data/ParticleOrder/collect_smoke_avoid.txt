@@ -1,0 +1,17 @@
+addNum:2
+life:0.5
+minscale:10
+maxscale:12
+accelpower:0.03
+growingTimer:0.05
+endscale:5
+rejectradius:0
+isgravity:false
+isbillboard:true
+emitscale:2.000000_2.000000_2.000000
+minvelo:-0.100000_-0.100000_-0.100000
+maxvelo:0.100000_0.100000_0.100000
+minrot:-0.100000_-0.100000_-0.100000
+maxrot:0.100000_0.100000_0.100000
+color:1.000000_1.000000_1.000000_0.039216
+tex:smoke
