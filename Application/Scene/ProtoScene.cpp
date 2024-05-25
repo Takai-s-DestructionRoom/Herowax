@@ -93,9 +93,7 @@ void ProtoScene::Init()
 	extract = Parameter::Extract("Boss");
 	controlUI.Init();
 	bossAppTimerUI.Init();
-	bossAppTimerUI.SetMaxTime(Parameter::GetParam(extract, "ボスが出現するまでの時間", 60.0f));
-	bossAppTimerUI.Start();
-
+	
 	SpotLightManager::GetInstance()->Init(&light);
 
 	//1ウェーブを読み込む
