@@ -454,6 +454,7 @@ void Player::Update()
 		ImGui::Text("WASD移動、スペースジャンプ、右クリで攻撃,Pでパブロ攻撃,Qでロウ回収");
 
 		ImGui::DragFloat("modelChangeOffset", &modelChangeOffset);
+		ImGui::DragFloat3("avoidVec", &avoidVec.x);
 		
 		if (ImGui::TreeNode("Transform系")) {
 
@@ -780,6 +781,7 @@ void Player::MoveKey()
 void Player::Avoidance()
 {
 	avoidTimer.Update();
+	avoidConsumTimer.Update();
 	
 	////削除
 	//for (auto itr = afterimagesObj.begin(); itr != afterimagesObj.end();)
@@ -792,8 +794,6 @@ void Player::Avoidance()
 	//		itr++;
 	//	}
 	//}
-
-	
 
 	//ボタンを押したら
 	if (!avoidTimer.GetRun()) 
@@ -816,6 +816,8 @@ void Player::Avoidance()
 				avoidVec.Normalize();									//方向だけの情報なので正規化して
 
 				avoidTimer.Start();
+
+				avoidConsumTimer.maxTime_ = avoidTimer.maxTime_ / (float)avoidConsumWax;//0.2
 			}
 		}
 		if (RInput::GetKeyDown(DIK_X)) {
@@ -838,19 +840,28 @@ void Player::Avoidance()
 				avoidVec.Normalize();									//方向だけの情報なので正規化して
 
 				avoidTimer.Start();
+
+				avoidConsumTimer.maxTime_ = avoidTimer.maxTime_ / (float)avoidConsumWax;//0.2
 			}
 		}
 	}
 
 	//回避中は方向を足し続ける
 	if (avoidTimer.GetRun() && waxStock > 0) {
+		//スピードを最初を早めに、最後を遅めに
+		avoidSpeed = Easing::OutQuad(maxAvoidSpeed,minAvoidSpeed, avoidTimer.GetTimeRate());
+		
 		moveVec += avoidVec * avoidSpeed;
 
-		//ストック減らす
-		waxStock--;
+		//ロウを一定間隔で消費
+		if (!avoidConsumTimer.GetRun()) {
+			avoidConsumTimer.Start();
+			//ストック減らす
+			waxStock--;
 
-		WaxManager::GetInstance()->Create(obj.mTransform, obj.mTransform.position, atkHeight,
-			atkSize, atkTimer.maxTime_, solidTimer.maxTime_);
+			WaxManager::GetInstance()->Create(obj.mTransform, obj.mTransform.position, atkHeight,
+				atkSize, atkTimer.maxTime_, solidTimer.maxTime_);
+		}
 
 		/*afterimagesObj.emplace_back();
 		afterimagesObj.back() = std::make_unique<AfterImage>();

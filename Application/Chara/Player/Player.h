@@ -97,9 +97,13 @@ public:
 	int32_t waxNum = 5;				//一度に出るロウの数
 
 	//----------- 回避関連 -------------//
-	Easing::EaseTimer avoidTimer = 0.1f;
+	Easing::EaseTimer avoidTimer = 0.5f;
+	Easing::EaseTimer avoidConsumTimer = 0.1f;
 	Vector3 avoidVec = {};
-	float avoidSpeed = 1.25f;
+	int32_t avoidConsumWax = 5;	//回避時のロウの消費量
+	float avoidSpeed = 0.0f;
+	float maxAvoidSpeed = 0.5f;
+	float minAvoidSpeed = 0.25f;
 
 	//std::vector<std::unique_ptr<AfterImage>> afterimagesObj;
 
