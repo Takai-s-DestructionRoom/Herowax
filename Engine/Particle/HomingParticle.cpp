@@ -94,10 +94,11 @@ void HomingParticle::Add(
 	uint32_t addNum, float life, Color color, TextureHandle tex,
 	float minScale, float maxScale, Vector3 minVelo, Vector3 maxVelo,
 	float accelPower, Vector3 minRot, Vector3 maxRot,
-	float growingTimer, float endScale, bool isGravity, bool isBillboard)
+	float growingTimer, float endScale, bool isGravity,
+	bool isBillboard, BlendMode blendMode)
 {
 	IEmitter3D::Add(
 		addNum, life, color, tex, minScale, maxScale,
 		minVelo, maxVelo, accelPower, minRot, maxRot,
-		growingTimer, endScale, isGravity, isBillboard);
+		growingTimer, endScale, isGravity, isBillboard, blendMode);
 }

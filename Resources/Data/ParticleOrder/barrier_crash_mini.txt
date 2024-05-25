@@ -6,6 +6,7 @@ accelpower:0.05
 growingTimer:0.05
 endscale:0
 rejectradius:0
+blendmode:1
 isgravity:false
 isbillboard:true
 emitscale:1.000000_1.000000_1.000000

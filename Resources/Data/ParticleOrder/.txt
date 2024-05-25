@@ -6,10 +6,13 @@ accelpower:0
 growingTimer:0
 endscale:1
 rejectradius:0
+blendmode:1
 isgravity:false
 isbillboard:true
 emitscale:0.000000_0.000000_0.000000
 minvelo:0.000000_0.000000_0.000000
 maxvelo:1.000000_1.000000_1.000000
+minrot:0.000000_0.000000_0.000000
+maxrot:0.000000_0.000000_0.000000
 color:1.000000_1.000000_1.000000_1.000000
 tex:directional_burst

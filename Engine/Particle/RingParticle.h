@@ -14,5 +14,6 @@ public:
 	void AddRing(uint32_t addNum, float life, Color color, TextureHandle tex,
 		float startRadius, float endRadius, float minScale, float maxScale,
 		float minVeloY, float maxVeloY, Vector3 minRot = {}, Vector3 maxRot = {},
-		float growingTimer = 0.f, float endScale = 0.f, bool isGravity = false, bool isBillboard = false) override;
+		float growingTimer = 0.f, float endScale = 0.f, bool isGravity = false,
+		bool isBillboard = false, BlendMode blendMode = BlendMode::Add) override;
 };

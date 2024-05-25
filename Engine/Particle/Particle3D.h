@@ -47,6 +47,13 @@ struct Particle3D
 // エミッター //
 class IEmitter3D
 {
+public:
+	enum class BlendMode : int32_t {
+		Alpha,
+		Add,
+		Sub
+	};
+
 protected:
 	Transform transform;
 	SRConstBuffer<TransformBuffer> transformBuff;
@@ -83,6 +90,7 @@ protected:
 
 	bool isGravity_ = false;				//重力の影響受けるかフラグ
 	bool isBillboard_ = false;				//ビルボード描画するかフラグ
+	BlendMode blendMode_ = BlendMode::Add;	//ブレンドモード
 
 	Texture texture;						//割り当てるテクスチャ
 
@@ -108,14 +116,16 @@ public:
 	//life:秒数指定なので注意
 	virtual void Add(uint32_t addNum, float life, Color color, TextureHandle tex, float minScale, float maxScale,
 		Vector3 minVelo, Vector3 maxVelo, float accelPower = 0.f, Vector3 minRot = {}, Vector3 maxRot = {},
-		float growingTimer = 0.f, float endScale = 0.f, bool isGravity = false, bool isBillboard = false, float rejectRadius = 0.f);
+		float growingTimer = 0.f, float endScale = 0.f, bool isGravity = false, bool isBillboard = false,
+		BlendMode blendMode = BlendMode::Add, float rejectRadius = 0.f);
 
 	//リング状パーティクル追加(固有処理にしたかったらoverrideで上書きする)
 	//life:秒数指定なので注意
 	virtual void AddRing(uint32_t addNum, float life, Color color, TextureHandle tex,
 		float startRadius, float endRadius, float minScale, float maxScale,
 		float minVeloY, float maxVeloY, Vector3 minRot = {}, Vector3 maxRot = {},
-		float growingTimer = 0.f, float endScale = 0.f, bool isGravity = false, bool isBillboard = false);
+		float growingTimer = 0.f, float endScale = 0.f, bool isGravity = false, 
+		bool isBillboard = false, BlendMode blendMode = BlendMode::Add);
 
 	//パーティクル全消し
 	void ClearParticles() { particles_.clear(); }

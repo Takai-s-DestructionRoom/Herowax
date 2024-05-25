@@ -172,12 +172,30 @@ void IEmitter3D::Draw()
 		pipedesc.BlendState.RenderTarget[0].SrcBlend = D3D12_BLEND_SRC_ALPHA;
 		pipedesc.BlendState.RenderTarget[0].DestBlend = D3D12_BLEND_ONE;
 
-		/*pipedesc.BlendState.RenderTarget[1].BlendOpAlpha = D3D12_BLEND_OP_ADD;
-		pipedesc.BlendState.RenderTarget[1].SrcBlendAlpha = D3D12_BLEND_SRC_ALPHA;
-		pipedesc.BlendState.RenderTarget[1].DestBlendAlpha = D3D12_BLEND_ONE;
-		pipedesc.BlendState.RenderTarget[1].BlendOp = D3D12_BLEND_OP_ADD;
-		pipedesc.BlendState.RenderTarget[1].SrcBlend = D3D12_BLEND_SRC_ALPHA;
-		pipedesc.BlendState.RenderTarget[1].DestBlend = D3D12_BLEND_INV_SRC_ALPHA;*/
+		////α合成
+		//pipedesc.BlendState.RenderTarget[0].BlendOpAlpha = D3D12_BLEND_OP_ADD;
+		//pipedesc.BlendState.RenderTarget[0].SrcBlendAlpha = D3D12_BLEND_SRC_ALPHA;
+		//pipedesc.BlendState.RenderTarget[0].DestBlendAlpha = D3D12_BLEND_ONE;
+		//pipedesc.BlendState.RenderTarget[0].BlendOp = D3D12_BLEND_OP_ADD;
+		//pipedesc.BlendState.RenderTarget[0].SrcBlend = D3D12_BLEND_SRC_ALPHA;
+		//pipedesc.BlendState.RenderTarget[0].DestBlend = D3D12_BLEND_INV_SRC_ALPHA;
+
+		////加算合成
+		//pipedesc.BlendState.RenderTarget[1].BlendOpAlpha = D3D12_BLEND_OP_ADD;
+		//pipedesc.BlendState.RenderTarget[1].SrcBlendAlpha = D3D12_BLEND_SRC_ALPHA;
+		//pipedesc.BlendState.RenderTarget[1].DestBlendAlpha = D3D12_BLEND_ONE;
+		//pipedesc.BlendState.RenderTarget[1].BlendOp = D3D12_BLEND_OP_ADD;
+		//pipedesc.BlendState.RenderTarget[1].SrcBlend = D3D12_BLEND_SRC_ALPHA;
+		//pipedesc.BlendState.RenderTarget[1].DestBlend = D3D12_BLEND_ONE;
+
+		////減算合成
+		//pipedesc.BlendState.RenderTarget[2].BlendOpAlpha = D3D12_BLEND_OP_REV_SUBTRACT;
+		//pipedesc.BlendState.RenderTarget[2].SrcBlendAlpha = D3D12_BLEND_SRC_ALPHA;
+		//pipedesc.BlendState.RenderTarget[2].DestBlendAlpha = D3D12_BLEND_ONE;
+		//pipedesc.BlendState.RenderTarget[2].BlendOp = D3D12_BLEND_OP_REV_SUBTRACT;
+		//pipedesc.BlendState.RenderTarget[2].SrcBlend = D3D12_BLEND_SRC_ALPHA;
+		//pipedesc.BlendState.RenderTarget[2].DestBlend = D3D12_BLEND_ONE;
+
 
 		RootSignature mRootSignature = RDirectX::GetDefRootSignature();
 
@@ -386,10 +404,12 @@ void IEmitter3D::TransferBuffer(ViewProjection viewprojection)
 
 void IEmitter3D::Add(uint32_t addNum, float life, Color color, TextureHandle tex,
 	float minScale, float maxScale, Vector3 minVelo, Vector3 maxVelo, float accelPower,
-	Vector3 minRot, Vector3 maxRot, float growingTimer, float endScale, bool isGravity, bool isBillboard, float rejectRadius)
+	Vector3 minRot, Vector3 maxRot, float growingTimer, float endScale, bool isGravity,
+	bool isBillboard, BlendMode blendMode, float rejectRadius)
 {
 	isGravity_ = isGravity;
 	isBillboard_ = isBillboard;
+	blendMode_ = blendMode;
 	texture = TextureManager::Get(tex);
 
 	for (uint32_t i = 0; i < addNum; i++)
@@ -470,10 +490,11 @@ void IEmitter3D::Add(uint32_t addNum, float life, Color color, TextureHandle tex
 void IEmitter3D::AddRing(uint32_t addNum, float life, Color color, TextureHandle tex,
 	float startRadius, float endRadius, float minScale, float maxScale,
 	float minVeloY, float maxVeloY, Vector3 minRot, Vector3 maxRot,
-	float growingTimer, float endScale, bool isGravity, bool isBillboard)
+	float growingTimer, float endScale, bool isGravity, bool isBillboard, BlendMode blendMode)
 {
 	isGravity_ = isGravity;
 	isBillboard_ = isBillboard;
+	blendMode_ = blendMode;
 	texture = TextureManager::Get(tex);
 
 	//キレイに一周させたいので指定した数が最大数超えてたら修正

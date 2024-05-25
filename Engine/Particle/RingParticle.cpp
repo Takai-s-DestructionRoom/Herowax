@@ -39,9 +39,9 @@ void RingParticle::AddRing(
 	uint32_t addNum, float life, Color color, TextureHandle tex,
 	float startRadius, float endRadius, float minScale, float maxScale,
 	float minVeloY, float maxVeloY, Vector3 minRot, Vector3 maxRot,
-	float growingTimer, float endScale, bool isGravity, bool isBillboard)
+	float growingTimer, float endScale, bool isGravity, bool isBillboard, BlendMode blendMode)
 {
 	IEmitter3D::AddRing(
 		addNum, life, color, tex, startRadius, endRadius, minScale, maxScale,
-		minVeloY, maxVeloY, minRot, maxRot, growingTimer, endScale, isGravity, isBillboard);
+		minVeloY, maxVeloY, minRot, maxRot, growingTimer, endScale, isGravity, isBillboard,blendMode);
 }

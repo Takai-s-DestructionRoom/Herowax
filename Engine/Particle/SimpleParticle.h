@@ -14,5 +14,6 @@ public:
 	void Add(
 		uint32_t addNum, float life, Color color, TextureHandle tex, float minScale, float maxScale,
 		Vector3 minVelo, Vector3 maxVelo, float accelPower = 0.f, Vector3 minRot = {}, Vector3 maxRot = {},
-		float growingTimer = 0.f, float endScale = 0.f,bool isGravity = false, bool isBillboard = false);
+		float growingTimer = 0.f, float endScale = 0.f, bool isGravity = false,
+		bool isBillboard = false, BlendMode blendMode = BlendMode::Add);
 };
