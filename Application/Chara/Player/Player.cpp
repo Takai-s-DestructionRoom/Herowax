@@ -317,9 +317,9 @@ void Player::Update()
 	obj.mTransform.position += moveVec;						//完成したものを座標に足し合わせる
 
 	//回収中なら回収中モデルのスケールを入れる
-	if (!WaxManager::GetInstance()->isCollected)
+	if (modelChange)
 	{
-		obj.mTransform.scale = Vector3(1, 1, 1) * collectScale;
+		obj.mTransform.scale = Vector3(1, 1, 1) * bagScale;
 	}
 	else
 	{
@@ -453,6 +453,8 @@ void Player::Update()
 		ImGui::Text("Lスティック移動、Aボタンジャンプ、Rで攻撃,Lでロウ回収");
 		ImGui::Text("WASD移動、スペースジャンプ、右クリで攻撃,Pでパブロ攻撃,Qでロウ回収");
 
+		ImGui::DragFloat("modelChangeOffset", &modelChangeOffset);
+		
 		if (ImGui::TreeNode("Transform系")) {
 
 			ImGui::DragFloat("人の位置Y", &humanOffset);

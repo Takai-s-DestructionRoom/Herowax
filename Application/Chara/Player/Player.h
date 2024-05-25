@@ -130,6 +130,9 @@ public:
 	PlayerUI ui;
 
 	bool soundFlag = false;
+	
+	float modelChangeOffset;//モデルのズレに合わせたオフセット
+	bool modelChange = false;
 
 private:
 	ModelObj attackDrawerObj;			//上記の当たり判定描画オブジェクト
@@ -149,7 +152,6 @@ private:
 	//モデル変更時に使うやつら
 	float bagScale = 0.0f;
 	float collectScale = 0.0f;
-	bool modelChange = false;
 
 	//タンク内のロウ描画
 	ModelObj tankWaterObj;
