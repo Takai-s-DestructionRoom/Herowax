@@ -419,7 +419,30 @@
         },
         {
             "type": "MESH",
-            "name": "敵",
+            "name": "敵.001",
+            "transform": {
+                "translation": [
+                    0.0,
+                    150.0,
+                    0.0
+                ],
+                "rotation": [
+                    0.0,
+                    -0.0,
+                    0.0
+                ],
+                "scaling": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            },
+            "setObject": "bombsolider",
+            "behaviorOrder": "roop_triangle"
+        },
+        {
+            "type": "MESH",
+            "name": "敵.002",
             "transform": {
                 "translation": [
                     -50.0,
@@ -437,11 +460,37 @@
                     1.0
                 ]
             },
-            "setObject": "Enemy"
+            "setObject": "Enemy",
+            "behaviorOrder": "",
+            "enemyOrder": ""
         },
         {
             "type": "MESH",
-            "name": "敵.005",
+            "name": "敵",
+            "transform": {
+                "translation": [
+                    -25.0,
+                    -43.29999923706055,
+                    0.0
+                ],
+                "rotation": [
+                    0.0,
+                    -0.0,
+                    0.0
+                ],
+                "scaling": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            },
+            "setObject": "Enemy",
+            "behaviorOrder": "",
+            "enemyOrder": ""
+        },
+        {
+            "type": "MESH",
+            "name": "敵.003",
             "transform": {
                 "translation": [
                     50.0,
@@ -459,7 +508,170 @@
                     1.0
                 ]
             },
-            "setObject": "Enemy"
+            "setObject": "Enemy",
+            "behaviorOrder": "roop_triangle"
+        },
+        {
+            "type": "MESH",
+            "name": "敵.004",
+            "transform": {
+                "translation": [
+                    -25.0,
+                    43.29999923706055,
+                    0.0
+                ],
+                "rotation": [
+                    0.0,
+                    -0.0,
+                    0.0
+                ],
+                "scaling": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            },
+            "setObject": "Enemy",
+            "behaviorOrder": "roop_triangle"
+        },
+        {
+            "type": "MESH",
+            "name": "敵.005",
+            "transform": {
+                "translation": [
+                    -150.0,
+                    0.0,
+                    0.0
+                ],
+                "rotation": [
+                    0.0,
+                    -0.0,
+                    0.0
+                ],
+                "scaling": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            },
+            "setObject": "bombsolider",
+            "behaviorOrder": "roop_triangle"
+        },
+        {
+            "type": "MESH",
+            "name": "ウェーブ管理オブジェクト",
+            "transform": {
+                "translation": [
+                    -16.629981994628906,
+                    9.42098617553711,
+                    0.5002517700195312
+                ],
+                "rotation": [
+                    0.0,
+                    -0.0,
+                    0.0
+                ],
+                "scaling": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            },
+            "setObject": "waveManage",
+            "waitTime": 5.0
+        },
+        {
+            "type": "MESH",
+            "name": "敵.006",
+            "transform": {
+                "translation": [
+                    150.0,
+                    0.0,
+                    0.0
+                ],
+                "rotation": [
+                    0.0,
+                    -0.0,
+                    0.0
+                ],
+                "scaling": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            },
+            "setObject": "bombsolider",
+            "behaviorOrder": "roop_triangle"
+        },
+        {
+            "type": "MESH",
+            "name": "敵.007",
+            "transform": {
+                "translation": [
+                    0.0,
+                    -150.0,
+                    0.0
+                ],
+                "rotation": [
+                    0.0,
+                    -0.0,
+                    0.0
+                ],
+                "scaling": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            },
+            "setObject": "bombsolider",
+            "behaviorOrder": "roop_triangle"
+        },
+        {
+            "type": "MESH",
+            "name": "敵.008",
+            "transform": {
+                "translation": [
+                    25.0,
+                    43.29999923706055,
+                    0.0
+                ],
+                "rotation": [
+                    0.0,
+                    -0.0,
+                    0.0
+                ],
+                "scaling": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            },
+            "setObject": "Enemy",
+            "behaviorOrder": "roop_triangle"
+        },
+        {
+            "type": "MESH",
+            "name": "敵.009",
+            "transform": {
+                "translation": [
+                    25.0,
+                    -43.29999923706055,
+                    0.0
+                ],
+                "rotation": [
+                    0.0,
+                    -0.0,
+                    0.0
+                ],
+                "scaling": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            },
+            "setObject": "Enemy",
+            "behaviorOrder": "",
+            "enemyOrder": ""
         }
     ]
 }
