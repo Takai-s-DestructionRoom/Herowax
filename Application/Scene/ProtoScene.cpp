@@ -24,6 +24,7 @@
 #include "LightObject.h"
 #include "NumDrawer.h"
 #include "Wave.h"
+#include "Tank.h"
 
 ProtoScene::ProtoScene()
 {
@@ -355,12 +356,17 @@ void ProtoScene::Update()
 		for (auto& wax : group->waxs) {
 			for (auto& enemy : EnemyManager::GetInstance()->enemys)
 			{
-				bool isShieldCollision = enemy->GetShield()->GetHitCollider(wax->collider);
+				if (enemy->enemyTag == Tank::GetEnemyTag()) {
+					
+					Tank* tank = static_cast<Tank*>(enemy.get());
 
-				//投げられてるロウと盾がぶつかったらロウを反射
-				if (isShieldCollision && wax->isSolid == false && wax->isGround == false) {
-					wax->isReverse = true;
-					enemy->GetShield()->Hit(1);
+					bool isShieldCollision = tank->GetShield()->GetHitCollider(wax->collider);
+
+					//投げられてるロウと盾がぶつかったらロウを反射
+					if (isShieldCollision && wax->isSolid == false && wax->isGround == false) {
+						wax->isReverse = true;
+						tank->GetShield()->Hit(1);
+					}
 				}
 
 				bool isCollision = ColPrimitive3D::CheckSphereToSphere(enemy->collider, wax->collider);
@@ -448,15 +454,19 @@ void ProtoScene::Update()
 				{
 					enemy->ChangeAttackState<EnemyEndAttackState>();
 					//もしパリィ中なら盾を吹っ飛ばす
-					if (player.GetWaxWall()->GetParry()) {
-						enemy->GetShield()->Break();
-					}
-					else
-					{
-						int32_t consum = (int32_t)EnemyManager::GetInstance()->GetNormalAttackPower();
-						consum = max(consum, 1);
+					if (enemy->enemyTag == Tank::GetEnemyTag()) {
 
-						player.WaxLeakOut(consum);
+						Tank* tank = static_cast<Tank*>(enemy.get());
+						if (player.GetWaxWall()->GetParry()) {
+							tank->GetShield()->Break();
+						}
+						else
+						{
+							int32_t consum = (int32_t)EnemyManager::GetInstance()->GetNormalAttackPower();
+							consum = max(consum, 1);
+
+							player.WaxLeakOut(consum);
+						}
 					}
 				}
 			}

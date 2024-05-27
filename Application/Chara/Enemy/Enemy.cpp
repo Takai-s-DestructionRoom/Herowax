@@ -46,7 +46,6 @@ gravity(0.2f)
 
 	TextureManager::Load("./Resources/warning.png", "warning");
 
-	shield.Init();
 	//shield.obj.SetParent(&obj);
 }
 
@@ -235,14 +234,6 @@ void Enemy::BaseUpdate()
 	if (!whiteTimer.GetStarted())brightColor = { 0,0,0,0 };
 
 	//WaxVisualUpdate();
-	
-	Vector3 frontVec = GetFrontVec().Normalize() * 5.f;
-	frontVec.y = 0;
-	shield.obj.mTransform.position = obj.mTransform.position + frontVec;
-	shield.obj.mTransform.rotation = Quaternion::LookAt(frontVec).ToEuler();
-	shield.obj.mTransform.rotation.y += Util::AngleToRadian(-90.f);
-
-	shield.Update();
 }
 
 void Enemy::TransfarBuffer()
@@ -285,8 +276,6 @@ void Enemy::Draw()
 
 		DrawCollider();
 		DrawAttackCollider();
-
-		shield.Draw();
 	}
 }
 
