@@ -24,6 +24,10 @@ public:
 	void SetMoveSpeed(float moveSpeed_);
 	//生存時間設定
 	void SetLifeTime(float lifeTime_);
+	//反転
+	void Reversal();
+	//反転フラグ取得
+	bool GetIsReversal() { return isReversal; };
 
 private:
 	Vector3 moveVec;
@@ -35,5 +39,7 @@ private:
 	float damage = 1;
 
 	Easing::EaseTimer lifeTimer;
+
+	bool isReversal = false;
 };
 

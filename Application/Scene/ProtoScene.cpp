@@ -25,6 +25,7 @@
 #include "NumDrawer.h"
 #include "Wave.h"
 #include "Tank.h"
+#include "BombSolider.h"
 
 ProtoScene::ProtoScene()
 {
@@ -506,12 +507,57 @@ void ProtoScene::Update()
 	//弾とプレイヤーの判定
 	for (auto& shot : EnemyManager::GetInstance()->enemyShots)
 	{
+		//弾が盾と衝突したら
+		if(player.GetWaxWall()) {
+			if (ColPrimitive3D::CheckSphereToSphere(shot->collider, player.GetWaxWall()->collider))
+			{
+				if (player.GetWaxWall()->GetParry()) {
+					//パリィ出来たら跳ね返す
+					shot->Reversal();
+				}
+				else
+				{
+					//出来ないならロウ消費して防ぐ
+					int32_t consum = (int32_t)shot->GetDamage();
+					consum = max(consum, 1);
+
+					player.WaxLeakOut(consum);
+					shot->SetIsAlive(false);
+				}
+
+				//判定に成功した時点で、プレイヤーと衝突しないように処理をスキップ
+				continue;
+			}
+		}
+
+		//本体とぶつかったらダメージ
 		if (ColPrimitive3D::CheckSphereToSphere(shot->collider, player.collider)) {
 			shot->SetIsAlive(false);
 			player.DealDamage(shot->GetDamage());
 		}
 	}
 
+	for (auto& enemy : EnemyManager::GetInstance()->enemys)
+	{
+		if (enemy->enemyTag == BombSolider::GetEnemyTag()) {
+			for (auto& shot : EnemyManager::GetInstance()->enemyShots)
+			{
+				//パリィした弾が当たったらダメージ
+				if (ColPrimitive3D::CheckSphereToSphere(shot->collider, enemy->collider) &&
+					shot->GetIsReversal()) {
+					shot->SetIsAlive(false);
+					
+					//enemyにダメージ
+					Vector3 knockVec = enemy->GetPos() - shot->GetPos();
+					knockVec.Normalize();
+					knockVec.y = 0;
+					enemy->DealDamage(player.GetAttackPower(),
+						knockVec, &player.obj);
+				}
+			}
+		}
+	}
+	
 	player.Update();
 	Boss::GetInstance()->Update();
 	WaveManager::Get()->Update();
