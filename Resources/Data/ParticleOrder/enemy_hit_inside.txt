@@ -3,10 +3,10 @@ life:0.2
 minscale:8
 maxscale:8
 accelpower:0
-growingTimer:0
-endscale:12
+growingTimer:0.05
+endscale:11
 rejectradius:0
-blendmode:1
+blendmode:0
 isgravity:false
 isbillboard:true
 emitscale:0.010000_0.010000_0.010000
