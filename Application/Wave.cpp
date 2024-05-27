@@ -35,8 +35,16 @@ void WaveManager::LoadLevelData()
 	LevelLoader::Get()->Load("./Level/wave/wave6.json", waves[5]);
 	LevelLoader::Get()->Load("./Level/wave/wave7.json", waves[6]);
 	LevelLoader::Get()->Load("./Level/wave/wave8.json", waves[7]);
+}
 
+void WaveManager::Init()
+{
 	bossApp = false;
+
+	waveNum = -1;
+
+	//1ウェーブを読み込む
+	WaveManager::Get()->NextWave();
 }
 
 void WaveManager::Update()

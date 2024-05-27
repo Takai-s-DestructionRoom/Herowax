@@ -96,8 +96,7 @@ void ProtoScene::Init()
 	
 	SpotLightManager::GetInstance()->Init(&light);
 
-	//1ウェーブを読み込む
-	WaveManager::Get()->NextWave();
+	WaveManager::Get()->Init();
 }
 
 void ProtoScene::Update()
