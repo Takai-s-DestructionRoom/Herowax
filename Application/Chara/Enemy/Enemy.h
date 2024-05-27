@@ -9,7 +9,6 @@
 #include "EnemyAttackState.h"
 #include "EnemyBehaviorEditor.h"
 #include "WaxVisual.h"
-#include "WaxShield.h"
 
 //このEnemyは基底にしたい
 //ので、処理を分化して現状のタンクくんというクラスを別で作る
@@ -56,7 +55,6 @@ private:
 
 	ModelObj attackDrawerObj;			//上記の当たり判定描画オブジェクト
 
-	WaxShield shield;
 
 	//------------ HP関連 ------------//
 	float hp;				//現在のヒットポイント
@@ -219,8 +217,6 @@ public:
 	float GetMoveSpeed() { return moveSpeed; };
 	//出現済みかどうかを取得
 	bool GetIsSpawn();
-	//
-	WaxShield* GetShield() { return &shield; };
 
 	// セッター //
 	//減速率設定

@@ -108,7 +108,10 @@ void EnemyManager::Update()
 			enemy->SetKnockTime(knockTime);
 			enemy->SetMutekiTime(mutekiTime);
 			enemy->SetTarget(target);
-			enemy->GetShield()->requireWaxSolidCount = shieldRequireWaxCount;
+			if (enemy->enemyTag == Tank::GetEnemyTag()) {
+				Tank* tank = static_cast<Tank*>(enemy.get());
+				tank->GetShield()->requireWaxSolidCount = shieldRequireWaxCount;
+			}
 
 			enemy->Update();
 		}
@@ -117,7 +120,10 @@ void EnemyManager::Update()
 	for (auto& enemy : enemys)
 	{
 		enemy->TransfarBuffer();
-		enemy->GetShield()->TransfarBuffer();
+		if (enemy->enemyTag == Tank::GetEnemyTag()) {
+			Tank* tank = static_cast<Tank*>(enemy.get());
+			tank->GetShield()->TransfarBuffer();
+		}
 	}
 
 	for (auto& shot : enemyShots)
