@@ -315,7 +315,8 @@ void ProtoScene::Update()
 			bool isCollision = ColPrimitive3D::CheckSphereToSphere(Boss::GetInstance()->collider, wax->collider);
 
 			//体だけになって投げられてる蝋に当たった時はダメージと蝋蓄積
-			if (isCollision && wax->isSolid == false && wax->isGround == false && Boss::GetInstance()->GetIsOnlyBody())
+			if (isCollision && wax->isSolid == false && wax->isGround == false &&
+				Boss::GetInstance()->GetIsOnlyBody())
 			{
 				//一応1ダメージ(ダメージ量に応じてロウのかかり具合も進行)
 				Boss::GetInstance()->DealDamage(player.GetAttackPower());
@@ -350,15 +351,18 @@ void ProtoScene::Update()
 		}
 	}
 
-	//蝋と敵の当たり判定
-	for (auto& group : WaxManager::GetInstance()->waxGroups)
+	for (auto& enemy : EnemyManager::GetInstance()->enemys)
 	{
-		//蝋一つ一つとの判定
-		for (auto& wax : group->waxs) {
-			for (auto& enemy : EnemyManager::GetInstance()->enemys)
-			{
+		//敵が未出現状態なら飛ばす
+		if (!enemy->GetIsSpawn())continue;
+
+		//蝋と敵の当たり判定
+		for (auto& group : WaxManager::GetInstance()->waxGroups)
+		{
+			//蝋一つ一つとの判定
+			for (auto& wax : group->waxs) {
 				if (enemy->enemyTag == Tank::GetEnemyTag()) {
-					
+
 					Tank* tank = static_cast<Tank*>(enemy.get());
 
 					bool isShieldCollision = tank->GetShield()->GetHitCollider(wax->collider);
@@ -381,7 +385,7 @@ void ProtoScene::Update()
 						enemy->DealDamage(player.GetAttackPower(),
 							knockVec, &player.obj);
 						isHitSound = true;
-					
+
 						//当たった場所にロウを付着
 						if (wax->isSolid == false) {
 							enemy->CreateWaxVisual(wax->obj.mTransform.position);
