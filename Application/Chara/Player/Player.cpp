@@ -821,11 +821,11 @@ void Player::Avoidance()
 		//ロウを一定間隔で消費
 		if (!avoidConsumTimer.GetRun()) {
 			avoidConsumTimer.Start();
-			//ストック減らす
-			waxStock--;
+			////ストック減らす
+			//waxStock--;
 
-			WaxManager::GetInstance()->Create(obj.mTransform, obj.mTransform.position, atkHeight,
-				atkSize, atkTimer.maxTime_, solidTimer.maxTime_);
+			/*WaxManager::GetInstance()->Create(obj.mTransform, obj.mTransform.position, atkHeight,
+				atkSize, atkTimer.maxTime_, solidTimer.maxTime_);*/
 		}
 
 		/*afterimagesObj.emplace_back();
