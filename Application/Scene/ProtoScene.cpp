@@ -638,7 +638,7 @@ void ProtoScene::Update()
 	}
 
 	//プレイヤーを押し戻す(ボス)
-	if (ColPrimitive3D::CheckSphereToSphere(Boss::GetInstance()->collider, player.collider) && Boss::GetInstance()->isAppearance) {
+	if (ColPrimitive3D::CheckSphereToSphere(Boss::GetInstance()->collider, player.collider) && Boss::GetInstance()->isDrawObj) {
 		Vector3 repulsionVec = player.GetPos() - Boss::GetInstance()->GetPos();
 		repulsionVec.Normalize();
 		repulsionVec.y = 0;
