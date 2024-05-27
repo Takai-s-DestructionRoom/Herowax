@@ -23,6 +23,8 @@ void WaxShield::Update()
 	if (IsSolid() && isAlive) {
 		//死亡
 		isAlive = false;
+		// 音鳴らす
+		RAudio::Play("Break", 0.6f);
 		//破壊パーティクル発生
 		ParticleManager::GetInstance()->AddSimple(obj.mTransform.position, "barrier_crash_mini");
 	}
@@ -78,8 +80,7 @@ void WaxShield::Break()
 {
 	waxSolidCount = requireWaxSolidCount;
 
-	// 音鳴らす
-	RAudio::Play("Break", 0.6f);
+
 }
 
 bool WaxShield::GetHitCollider(ColPrimitive3D::Sphere hit)
