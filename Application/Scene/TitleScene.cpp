@@ -55,7 +55,7 @@ void TitleScene::Init()
 
 	SpotLightManager::GetInstance()->Init(&light);
 
-	
+	RAudio::Stop("Boss");
 }
 
 void TitleScene::Update()
