@@ -508,9 +508,19 @@ void Enemy::DealDamage(uint32_t damage, const Vector3& dir, ModelObj* target_)
 		0.03f, -Vector3(1, 1, 1) * 0.1f, Vector3(1, 1, 1) * 0.1f, 0.1f);
 
 	//ヒットエフェクト出す
+	Vector3 toPlayerVec = 
+		target->mTransform.position - obj.mTransform.position;	//プレイヤーへのベクトル
+
 	ParticleManager::GetInstance()->AddSimple(
-		obj.mTransform.position + Vector3::UP * obj.mTransform.scale.y,
+		obj.mTransform.position +
+		Vector3::UP * obj.mTransform.scale.y +
+		toPlayerVec.Normalize() * obj.mTransform.scale.z,
 		"enemy_hit");
+	ParticleManager::GetInstance()->AddSimple(
+		obj.mTransform.position +
+		Vector3::UP * obj.mTransform.scale.y +
+		toPlayerVec.Normalize() * obj.mTransform.scale.z,
+		"enemy_hit_inside");
 
 	//かかりカウント加算
 	waxSolidCount++;

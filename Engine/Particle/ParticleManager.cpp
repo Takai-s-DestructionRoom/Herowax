@@ -106,14 +106,16 @@ void ParticleManager::AddRing(
 	Vector3 emitPos, uint32_t addNum, float life, Color color, TextureHandle tex,
 	float startRadius, float endRadius, float minScale, float maxScale,
 	float minVeloY, float maxVeloY, Vector3 minRot, Vector3 maxRot,
-	float growingTimer, float endScale, bool isGravity, bool isBillboard)
+	float growingTimer, float endScale, bool isGravity,
+	bool isBillboard, IEmitter3D::BlendMode blendMode)
 {
 	emitters_.emplace_back();
 	emitters_.back() = std::make_unique<RingParticle>();
 	emitters_.back()->SetPos(emitPos);
 	emitters_.back()->AddRing(
 		addNum, life, color, tex, startRadius, endRadius, minScale, maxScale,
-		minVeloY, maxVeloY, minRot, maxRot, growingTimer, endScale, isGravity, isBillboard);
+		minVeloY, maxVeloY, minRot, maxRot, growingTimer, endScale, isGravity,
+		isBillboard,blendMode);
 }
 
 void ParticleManager::AddSimple(
@@ -121,7 +123,8 @@ void ParticleManager::AddSimple(
 	Color color, TextureHandle tex, float minScale, float maxScale,
 	Vector3 minVelo, Vector3 maxVelo, float accelPower,
 	Vector3 minRot, Vector3 maxRot,
-	float growingTimer, float endScale, bool isGravity, bool isBillboard)
+	float growingTimer, float endScale, bool isGravity,
+	bool isBillboard, IEmitter3D::BlendMode blendMode)
 {
 	emitters_.emplace_back();
 	emitters_.back() = std::make_unique<SimpleParticle>();
@@ -130,7 +133,7 @@ void ParticleManager::AddSimple(
 	emitters_.back()->Add(
 		addNum, life, color, tex, minScale, maxScale,
 		minVelo, maxVelo, accelPower, minRot, maxRot,
-		growingTimer, endScale, isGravity, isBillboard);
+		growingTimer, endScale, isGravity, isBillboard,blendMode);
 }
 
 void ParticleManager::AddSimple2D(
@@ -159,7 +162,8 @@ void ParticleManager::AddSimple(Vector3 emitPos, std::string pDataHandle)
 	emitters_.back()->Add(
 		pdata.addNum, pdata.life, pdata.color, pdata.tex, pdata.minScale, pdata.maxScale,
 		pdata.minVelo, pdata.maxVelo, pdata.accelPower, pdata.minRot, pdata.maxRot,
-		pdata.growingTimer, pdata.endScale, pdata.isGravity, pdata.isBillboard,pdata.rejectRadius);
+		pdata.growingTimer, pdata.endScale, pdata.isGravity, pdata.isBillboard,
+		(IEmitter3D::BlendMode)pdata.blendMode, pdata.rejectRadius);
 }
 
 void ParticleManager::AddRing(Vector3 emitPos, std::string pDataHandle)
@@ -194,14 +198,16 @@ void ParticleManager::AddHoming(Vector3 emitPos, std::string pDataHandle, Vector
 	emitters_.back()->Add(
 		pdata.addNum, pdata.life, pdata.color, pdata.tex, pdata.minScale, pdata.maxScale,
 		pdata.minVelo, pdata.maxVelo, pdata.accelPower, pdata.minRot, pdata.maxRot,
-		pdata.growingTimer, pdata.endScale, pdata.isGravity, pdata.isBillboard,pdata.rejectRadius);
+		pdata.growingTimer, pdata.endScale, pdata.isGravity, pdata.isBillboard,
+		(IEmitter3D::BlendMode)pdata.blendMode,pdata.rejectRadius);
 }
 
 void ParticleManager::AddHoming(
 	Vector3 emitPos, Vector3 emitScale, uint32_t addNum, float life, Color color, TextureHandle tex,
 	float minScale, float maxScale, Vector3 minVelo, Vector3 maxVelo, Vector3 targetPos,
 	float accelPower, Vector3 minRot, Vector3 maxRot,
-	float growingTimer, float endScale, bool isGravity, bool isBillboard, bool useSlimeWax)
+	float growingTimer, float endScale, bool isGravity, bool isBillboard,
+	IEmitter3D::BlendMode blendMode,bool useSlimeWax)
 {
 	emitters_.emplace_back();
 	emitters_.back() = std::make_unique<HomingParticle>(targetPos, useSlimeWax);
@@ -210,7 +216,7 @@ void ParticleManager::AddHoming(
 	emitters_.back()->Add(
 		addNum, life, color, tex, minScale, maxScale,
 		minVelo, maxVelo, accelPower, minRot, maxRot,
-		growingTimer, endScale, isGravity, isBillboard);
+		growingTimer, endScale, isGravity, isBillboard,blendMode);
 }
 
 void ParticleManager::AddHoming2D(Vector2 emitPos, Vector2 emitScale, uint32_t addNum, float life, Color color, TextureHandle tex, float minScale, float maxScale, Vector2 minVelo, Vector2 maxVelo, Vector2 targetPos, float accelPower, float minRot, float maxRot, float growingTimer, float endScale, bool isGravity)
@@ -235,5 +241,6 @@ void ParticleManager::AddDirectional(Vector3 emitPos, std::string pDataHandle)
 	emitters_.back()->Add(
 		pdata.addNum, pdata.life, pdata.color, pdata.tex, pdata.minScale, pdata.maxScale,
 		pdata.minVelo, pdata.maxVelo, pdata.accelPower, {0,0,0},{0,0,0},
-		pdata.growingTimer, pdata.endScale, pdata.isGravity, pdata.isBillboard, pdata.rejectRadius);
+		pdata.growingTimer, pdata.endScale, pdata.isGravity, pdata.isBillboard,
+		(IEmitter3D::BlendMode)pdata.blendMode,pdata.rejectRadius);
 }

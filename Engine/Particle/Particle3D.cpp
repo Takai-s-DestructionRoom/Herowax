@@ -151,33 +151,49 @@ void IEmitter3D::Update()
 
 void IEmitter3D::Draw()
 {
-	if (isBillboard_)
-	{
-		//パイプライン
-		PipelineStateDesc pipedesc = RDirectX::GetDefPipeline().mDesc;
-		pipedesc.VS = Shader::GetOrCreate("ParticleBillboard_VS", "Shader/ParticleBillboard/ParticleBillboardVS.hlsl", "main", "vs_5_0");
-		pipedesc.PS = Shader::GetOrCreate("ParticleBillboard_PS", "Shader/ParticleBillboard/ParticleBillboardPS.hlsl", "main", "ps_5_0");
-		pipedesc.GS = Shader::GetOrCreate("ParticleBillboard_GS", "Shader/ParticleBillboard/ParticleBillboardGS.hlsl", "main", "gs_5_0");
+	//パイプライン
+	PipelineStateDesc pipedesc = RDirectX::GetDefPipeline().mDesc;
 
-		pipedesc.RasterizerState.CullMode = D3D12_CULL_MODE_NONE;
-		pipedesc.RasterizerState.FillMode = D3D12_FILL_MODE_SOLID;
-		pipedesc.DepthStencilState.DepthWriteMask = D3D12_DEPTH_WRITE_MASK_ZERO;
-		pipedesc.BlendState.AlphaToCoverageEnable = false;
-
-		//加算合成
+	std::string suffixBlendMode = "";
+	if (blendMode_ == BlendMode::Alpha) {
+		suffixBlendMode = "_Alpha";
+		pipedesc.BlendState.RenderTarget[0].BlendOpAlpha = D3D12_BLEND_OP_ADD;
+		pipedesc.BlendState.RenderTarget[0].SrcBlendAlpha = D3D12_BLEND_SRC_ALPHA;
+		pipedesc.BlendState.RenderTarget[0].DestBlendAlpha = D3D12_BLEND_ONE;
+		pipedesc.BlendState.RenderTarget[0].BlendOp = D3D12_BLEND_OP_ADD;
+		pipedesc.BlendState.RenderTarget[0].SrcBlend = D3D12_BLEND_SRC_ALPHA;
+		pipedesc.BlendState.RenderTarget[0].DestBlend = D3D12_BLEND_INV_SRC_ALPHA;
+	}
+	else if (blendMode_ == BlendMode::Add) {
+		suffixBlendMode = "_Add";
 		pipedesc.BlendState.RenderTarget[0].BlendOpAlpha = D3D12_BLEND_OP_ADD;
 		pipedesc.BlendState.RenderTarget[0].SrcBlendAlpha = D3D12_BLEND_SRC_ALPHA;
 		pipedesc.BlendState.RenderTarget[0].DestBlendAlpha = D3D12_BLEND_ONE;
 		pipedesc.BlendState.RenderTarget[0].BlendOp = D3D12_BLEND_OP_ADD;
 		pipedesc.BlendState.RenderTarget[0].SrcBlend = D3D12_BLEND_SRC_ALPHA;
 		pipedesc.BlendState.RenderTarget[0].DestBlend = D3D12_BLEND_ONE;
+	}
+	else if (blendMode_ == BlendMode::Sub) {
+		suffixBlendMode = "_Sub";
+		pipedesc.BlendState.RenderTarget[0].BlendOpAlpha = D3D12_BLEND_OP_REV_SUBTRACT;
+		pipedesc.BlendState.RenderTarget[0].SrcBlendAlpha = D3D12_BLEND_SRC_ALPHA;
+		pipedesc.BlendState.RenderTarget[0].DestBlendAlpha = D3D12_BLEND_ONE;
+		pipedesc.BlendState.RenderTarget[0].BlendOp = D3D12_BLEND_OP_REV_SUBTRACT;
+		pipedesc.BlendState.RenderTarget[0].SrcBlend = D3D12_BLEND_SRC_ALPHA;
+		pipedesc.BlendState.RenderTarget[0].DestBlend = D3D12_BLEND_ONE;
+	}
 
-		/*pipedesc.BlendState.RenderTarget[1].BlendOpAlpha = D3D12_BLEND_OP_ADD;
-		pipedesc.BlendState.RenderTarget[1].SrcBlendAlpha = D3D12_BLEND_SRC_ALPHA;
-		pipedesc.BlendState.RenderTarget[1].DestBlendAlpha = D3D12_BLEND_ONE;
-		pipedesc.BlendState.RenderTarget[1].BlendOp = D3D12_BLEND_OP_ADD;
-		pipedesc.BlendState.RenderTarget[1].SrcBlend = D3D12_BLEND_SRC_ALPHA;
-		pipedesc.BlendState.RenderTarget[1].DestBlend = D3D12_BLEND_INV_SRC_ALPHA;*/
+	pipedesc.RasterizerState.CullMode = D3D12_CULL_MODE_NONE;
+	pipedesc.RasterizerState.FillMode = D3D12_FILL_MODE_SOLID;
+	pipedesc.BlendState.AlphaToCoverageEnable = false;
+
+	if (isBillboard_)
+	{
+		pipedesc.VS = Shader::GetOrCreate("ParticleBillboard_VS", "Shader/ParticleBillboard/ParticleBillboardVS.hlsl", "main", "vs_5_0");
+		pipedesc.PS = Shader::GetOrCreate("ParticleBillboard_PS", "Shader/ParticleBillboard/ParticleBillboardPS.hlsl", "main", "ps_5_0");
+		pipedesc.GS = Shader::GetOrCreate("ParticleBillboard_GS", "Shader/ParticleBillboard/ParticleBillboardGS.hlsl", "main", "gs_5_0");
+
+		pipedesc.DepthStencilState.DepthWriteMask = D3D12_DEPTH_WRITE_MASK_ZERO;
 
 		RootSignature mRootSignature = RDirectX::GetDefRootSignature();
 
@@ -258,7 +274,7 @@ void IEmitter3D::Draw()
 		};
 		pipedesc.PrimitiveTopologyType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_POINT;
 
-		GraphicsPipeline pipe = GraphicsPipeline::GetOrCreate("ParticleBillboard", pipedesc);
+		GraphicsPipeline pipe = GraphicsPipeline::GetOrCreate("ParticleBillboard" + suffixBlendMode, pipedesc);
 		RenderOrder order;
 		order.mRootSignature = mRootSignature.mPtr.Get();
 		order.pipelineState = pipe.mPtr.Get();
@@ -276,15 +292,9 @@ void IEmitter3D::Draw()
 	}
 	else
 	{
-		//パイプライン
-		PipelineStateDesc pipedesc = RDirectX::GetDefPipeline().mDesc;
 		pipedesc.VS = Shader::GetOrCreate("Particle3D_VS", "Shader/Particle3D/Particle3DVS.hlsl", "main", "vs_5_0");
 		pipedesc.PS = Shader::GetOrCreate("Particle3D_PS", "Shader/Particle3D/Particle3DPS.hlsl", "main", "ps_5_0");
 		pipedesc.GS = Shader::GetOrCreate("Particle3D_GS", "Shader/Particle3D/Particle3DGS.hlsl", "main", "gs_5_0");
-
-		pipedesc.RasterizerState.CullMode = D3D12_CULL_MODE_NONE;
-		pipedesc.RasterizerState.FillMode = D3D12_FILL_MODE_SOLID;
-		pipedesc.BlendState.AlphaToCoverageEnable = false;
 
 		RootSignature mRootSignature = RDirectX::GetDefRootSignature();
 
@@ -358,7 +368,7 @@ void IEmitter3D::Draw()
 		};
 		pipedesc.PrimitiveTopologyType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_POINT;
 
-		GraphicsPipeline pipe = GraphicsPipeline::GetOrCreate("Particle3D", pipedesc);
+		GraphicsPipeline pipe = GraphicsPipeline::GetOrCreate("Particle3D" + suffixBlendMode, pipedesc);
 		RenderOrder order;
 		order.mRootSignature = mRootSignature.mPtr.Get();
 		order.pipelineState = pipe.mPtr.Get();
@@ -386,10 +396,12 @@ void IEmitter3D::TransferBuffer(ViewProjection viewprojection)
 
 void IEmitter3D::Add(uint32_t addNum, float life, Color color, TextureHandle tex,
 	float minScale, float maxScale, Vector3 minVelo, Vector3 maxVelo, float accelPower,
-	Vector3 minRot, Vector3 maxRot, float growingTimer, float endScale, bool isGravity, bool isBillboard, float rejectRadius)
+	Vector3 minRot, Vector3 maxRot, float growingTimer, float endScale, bool isGravity,
+	bool isBillboard, BlendMode blendMode, float rejectRadius)
 {
 	isGravity_ = isGravity;
 	isBillboard_ = isBillboard;
+	blendMode_ = blendMode;
 	texture = TextureManager::Get(tex);
 
 	for (uint32_t i = 0; i < addNum; i++)
@@ -470,10 +482,11 @@ void IEmitter3D::Add(uint32_t addNum, float life, Color color, TextureHandle tex
 void IEmitter3D::AddRing(uint32_t addNum, float life, Color color, TextureHandle tex,
 	float startRadius, float endRadius, float minScale, float maxScale,
 	float minVeloY, float maxVeloY, Vector3 minRot, Vector3 maxRot,
-	float growingTimer, float endScale, bool isGravity, bool isBillboard)
+	float growingTimer, float endScale, bool isGravity, bool isBillboard, BlendMode blendMode)
 {
 	isGravity_ = isGravity;
 	isBillboard_ = isBillboard;
+	blendMode_ = blendMode;
 	texture = TextureManager::Get(tex);
 
 	//キレイに一周させたいので指定した数が最大数超えてたら修正

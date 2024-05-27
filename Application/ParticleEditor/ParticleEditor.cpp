@@ -125,6 +125,18 @@ void ParticleEditor::OrderCreateGUI()
 			ImGui::Text("------------------------------------------");
 			ImGui::Checkbox("重力を適用するか", &saveSimplePData.isGravity);
 			ImGui::Checkbox("Y軸ビルボード化するか", &saveSimplePData.isBillboard);
+			ImGui::RadioButton("アルファブレンド",&saveSimplePData.blendMode,0);
+			ImGui::RadioButton("加算合成", &saveSimplePData.blendMode,1);
+			ImGui::RadioButton("減算合成", &saveSimplePData.blendMode,2);
+			if (saveSimplePData.blendMode == 0) {
+				ImGui::Text("アルファブレンド");
+			}
+			else if (saveSimplePData.blendMode == 1) {
+				ImGui::Text("加算合成");
+			}
+			else if (saveSimplePData.blendMode == 2) {
+				ImGui::Text("減算合成");
+			}
 			ImGui::Text("------------------------------------------");
 			ImGui::InputText("セーブするファイル名", &saveFileName);
 
@@ -157,6 +169,8 @@ void ParticleEditor::OrderCreateGUI()
 			ImGui::Text("------------------------------------------");
 			ImGui::Checkbox("重力を適用するか", &saveRingPData.isGravity);
 			ImGui::Checkbox("Y軸ビルボード化するか", &saveRingPData.isBillboard);
+			ImGui::RadioButton("ブレンドモード", &saveRingPData.blendMode);
+			ImGui::Text("0:Alpha,1:Add,2:Sub");
 			ImGui::Text("------------------------------------------");
 			ImGui::InputText("セーブするファイル名", &saveFileName);
 
@@ -202,6 +216,8 @@ void ParticleEditor::OrderCreateGUI()
 			ImGui::Checkbox("重力を適用するか", &saveHomingPData.isGravity);
 			ImGui::Checkbox("Y軸ビルボード化するか", &saveHomingPData.isBillboard);
 			ImGui::Checkbox("エミッターの中心に引き寄せられるか", &saveHomingPData.isTargetEmitter);
+			ImGui::RadioButton("ブレンドモード", &saveHomingPData.blendMode);
+			ImGui::Text("0:Alpha,1:Add,2:Sub");
 			ImGui::Text("------------------------------------------");
 			ImGui::InputText("セーブするファイル名", &saveFileName);
 
@@ -242,6 +258,8 @@ void ParticleEditor::OrderCreateGUI()
 			ImGui::Text("------------------------------------------");
 			ImGui::Checkbox("重力を適用するか", &saveDirectionalPData.isGravity);
 			ImGui::Checkbox("Y軸ビルボード化するか", &saveDirectionalPData.isBillboard);
+			ImGui::RadioButton("ブレンドモード", &saveDirectionalPData.blendMode);
+			ImGui::Text("0:Alpha,1:Add,2:Sub");
 			ImGui::Text("------------------------------------------");
 			ImGui::InputText("セーブするファイル名", &saveFileName);
 
@@ -344,6 +362,10 @@ SimplePData ParticleEditor::LoadSimple(const std::string& filename)
 		if (Util::ContainString(line, "rejectradius")) {
 			std::vector<std::string> strs = Util::StringSplit(line, ":");
 			result.rejectRadius = std::stof(strs[1]);
+		}
+		if (Util::ContainString(line, "blendmode")) {
+			std::vector<std::string> strs = Util::StringSplit(line, ":");
+			result.blendMode = std::stoi(strs[1]);
 		}
 
 		//boolども
@@ -465,6 +487,10 @@ RingPData ParticleEditor::LoadRing(const std::string& filename)
 			std::vector<std::string> strs = Util::StringSplit(line, ":");
 			result.endScale = std::stof(strs[1]);
 		}
+		if (Util::ContainString(line, "blendmode")) {
+			std::vector<std::string> strs = Util::StringSplit(line, ":");
+			result.blendMode = std::stoi(strs[1]);
+		}
 
 		//boolども
 		if (Util::ContainString(line, "isgravity")) {
@@ -564,6 +590,10 @@ HomingPData ParticleEditor::LoadHoming(const std::string& filename)
 		if (Util::ContainString(line, "rejectradius")) {
 			std::vector<std::string> strs = Util::StringSplit(line, ":");
 			result.rejectRadius = std::stof(strs[1]);
+		}
+		if (Util::ContainString(line, "blendmode")) {
+			std::vector<std::string> strs = Util::StringSplit(line, ":");
+			result.blendMode = std::stoi(strs[1]);
 		}
 
 		//boolども
@@ -688,6 +718,10 @@ DirectionalPData ParticleEditor::LoadDirectional(const std::string& filename)
 			std::vector<std::string> strs = Util::StringSplit(line, ":");
 			result.rejectRadius = std::stof(strs[1]);
 		}
+		if (Util::ContainString(line, "blendmode")) {
+			std::vector<std::string> strs = Util::StringSplit(line, ":");
+			result.blendMode = std::stoi(strs[1]);
+		}
 
 		//boolども
 		if (Util::ContainString(line, "isgravity")) {
@@ -752,6 +786,7 @@ void ParticleEditor::SaveSimple(const SimplePData& saveData, const std::string& 
 	writing_file << "growingTimer:" << saveData.growingTimer << std::endl;
 	writing_file << "endscale:" << saveData.endScale << std::endl;
 	writing_file << "rejectradius:" << saveData.rejectRadius << std::endl;
+	writing_file << "blendmode:" << saveData.blendMode << std::endl;
 
 	std::string tempGrab = "false";
 	if (saveData.isGravity)tempGrab = "true";
@@ -792,6 +827,7 @@ void ParticleEditor::SaveRing(const RingPData& saveData, const std::string& save
 	writing_file << "maxveloY:" << saveData.maxVeloY << std::endl;
 	writing_file << "growingTimer:" << saveData.growingTimer << std::endl;
 	writing_file << "endscale:" << saveData.endScale << std::endl;
+	writing_file << "blendmode:" << saveData.blendMode << std::endl;
 
 	std::string tempGrab = "false";
 	if (saveData.isGravity)tempGrab = "true";
@@ -827,6 +863,7 @@ void ParticleEditor::SaveHoming(const HomingPData& saveData, const std::string& 
 	writing_file << "growingTimer:" << saveData.growingTimer << std::endl;
 	writing_file << "endscale:" << saveData.endScale << std::endl;
 	writing_file << "rejectradius:" << saveData.rejectRadius << std::endl;
+	writing_file << "blendmode:" << saveData.blendMode << std::endl;
 
 	std::string tempGrab = "false";
 	if (saveData.isGravity)tempGrab = "true";
@@ -870,6 +907,7 @@ void ParticleEditor::SaveDirectional(const DirectionalPData& saveData, const std
 	writing_file << "growingTimer:" << saveData.growingTimer << std::endl;
 	writing_file << "endscale:" << saveData.endScale << std::endl;
 	writing_file << "rejectradius:" << saveData.rejectRadius << std::endl;
+	writing_file << "blendmode:" << saveData.blendMode << std::endl;
 
 	std::string tempGrab = "false";
 	if (saveData.isGravity)tempGrab = "true";

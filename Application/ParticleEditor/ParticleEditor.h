@@ -27,6 +27,7 @@ struct SimplePData
 	bool isGravity = false;
 	bool isBillboard = false;
 	float rejectRadius = 0.f;
+	int32_t blendMode = 1;	//デフォ加算
 
 	std::string error = "";
 };
@@ -50,6 +51,7 @@ struct RingPData
 	float endScale = 0.f;
 	bool isGravity = false;
 	bool isBillboard = false;
+	int32_t blendMode = 1;	//デフォ加算
 
 	std::string error = "";
 };
@@ -76,6 +78,7 @@ struct HomingPData
 	bool isBillboard = false;
 	float rejectRadius = 0.f;
 	bool isTargetEmitter = true;	//目標地点がエミッターの座標か
+	int32_t blendMode = 1;			//デフォ加算
 
 	std::string error = "";
 };
@@ -98,6 +101,7 @@ struct DirectionalPData
 	bool isGravity = false;
 	bool isBillboard = false;
 	float rejectRadius = 0.f;
+	int32_t blendMode = 1;	//デフォ加算
 
 	std::string error = "";
 };

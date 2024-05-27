@@ -426,7 +426,6 @@ void Player::Update()
 		= -(tankWaterObj.mTransform.scale.y + tankBuff->amplitude)
 		+ (tankWaterObj.mTransform.scale.y * 2.0f + tankBuff->amplitude) * tankRatio;
 	tankBuff->time += TimeManager::deltaTime;
-	SimpleDrawer::DrawString(0, 0, 10000, Util::StringFormat("ratio:%f, upper:%f", tankRatio, tankBuff->upper));
 
 	ui.Update(this);
 

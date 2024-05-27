@@ -28,11 +28,11 @@ void DirectionalParticle::Update()
 
 void DirectionalParticle::Add(uint32_t addNum, float life, Color color, TextureHandle tex,
 	float minScale, float maxScale, Vector3 minVelo, Vector3 maxVelo, float accelPower,
-	float growingTimer, float endScale, bool isGravity, bool isBillboard)
+	float growingTimer, float endScale, bool isGravity, bool isBillboard, BlendMode blendMode)
 {
 
 	IEmitter3D::Add(
 		addNum, life, color, tex, minScale, maxScale,
 		minVelo, maxVelo, accelPower, {0,0,0}, { 0,0,0 },
-		growingTimer, endScale, isGravity, isBillboard);
+		growingTimer, endScale, isGravity, isBillboard,blendMode);
 }
