@@ -14,4 +14,6 @@ public:
 private:	
 	NumDrawer numDrawer;
 	Sprite atText;
+	Sprite nextwave;
+	Sprite tai;
 };

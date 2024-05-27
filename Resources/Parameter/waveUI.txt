@@ -1,0 +1,6 @@
+atText_pos:513_100_0
+atText_scale:1_1_1
+nextwave_pos:633_43_0
+nextwave_scale:1_1_1
+tai_pos:743_102_0
+tai_scale:1_1_1
