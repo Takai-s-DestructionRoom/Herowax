@@ -56,6 +56,17 @@ void EnemyFindState::Update(Enemy* enemy)
 	//びっくりを出す(びっくり出す時間とこのステートの生存時間は同じ)
 	InstantDrawer::DrawGraph3D(position,5.0f,5.0f,"exclametion");
 
+	//角度加算
+	//向く方向のベクトルを取得
+	Vector3 aVec = enemy->GetTarget()->mTransform.position - enemy->GetPos();
+	aVec.Normalize();
+	aVec.y = 0;
+
+	//ターゲットの方向を向いてくれる
+	Quaternion aLookat = Quaternion::LookAt(aVec);
+	//euler軸へ変換
+	enemy->RotVecPlus(aLookat.ToEuler());
+
 	//時間たったら次へ
 	if (lifeTimer.GetEnd()) {
 		//遷移命令
@@ -243,7 +254,8 @@ void EnemyEndAttackState::Update(Enemy* enemy)
 
 	if (postureTimer.GetEnd()) {
 		//遷移命令
-		enemy->ChangeAttackState<EnemySeekState>();
+		//enemy->ChangeAttackState<EnemySeekState>();
+		enemy->ChangeAttackState<EnemyBackOriginState>();
 	}
 }
 
@@ -264,10 +276,9 @@ void EnemySeekState::Update(Enemy* enemy)
 	//探す タイマーを回す
 	seekTimer.Update();
 	
-	//本当は当たり判定を直接持ってきたい
 	ColPrimitive3D::Sphere sphere;
 	sphere.pos = enemy->GetTarget()->mTransform.position;
-	sphere.r = 20;
+	sphere.r = enemy->attackHitCollider.r;
 
 	//見つかったら
 	if (ColPrimitive3D::CheckSphereToSphere(enemy->collider, sphere))
@@ -305,7 +316,21 @@ void EnemyBackOriginState::Update(Enemy* enemy)
 
 	//ターゲットの方向を向いてくれる
 	Quaternion aLookat = Quaternion::LookAt(moveVec);
+	//euler軸へ変換
+	enemy->RotVecPlus(aLookat.ToEuler());
 
+	//その途中でプレイヤーを見つけたらもっかい攻撃へ
+	ColPrimitive3D::Sphere sphere;
+	sphere.pos = enemy->GetTarget()->mTransform.position;
+	sphere.r = enemy->attackHitCollider.r;
+	//見つかったら
+	if (ColPrimitive3D::CheckSphereToSphere(enemy->collider, sphere))
+	{
+		//攻撃ステートへ
+		enemy->ChangeAttackState<EnemyFindState>();
+	}
+
+	//初期位置にたどり着いたら通常モードへ
 	ColPrimitive3D::Sphere origin;
 	origin.pos = enemy->GetOriginPos();
 	origin.r = 2;
