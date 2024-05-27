@@ -817,9 +817,9 @@ void ProtoScene::Draw()
 
 		if (Boss::GetInstance()->isAppearanced == false)
 		{
-			bossAppTimerUI.Draw();
+			//bossAppTimerUI.Draw();
 		}
-		//waveUI.Draw();
+		waveUI.Draw();
 	}
 
 	//更新
