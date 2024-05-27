@@ -873,6 +873,9 @@
     <ClCompile Include="main.cpp">
       <Filter>ソース ファイル\Engine</Filter>
     </ClCompile>
+    <ClCompile Include="Application\UI\WaveUI.cpp">
+      <Filter>ソース ファイル\Application\UI</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Shader\Basic\BasicPS.hlsl">
@@ -1626,6 +1629,9 @@
     </ClInclude>
     <ClInclude Include="Application\MetaBall2D.h">
       <Filter>ヘッダー ファイル\Application\Metaball2D</Filter>
+    </ClInclude>
+    <ClInclude Include="Application\UI\WaveUI.h">
+      <Filter>ヘッダー ファイル\Application\UI</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

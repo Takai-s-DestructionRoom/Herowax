@@ -14,12 +14,12 @@ class NumDrawer
 		static void LoadResource();
 
 		//maxDigit:最大桁数(表示桁数)
-		void Init(int32_t maxDigit);
+		void Init(int32_t maxDigit, const std::string& title = "数字描画機能");
 		void Update();
 		void Draw();
 		~NumDrawer() {};
 
-		void Imgui(const std::string& title = "数字描画機能");
+		void Imgui();
 
 		void SetNum(int32_t num);
 
@@ -42,4 +42,5 @@ class NumDrawer
 		std::vector<int32_t> digit;	//各桁の数字格納用
 
 		Easing::EaseTimer timer = 60.f;
+		std::string filename = "NumDrawer";
 };

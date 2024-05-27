@@ -25,7 +25,7 @@ PlayerUI::PlayerUI()
 	GaugeReset();
 	GaugeAdd();
 
-	numDrawer.Init(3);
+	numDrawer.Init(3,"NumDrawer");
 
 	playerHpUI.Init();
 
