@@ -66,25 +66,31 @@ void BossPunch::Update(Boss* boss)
 	Quaternion aLookat = Quaternion::LookAt(handToTarget);
 
 	//殴り時のモーション遷移
-	punchRadianX = Easing::InQuad(Util::AngleToRadian(-60.f), 0, boss->punchTimer.GetTimeRate());
+	punchRadianX = Easing::InQuad(Util::AngleToRadian(-30.f), Util::AngleToRadian(50.f), boss->punchTimer.GetTimeRate());
 	if (isLeft_)
 	{
-		punchRadianY = Easing::InQuad(Util::AngleToRadian(-90.f), 0, boss->punchTimer.GetTimeRate());
+		punchRadianY = Easing::InQuad(Util::AngleToRadian(90.f), Util::AngleToRadian(-30.f), boss->punchTimer.GetTimeRate());
 	}
 	else
 	{
-		punchRadianY = Easing::InQuad(Util::AngleToRadian(90.f), 0, boss->punchTimer.GetTimeRate());
+		punchRadianY = Easing::InQuad(Util::AngleToRadian(-90.f), Util::AngleToRadian(30.f), boss->punchTimer.GetTimeRate());
 	}
 
 	Quaternion punchQuaterX = Quaternion::AngleAxis({ 1,0,0 }, punchRadianX);
 	Quaternion punchQuaterY = Quaternion::AngleAxis({ 0,1,0 }, punchRadianY);
 
+	//体と同じような回転かけるときもいので先に腕だけeuler軸へ変換
+	boss->parts[(size_t)isLeft_].obj.mTransform.rotation = aLookat.ToEuler();
+
 	//計算した向きをかける
-	aLookat = aLookat * punchQuaterX * punchQuaterY;
+	aLookat = punchQuaterX * punchQuaterY * aLookat;
 
 	//euler軸へ変換
-	boss->parts[(size_t)isLeft_].obj.mTransform.rotation = aLookat.ToEuler();
 	boss->obj.mTransform.rotation = aLookat.ToEuler();
+
+	//基準座標に回転をかけて親子っぽくしてる
+	boss->parts[(size_t)!isLeft_].obj.mTransform.position = boss->parts[(size_t)!isLeft_].oriPos * Matrix4::RotationY(aLookat.ToEuler().y);
+	boss->parts[(size_t)!isLeft_].obj.mTransform.rotation = aLookat.ToEuler();
 
 	if (boss->punchTimer.GetEnd() && boss->punchImpactTimer.GetStarted() == false)
 	{

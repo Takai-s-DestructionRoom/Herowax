@@ -77,6 +77,9 @@ private:
 	//敵の盾
 	int32_t shieldRequireWaxCount = 60;
 
+	//
+	float shotCoolTime = 1.0f;
+
 public:
 	static EnemyManager* GetInstance();
 

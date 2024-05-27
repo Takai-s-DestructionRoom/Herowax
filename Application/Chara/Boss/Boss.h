@@ -53,7 +53,6 @@ private:
 	BossAI ai;
 
 	bool changingState = false;		//ステート変更中かフラグ
-	bool isDrawObj = true;			//オブジェクト描画するかフラグ
 
 	float phaseTimer;				//フェーズ移行に使うタイマー
 
@@ -98,6 +97,8 @@ public:
 
 	std::array<Parts, 2> parts;			//体のパーツ
 	ModelObj targetCircle;				//攻撃位置表示用
+
+	bool isDrawObj = true;			//オブジェクト描画するかフラグ
 
 	//------------ 行動関連 ------------//
 	Easing::EaseTimer standTimer;		//待機時間
