@@ -422,7 +422,7 @@
             "name": "敵.001",
             "transform": {
                 "translation": [
-                    -106.06600189208984,
+                    106.06600189208984,
                     -106.06600189208984,
                     0.0
                 ],
@@ -445,8 +445,8 @@
             "name": "敵.002",
             "transform": {
                 "translation": [
-                    -65.59629821777344,
-                    -15.487600326538086,
+                    -50.0,
+                    0.0,
                     0.0
                 ],
                 "rotation": [
@@ -469,8 +469,8 @@
             "name": "敵",
             "transform": {
                 "translation": [
-                    65.59629821777344,
-                    15.487600326538086,
+                    0.0,
+                    -50.0,
                     0.0
                 ],
                 "rotation": [
@@ -493,8 +493,8 @@
             "name": "敵.003",
             "transform": {
                 "translation": [
-                    -15.487600326538086,
-                    -65.59629821777344,
+                    50.0,
+                    0.0,
                     0.0
                 ],
                 "rotation": [
@@ -516,8 +516,8 @@
             "name": "敵.004",
             "transform": {
                 "translation": [
-                    15.487600326538086,
-                    65.59629821777344,
+                    0.0,
+                    50.0,
                     0.0
                 ],
                 "rotation": [
@@ -539,7 +539,7 @@
             "name": "敵.005",
             "transform": {
                 "translation": [
-                    106.06600189208984,
+                    -106.06600189208984,
                     106.06600189208984,
                     0.0
                 ],
@@ -559,12 +559,12 @@
         },
         {
             "type": "MESH",
-            "name": "ウェーブ管理オブジェクト",
+            "name": "敵.006",
             "transform": {
                 "translation": [
-                    -16.629981994628906,
-                    9.42098617553711,
-                    0.5002517700195312
+                    -106.06600189208984,
+                    -106.06600189208984,
+                    0.0
                 ],
                 "rotation": [
                     0.0,
@@ -577,8 +577,54 @@
                     1.0
                 ]
             },
-            "setObject": "waveManage",
-            "waitTime": 5.0
+            "setObject": "bombsolider",
+            "behaviorOrder": "roop_triangle"
+        },
+        {
+            "type": "MESH",
+            "name": "敵.007",
+            "transform": {
+                "translation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "rotation": [
+                    0.0,
+                    -0.0,
+                    0.0
+                ],
+                "scaling": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            },
+            "setObject": "bombsolider",
+            "behaviorOrder": "roop_triangle"
+        },
+        {
+            "type": "MESH",
+            "name": "敵.008",
+            "transform": {
+                "translation": [
+                    106.06600189208984,
+                    106.06600189208984,
+                    0.0
+                ],
+                "rotation": [
+                    0.0,
+                    -0.0,
+                    0.0
+                ],
+                "scaling": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            },
+            "setObject": "bombsolider",
+            "behaviorOrder": "roop_triangle"
         }
     ]
 }
