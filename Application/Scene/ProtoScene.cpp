@@ -406,6 +406,11 @@ void ProtoScene::Update()
 						enemy->DealDamage(player.GetInvolvePower(),
 							knockVec, &player.obj);
 
+						if (!RAudio::IsPlaying("Hit"))
+						{
+							RAudio::Play("Hit");
+						}
+
 						//このタイミングで固まった場合も溶ける
 						if (enemy->GetIsSolid())
 						{
