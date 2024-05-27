@@ -39,10 +39,10 @@ void BossAppUI::Update()
 
 void BossAppUI::Draw()
 {
-	TimerUI::Draw();
+	/*TimerUI::Draw();
 	atText.Draw();
 
-	bossAppText.Draw();
+	bossAppText.Draw();*/
 }
 
 void BossAppUI::Imgui(const std::string& title)
