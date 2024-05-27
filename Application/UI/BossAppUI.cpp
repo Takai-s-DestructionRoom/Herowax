@@ -5,15 +5,15 @@
 void BossAppUI::Init()
 {
 	atText = TextureManager::Load("./Resources/UI/at.png", "at");
-	bossAppText = TextureManager::Load("./Resources/UI/bossAppText.png", "bossAppText");
+	enemyAllKillText = TextureManager::Load("./Resources/UI/enemyAllKillText.png", "enemyAllKillText");
 
 	TimerUI::Init();
 
 	std::map<std::string, std::string> extract = Parameter::Extract("BossTimerUI");
 	atPlusPos = Parameter::GetVector3Data(extract,"「あと」の位置", atPlusPos);
 	atPlusScale = Parameter::GetVector3Data(extract,"「あと」の大きさ", atPlusScale);
-	bossAppPlusPos = Parameter::GetVector3Data(extract,"「ボスが..」の位置", bossAppPlusPos);
-	bossAppPlusScale = Parameter::GetVector3Data(extract,"「ボスが..」の大きさ", bossAppPlusScale);
+	enemyAllKillPlusPos = Parameter::GetVector3Data(extract,"「敵を全て倒せ」の位置", enemyAllKillPlusPos);
+	enemyAllKillPlusScale = Parameter::GetVector3Data(extract,"「敵をすべて倒せ」の大きさ", enemyAllKillPlusScale);
 
 	basePos = Parameter::GetVector3Data(extract, "位置", basePos);
 	baseScale = Parameter::GetVector3Data(extract, "大きさ", baseScale);
@@ -23,16 +23,16 @@ void BossAppUI::Init()
 void BossAppUI::Update()
 {
 	atText.mTransform.position = basePos + atPlusPos;
-	bossAppText.mTransform.position = basePos + bossAppPlusPos;
+	enemyAllKillText.mTransform.position = basePos + enemyAllKillPlusPos;
 
 	atText.mTransform.scale = atPlusScale;
-	bossAppText.mTransform.scale = bossAppPlusScale;
+	enemyAllKillText.mTransform.scale = enemyAllKillPlusScale;
 
 	atText.mTransform.UpdateMatrix();
 	atText.TransferBuffer();
 
-	bossAppText.mTransform.UpdateMatrix();
-	bossAppText.TransferBuffer();
+	enemyAllKillText.mTransform.UpdateMatrix();
+	enemyAllKillText.TransferBuffer();
 
 	TimerUI::Update();
 }
@@ -43,6 +43,8 @@ void BossAppUI::Draw()
 	atText.Draw();
 
 	bossAppText.Draw();*/
+
+	enemyAllKillText.Draw();
 }
 
 void BossAppUI::Imgui(const std::string& title)
@@ -58,8 +60,8 @@ void BossAppUI::Imgui(const std::string& title)
 
 		ImGui::DragFloat3("「あと」の位置", &atPlusPos.x);
 		ImGui::DragFloat3("「あと」の大きさ", &atPlusScale.x, 0.1f);
-		ImGui::DragFloat3("「ボスが..」の位置", &bossAppPlusPos.x);
-		ImGui::DragFloat3("「ボスが..」の大きさ", &bossAppPlusScale.x, 0.1f);
+		ImGui::DragFloat3("「敵をすべて倒せ」の位置", &enemyAllKillPlusPos.x);
+		ImGui::DragFloat3("「敵をすべて倒せ」の大きさ", &enemyAllKillPlusScale.x, 0.1f);
 		
 		ImGui::DragFloat("間隔", &interX);
 
@@ -80,8 +82,8 @@ void BossAppUI::Imgui(const std::string& title)
 			Parameter::Save("間隔", interX);
 			Parameter::SaveVector3("「あと」の位置", atPlusPos);
 			Parameter::SaveVector3("「あと」の大きさ", atPlusScale);
-			Parameter::SaveVector3("「ボスが..」の位置", bossAppPlusPos);
-			Parameter::SaveVector3("「ボスが..」の大きさ", bossAppPlusScale);
+			Parameter::SaveVector3("「敵をすべて倒せ」の位置", enemyAllKillPlusPos);
+			Parameter::SaveVector3("「敵をすべて倒せ」の大きさ", enemyAllKillPlusScale);
 
 			Parameter::End();
 		}

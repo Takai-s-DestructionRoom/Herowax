@@ -106,6 +106,7 @@ public:
 	Easing::EaseTimer punchImpactTimer;	//パンチの当たり判定がある時間
 	Easing::EaseTimer punchStayTimer;	//パンチ終わってからモーション終了までの時間
 	bool isAppearance = false;			//出現中かフラグ
+	bool isAppearanced = false;			//出現済かフラグ
 	bool isDead = false;				//撃破演出中かフラグ
 
 	int32_t maxPartsNum = 32;

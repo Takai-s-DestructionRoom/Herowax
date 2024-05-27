@@ -114,6 +114,7 @@ void Boss::Init()
 	punchStayTimer.Reset();
 
 	isAppearance = false;
+	isAppearanced = false;
 	isDead = false;
 
 	isOldBodySolid = false;

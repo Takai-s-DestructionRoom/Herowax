@@ -12,11 +12,11 @@ public:
 
 private:
 	Sprite atText;
-	Sprite bossAppText;
+	Sprite enemyAllKillText;
 
 	Vector3 atPlusPos;
 	Vector3 atPlusScale;
-	Vector3 bossAppPlusPos;
-	Vector3 bossAppPlusScale;
+	Vector3 enemyAllKillPlusPos;
+	Vector3 enemyAllKillPlusScale;
 };
 

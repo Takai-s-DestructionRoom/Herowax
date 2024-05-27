@@ -95,7 +95,7 @@ void ProtoScene::Init()
 	extract = Parameter::Extract("Boss");
 	controlUI.Init();
 	bossAppTimerUI.Init();
-	
+
 	SpotLightManager::GetInstance()->Init(&light);
 
 	WaveManager::Get()->Init();
@@ -112,7 +112,7 @@ void ProtoScene::Update()
 		if (RInput::GetInstance()->GetKeyDown(DIK_B))
 		{
 			RAudio::Stop("Boss");
-		    RAudio::Stop("Normal");
+			RAudio::Stop("Normal");
 			EventCaller::EventCall(BossDeadScene::GetEventCallStr());
 			player.isMove = false;
 		}
@@ -159,6 +159,7 @@ void ProtoScene::Update()
 
 		player.isMove = false;
 		Boss::GetInstance()->isAppearance = true;
+		Boss::GetInstance()->isAppearanced = true;
 		Boss::GetInstance()->isAlive = true;
 		EnemyManager::GetInstance()->isStop = true;
 
@@ -186,7 +187,7 @@ void ProtoScene::Update()
 		if (EventCaller::GetNowEventStr() == BossDeadScene::GetEventCallStr()) {
 			RAudio::Stop("Boss");
 			RAudio::Stop("Normal");
-			SceneManager::GetInstance()->Change<TitleScene,SimpleSceneTransition>();
+			SceneManager::GetInstance()->Change<TitleScene, SimpleSceneTransition>();
 		}
 
 		EventCaller::NowEventStrReset();
@@ -517,7 +518,7 @@ void ProtoScene::Update()
 	for (auto& shot : EnemyManager::GetInstance()->enemyShots)
 	{
 		//弾が盾と衝突したら
-		if(player.GetWaxWall()) {
+		if (player.GetWaxWall()) {
 			if (ColPrimitive3D::CheckSphereToSphere(shot->collider, player.GetWaxWall()->collider))
 			{
 				if (player.GetWaxWall()->GetParry()) {
@@ -555,7 +556,7 @@ void ProtoScene::Update()
 				if (ColPrimitive3D::CheckSphereToSphere(shot->collider, enemy->collider) &&
 					shot->GetIsReversal()) {
 					shot->SetIsAlive(false);
-					
+
 					//enemyにダメージ
 					Vector3 knockVec = enemy->GetPos() - shot->GetPos();
 					knockVec.Normalize();
@@ -566,7 +567,7 @@ void ProtoScene::Update()
 			}
 		}
 	}
-	
+
 	player.Update();
 	Boss::GetInstance()->Update();
 	WaveManager::Get()->Update();
@@ -582,10 +583,10 @@ void ProtoScene::Update()
 		if (enemy1->GetState() == EnemyCollect::GetStateStr())continue;
 
 		//攻撃中と回収され中はこの判定をなくす
-		if (enemy1->GetAttackState() != EnemyNowAttackState::GetStateStr()) 
-		{	
+		if (enemy1->GetAttackState() != EnemyNowAttackState::GetStateStr())
+		{
 			//プレイヤーと判定、当たってるなら押し戻す
-			if (ColPrimitive3D::CheckSphereToSphere(enemy1->collider, player.collider)) 
+			if (ColPrimitive3D::CheckSphereToSphere(enemy1->collider, player.collider))
 			{
 				Vector3 repulsionVec = player.GetPos() - enemy1->GetPos();
 				repulsionVec.Normalize();
@@ -615,7 +616,7 @@ void ProtoScene::Update()
 				//一旦これだけ無理やり足す
 				enemy1->obj.mTransform.position += e1RepulsionVec;
 				enemy2->obj.mTransform.position += e2RepulsionVec;
-				
+
 				//プレイヤーを探している状態(攻撃状態でない時)に他の敵にぶつかった場合
 				//周回座標の基準をずらす
 				if (enemy1->GetAttackState() == EnemyNormalState::GetStateStr())
@@ -637,7 +638,7 @@ void ProtoScene::Update()
 	//ボスの落下攻撃との当たり判定
 	if (Boss::GetInstance()->fallAtkTimer.GetRun())
 	{
-		for (size_t i = 0; i < Boss::GetInstance()->fallParts.size();i++)
+		for (size_t i = 0; i < Boss::GetInstance()->fallParts.size(); i++)
 		{
 			if (ColPrimitive3D::CheckSphereToSphere(Boss::GetInstance()->fallParts[i].collider, player.collider))
 			{
@@ -647,7 +648,7 @@ void ProtoScene::Update()
 	}
 
 	//プレイヤーを押し戻す(ボス)
-	if (ColPrimitive3D::CheckSphereToSphere(Boss::GetInstance()->collider, player.collider) && Boss::GetInstance()->isDrawObj) {
+	if (ColPrimitive3D::CheckSphereToSphere(Boss::GetInstance()->collider, player.collider) && Boss::GetInstance()->isAppearanced) {
 		Vector3 repulsionVec = player.GetPos() - Boss::GetInstance()->GetPos();
 		repulsionVec.Normalize();
 		repulsionVec.y = 0;
@@ -738,13 +739,14 @@ void ProtoScene::Update()
 	{
 		RAudio::Stop("Boss");
 		RAudio::Stop("Normal");
-		SceneManager::GetInstance()->Change<FailedScene,SimpleSceneTransition>();
+		SceneManager::GetInstance()->Change<FailedScene, SimpleSceneTransition>();
 	}
 
 	controlUI.Update();
-	//bossAppTimerUI.Imgui();
+	bossAppTimerUI.Imgui();
+
 	bossAppTimerUI.Update();
-	
+
 #pragma region ImGui
 	if (RImGui::showImGui)
 	{
@@ -769,7 +771,7 @@ void ProtoScene::Update()
 
 		// 平行光源 //
 		ImGui::Begin("平行光源");
-		
+
 		ImGui::DragFloat3("アンビエント", &ambient.x);
 
 		if (ImGui::Button("セーブ")) {
@@ -807,8 +809,8 @@ void ProtoScene::Draw()
 	//なんのイベントも呼ばれていないならUIを描画
 	if (EventCaller::GetNowEventStr() == "") {
 		controlUI.Draw();
-	
-		if (!bossAppTimerUI.GetEnd()) 
+
+		if (Boss::GetInstance()->isAppearanced == false)
 		{
 			bossAppTimerUI.Draw();
 		}
