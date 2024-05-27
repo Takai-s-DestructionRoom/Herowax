@@ -2,6 +2,7 @@
 #include "EnemyAttackState.h"
 #include "Enemy.h"
 #include "EnemyManager.h"
+#include "BombSolider.h"
 
 EnemyRangePreState::EnemyRangePreState()
 {
@@ -71,10 +72,43 @@ void EnemyRangeNowState::Update(Enemy* enemy)
 	//球を撃たせる
 	EnemyManager::GetInstance()->CreateEnemyShot(enemy);
 	//ステート変更
-	enemy->ChangeAttackState<EnemyNormalState>();
+	enemy->ChangeAttackState<EnemyRangeCoolState>();
 }
 
 std::string EnemyRangeNowState::GetStateStr()
 {
 	return "RangeNow";
+}
+
+EnemyRangeCoolState::EnemyRangeCoolState()
+{
+	isStart = true;
+}
+
+void EnemyRangeCoolState::Update(Enemy* enemy)
+{
+	enemy->SetAttackStateStr(EnemyRangeCoolState::GetStateStr());
+
+	if (isStart) {
+		if (enemy->enemyTag == BombSolider::GetEnemyTag()) {
+			BombSolider* bombSolider = static_cast<BombSolider*>(enemy);
+			lifeTimer.maxTime_ = bombSolider->shotCoolTime;
+		}
+
+		lifeTimer.Start();
+
+		isStart = false;
+	}
+
+	lifeTimer.Update();
+
+	if (lifeTimer.GetEnd()) {
+		//ステート変更
+		enemy->ChangeAttackState<EnemyNormalState>();
+	}
+}
+
+std::string EnemyRangeCoolState::GetStateStr()
+{
+	return "RangeCool";
 }

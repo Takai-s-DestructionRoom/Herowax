@@ -27,3 +27,14 @@ private:
 	Easing::EaseTimer blinkTimer;
 };
 
+class EnemyRangeCoolState : public EnemyAttackState
+{
+public:
+	EnemyRangeCoolState();
+	void Update(Enemy* enemy);
+
+	static std::string GetStateStr();
+private:
+	bool isStart = true;
+	Easing::EaseTimer lifeTimer;
+};
