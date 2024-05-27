@@ -19,6 +19,7 @@
 #include "IEventScene.h"
 #include "ControlUI.h"
 #include "BossAppUI.h"
+#include "WaveUI.h"
 
 class ProtoScene : public IScene
 {
@@ -42,6 +43,7 @@ private:
 	
 	ControlUI controlUI;
 	BossAppUI bossAppTimerUI;
+	WaveUI waveUI;
 	
 	float rot[3] = { 0, 0, 0 };
 	float scale[3] = { 1, 1, 1 };

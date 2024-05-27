@@ -80,6 +80,8 @@ private:
 	//
 	float shotCoolTime = 1.0f;
 
+	float shotBreachTime = 1.0f;
+
 public:
 	static EnemyManager* GetInstance();
 
@@ -104,7 +106,7 @@ public:
 		enemys.back()->Init();
 	}
 
-	void CreateEnemyShot(Enemy* enemy);
+	void CreateEnemyShot(Enemy* enemy, Vector3 attackEndPos);
 
 	//ダメージ設定
 	void SetShotParam(float damage, float moveSpeed_, float lifeTime_);

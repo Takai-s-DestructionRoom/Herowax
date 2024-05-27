@@ -10,7 +10,12 @@ public:
 	static std::string GetEnemyTag();
 
 public:
-	//出現
+	//弾を撃つクールタイム
 	float shotCoolTime = 1.0f;
+	
+	//ターゲットを決めてから撃つまでの時間
+	float shotBreachTime = 0.5f;
+
+	Vector3 attackEndPos = {};
 };
 

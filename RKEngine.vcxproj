@@ -312,6 +312,7 @@
     <ClCompile Include="Application\WaxShield.cpp" />
     <ClCompile Include="Application\WaxWall.cpp" />
     <ClCompile Include="Application\MetaBall2D.cpp" />
+    <ClCompile Include="Application\UI\WaveUI.cpp" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Shader\MetaballRenderer\MetaballRendererPS.hlsl">
@@ -1111,6 +1112,7 @@
     <ClInclude Include="Application\WaxShield.h" />
     <ClInclude Include="Application\WaxWall.h" />
     <ClInclude Include="Application\MetaBall2D.h" />
+    <ClInclude Include="Application\UI\WaveUI.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Shader\MetaballRenderer\MetaballRenderer.hlsli" />

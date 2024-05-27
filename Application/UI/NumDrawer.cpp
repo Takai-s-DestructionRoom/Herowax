@@ -17,7 +17,7 @@ void NumDrawer::LoadResource()
 	TextureManager::Load("./Resources/UI/num_9.png", "num_9");
 }
 
-void NumDrawer::Init(int32_t maxDigit)
+void NumDrawer::Init(int32_t maxDigit,const std::string& title)
 {
 	numberTextures = {
 		"num_0",
@@ -42,7 +42,9 @@ void NumDrawer::Init(int32_t maxDigit)
 		numberSprites[i].SetTexture(numberTextures[0]);
 	}
 
-	std::map<std::string, std::string> extract = Parameter::Extract("NumDrawer");
+	filename = title;
+
+	std::map<std::string, std::string> extract = Parameter::Extract(filename);
 	basePos = Parameter::GetVector3Data(extract, "位置", basePos);
 	baseScale = Parameter::GetVector3Data(extract, "大きさ", baseScale);
 	interX = Parameter::GetParam(extract, "間隔", interX);
@@ -69,16 +71,16 @@ void NumDrawer::Draw()
 	}
 }
 
-void NumDrawer::Imgui(const std::string& title)
+void NumDrawer::Imgui()
 {
 	if (RImGui::showImGui) {
-		ImGui::Begin(title.c_str());
+		ImGui::Begin(filename.c_str());
 		ImGui::DragFloat3("位置", &basePos.x);
 		ImGui::DragFloat3("大きさ", &baseScale.x, 0.1f);
 		ImGui::DragFloat("間隔", &interX);
 
 		if (ImGui::Button("セーブ")) {
-			Parameter::Begin("NumDrawer");
+			Parameter::Begin(filename);
 			Parameter::SaveVector3("位置", basePos);
 			Parameter::SaveVector3("大きさ", baseScale);
 			Parameter::Save("間隔", interX);

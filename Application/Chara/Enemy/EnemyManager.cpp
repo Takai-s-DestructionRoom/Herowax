@@ -65,12 +65,12 @@ EnemyManager::EnemyManager()
 	shieldRequireWaxCount = (int32_t)Parameter::GetParam(extract,"盾の耐久力", 60.f);
 }
 
-void EnemyManager::CreateEnemyShot(Enemy* enemy)
+void EnemyManager::CreateEnemyShot(Enemy* enemy,Vector3 attackEndPos)
 {
 	enemyShots.emplace_back();
 	enemyShots.back() = std::make_unique<EnemyShot>();
 	enemyShots.back()->Init();
-	Vector3 targetVec = enemy->GetTarget()->mTransform.position - enemy->GetPos();
+	Vector3 targetVec = attackEndPos - enemy->GetPos();
 	targetVec.Normalize();
 	enemyShots.back()->SetParam(enemy->GetPos(), targetVec);
 }
@@ -115,6 +115,7 @@ void EnemyManager::Update()
 			if (enemy->enemyTag == BombSolider::GetEnemyTag()) {
 				BombSolider* bombSolider = static_cast<BombSolider*>(enemy.get());
 				bombSolider->shotCoolTime = shotCoolTime;
+				bombSolider->shotBreachTime = shotBreachTime;
 			}
 
 			enemy->Update();
@@ -235,8 +236,10 @@ void EnemyManager::Update()
 			ImGui::DragFloat("弾の生存時間",&shotLifeTime, 0.1f);
 			ImGui::DragFloat("弾の速度",&shotMoveSpeed, 0.1f);
 			ImGui::DragFloat("遠距離敵の攻撃のクールタイム",&shotCoolTime, 0.1f);
+			ImGui::DragFloat("遠距離敵がターゲットを決めてから攻撃するまでの隙の時間",&shotBreachTime, 0.1f);
 			//丸め処理
 			shotCoolTime = max(shotCoolTime, 0.1f);
+			shotBreachTime = max(shotBreachTime, 0.1f);
 
 			ImGui::TreePop();
 		}

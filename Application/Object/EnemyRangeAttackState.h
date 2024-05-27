@@ -25,6 +25,7 @@ public:
 private:
 	Easing::EaseTimer lifeTimer;
 	Easing::EaseTimer blinkTimer;
+	bool isStart = true;
 };
 
 class EnemyRangeCoolState : public EnemyAttackState

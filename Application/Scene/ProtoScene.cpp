@@ -50,6 +50,8 @@ ProtoScene::ProtoScene()
 	NumDrawer::LoadResource();
 
 	WaveManager::Get()->LoadLevelData();
+
+	waveUI.LoadResource();
 }
 
 void ProtoScene::Init()
@@ -99,6 +101,8 @@ void ProtoScene::Init()
 	SpotLightManager::GetInstance()->Init(&light);
 
 	WaveManager::Get()->Init();
+
+	waveUI.Init();
 }
 
 void ProtoScene::Update()
@@ -746,7 +750,8 @@ void ProtoScene::Update()
 	bossAppTimerUI.Imgui();
 
 	bossAppTimerUI.Update();
-
+	waveUI.Update();
+	
 #pragma region ImGui
 	if (RImGui::showImGui)
 	{
@@ -814,6 +819,7 @@ void ProtoScene::Draw()
 		{
 			bossAppTimerUI.Draw();
 		}
+		//waveUI.Draw();
 	}
 
 	//更新
