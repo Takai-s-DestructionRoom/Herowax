@@ -4,11 +4,18 @@
 #include "BossPunch.h"
 #include "BossFallAttack.h"
 #include "TimeManager.h"
+#include "Level.h"
+#include "RImGui.h"
 
 void BossAI::Init()
 {
 	isStart = true;
 	situation = BossSituation::All;
+
+	//壁までの距離
+	maxDist = Level::Get()->wall[0].mTransform.position.Length();
+	//ボスとプレイヤーの距離
+	dist = 0;
 }
 
 void BossAI::Update(Boss* boss)
@@ -54,51 +61,96 @@ void BossAI::Update(Boss* boss)
 		if (isStand)
 		{
 			int32_t num = Util::GetRand(1, 100);	//確率用
-			//int32_t maxDist = 
-			//int32_t dist = 
+			//ボスとプレイヤーの距離
+			dist = (boss->GetTarget()->mTransform.position - boss->obj.mTransform.position).Length();
 
 			if (situation == BossSituation::All) {
 				//パンチに移行
-				//40%で右パンチ40%で左パンチ20%で落下攻撃
-				if (num > 40)
+				if (dist / maxDist < 0.6f)	//距離近ければ90%パンチ10%落下攻撃
 				{
-					boss->state = std::make_unique<BossPunch>(true);
+					if (num < 45)
+					{
+						boss->state = std::make_unique<BossPunch>(true);
+					}
+					else if (num < 90)
+					{
+						boss->state = std::make_unique<BossPunch>(false);
+					}
+					else
+					{
+						boss->state = std::make_unique<BossFallAttack>();
+					}
 				}
-				else if (num > 80)
+				else						//距離遠ければ60%パンチ40%落下攻撃
 				{
-					boss->state = std::make_unique<BossPunch>(false);
-				}
-				else
-				{
-					boss->state = std::make_unique<BossFallAttack>();
+					if (num < 30)
+					{
+						boss->state = std::make_unique<BossPunch>(true);
+					}
+					else if (num < 60)
+					{
+						boss->state = std::make_unique<BossPunch>(false);
+					}
+					else
+					{
+						boss->state = std::make_unique<BossFallAttack>();
+					}
 				}
 				return;
 			}
-			//左しか残ってないなら70%左パンチ
+			//左しか残ってないなら
 			if (situation == BossSituation::OnlyLeft) {
-				if (num > 70)
+				if (dist / maxDist < 0.6f)	//距離近ければ90%パンチ10%落下攻撃
 				{
-					boss->state = std::make_unique<BossPunch>(true);
+					if (num < 90)
+					{
+						boss->state = std::make_unique<BossPunch>(true);
+					}
+					else
+					{
+						boss->state = std::make_unique<BossFallAttack>();
+					}
 				}
-				else
+				else						//距離遠ければ60%パンチ40%落下攻撃
 				{
-					boss->state = std::make_unique<BossFallAttack>();
+					if (num < 60)
+					{
+						boss->state = std::make_unique<BossPunch>(true);
+					}
+					else
+					{
+						boss->state = std::make_unique<BossFallAttack>();
+					}
 				}
 				return;
 			}
-			//右しか残ってないなら右パンチ
+			//右しか残ってないなら
 			if (situation == BossSituation::OnlyRight) {
-				if (num > 70)
+				if (dist / maxDist < 0.6f)	//距離近ければ90%パンチ10%落下攻撃
 				{
-					boss->state = std::make_unique<BossPunch>(false);
+					if (num < 90)
+					{
+						boss->state = std::make_unique<BossPunch>(false);
+					}
+					else
+					{
+						boss->state = std::make_unique<BossFallAttack>();
+					}
 				}
-				else
+				else						//距離遠ければ60%パンチ40%落下攻撃
 				{
-					boss->state = std::make_unique<BossFallAttack>();
+					if (num < 60)
+					{
+						boss->state = std::make_unique<BossPunch>(false);
+					}
+					else
+					{
+						boss->state = std::make_unique<BossFallAttack>();
+					}
 				}
 				return;
 			}
-			//腕が無いなら待機モーションへ(今後別モーションへの遷移など実装)
+			//腕が無いなら落下攻撃
 			if (situation == BossSituation::NoArms) {
 				boss->state = std::make_unique<BossFallAttack>();
 				return;
@@ -111,6 +163,18 @@ void BossAI::Update(Boss* boss)
 			boss->state = std::make_unique<BossNormal>();
 			return;
 		}
+	}
+
+	if (RImGui::showImGui)
+	{
+		ImGui::SetNextWindowSize({ 600, 250 }, ImGuiCond_FirstUseEver);
+
+		ImGui::Begin("ボスAI");
+		ImGui::Text("距離割合:%f", dist / maxDist);
+		ImGui::Text("ボスとの距離:%f", dist);
+		ImGui::Text("最大距離:%f", maxDist);
+
+		ImGui::End();
 	}
 }
 
