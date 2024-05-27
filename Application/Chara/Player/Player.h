@@ -160,6 +160,7 @@ private:
 	//タンク内のロウ描画
 	ModelObj tankWaterObj;
 	float tankRadius = 1.0f;
+	float tankValue = 0;
 	struct TankWaterData {
 		Vector3 centerPos;
 		float upper;
