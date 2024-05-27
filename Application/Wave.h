@@ -21,6 +21,7 @@ public:
 	//レベルデータを先に読み込んでおく
 	void LoadLevelData();
 
+	void Init();
 	void Update();
 
 	void Imgui();

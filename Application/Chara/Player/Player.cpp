@@ -426,7 +426,6 @@ void Player::Update()
 		= -(tankWaterObj.mTransform.scale.y + tankBuff->amplitude)
 		+ (tankWaterObj.mTransform.scale.y * 2.0f + tankBuff->amplitude) * tankRatio;
 	tankBuff->time += TimeManager::deltaTime;
-	SimpleDrawer::DrawString(0, 0, 10000, Util::StringFormat("ratio:%f, upper:%f", tankRatio, tankBuff->upper));
 
 	ui.Update(this);
 
@@ -456,6 +455,18 @@ void Player::Update()
 		ImGui::DragFloat("modelChangeOffset", &modelChangeOffset);
 		ImGui::DragFloat3("avoidVec", &avoidVec.x);
 		
+		if (ImGui::TreeNode("初期状態設定"))
+		{
+			ImGui::SliderFloat("初期座標X", &initPos.x, -100.f, 100.f);
+			ImGui::SliderFloat("初期座標Y", &initPos.y, -100.f, 100.f);
+			ImGui::SliderFloat("初期座標Z", &initPos.z, -100.f, 100.f);
+			ImGui::SliderFloat("初期方向X", &initRot.x, 0.f, 360.f);
+			ImGui::SliderFloat("初期方向Y", &initRot.y, 0.f, 360.f);
+			ImGui::SliderFloat("初期方向Z", &initRot.z, 0.f, 360.f);
+			ImGui::InputInt("ロウの初期最大ストック数", &initWaxStock, 1, 100);
+
+			ImGui::TreePop();
+		}
 		if (ImGui::TreeNode("Transform系")) {
 
 			ImGui::DragFloat("人の位置Y", &humanOffset);
@@ -464,19 +475,6 @@ void Player::Update()
 			ImGui::DragFloat("回収中の大きさ", &collectScale);
 			ImGui::ColorEdit4("プレイヤーの色", &obj.mTuneMaterial.mColor.r);
 			ImGui::DragFloat("モデルをずらすY", &modelOffset.y, 0.1f);
-
-			if (ImGui::TreeNode("初期状態設定"))
-			{
-				ImGui::SliderFloat("初期座標X", &initPos.x, -100.f, 100.f);
-				ImGui::SliderFloat("初期座標Y", &initPos.y, -100.f, 100.f);
-				ImGui::SliderFloat("初期座標Z", &initPos.z, -100.f, 100.f);
-				ImGui::SliderFloat("初期方向X", &initRot.x, 0.f, 360.f);
-				ImGui::SliderFloat("初期方向Y", &initRot.y, 0.f, 360.f);
-				ImGui::SliderFloat("初期方向Z", &initRot.z, 0.f, 360.f);
-				ImGui::InputInt("ロウの初期最大ストック数", &initWaxStock, 1, 100);
-
-				ImGui::TreePop();
-			}
 
 			ImGui::TreePop();
 		}
