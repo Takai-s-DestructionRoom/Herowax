@@ -83,3 +83,12 @@ void EnemyShot::SetLifeTime(float lifeTime_)
 {
 	lifeTimer.maxTime_ = lifeTime_;
 }
+
+void EnemyShot::Reversal()
+{
+	//反転済みなら通さない
+	if (isReversal)return;
+
+	isReversal = true;
+	moveVec = -moveVec;
+}
