@@ -1,6 +1,7 @@
 #include "PlayerHpUI.h"
 #include "RImGui.h"
 #include "Player.h"
+#include "InstantDrawer.h"
 #include "Parameter.h"
 
 void PlayerHpUI::Init()
@@ -110,6 +111,12 @@ void PlayerHpUI::Draw()
 	circleGauge.Draw();
 	
 	circleGaugeFrame.Draw();
+
+	InstantDrawer::DrawGraph3D(
+		circleGaugeFrame.baseTrans.position,
+		circleGaugeFrame.baseTrans.scale.x * 6.5f,
+		circleGaugeFrame.baseTrans.scale.y * 6.5f,
+		TextureManager::Load("./Resources/UI/hpText.png", "hpText"));
 }
 
 void PlayerHpUI::SetPlayer(Player* player_)
