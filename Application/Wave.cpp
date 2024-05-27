@@ -6,6 +6,7 @@
 #include "RInput.h"
 #include "EnemyManager.h"
 #include "Boss.h"
+#include "Parameter.h"
 
 WaveManager* WaveManager::Get()
 {
@@ -39,6 +40,9 @@ void WaveManager::LoadLevelData()
 
 void WaveManager::Init()
 {
+	std::map<std::string, std::string> extract = Parameter::Extract("waveManage");
+	MAX_NUM = Parameter::GetParam(extract,"最大ウェーブ数", 8);
+
 	bossApp = false;
 
 	waveNum = -1;
@@ -87,10 +91,16 @@ void WaveManager::Imgui()
 		if (ImGui::Button("敵を全消し(次のウェーブに進める)")) {
 			EnemyManager::GetInstance()->enemys.clear();
 		}
-
 		ImGui::SliderInt("ウェーブを指定する", &debugNum, 1, MAX_NUM);
 		if (ImGui::Button("指定したウェーブへ移動")) {
 			MoveWave(debugNum);
+		}
+
+		ImGui::SliderInt("最大ウェーブ数変更", &MAX_NUM, 1, 8);
+		if (ImGui::Button("セーブ")) {
+			Parameter::Begin("waveManage");
+			Parameter::Save("最大ウェーブ数", MAX_NUM);
+			Parameter::End();
 		}
 
 		ImGui::End();

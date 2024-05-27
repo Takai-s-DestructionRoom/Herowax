@@ -112,6 +112,10 @@ void EnemyManager::Update()
 				Tank* tank = static_cast<Tank*>(enemy.get());
 				tank->GetShield()->requireWaxSolidCount = shieldRequireWaxCount;
 			}
+			if (enemy->enemyTag == BombSolider::GetEnemyTag()) {
+				BombSolider* bombSolider = static_cast<BombSolider*>(enemy.get());
+				bombSolider->shotCoolTime = shotCoolTime;
+			}
 
 			enemy->Update();
 		}
@@ -230,6 +234,10 @@ void EnemyManager::Update()
 			ImGui::DragFloat("弾の威力",&shotDamage,0.1f);
 			ImGui::DragFloat("弾の生存時間",&shotLifeTime, 0.1f);
 			ImGui::DragFloat("弾の速度",&shotMoveSpeed, 0.1f);
+			ImGui::DragFloat("遠距離敵の攻撃のクールタイム",&shotCoolTime, 0.1f);
+			//丸め処理
+			shotCoolTime = max(shotCoolTime, 0.1f);
+
 			ImGui::TreePop();
 		}
 		if (ImGui::TreeNode("敵の盾")) {
