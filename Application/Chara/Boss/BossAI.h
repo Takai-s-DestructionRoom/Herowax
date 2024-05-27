@@ -15,6 +15,8 @@ class BossAI
 {
 private:
 	bool isStart;
+	float maxDist;	//壁までの距離
+	float dist;		//ボスとプレイヤーの距離
 
 	BossSituation situation = BossSituation::All; //想定されるボスの遷移状態
 
