@@ -3,6 +3,7 @@
 #include "WaxManager.h"
 #include "TimeManager.h"
 #include "ParticleManager.h"
+#include "RAudio.h"
 
 void WaxShield::Init()
 {
@@ -12,6 +13,8 @@ void WaxShield::Init()
 	obj.mTransform.scale = { 2,2,2 };
 	
 	colliderSize = 5;
+
+	RAudio::Load("Resources/Sounds/SE/shieldBreak.wav", "Break");
 }
 
 void WaxShield::Update()
@@ -74,6 +77,9 @@ bool WaxShield::IsSolid()
 void WaxShield::Break()
 {
 	waxSolidCount = requireWaxSolidCount;
+
+	// 音鳴らす
+	RAudio::Play("Break", 0.6f);
 }
 
 bool WaxShield::GetHitCollider(ColPrimitive3D::Sphere hit)
