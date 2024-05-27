@@ -41,7 +41,7 @@ void WaveManager::LoadLevelData()
 void WaveManager::Init()
 {
 	std::map<std::string, std::string> extract = Parameter::Extract("waveManage");
-	MAX_NUM = Parameter::GetParam(extract,"最大ウェーブ数", 8);
+	MAX_NUM = (int32_t)Parameter::GetParam(extract,"最大ウェーブ数", 8);
 
 	bossApp = false;
 
