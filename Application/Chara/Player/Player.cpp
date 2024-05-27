@@ -421,11 +421,16 @@ void Player::Update()
 	tankBuff->centerPos = tankWaterObj.mTransform.position;
 	tankBuff->amplitude = 0.04f;
 	tankBuff->frequency = 10.0f;
-	float tankRatio = waxStock / (float)maxWaxStock;
-	tankBuff->upper
-		= -(tankWaterObj.mTransform.scale.y + tankBuff->amplitude)
+	float tankRatio = waxStock / 100.0f;
+	float newTankValue = -(tankWaterObj.mTransform.scale.y + tankBuff->amplitude)
 		+ (tankWaterObj.mTransform.scale.y * 2.0f + tankBuff->amplitude) * tankRatio;
+	tankValue += (newTankValue - tankValue) / 7.0f;
+	tankBuff->upper = tankValue;
 	tankBuff->time += TimeManager::deltaTime;
+
+	if (RInput::GetKeyDown(DIK_H)) {
+		waxStock = 100;
+	}
 
 	ui.Update(this);
 
