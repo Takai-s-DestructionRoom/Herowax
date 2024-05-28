@@ -350,6 +350,7 @@ void Player::Update()
 
 	bool isCollision = false;
 	float len = 0;
+	int32_t count = 0;
 
 	//移動制限(フェンス準拠)
 	for (auto& wall : Level::Get()->wallCol)
@@ -372,7 +373,8 @@ void Player::Update()
 				//「移動前の2個目の壁との距離」の方が「移動後の1個目の壁との距離」より遠ければ2個目の壁基準で動かす
 				if (len >= toWallLen)
 				{
-					slideVec = vec;
+					//slideVec = vec;
+					slideVec = -wall.normal.Cross(slideVec);
 				}
 			}
 			else
@@ -382,6 +384,7 @@ void Player::Update()
 				slideVec = vec;
 				isCollision = true;
 			}
+			count++;
 		}
 	}
 
@@ -394,6 +397,7 @@ void Player::Update()
 		ImGui::Text("残った方向:%f,%f,%f", slideVec.x, slideVec.y, slideVec.z);
 		ImGui::Text("壁との距離:%f", toWallLen);
 		ImGui::Text("2枚目壁との距離:%f", len);
+		ImGui::Text("何枚の壁と衝突してるか:%d", count);
 
 		ImGui::End();
 	}
