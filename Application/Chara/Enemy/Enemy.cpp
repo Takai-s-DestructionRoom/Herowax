@@ -277,7 +277,10 @@ void Enemy::Draw()
 
 		ui.Draw();
 
-		predictionLine.Draw();
+		if (GetAttackState() == "PreAttack" && GetIsSolid() == false)
+		{
+			predictionLine.Draw();
+		}
 
 		DrawCollider();
 		DrawAttackCollider();
