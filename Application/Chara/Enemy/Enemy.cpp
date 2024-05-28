@@ -277,7 +277,9 @@ void Enemy::Draw()
 
 		ui.Draw();
 
-		predictionLine.Draw();
+		if (!GetIsSolid()) {
+			predictionLine.Draw();
+		}
 
 		DrawCollider();
 		DrawAttackCollider();

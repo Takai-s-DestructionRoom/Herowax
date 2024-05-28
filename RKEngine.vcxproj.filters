@@ -370,6 +370,9 @@
     <Filter Include="シェーダー ファイル\TankWater">
       <UniqueIdentifier>{b2dd8dfd-7d42-4483-95fe-e994fddfc039}</UniqueIdentifier>
     </Filter>
+    <Filter Include="シェーダー ファイル\SlimeWax_Light">
+      <UniqueIdentifier>{7c2d467d-7722-4a38-92ef-beee19bb3e88}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Engine\2d\Sprite.cpp">
@@ -1103,6 +1106,12 @@
     <FxCompile Include="Shader\TankWater\TankWaterBackVS.hlsl">
       <Filter>シェーダー ファイル\TankWater</Filter>
     </FxCompile>
+    <FxCompile Include="Shader\SlimeWax_Light\SlimeWaxLightVS.hlsl">
+      <Filter>シェーダー ファイル\SlimeWax_Light</Filter>
+    </FxCompile>
+    <FxCompile Include="Shader\SlimeWax_Light\SlimeWaxLightPS.hlsl">
+      <Filter>シェーダー ファイル\SlimeWax_Light</Filter>
+    </FxCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\2d\Sprite.h">
@@ -1736,6 +1745,9 @@
       <Filter>シェーダー ファイル\SlimeShader</Filter>
     </None>
     <None Include="Shader\MetaballRenderer\MetaballRenderer.hlsli" />
+    <None Include="Shader\SlimeWax_Light\SlimeWaxLight.hlsli">
+      <Filter>シェーダー ファイル\SlimeWax_Light</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Text Include="hogehoge.txt" />
