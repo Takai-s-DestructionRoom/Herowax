@@ -144,6 +144,7 @@ void ProtoScene::Update()
 		RAudio::Stop("Normal");
 
 		player.isMove = false;
+		player.SetIsGodmode(true);	//プレイヤー無敵に
 		Boss::GetInstance()->isDead = true;
 
 		SceneTrance::GetInstance()->SetIsChange(false);	//忘れずに
@@ -381,7 +382,7 @@ void ProtoScene::Update()
 
 				bool isCollision = ColPrimitive3D::CheckSphereToSphere(enemy->collider, wax->collider);
 
-				if (isCollision && wax->isSolid == false) {
+				if (isCollision) {
 					//投げられてる蝋に当たった時はダメージと蝋蓄積
 					if (wax->isGround == false) {
 						//enemyにダメージ

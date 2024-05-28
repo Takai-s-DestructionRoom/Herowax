@@ -295,8 +295,8 @@ void Player::Update()
 			godmodeTimer.Start();
 		} 
 
-		//ゲーミング色に
-		obj.mTuneMaterial.mColor = GamingColorUpdate();
+		////ゲーミング色に
+		//obj.mTuneMaterial.mColor = GamingColorUpdate();
 	}
 
 	//無敵時間終了したらフラグもfalseに
