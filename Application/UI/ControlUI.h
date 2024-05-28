@@ -11,6 +11,7 @@ public:
 	std::string load_file = "";
 	Vector2 position{};
 	Vector2 size{};
+	float alpha = 1.f;
 };
 
 class ControlUI
