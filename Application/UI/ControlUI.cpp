@@ -23,7 +23,7 @@ void ControlUI::LoadResource()
 
 ControlUI::ControlUI()
 {
-	
+
 }
 
 void ControlUI::Init()
@@ -39,7 +39,7 @@ void ControlUI::Init()
 		uiOnces[i].position.x = Parameter::GetParam(extract, text1, 0);
 		uiOnces[i].position.y = Parameter::GetParam(extract, text2, 0);
 		uiOnces[i].size.x = Parameter::GetParam(extract, text3, 0);
-		uiOnces[i].size.y = Parameter::GetParam(extract, text4,0);
+		uiOnces[i].size.y = Parameter::GetParam(extract, text4, 0);
 	}
 
 	uiOnces[0].load_file = "L_Stick";
@@ -54,6 +54,9 @@ void ControlUI::Init()
 	uiOnces[9].load_file = "guardText";
 	uiOnces[10].load_file = "X_normal";
 	uiOnces[11].load_file = "avoidText";
+
+	uiOnces[8].alpha = 0.f;
+	uiOnces[11].alpha = 0.f;
 }
 
 void ControlUI::Update()
@@ -64,7 +67,7 @@ void ControlUI::Update()
 
 		// デバッグモード //
 		ImGui::Begin("UI配置");
-		
+
 		for (int32_t i = 0; i < uiOnces.size(); i++)
 		{
 			std::string text1 = "ui位置" + std::to_string(i);
@@ -103,5 +106,5 @@ void ControlUI::Draw()
 
 void UIOnce::Draw()
 {
-	InstantDrawer::DrawGraph(position.x, position.y,size.x,size.y,0, load_file);
+	InstantDrawer::DrawGraph(position.x, position.y, size.x, size.y, 0, load_file, { 1,1,1,alpha });
 }
