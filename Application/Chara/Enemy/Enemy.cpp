@@ -277,8 +277,7 @@ void Enemy::Draw()
 
 		ui.Draw();
 
-		if (GetAttackState() == "PreAttack" && GetIsSolid() == false)
-		{
+		if (!GetIsSolid()) {
 			predictionLine.Draw();
 		}
 

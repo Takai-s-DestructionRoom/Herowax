@@ -1264,9 +1264,11 @@ void Player::ShieldUp()
 	frontVec.Normalize();
 	frontVec *= 10.0f;
 	
-	waxWall.obj.mTransform.position = obj.mTransform.position + frontVec;
+	/*waxWall.obj.mTransform.position = obj.mTransform.position + frontVec;
 	waxWall.obj.mTransform.rotation = Quaternion::LookAt(frontVec).ToEuler();
-	waxWall.obj.mTransform.rotation.y += Util::AngleToRadian(-90.f);
+	waxWall.obj.mTransform.rotation.y += Util::AngleToRadian(-90.f);*/
+
+	waxWall.obj.mTransform.position = obj.mTransform.position;
 
 	if (RInput::GetInstance()->GetPadButtonDown(XINPUT_GAMEPAD_X) ||
 		RInput::GetKeyDown(DIK_Z)) {

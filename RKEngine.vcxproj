@@ -863,6 +863,8 @@
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.1</ShaderModel>
     </FxCompile>
+    <FxCompile Include="Shader\SlimeWax_Light\SlimeWaxLightPS.hlsl" />
+    <FxCompile Include="Shader\SlimeWax_Light\SlimeWaxLightVS.hlsl" />
     <FxCompile Include="Shader\Sprite\SpritePS.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
@@ -1146,6 +1148,7 @@
     <None Include="Shader\SlimeShader\WaxMerge.hlsli" />
     <None Include="Shader\SlimeShader\WaxShader.hlsli" />
     <None Include="Shader\SlimeShader\WaxShader3.hlsli" />
+    <None Include="Shader\SlimeWax_Light\SlimeWaxLight.hlsli" />
     <None Include="Shader\Sprite\Sprite.hlsli" />
     <None Include="Shader\Test\Test.hlsli" />
     <None Include="Shader\TilingBasic\TilingBasic.hlsli" />

@@ -1,13 +1,19 @@
 #include "WaxWall.h"
+#include "WaxManager.h"
+#include "RImGui.h"
 
 void WaxWall::Init()
 {
-	obj = PaintableModelObj(Model::Load("./Resources/Model/Shield/shield.obj", "shield"));
+	obj = PaintableModelObj(Model::Load("./Resources/Model/Sphere.obj", "Sphere"));
 	obj.mTransform.scale = { 2,2,2 };
+	baseScale = { 10,10,10 };
 
 	colliderSize = 10;
 
 	isAlive = false;
+
+	obj.mTuneMaterial.mColor = Color::kWaxColor;
+	obj.mTuneMaterial.mColor.a = { 1.0f };
 }
 
 void WaxWall::Update()
@@ -28,10 +34,28 @@ void WaxWall::Update()
 
 	if (!isAlive)return;
 
+	//入りの挙動(外側から濃くなって、プレイヤーの周りに発生する)
+	obj.mTransform.scale = baseScale;
+	if (parryTimer.GetStarted()) {
+		float barriarScale = Easing::OutQuad(1.0f, 0.0f, parryTimer.GetTimeRate());
+		obj.mTransform.scale += { barriarScale, barriarScale, barriarScale };
+	}
+	obj.mTuneMaterial.mColor.a = Easing::OutQuad(0.5f, 0.6f,parryTimer.GetTimeRate());
+
 	UpdateCollider();
 
 	obj.mTransform.UpdateMatrix();
 	BrightTransferBuffer(Camera::sNowCamera->mViewProjection);
+
+
+	if (RImGui::showImGui)
+	{
+		ImGui::SetNextWindowSize({ 600, 250 }, ImGuiCond_FirstUseEver);
+
+		ImGui::Begin("WaxWall");
+		ImGui::ColorEdit4("色", &obj.mTuneMaterial.mColor.r);
+		ImGui::End();
+	}
 }
 
 void WaxWall::Draw()
@@ -40,8 +64,8 @@ void WaxWall::Draw()
 
 	BrightDraw();
 
-	/*isDrawCollider = true;
-	DrawCollider();*/
+	isDrawCollider = true;
+	DrawCollider();
 }
 
 bool WaxWall::GetParry()
