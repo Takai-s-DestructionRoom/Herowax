@@ -20,6 +20,8 @@ void EnemyNormal::Update(Enemy* enemy)
 	enemy->SetSlowCoatingMag(0.f);
 	enemy->SetStateStr(EnemyNormal::GetStateStr());
 
+	enemy->obj.mTuneMaterial.mColor = Color::kWhite;
+
 	//ここからの遷移は当たり判定に任せる
 }
 
@@ -36,6 +38,8 @@ EnemySlow::EnemySlow()
 void EnemySlow::Update(Enemy* enemy)
 {
 	enemy->SetStateStr(EnemySlow::GetStateStr());
+
+	enemy->obj.mTuneMaterial.mColor = Color::kBlack;
 
 	//足とられた時の減速率はimguiでいじったものを基準とするのでここではいじらない
 	enemy->SetSlowCoatingMag(0.f);
