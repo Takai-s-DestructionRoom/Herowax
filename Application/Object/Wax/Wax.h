@@ -10,6 +10,15 @@ struct DisolveBuffer
 	float disolveValue;
 };
 
+struct SlimeLightBuffer
+{
+	Float4 waxColor;
+	Float4 rimColor;
+	float rimPower;
+	float pad[3];
+};
+
+
 //蝋
 class Wax : public GameObject
 {
@@ -61,6 +70,11 @@ public:
 
 private:
 	SRConstBuffer<DisolveBuffer> mDisolveBuff;
+	SRConstBuffer<SlimeLightBuffer> mSlimeBuff;
+
+	Color waxColor = {};
+	Color rimColor = {};
+	float rimPower = {};
 
 	std::vector<Vector3> spline;
 

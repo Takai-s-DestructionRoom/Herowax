@@ -92,6 +92,8 @@ public:
 
 	GraphicsPipeline CreateDisolvePipeLine();
 
+	GraphicsPipeline SlimeShaderPipeLine();	//パイプライン生成
+
 	//死んでるやつらを殺したりする
 	void Delete();
 

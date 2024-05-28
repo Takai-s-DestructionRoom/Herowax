@@ -22,8 +22,8 @@ struct PS_OUT
 
 PS_OUT main(VSOutput input)
 {
-    float4 texcolor = float4(mainTex.Sample(smp, input.uv));
-    texcolor = texcolor * m_color;
+    //float4 texcolor = float4(mainTex.Sample(smp, input.uv));
+    //texcolor = texcolor * m_color;
 	
     //レイの開始点をオブジェクトからにすることで
     //どれだけ離れてもraymarchを回す回数が一定になるため、描画されるようになる
