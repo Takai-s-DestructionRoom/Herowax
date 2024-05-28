@@ -374,7 +374,7 @@ void Player::Update()
 				if (len >= toWallLen)
 				{
 					//slideVec = vec;
-					slideVec = -wall.normal.Cross(slideVec);
+					slideVec = wall.normal.Cross(slideVec);
 				}
 			}
 			else
