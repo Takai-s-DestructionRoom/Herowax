@@ -25,6 +25,7 @@ void Level::Reset()
 	EnemyManager::GetInstance()->Init();
 	objects.clear();
 	wall.clear();
+	wallCol.clear();
 
 	ground = Ground::GetInstance();
 }
