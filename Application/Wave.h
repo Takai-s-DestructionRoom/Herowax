@@ -30,9 +30,12 @@ public:
 	void NextWave();
 	void MoveWave(int32_t moveNum);
 
+	Easing::EaseTimer GetWaitTimer() { return waitTimer; };
+
 private:
 	WaveManager() {};
 	~WaveManager() {};
+
 private:
 	int32_t debugNum = 1;
 
