@@ -144,6 +144,7 @@ void ProtoScene::Update()
 		RAudio::Stop("Normal");
 
 		player.isMove = false;
+		player.SetIsGodmode(true);	//プレイヤー無敵に
 		Boss::GetInstance()->isDead = true;
 
 		SceneTrance::GetInstance()->SetIsChange(false);	//忘れずに
