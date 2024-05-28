@@ -102,6 +102,61 @@ GraphicsPipeline WaxManager::CreateDisolvePipeLine()
 	return pipe;
 }
 
+GraphicsPipeline WaxManager::SlimeShaderPipeLine()
+{
+	DescriptorRange descriptorRange{};
+	descriptorRange.NumDescriptors = 1; //一度の描画に使うテクスチャが1枚なので1
+	descriptorRange.RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_SRV;
+	descriptorRange.BaseShaderRegister = 0; //テクスチャレジスタ0番
+	descriptorRange.OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND;
+
+	PipelineStateDesc pipedesc = RDirectX::GetDefPipeline().mDesc;
+	pipedesc.VS = Shader::GetOrCreate("SlimeWaxLightVS", "Shader/SlimeWax_Light/SlimeWaxLightVS.hlsl", "main", "vs_5_0");
+	pipedesc.PS = Shader::GetOrCreate("SlimeWaxLightPS", "Shader/SlimeWax_Light/SlimeWaxLightPS.hlsl", "main", "ps_5_0");
+
+	RootParamaters rootParams(6);
+	//マテリアル
+	rootParams[0].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV; //定数バッファビュー
+	rootParams[0].Descriptor.ShaderRegister = 0; //定数バッファ番号
+	rootParams[0].Descriptor.RegisterSpace = 0; //デフォルト値
+	rootParams[0].ShaderVisibility = D3D12_SHADER_VISIBILITY_ALL; //全シェーダから見える
+	//定数バッファ1番(Transform)
+	rootParams[1].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV; //定数バッファビュー
+	rootParams[1].Descriptor.ShaderRegister = 1; //定数バッファ番号
+	rootParams[1].Descriptor.RegisterSpace = 0; //デフォルト値
+	rootParams[1].ShaderVisibility = D3D12_SHADER_VISIBILITY_ALL; //全シェーダから見える
+	//定数バッファ2番(ViewProjection)
+	rootParams[2].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV; //定数バッファビュー
+	rootParams[2].Descriptor.ShaderRegister = 2; //定数バッファ番号
+	rootParams[2].Descriptor.RegisterSpace = 0; //デフォルト値
+	rootParams[2].ShaderVisibility = D3D12_SHADER_VISIBILITY_ALL; //全シェーダから見える
+	//定数バッファ3番(Light)
+	rootParams[3].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV; //定数バッファビュー
+	rootParams[3].Descriptor.ShaderRegister = 3; //定数バッファ番号
+	rootParams[3].Descriptor.RegisterSpace = 0; //デフォルト値
+	rootParams[3].ShaderVisibility = D3D12_SHADER_VISIBILITY_ALL; //全シェーダから見える
+	//テクスチャ(本体テクスチャ)
+	descriptorRange.BaseShaderRegister = 0;	//テクスチャレジスタ1番
+	rootParams[4].ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;
+	rootParams[4].DescriptorTable = DescriptorRanges{ descriptorRange };
+	rootParams[4].ShaderVisibility = D3D12_SHADER_VISIBILITY_ALL;
+	//定数バッファ4番(slime)
+	rootParams[5].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV; //定数バッファビュー
+	rootParams[5].Descriptor.ShaderRegister = 4; //定数バッファ番号
+	rootParams[5].Descriptor.RegisterSpace = 0; //デフォルト値
+	rootParams[5].ShaderVisibility = D3D12_SHADER_VISIBILITY_ALL; //全シェーダから見える
+
+	RootSignatureDesc rootDesc = RDirectX::GetDefRootSignature().mDesc;
+	rootDesc.RootParamaters = rootParams;
+	RootSignature mRootSig = RootSignature::GetOrCreate("SlimeShaderSignature", rootDesc);
+
+	pipedesc.pRootSignature = mRootSig.mPtr.Get();
+
+	GraphicsPipeline pipe = GraphicsPipeline::GetOrCreate("SlimeShader", pipedesc);
+
+	return pipe;
+}
+
 void WaxManager::Delete()
 {
 	//死んでいるグループがあれば消す
