@@ -751,7 +751,7 @@ void ProtoScene::Update()
 
 	bossAppTimerUI.Update();
 	waveUI.Update();
-	
+
 #pragma region ImGui
 	if (RImGui::showImGui)
 	{
@@ -818,8 +818,8 @@ void ProtoScene::Draw()
 		if (Boss::GetInstance()->isAppearanced == false)
 		{
 			//bossAppTimerUI.Draw();
+			waveUI.Draw();
 		}
-		waveUI.Draw();
 	}
 
 	//更新
