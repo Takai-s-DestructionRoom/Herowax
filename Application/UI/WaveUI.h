@@ -1,6 +1,7 @@
 #pragma once
 #include "NumDrawer.h"
 #include "Sprite.h"
+#include "TimerUI.h"
 
 class WaveUI
 {
@@ -16,4 +17,7 @@ private:
 	Sprite atText;
 	Sprite nextwave;
 	Sprite tai;
+
+	Sprite enemyAllKillText;
+	TimerUI timerUI;;
 };

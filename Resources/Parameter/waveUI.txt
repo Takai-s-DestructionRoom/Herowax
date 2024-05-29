@@ -4,3 +4,5 @@ nextwave_pos:633_43_0
 nextwave_scale:1_1_1
 tai_pos:743_102_0
 tai_scale:1_1_1
+enemyAllKillText_pos:635_45_0
+enemyAllKillText_scale:1_1_1

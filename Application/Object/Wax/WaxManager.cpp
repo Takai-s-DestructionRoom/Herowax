@@ -383,10 +383,14 @@ bool WaxManager::Collect(ColPrimitive3D::Ray collider)
 	return false;
 }
 
-int32_t WaxManager::Collect(ColPrimitive3D::Ray collider, float waxCollectVertical)
+int32_t WaxManager::Collect(ColPrimitive3D::Ray collider, float waxCollectVertical, GameObject* target)
 {
 	int32_t getNum = 0;
 	bool isCollect = false;
+
+	//回収ターゲットを入れる
+	WaxManager::GetInstance()->collectTarget = target;
+
 	for (auto& group : waxGroups)
 	{
 		for (auto& wax : group->waxs)
