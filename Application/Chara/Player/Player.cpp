@@ -76,13 +76,15 @@ isFireStock(false), isWaxStock(true), waxCollectAmount(0)
 	maxRange = Parameter::GetParam(extract, "攻撃範囲_最大", maxRange);
 
 	bagScale = Parameter::GetParam(extract, "風船の大きさ", 1.0f);
-	humanOffset = Parameter::GetParam(extract,"人の位置Y", humanOffset);
-	humanScale = Parameter::GetParam(extract,"人の大きさ", humanScale);
-	collectScale = Parameter::GetParam(extract,"回収中の大きさ", collectScale);
+	humanOffset = Parameter::GetParam(extract, "人の位置Y", humanOffset);
+	humanScale = Parameter::GetParam(extract, "人の大きさ", humanScale);
+	collectScale = Parameter::GetParam(extract, "回収中の大きさ", collectScale);
 
-	initWaxStock = (int32_t)Parameter::GetParam(extract,"ロウの初期最大ストック数", (float)initWaxStock);
+	initWaxStock = (int32_t)Parameter::GetParam(extract, "ロウの初期最大ストック数", (float)initWaxStock);
 	maxWaxStock = initWaxStock;
 	waxStock = initWaxStock;
+
+	bonusUI.Init();
 }
 
 void Player::Init()
@@ -461,8 +463,8 @@ void Player::Update()
 		ImGui::Text("Lスティック移動、Aボタンジャンプ、Rで攻撃,Lでロウ回収");
 		ImGui::Text("WASD移動、スペースジャンプ、右クリで攻撃,Pでパブロ攻撃,Qでロウ回収");
 
-		ImGui::DragFloat("modelChangeOffset", &modelChangeOffset);
-		ImGui::DragFloat3("avoidVec", &avoidVec.x);
+		ImGui::DragInt("ボーナスが獲得できる回収量", &bonusLine);	
+		ImGui::DragInt("ボーナス時に追加で獲得できるロウの量", &bonusGetWax);	
 		
 		if (ImGui::TreeNode("初期状態設定"))
 		{
@@ -633,6 +635,7 @@ void Player::Draw()
 		
 		waxUI.Draw();
 		waxWall.Draw();
+		bonusUI.Draw();
 	}
 }
 
@@ -998,12 +1001,7 @@ void Player::WaxCollect()
 
 	//イベント中でなければ入る
 	if (EventCaller::GetNowEventStr() == "") {
-		//回収したロウに応じてストック増やす
-		if (isWaxStock && WaxManager::GetInstance()->isCollected)
-		{
-			
-		}
-
+		
 		int32_t nowPlusNum = EnemyManager::GetInstance()->collectNum;
 		if (nowPlusNum > 0) {
 			waxCollectAmount += nowPlusNum;
@@ -1018,6 +1016,7 @@ void Player::WaxCollect()
 		if (waxCollectAmount > 0)
 		{
 			waxStock += waxCollectAmount;
+			bonusCount += waxCollectAmount;
 			//音鳴らす
 			RAudio::Play("eCollect",0.5f);
 
@@ -1103,27 +1102,6 @@ void Player::WaxCollect()
 				}
 			}
 
-
-			//本体吸収
-			//演出の都合上、いったん消す
-			//if (boss->GetStateStr() == "Collected") {
-			//	if (RayToSphereCol(collectCol, boss->collider))
-			//	{
-			//		isCollectSuccess = true;
-
-			//		//今のロウとの距離
-			//		float len = (collectCol.start -
-			//			boss->GetPos()).Length();
-
-			//		//見たロウが範囲外ならスキップ
-			//		if (waxCollectVertical >= len) {
-			//			boss->collectPos = collectCol.start;
-			//			boss->ChangeState<BossDeadState>();
-			//			waxCollectAmount += 1;
-			//		}
-			//	}
-			//}
-
 			if (isCollectSuccess) {
 				obj.mModel = ModelManager::Get("collect");
 				modelChange = true;
@@ -1139,7 +1117,24 @@ void Player::WaxCollect()
 		//ロウからターゲットを除去
 		WaxManager::GetInstance()->collectTarget = nullptr;
 		EnemyManager::GetInstance()->collectTarget = nullptr;
+
+		//回収量に応じてボーナス
+		if (bonusCount >= bonusLine) {
+			//追加でロウが増える
+			waxCollectAmount += bonusGetWax;
+
+			bonusCount = 0;
+		}
 	}
+
+	if (!(RInput::GetInstance()->GetLTrigger() || RInput::GetInstance()->GetKey(DIK_Q)))
+	{
+		bonusCount = 0;
+	}
+
+	bonusLine = max(bonusLine, 1);
+	bonusUI.circleGauge.baseRadian = 360.f - (float)((float)bonusCount / (float)bonusLine) * 360.f;
+	bonusUI.Update();
 
 	if (WaxManager::GetInstance()->isCollected == false)
 	{

@@ -51,15 +51,15 @@ void PlayerHpUI::Update()
 	circleGaugeBack.SetBillboardSize(sizeFront);
 	circleGaugeFrame.SetBillboardSize(sizeBack);
 
-	circleGauge.radian = baseMin + baseRadian * rate;
+	circleGauge.baseRadian = baseMin + baseRadian * rate;
 	circleGauge.Update();
 
-	circleGaugeBack.radian = baseMin;
+	circleGaugeBack.baseRadian = baseMin;
 	circleGaugeBack.baseTrans.position = circleGauge.baseTrans.position;
 	circleGaugeBack.angle = circleGauge.angle;
 	circleGaugeBack.Update();
 	
-	circleGaugeFrame.radian = baseMin;
+	circleGaugeFrame.baseRadian = baseMin;
 	circleGaugeFrame.baseTrans.position = circleGauge.baseTrans.position;
 	circleGaugeFrame.angle = circleGauge.angle;
 	circleGaugeFrame.Update();
@@ -72,7 +72,7 @@ void PlayerHpUI::Update()
 
 		ImGui::SliderFloat("現在の割合(システム側)", &baseRadian,0.0f,360.f);
 		ImGui::SliderFloat("レート", &rate,0.0f,1.0f);
-		ImGui::Text("現在の割合(ゲージ側):%f", circleGauge.radian);
+		ImGui::Text("現在の割合(ゲージ側):%f", circleGauge.baseRadian);
 		ImGui::DragFloat3("位置", &circleGauge.baseTrans.position.x);
 		ImGui::DragFloat("角度", &circleGauge.angle ,0.01f);
 		ImGui::DragFloat2("大きさ(本体)", &sizeFront.x,0.1f);
