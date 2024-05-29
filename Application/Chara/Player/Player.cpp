@@ -80,6 +80,8 @@ isFireStock(false), isWaxStock(true), waxCollectAmount(0)
 	humanScale = Parameter::GetParam(extract, "人の大きさ", humanScale);
 	collectScale = Parameter::GetParam(extract, "回収中の大きさ", collectScale);
 
+	waxWall.parryTimer.maxTime_ = Parameter::GetParam(extract,"パリィの猶予時間", 0.1f);
+
 	initWaxStock = (int32_t)Parameter::GetParam(extract, "ロウの初期最大ストック数", (float)initWaxStock);
 	maxWaxStock = initWaxStock;
 	waxStock = initWaxStock;
@@ -97,6 +99,10 @@ void Player::Init()
 	RAudio::Load("Resources/Sounds/SE/P_attack.wav", "Attack");
 	RAudio::Load("Resources/Sounds/SE/P_attackHit.wav", "Hit");
 	RAudio::Load("Resources/Sounds/SE/P_enemyCollect.wav", "eCollect");
+
+	RAudio::Load("Resources/Sounds/SE/playerShield.wav", "Shield");
+	
+	
 
 	obj = PaintableModelObj("playerBag");
 	humanObj = ModelObj("playerHuman");
@@ -312,12 +318,9 @@ void Player::Update()
 		godmodeTimer.Reset();
 	}
 
-	bool nowCollected = WaxManager::GetInstance()->notCollect && 
-		!EnemyManager::GetInstance()->GetNowCollectEnemy();
-
 	moveVec *=
 		moveSpeed * moveAccel *
-		nowCollected;				//移動速度をかけ合わせたら完成(回収中は動けない)
+		WaxManager::GetInstance()->notCollect;				//移動速度をかけ合わせたら完成(回収中は動けない)
 	obj.mTransform.position += moveVec;						//完成したものを座標に足し合わせる
 
 	//回収中なら回収中モデルのスケールを入れる
@@ -331,7 +334,7 @@ void Player::Update()
 	}
 
 	//攻撃中と回収中なら正面へ、それ以外なら後ろへ
-	if (isAttack || !nowCollected) {
+	if (isAttack || !WaxManager::GetInstance()->notCollect) {
 		Vector3 tVec = collectRangeModel.mTransform.position - collectCol.start;
 		tVec.y = 0;
 		tVec.Normalize();
@@ -394,7 +397,6 @@ void Player::Update()
 
 	if (RImGui::showImGui)
 	{
-
 		ImGui::SetNextWindowSize({ 600, 250 }, ImGuiCond_FirstUseEver);
 
 		ImGui::Begin("移動制限");
@@ -469,6 +471,7 @@ void Player::Update()
 
 		ImGui::Begin("Player");
 
+		ImGui::Checkbox("吸収フラグ", &WaxManager::GetInstance()->notCollect);
 		ImGui::Text("現在のHP:%f", hp);
 		ImGui::InputFloat("最大HP:", &maxHP, 1.0f);
 		ImGui::Text("Lスティック移動、Aボタンジャンプ、Rで攻撃,Lでロウ回収");
@@ -544,6 +547,11 @@ void Player::Update()
 			ImGui::InputFloat("敵がこの範囲に入ると攻撃状態へ遷移する大きさ", &attackHitCollider.r, 1.0f);
 			ImGui::TreePop();
 		}
+		if (ImGui::TreeNode("ガード系"))
+		{
+			ImGui::DragFloat("パリィの猶予時間", &waxWall.parryTimer.maxTime_, 0.01f);
+			ImGui::TreePop();
+		}
 		if (ImGui::TreeNode("MUTEKI系"))
 		{
 			ImGui::Checkbox("無敵状態切り替え", &isGodmode);
@@ -592,7 +600,7 @@ void Player::Update()
 			Parameter::Save("風船の大きさ", bagScale);
 			Parameter::Save("回収中の大きさ", collectScale);
 			Parameter::Save("ロウの初期最大ストック数", initWaxStock);
-
+			Parameter::Save("パリィの猶予時間", waxWall.parryTimer.maxTime_);
 			Parameter::End();
 		}
 
@@ -1048,14 +1056,18 @@ void Player::WaxCollect()
 		}
 	}
 
+	if (GetWaxCollectButtonDown()) {
+		WaxManager::GetInstance()->notCollect = false;
+	}
+
 	if (isMove)
 	{
 		//回収ボタンポチーw
-		if (GetWaxCollectButtonDown())
+		if (!WaxManager::GetInstance()->notCollect)
 		{
 			bool isCollectSuccess = false;;
 			//ロウがストック性かつ地面についてて回収できる状態なら
-			if (isWaxStock && isGround && WaxManager::GetInstance()->notCollect)
+			if (isWaxStock && isGround)
 			{
 				isCollectSuccess = true;
 
@@ -1111,7 +1123,7 @@ void Player::WaxCollect()
 				if (enemy->GetIsSolid() && ColPrimitive3D::RayToSphereCol(collectCol, enemy->collider))
 				{
 					//回収状態に遷移
-					WaxManager::GetInstance()->notCollect = true;
+					WaxManager::GetInstance()->notCollect = false;
 					EnemyManager::GetInstance()->collectTarget = this;
 					enemy->isCollect = true;
 					enemy->ChangeState<EnemyCollect>();
@@ -1130,10 +1142,6 @@ void Player::WaxCollect()
 		RInput::GetInstance()->GetKeyUp(DIK_Q))) {
 
 		WaxManager::GetInstance()->notCollect = true;
-
-		//ロウからターゲットを除去
-		WaxManager::GetInstance()->collectTarget = nullptr;
-		EnemyManager::GetInstance()->collectTarget = nullptr;
 	}
 
 	//回収中にダメージを受けたら回収をキャンセル
@@ -1145,8 +1153,17 @@ void Player::WaxCollect()
 		WaxLeakOut(collectCount, {-10.f,-10.f}, {10.f,10.f});
 	}
 
+	if (!WaxManager::GetInstance()->notCollect) {
+		//ロウからターゲットを除去
+		WaxManager::GetInstance()->collectTarget = this;
+		EnemyManager::GetInstance()->collectTarget = this;
+	}
+
 	if (WaxManager::GetInstance()->notCollect) {
 		collectCount = 0;
+		//ロウからターゲットを除去
+		WaxManager::GetInstance()->collectTarget = nullptr;
+		EnemyManager::GetInstance()->collectTarget = nullptr;
 	}
 
 	if (WaxManager::GetInstance()->notCollect == false)
@@ -1321,6 +1338,8 @@ void Player::ShieldUp()
 				WaxLeakOut(waxWall.START_CHECK_WAXNUM);
 
 				waxWall.Start();
+
+				RAudio::Play("Attack", 1.0f);
 			}
 		}
 	}
