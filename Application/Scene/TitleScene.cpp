@@ -5,6 +5,7 @@
 #include "ParticleManager.h"
 #include "InstantDrawer.h"
 #include "SimpleSceneTransition.h"
+#include "WaxSceneTransition.h"
 #include <RAudio.h>
 #include "LightObject.h"
 
@@ -86,7 +87,8 @@ void TitleScene::Update()
 	{
 		sceneChange = true;
 		RAudio::Play("Select", 0.6f);
-		SceneManager::GetInstance()->Change<ProtoScene, SimpleSceneTransition>();
+		//SceneManager::GetInstance()->Change<ProtoScene, SimpleSceneTransition>();
+		SceneManager::GetInstance()->Change<ProtoScene, WaxSceneTransition>();
 	}
 
 	camera.mViewProjection.UpdateMatrix();
