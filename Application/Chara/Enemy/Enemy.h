@@ -28,6 +28,8 @@ private:
 	float radianX;
 	float radianZ;
 
+	Vector3 modelSize;			//モデルの大きさ
+
 	Vector3 basis;
 	Vector3 behaviorOrigen;
 
@@ -75,6 +77,7 @@ private:
 	//------------ 出現関連 ------------//
 	Easing::EaseTimer warningTimer = 1.0f;
 	Easing::EaseTimer spawnTimer = 1.0f;
+	int32_t smokeCount = 0;
 
 	Easing::EaseTimer warningRoop = 1.0f;
 	Color warningColor = { 1,1,1,0 };
@@ -227,6 +230,8 @@ public:
 	float GetMoveSpeed() { return moveSpeed; };
 	//出現済みかどうかを取得
 	bool GetIsSpawn();
+	//移動量
+	Vector3 GetModelSize() { return modelSize; };
 
 	// セッター //
 	//減速率設定
@@ -269,5 +274,8 @@ public:
 	//
 	void BehaviorOrigenPosPlus(const Vector3& plusVec) { behaviorOrigen += plusVec; };
 	void BehaviorOrigenReset() { behaviorOrigen = basis; }
+
+	//モデルの大きさを設定
+	void SetModelSize(Vector3 setModelSize) { modelSize = setModelSize; };
 };
 
