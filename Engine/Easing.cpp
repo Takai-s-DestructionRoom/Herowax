@@ -287,9 +287,7 @@ void Easing::EaseTimer::RoopReverse(const float elapseTimer)
 
 float Easing::EaseTimer::GetTimeRate()const
 {
-	float timeRate = 0.0f;
-	timeRate = Util::Clamp(timeRate, nowTime_ / maxTime_, 1.0f);
-	return timeRate;
+	return Util::Clamp(nowTime_ / maxTime_, 0.0f, 1.0f);
 }
 
 Vector3 InQuadVec3(const Vector3& start, const Vector3& end, float timerate)

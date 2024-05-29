@@ -40,7 +40,6 @@ public:
 	//描画要求をRendererへ
 	void Draw(std::string stageID = "Opaque") override;
 
-private:
 	static RootSignature* GetRootSig();
 	static GraphicsPipeline* GetPipeline();
 };

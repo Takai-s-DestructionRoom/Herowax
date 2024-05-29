@@ -1,12 +1,13 @@
 #include "WaxWall.h"
 #include "WaxManager.h"
 #include "RImGui.h"
+#include <Renderer.h>
+#include <SimpleDrawer.h>
 
 void WaxWall::Init()
 {
 	obj = PaintableModelObj(Model::Load("./Resources/Model/Sphere.obj", "Sphere"));
 	obj.mTransform.scale = { 2,2,2 };
-	baseScale = { 10,10,10 };
 
 	colliderSize = 10;
 
@@ -14,6 +15,9 @@ void WaxWall::Init()
 
 	obj.mTuneMaterial.mColor = Color::kWaxColor;
 	obj.mTuneMaterial.mColor.a = { 1.0f };
+
+	GetWaxWallRootSig();
+	GetWaxWallPipeline();
 }
 
 void WaxWall::Update()
@@ -35,14 +39,22 @@ void WaxWall::Update()
 	if (!isAlive)return;
 
 	//入りの挙動(外側から濃くなって、プレイヤーの周りに発生する)
-	obj.mTransform.scale = baseScale;
+	obj.mTransform.scale = { 0, 0, 0 };
 	if (parryTimer.GetStarted()) {
-		float barriarScale = Easing::OutQuad(1.0f, 0.0f, parryTimer.GetTimeRate());
+		float f = 1 + 2.7f * powf(parryTimer.GetTimeRate() - 1, 3) + 1.7f * powf(parryTimer.GetTimeRate() - 1, 2);
+		
+		float barriarScale = 8.0f * f;
+		SimpleDrawer::DrawString(0, 0, 0, Util::StringFormat("%f, %f", parryTimer.GetTimeRate(), barriarScale));
 		obj.mTransform.scale += { barriarScale, barriarScale, barriarScale };
 	}
-	obj.mTuneMaterial.mColor.a = Easing::OutQuad(0.5f, 0.6f,parryTimer.GetTimeRate());
+	obj.mTuneMaterial.mColor.a = Easing::OutQuad(0.5f, 0.6f, parryTimer.GetTimeRate());
 
 	UpdateCollider();
+
+	hogeBuff->waxColor = Color::kWaxColor;
+	hogeBuff->waxColor.a = 0.1f;
+	hogeBuff->rimColor = Color::kWhite;
+	hogeBuff->rimPower = 1.0f;
 
 	obj.mTransform.UpdateMatrix();
 	BrightTransferBuffer(Camera::sNowCamera->mViewProjection);
@@ -62,10 +74,14 @@ void WaxWall::Draw()
 {
 	if (!isAlive)return;
 
-	BrightDraw();
+	for (RenderOrder order : obj.GetRenderOrder()) {
+		order.mRootSignature = GetWaxWallRootSig()->mPtr.Get();
+		order.pipelineState = GetWaxWallPipeline()->mPtr.Get();
 
-	isDrawCollider = true;
-	DrawCollider();
+		order.rootData.push_back({ RootDataType::SRBUFFER_CBV, hogeBuff.mBuff });
+
+		Renderer::DrawCall("Opaque", order);
+	}
 }
 
 bool WaxWall::GetParry()
@@ -117,4 +133,32 @@ void WaxWall::End()
 	else {
 		endFlag = true;
 	}
+}
+
+RootSignature* WaxWall::GetWaxWallRootSig()
+{
+	RootSignatureDesc desc = PaintableModelObj::GetRootSig()->mDesc;
+
+	desc.RootParamaters.emplace_back();
+
+	desc.RootParamaters.back().ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;
+	desc.RootParamaters.back().Descriptor.ShaderRegister = 4;
+	desc.RootParamaters.back().Descriptor.RegisterSpace = 0;
+	desc.RootParamaters.back().ShaderVisibility = D3D12_SHADER_VISIBILITY_ALL;
+
+	desc.Flags = D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT;
+	return &RootSignature::GetOrCreate("WaxWall", desc);
+}
+
+GraphicsPipeline* WaxWall::GetWaxWallPipeline()
+{
+	PipelineStateDesc desc = RDirectX::GetDefPipeline().mDesc;
+	desc.pRootSignature = GetWaxWallRootSig()->mPtr.Get();
+	desc.VS = Shader::GetOrCreate("WaxWallVS", "./Shader/SlimeWax_Light/SlimeWaxLightVS.hlsl", "main", "vs_5_0");
+	desc.PS = Shader::GetOrCreate("WaxWallPS", "./Shader/SlimeWax_Light/SlimeWaxLightPS.hlsl", "main", "ps_5_0");
+
+	desc.BlendState.AlphaToCoverageEnable = false;
+	desc.DepthStencilState.DepthWriteMask = D3D12_DEPTH_WRITE_MASK_ZERO;
+
+	return &GraphicsPipeline::GetOrCreate("WaxWall", desc);
 }
