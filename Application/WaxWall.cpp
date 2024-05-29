@@ -51,9 +51,14 @@ void WaxWall::Update()
 
 	UpdateCollider();
 
+	if (GetParry()) {
+		hogeBuff->rimColor = Color::kLightblue;
+	}
+	else {
+		hogeBuff->rimColor = Color::kWhite;
+	}	
 	hogeBuff->waxColor = Color::kWaxColor;
 	hogeBuff->waxColor.a = 0.1f;
-	hogeBuff->rimColor = Color::kWhite;
 	hogeBuff->rimPower = 1.0f;
 
 	obj.mTransform.UpdateMatrix();
