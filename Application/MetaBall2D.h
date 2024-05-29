@@ -12,6 +12,12 @@ struct Metaball2DBuffer
 	float stroke_;
 };
 
+struct BlurBuffer
+{
+	float sigma;
+	float stepwidth;
+};
+
 class MetaBall2D
 {
 public:
@@ -87,6 +93,9 @@ private:
 	float gravityAccel = 0.03f;
 	float boundPower = 2.f;
 	
+	float sigma = 0.005f;
+	float stepwidth = 0.001f;
+
 	bool renderTargetFlag = false;
 	int32_t createNum = 100;
 	Vector2 createSize = { 0.1f,0.1f};
@@ -95,6 +104,7 @@ private:
 	GraphicsPipeline mPipelineState;
 
 	SRConstBuffer<Metaball2DBuffer> metaball2DBuffer; 
+	SRConstBuffer<BlurBuffer> blurBuffer;
 	SRVertexBuffer mVertBuff;
 	SRIndexBuffer mIndexBuff;
 };

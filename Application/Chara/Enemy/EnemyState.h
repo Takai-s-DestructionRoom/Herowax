@@ -75,8 +75,10 @@ public:
 
 	static std::string GetStateStr();
 private:
-	float accel = 0.f;			//回収の加速度
 	bool isStart = true;
-	float oldTimeRate = 0.0f;
+	Easing::EaseTimer collectTimer = 0.1f;
 	Vector3 startPos;
+
+	float accel = 1.f;			//回収の加速度
+	float collectSpeed = 1.0f;
 };

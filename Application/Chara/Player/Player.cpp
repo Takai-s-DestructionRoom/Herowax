@@ -1001,23 +1001,36 @@ void Player::WaxCollect()
 		//回収したロウに応じてストック増やす
 		if (isWaxStock && WaxManager::GetInstance()->isCollected)
 		{
-			if (waxCollectAmount > 0)
-			{
-				waxStock += waxCollectAmount;
-				//音鳴らす
-				RAudio::Play("eCollect");
+			
+		}
 
-				ParticleManager::GetInstance()->AddHoming2D(
-					Util::GetScreenPos(obj.mTransform.position), { 150.f,150.f }, waxCollectAmount, 0.8f,
-					Color::kWaxColor,
-					TextureManager::Load("./Resources/Particle/particle_simple.png", "particleSimple"),
-					150.f, 180.f, { -1.f,-1.f }, { 1.f,1.f },
-					ui.numDrawer.GetPos(), 0.f,
-					0.01f, 0.05f,
-					0.1f, 0.f);
+		int32_t nowPlusNum = EnemyManager::GetInstance()->collectNum;
+		if (nowPlusNum > 0) {
+			waxCollectAmount += nowPlusNum;
+			MaxWaxPlus(nowPlusNum);
+		}
+		EnemyManager::GetInstance()->collectNum = 0;
 
-				waxCollectAmount = 0;
-			}
+		//回収が完了したら増やす
+		waxCollectAmount += WaxManager::GetInstance()->collectWaxNum;
+		WaxManager::GetInstance()->collectWaxNum = 0;
+
+		if (waxCollectAmount > 0)
+		{
+			waxStock += waxCollectAmount;
+			//音鳴らす
+			RAudio::Play("eCollect",0.5f);
+
+			ParticleManager::GetInstance()->AddHoming2D(
+				Util::GetScreenPos(obj.mTransform.position), { 150.f,150.f }, waxCollectAmount, 0.8f,
+				Color::kWaxColor,
+				TextureManager::Load("./Resources/Particle/particle_simple.png", "particleSimple"),
+				150.f, 180.f, { -1.f,-1.f }, { 1.f,1.f },
+				ui.numDrawer.GetPos(), 0.f,
+				0.01f, 0.05f,
+				0.1f, 0.f);
+
+			waxCollectAmount = 0;
 		}
 	}
 
@@ -1033,8 +1046,7 @@ void Player::WaxCollect()
 				isCollectSuccess = true;
 
 				//ロウ回収
-				int32_t temp = WaxManager::GetInstance()->Collect(collectCol, waxCollectVertical);
-				waxCollectAmount += temp;
+				WaxManager::GetInstance()->Collect(collectCol, waxCollectVertical,this);
 			}
 			//腕吸収
 			if (boss->parts[(int32_t)PartsNum::LeftHand].isCollected && 
@@ -1079,6 +1091,18 @@ void Player::WaxCollect()
 				}
 			}
 
+			for (auto& enemy : EnemyManager::GetInstance()->enemys)
+			{
+				//回収ボタン押されたときに固まってるなら吸収
+				if (enemy->GetIsSolid() && ColPrimitive3D::RayToSphereCol(collectCol, enemy->collider))
+				{
+					//回収状態に遷移
+					EnemyManager::GetInstance()->collectTarget = this;
+					enemy->isCollect = true;
+					enemy->ChangeState<EnemyCollect>();
+				}
+			}
+
 
 			//本体吸収
 			//演出の都合上、いったん消す
@@ -1105,6 +1129,16 @@ void Player::WaxCollect()
 				modelChange = true;
 			}
 		}
+	}
+
+	//キーから手を離したら動ける
+	if ((RInput::GetInstance()->GetLTriggerUp() ||
+		RInput::GetInstance()->GetKeyUp(DIK_Q))) {
+		WaxManager::GetInstance()->isCollected = true;
+		
+		//ロウからターゲットを除去
+		WaxManager::GetInstance()->collectTarget = nullptr;
+		EnemyManager::GetInstance()->collectTarget = nullptr;
 	}
 
 	if (WaxManager::GetInstance()->isCollected == false)

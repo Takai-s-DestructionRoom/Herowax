@@ -22,31 +22,43 @@ WaxCollect::WaxCollect()
 
 void WaxCollect::Update(Wax* wax)
 {
+	//もし回収対象がぬるぽになってたら解除
+	if (WaxManager::GetInstance()->collectTarget == nullptr) {
+		wax->ChangeState<WaxNormal>();
+		return;
+	}
+
 	//吸収状態になったら反転を解除
 	wax->isReverse = false;
 
-	oldTimeRate = wax->collectTimer.GetTimeRate();
-	wax->collectTimer.Update();
 	if (isStart) {
-		wax->collectTimer.Start();
 		isStart = false;
 		startPos = wax->obj.mTransform.position;
 	}
+
+	timer.Roop();
+	if (timer.GetRoopEnd()) {
+		accel += 0.1f;
+	}
+
 	wax->SetStateStr(WaxCollect::GetStateStr());
 
-	Vector3 now = OutQuadVec3(startPos, wax->collectPos, wax->collectTimer.GetTimeRate());
-	Vector3 old = OutQuadVec3(startPos, wax->collectPos, oldTimeRate);
+	Vector3 tVec = WaxManager::GetInstance()->collectTarget->obj.mTransform.position - startPos;
+	tVec.Normalize();
+	tVec.y = 0;
+	
 	//現在フレームの移動量の分だけをmoveVecに足す
-	wax->moveVec += now - old;
+	wax->moveVec += tVec * collectSpeed * accel;
 
 	//到達したら殺す
-	if (wax->collectTimer.GetEnd())
-	{
+	if (ColPrimitive3D::CheckSphereToSphere(wax->collider, WaxManager::GetInstance()->collectTarget->collider) &&
+		wax->isAlive)
+	{ 
 		wax->DeadParticle();
 		wax->isAlive = false;
 		accel = 0.f;
 
-		WaxManager::GetInstance()->isCollected = true;
+		WaxManager::GetInstance()->collectWaxNum++;
 	}
 }
 
