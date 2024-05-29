@@ -40,6 +40,8 @@ FailedScene::FailedScene()
 
 void FailedScene::Init()
 {
+	RAudio::Load("Resources/Sounds/BGM/Gameover.wav", "Over");
+
 	camera.mViewProjection.mEye = { 0, 60, -cameraDist };
 	camera.mViewProjection.mTarget = { 0, 30, 0 };
 	camera.mViewProjection.UpdateMatrix();
@@ -53,6 +55,8 @@ void FailedScene::Init()
 	Boss::GetInstance()->SetTarget(&bossTarget);
 
 	SpotLightManager::GetInstance()->Init(&light);
+
+	RAudio::Play("Over", 0.3f, 1.0f, true);
 }
 
 void FailedScene::Update()
@@ -84,6 +88,8 @@ void FailedScene::Update()
 		RAudio::Play("Select", 0.6f);
 		SceneManager::GetInstance()->Change<TitleScene, SimpleSceneTransition>();
 		sceneChange = true;
+
+		RAudio::Stop("Over");
 	}
 
 	camera.mViewProjection.UpdateMatrix();

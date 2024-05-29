@@ -43,7 +43,11 @@ ProtoScene::ProtoScene()
 
 	RAudio::Load("Resources/Sounds/BGM/Ingame.wav", "Normal");
 	RAudio::Load("Resources/Sounds/BGM/Boss.wav", "Boss");
+	RAudio::Load("Resources/Sounds/BGM/Gameclear.wav", "Clear");
+	
 	RAudio::Load("Resources/Sounds/SE/P_attackHit.wav", "Hit");
+	RAudio::Load("Resources/Sounds/SE/playerParry.wav", "Parry");
+	RAudio::Load("Resources/Sounds/SE/playerGuard.wav", "Guard");
 
 	ControlUI::LoadResource();
 	TimerUI::LoadResource();
@@ -131,6 +135,15 @@ void ProtoScene::Update()
 		}
 	}
 
+	if (player.hp <= 0)
+	{
+		if (RAudio::IsPlaying("Boss") || RAudio::IsPlaying("Normal"))
+		{
+			RAudio::Stop("Boss");
+			RAudio::Stop("Normal");
+		}
+	}
+
 	SceneTrance::GetInstance()->Update();
 
 	//ボス撃破シーンに遷移
@@ -142,6 +155,8 @@ void ProtoScene::Update()
 
 		RAudio::Stop("Boss");
 		RAudio::Stop("Normal");
+
+		
 
 		player.isMove = false;
 		player.SetIsGodmode(true);	//プレイヤー無敵に
@@ -472,6 +487,12 @@ void ProtoScene::Update()
 						Tank* tank = static_cast<Tank*>(enemy.get());
 						if (player.GetWaxWall()->GetParry()) {
 							tank->GetShield()->Break();
+
+							if (!RAudio::IsPlaying("Parry"))
+							{
+								RAudio::Play("Parry", 0.8f);
+							}
+							
 						}
 						else
 						{
@@ -479,6 +500,11 @@ void ProtoScene::Update()
 							consum = max(consum, 1);
 
 							player.WaxLeakOut(consum);
+
+							/*if (!RAudio::IsPlaying("Guard"))
+							{
+								RAudio::Play("Guard", 0.8f);
+							}*/
 						}
 					}
 				}
@@ -520,6 +546,8 @@ void ProtoScene::Update()
 				if (player.GetWaxWall()->GetParry()) {
 					//パリィ出来たら跳ね返す
 					shot->Reversal();
+
+					RAudio::Play("Parry", 0.8f);
 				}
 				else
 				{
@@ -529,6 +557,8 @@ void ProtoScene::Update()
 
 					player.WaxLeakOut(consum);
 					shot->SetIsAlive(false);
+
+					RAudio::Play("Guard", 0.8f);
 				}
 
 				//判定に成功した時点で、プレイヤーと衝突しないように処理をスキップ
