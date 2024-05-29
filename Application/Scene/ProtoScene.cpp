@@ -393,6 +393,12 @@ void ProtoScene::Update()
 					if (isShieldCollision && wax->isSolid == false && wax->isGround == false) {
 						wax->isReverse = true;
 						tank->GetShield()->Hit(1);
+
+						if (!RAudio::IsPlaying("Parry"))
+						{
+							RAudio::Play("Parry", 0.8f);
+						}
+						
 					}
 				}
 
@@ -502,10 +508,10 @@ void ProtoScene::Update()
 
 							player.WaxLeakOut(consum);
 
-							/*if (!RAudio::IsPlaying("Guard"))
+							if (!RAudio::IsPlaying("Guard"))
 							{
 								RAudio::Play("Guard", 0.8f);
-							}*/
+							}
 						}
 					}
 				}
@@ -583,6 +589,8 @@ void ProtoScene::Update()
 				if (ColPrimitive3D::CheckSphereToSphere(shot->collider, enemy->collider) &&
 					shot->GetIsReversal()) {
 					shot->SetIsAlive(false);
+
+					RAudio::Play("Hit");
 
 					//enemyにダメージ
 					Vector3 knockVec = enemy->GetPos() - shot->GetPos();
