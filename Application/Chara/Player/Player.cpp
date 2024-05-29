@@ -1059,7 +1059,10 @@ void Player::WaxCollect()
 	if (GetWaxCollectButtonDown()) {
 		WaxManager::GetInstance()->notCollect = false;
 	
-		RAudio::Play("Collect", 0.6f);
+		if (!RAudio::IsPlaying("Collect"))
+		{
+			RAudio::Play("Collect", 0.6f);
+		}	
 	}
 
 	if (isMove)
@@ -1135,6 +1138,8 @@ void Player::WaxCollect()
 		RInput::GetInstance()->GetKeyUp(DIK_Q))) {
 
 		WaxManager::GetInstance()->notCollect = true;
+
+		RAudio::Stop("Collect");
 	}
 
 	//回収中にダメージを受けたら回収をキャンセル
