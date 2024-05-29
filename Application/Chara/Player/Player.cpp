@@ -143,14 +143,14 @@ void Player::Init()
 void Player::Reset()
 {
 	oldRot = rotVec;
+	
+	oldHp = hp;
 	//回転初期化
 	rotVec = { 0,0,0 };
 }
 
 void Player::Update()
 {
-	Reset();
-
 	//タイマー更新
 	damageCoolTimer.Update();
 	godmodeTimer.Update();
@@ -997,7 +997,7 @@ void Player::WaxCollect()
 	Vector3 dir = Camera::sNowCamera->mViewProjection.mTarget - Camera::sNowCamera->mViewProjection.mEye;
 	dir.y = 0;
 	collectCol.dir = dir.Normalize();
-	
+
 	collectCol.start = GetFootPos();
 	collectCol.radius = waxCollectRange * 0.5f;
 
@@ -1014,7 +1014,7 @@ void Player::WaxCollect()
 
 	//イベント中でなければ入る
 	if (EventCaller::GetNowEventStr() == "") {
-		
+
 		int32_t nowPlusNum = EnemyManager::GetInstance()->collectNum;
 		if (nowPlusNum > 0) {
 			waxCollectAmount += nowPlusNum;
@@ -1029,9 +1029,11 @@ void Player::WaxCollect()
 		if (waxCollectAmount > 0)
 		{
 			waxStock += waxCollectAmount;
-			
+
+			collectCount += waxCollectAmount;
+
 			//音鳴らす
-			RAudio::Play("eCollect",0.5f);
+			RAudio::Play("eCollect", 0.5f);
 
 			ParticleManager::GetInstance()->AddHoming2D(
 				Util::GetScreenPos(obj.mTransform.position), { 150.f,150.f }, waxCollectAmount, 0.8f,
@@ -1058,10 +1060,10 @@ void Player::WaxCollect()
 				isCollectSuccess = true;
 
 				//ロウ回収
-				WaxManager::GetInstance()->Collect(collectCol, waxCollectVertical,this);
+				WaxManager::GetInstance()->Collect(collectCol, waxCollectVertical, this);
 			}
 			//腕吸収
-			if (boss->parts[(int32_t)PartsNum::LeftHand].isCollected && 
+			if (boss->parts[(int32_t)PartsNum::LeftHand].isCollected &&
 				!boss->parts[(int32_t)PartsNum::LeftHand].collectTimer.GetStarted()) {
 				if (RayToSphereCol(collectCol, boss->parts[(int32_t)PartsNum::LeftHand].collider))
 				{
@@ -1109,6 +1111,7 @@ void Player::WaxCollect()
 				if (enemy->GetIsSolid() && ColPrimitive3D::RayToSphereCol(collectCol, enemy->collider))
 				{
 					//回収状態に遷移
+					WaxManager::GetInstance()->notCollect = true;
 					EnemyManager::GetInstance()->collectTarget = this;
 					enemy->isCollect = true;
 					enemy->ChangeState<EnemyCollect>();
@@ -1125,11 +1128,25 @@ void Player::WaxCollect()
 	//キーから手を離したら動ける
 	if ((RInput::GetInstance()->GetLTriggerUp() ||
 		RInput::GetInstance()->GetKeyUp(DIK_Q))) {
+
 		WaxManager::GetInstance()->notCollect = true;
-		
+
 		//ロウからターゲットを除去
 		WaxManager::GetInstance()->collectTarget = nullptr;
 		EnemyManager::GetInstance()->collectTarget = nullptr;
+	}
+
+	//回収中にダメージを受けたら回収をキャンセル
+	if (!WaxManager::GetInstance()->notCollect && GetDamageTrigger()) {
+
+		WaxManager::GetInstance()->notCollect = true;
+
+		//回収したロウと同じ数のロウを地面にばらまく
+		WaxLeakOut(collectCount, {-10.f,-10.f}, {10.f,10.f});
+	}
+
+	if (WaxManager::GetInstance()->notCollect) {
+		collectCount = 0;
 	}
 
 	if (WaxManager::GetInstance()->notCollect == false)
@@ -1191,7 +1208,7 @@ void Player::MaxWaxPlus(int32_t plus)
 	waxUI.Start();
 }
 
-void Player::WaxLeakOut(int32_t leakNum)
+void Player::WaxLeakOut(int32_t leakNum, Vector2 minLeakLength, Vector2 maxLeakLength)
 {
 	for (int32_t i = 0; i < leakNum; i++)
 	{
@@ -1203,8 +1220,8 @@ void Player::WaxLeakOut(int32_t leakNum)
 			startTrans.position.y = atkHeight;
 
 			Vector3 endPos = waxWall.obj.mTransform.position;
-			endPos.x += Util::GetRand(-2.5f,2.5f);
-			endPos.z += Util::GetRand(-2.5f,2.5f);
+			endPos.x += Util::GetRand(-minLeakLength.x,maxLeakLength.x);
+			endPos.z += Util::GetRand(-minLeakLength.y,maxLeakLength.y);
 
 			WaxManager::GetInstance()->Create(
 				startTrans,
