@@ -100,6 +100,10 @@ void Player::Init()
 	RAudio::Load("Resources/Sounds/SE/P_attackHit.wav", "Hit");
 	RAudio::Load("Resources/Sounds/SE/P_enemyCollect.wav", "eCollect");
 
+	RAudio::Load("Resources/Sounds/SE/playerShield.wav", "Shield");
+	
+	
+
 	obj = PaintableModelObj("playerBag");
 	humanObj = ModelObj("playerHuman");
 	tankWaterObj = ModelObj("TankWater");
@@ -1327,6 +1331,8 @@ void Player::ShieldUp()
 				WaxLeakOut(waxWall.START_CHECK_WAXNUM);
 
 				waxWall.Start();
+
+				RAudio::Play("Attack", 1.0f);
 			}
 		}
 	}
