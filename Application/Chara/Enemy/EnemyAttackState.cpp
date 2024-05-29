@@ -44,8 +44,8 @@ void EnemyFindState::Update(Enemy* enemy)
 	
 	if (isStart) {
 		position = enemy->obj.mTransform.position;
-		startY = position.y;
-		endY = position.y + enemy->GetScale().y * 1.5f;
+		startY = position.y + enemy->GetScale().y;
+		endY = position.y + enemy->GetScale().y * enemy->GetModelSize().y;
 	}
 	position.x = enemy->obj.mTransform.position.x;
 	position.z = enemy->obj.mTransform.position.z;
