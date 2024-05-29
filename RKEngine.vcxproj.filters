@@ -1112,6 +1112,9 @@
     <FxCompile Include="Shader\SlimeWax_Light\SlimeWaxLightPS.hlsl">
       <Filter>シェーダー ファイル\SlimeWax_Light</Filter>
     </FxCompile>
+    <FxCompile Include="Shader\TankWater\TankMeterPS.hlsl">
+      <Filter>シェーダー ファイル\TankWater</Filter>
+    </FxCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\2d\Sprite.h">
