@@ -65,7 +65,7 @@ void EnemyFindState::Update(Enemy* enemy)
 	//ターゲットの方向を向いてくれる
 	Quaternion aLookat = Quaternion::LookAt(aVec);
 	//euler軸へ変換
-	enemy->RotVecPlus(aLookat.ToEuler());
+	enemy->SetRotVec(aLookat.ToEuler());
 
 	//時間たったら次へ
 	if (lifeTimer.GetEnd()) {
@@ -149,7 +149,7 @@ void EnemyPreState::Update(Enemy* enemy)
 	float radX = Easing::InQuad(0, radStartX, lifeTimer.GetTimeRate());
 
 	//euler軸へ変換
-	enemy->RotVecPlus(aLookat.ToEuler());
+	enemy->SetRotVec(aLookat.ToEuler());
 	enemy->RotVecPlus({ radX ,0,0});
 
 	//時間たったら次へ
@@ -208,7 +208,7 @@ void EnemyNowAttackState::Update(Enemy* enemy)
 	float radX = Util::AngleToRadian(30.f);
 
 	//euler軸へ変換
-	enemy->RotVecPlus(aLookat.ToEuler());
+	enemy->SetRotVec(aLookat.ToEuler());
 	enemy->RotVecPlus({ radX ,0,0 });
 
 	if (chargeTimer.GetEnd()) {
@@ -249,7 +249,7 @@ void EnemyEndAttackState::Update(Enemy* enemy)
 	float radX = Easing::InQuad(radStartX, 0, postureTimer.GetTimeRate());
 
 	//euler軸へ変換
-	enemy->RotVecPlus(aLookat.ToEuler());
+	enemy->SetRotVec(aLookat.ToEuler());
 	enemy->RotVecPlus({ radX ,0,0 });
 
 	if (postureTimer.GetEnd()) {

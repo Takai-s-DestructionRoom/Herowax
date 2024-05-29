@@ -63,6 +63,9 @@ namespace Easing
 		bool reverse_ = false;
 		//後退終了フラグ
 		bool reverseend_ = false;
+		
+		bool roopend_ = false;
+		bool roopReverseEnd_ = false;
 
 	public:
 		//コンストラクタ
@@ -96,6 +99,9 @@ namespace Easing
 		void SetReverseEnd(bool reverseend) { reverseend_ = reverseend; };
 		//一度でも後退されたらtrueになるフラグ取得
 		bool GetReverseStarted()const { return reverse_ || reverseend_; };
+		//ループが終了したタイミングで立つ
+		bool GetRoopEnd() { return roopend_; };
+		bool GetRoopReverseEnd() { return roopReverseEnd_; };
 
 		//タイマーは起動しないが初期化する
 		void Reset();
