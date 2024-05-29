@@ -416,11 +416,6 @@ int32_t WaxManager::Collect(ColPrimitive3D::Ray collider, float waxCollectVertic
 			}
 		}
 	}
-
-	if (isCollect == true)
-	{
-		RAudio::Play("Collect", 0.6f);
-	}
 	
 	return getNum;
 }

@@ -368,7 +368,7 @@ void ProtoScene::Update()
 	for (auto& enemy : EnemyManager::GetInstance()->enemys)
 	{
 		//蝋と当たり判定をする前に、足盗られは毎フレーム解除判定を行う
-		if (enemy->GetState() == "Slow") {
+		if (enemy->GetState() == EnemySlow::GetStateStr()) {
 			enemy->ChangeState<EnemyNormal>();
 		}
 	}
