@@ -43,12 +43,13 @@ void WaxCollect::Update(Wax* wax)
 
 	wax->SetStateStr(WaxCollect::GetStateStr());
 
-	Vector3 tVec = WaxManager::GetInstance()->collectTarget->obj.mTransform.position - startPos;
+	Vector3 tVec = WaxManager::GetInstance()->collectTarget->obj.mTransform.position - wax->obj.mTransform.position;
 	tVec.Normalize();
 	tVec.y = 0;
 	
 	//現在フレームの移動量の分だけをmoveVecに足す
-	wax->moveVec += tVec * collectSpeed * accel;
+	//投げてるやつを回収したときにおかしくならないように上書きする
+	wax->moveVec = tVec * collectSpeed * accel;
 
 	//到達したら殺す
 	if (ColPrimitive3D::CheckSphereToSphere(wax->collider, WaxManager::GetInstance()->collectTarget->collider) &&

@@ -201,7 +201,8 @@ void Player::Update()
 	}
 
 	//攻撃ボタン入力中で、実際にロウが出せたら攻撃フラグを立てる
-	isAttack = (RInput::GetInstance()->GetRTrigger() || RInput::GetKey(DIK_SPACE)) && (waxStock > 0);
+	isAttack = (RInput::GetInstance()->GetRTrigger() || RInput::GetKey(DIK_SPACE)) && 
+		(waxStock > 0) && WaxManager::GetInstance()->notCollect;
 
 	//-----------クールタイム管理-----------//
 	atkTimer.Update();
@@ -235,7 +236,7 @@ void Player::Update()
 	waxStock = Util::Clamp(waxStock, 0, maxWaxStock);
 
 	//回収が終わったらモデルを戻す
-	if (WaxManager::GetInstance()->isCollected && modelChange) {
+	if (WaxManager::GetInstance()->notCollect && modelChange) {
 		obj.mModel = ModelManager::Get("playerBag");
 		modelChange = false;
 	}
@@ -310,7 +311,7 @@ void Player::Update()
 		godmodeTimer.Reset();
 	}
 
-	bool nowCollected = WaxManager::GetInstance()->isCollected && 
+	bool nowCollected = WaxManager::GetInstance()->notCollect && 
 		!EnemyManager::GetInstance()->GetNowCollectEnemy();
 
 	moveVec *=
@@ -453,7 +454,6 @@ void Player::Update()
 #pragma region ImGui
 	if (RImGui::showImGui)
 	{
-
 		ImGui::SetNextWindowSize({ 600, 250 }, ImGuiCond_FirstUseEver);
 
 		ImGui::Begin("Player");
@@ -620,7 +620,7 @@ void Player::Draw()
 		}
 
 		//回収中は別モデルに置き換えるので描画しない
-		if (WaxManager::GetInstance()->isCollected) {
+		if (WaxManager::GetInstance()->notCollect) {
 			humanObj.Draw();
 		}
 
@@ -719,7 +719,7 @@ void Player::MoveKey()
 	keyVec.y = (float)(RInput::GetInstance()->GetKey(DIK_W) - RInput::GetInstance()->GetKey(DIK_S));
 
 	//キー入力されてて回収中じゃないなら
-	if (keyVec.LengthSq() > 0.f && WaxManager::GetInstance()->isCollected) {
+	if (keyVec.LengthSq() > 0.f && WaxManager::GetInstance()->notCollect) {
 		//カメラから注視点へのベクトル
 		Vector3 cameraVec = Camera::sNowCamera->mViewProjection.mTarget - Camera::sNowCamera->mViewProjection.mEye;
 		//カメラの角度
@@ -877,7 +877,7 @@ void Player::Rotation()
 
 	Vector2 LStick = RInput::GetInstance()->GetLStick(true, false);
 	//スティック入力されてて回収中じゃなければ
-	if (LStick.LengthSq() > 0 && WaxManager::GetInstance()->isCollected) {
+	if (LStick.LengthSq() > 0 && WaxManager::GetInstance()->notCollect) {
 		//カメラから注視点へのベクトル
 		Vector3 cameraVec = Camera::sNowCamera->mViewProjection.mTarget -
 			Camera::sNowCamera->mViewProjection.mEye;
@@ -1040,7 +1040,7 @@ void Player::WaxCollect()
 		{
 			bool isCollectSuccess = false;;
 			//ロウがストック性かつ地面についてて回収できる状態なら
-			if (isWaxStock && isGround && WaxManager::GetInstance()->isCollected)
+			if (isWaxStock && isGround && WaxManager::GetInstance()->notCollect)
 			{
 				isCollectSuccess = true;
 
@@ -1112,7 +1112,7 @@ void Player::WaxCollect()
 	//キーから手を離したら動ける
 	if ((RInput::GetInstance()->GetLTriggerUp() ||
 		RInput::GetInstance()->GetKeyUp(DIK_Q))) {
-		WaxManager::GetInstance()->isCollected = true;
+		WaxManager::GetInstance()->notCollect = true;
 		
 		//ロウからターゲットを除去
 		WaxManager::GetInstance()->collectTarget = nullptr;
@@ -1136,7 +1136,7 @@ void Player::WaxCollect()
 	bonusUI.circleGauge.baseRadian = 360.f - (float)((float)bonusCount / (float)bonusLine) * 360.f;
 	bonusUI.Update();
 
-	if (WaxManager::GetInstance()->isCollected == false)
+	if (WaxManager::GetInstance()->notCollect == false)
 	{
 		Vector3 emitPos = obj.mTransform.position + dir * (waxCollectVertical - waxCollectRange);
 		emitPos.y += obj.mTransform.scale.y;
@@ -1300,7 +1300,7 @@ void Player::ShieldUp()
 	waxWall.obj.mTransform.position = obj.mTransform.position;
 
 	if (RInput::GetInstance()->GetPadButtonDown(XINPUT_GAMEPAD_X) ||
-		RInput::GetKeyDown(DIK_Z)) {
+		RInput::GetKeyDown(DIK_Z) && WaxManager::GetInstance()->notCollect) {
 		//パリィ状態でなければ出現
 		if (!waxWall.GetParry()) {
 			if (waxWall.StartCheck(waxStock)) {
@@ -1312,10 +1312,13 @@ void Player::ShieldUp()
 		}
 	}
 
-	//毎フレーム放してるかチェック
-	if (RInput::GetInstance()->GetPadButtonUp(XINPUT_GAMEPAD_X) || RInput::GetKeyUp(DIK_Z)) {
-		//離したら終了
-		waxWall.End();
+	if (waxWall.GetParry() || waxWall.GetLeakOutMode())
+	{
+		//毎フレーム放してるかチェック
+		if (RInput::GetInstance()->GetPadButtonUp(XINPUT_GAMEPAD_X) || RInput::GetKeyUp(DIK_Z)) {
+			//離したら終了
+			waxWall.End();
+		}
 	}
 
 	//ロウ漏れモードなら
