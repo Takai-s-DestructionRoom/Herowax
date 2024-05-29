@@ -1054,6 +1054,8 @@ void Player::WaxCollect()
 
 	if (GetWaxCollectButtonDown()) {
 		WaxManager::GetInstance()->notCollect = false;
+	
+		RAudio::Play("Collect", 0.6f);
 	}
 
 	if (isMove)
@@ -1061,12 +1063,12 @@ void Player::WaxCollect()
 		//回収ボタンポチーw
 		if (!WaxManager::GetInstance()->notCollect)
 		{
-			bool isCollectSuccess = false;;
+			obj.mModel = ModelManager::Get("collect");
+			modelChange = true;
+
 			//ロウがストック性かつ地面についてて回収できる状態なら
 			if (isWaxStock && isGround)
 			{
-				isCollectSuccess = true;
-
 				//ロウ回収
 				WaxManager::GetInstance()->Collect(collectCol, waxCollectVertical, this);
 			}
@@ -1075,8 +1077,6 @@ void Player::WaxCollect()
 				!boss->parts[(int32_t)PartsNum::LeftHand].collectTimer.GetStarted()) {
 				if (RayToSphereCol(collectCol, boss->parts[(int32_t)PartsNum::LeftHand].collider))
 				{
-					isCollectSuccess = true;
-
 					//今のロウとの距離
 					float len = (collectCol.start -
 						boss->parts[(int32_t)PartsNum::LeftHand].GetPos()).Length();
@@ -1101,8 +1101,6 @@ void Player::WaxCollect()
 
 					//見たロウが範囲外ならスキップ
 					if (waxCollectVertical >= len) {
-						isCollectSuccess = true;
-
 						//とりあえず壊しちゃう
 						boss->parts[(int32_t)PartsNum::RightHand].collectPos = collectCol.start;
 						boss->parts[(int32_t)PartsNum::RightHand].ChangeState<BossPartCollect>();
@@ -1125,11 +1123,6 @@ void Player::WaxCollect()
 					enemy->ChangeState<EnemyCollect>();
 				}
 			}
-
-			if (isCollectSuccess) {
-				obj.mModel = ModelManager::Get("collect");
-				modelChange = true;
-			}
 		}
 	}
 
@@ -1146,7 +1139,7 @@ void Player::WaxCollect()
 		WaxManager::GetInstance()->notCollect = true;
 
 		//回収したロウと同じ数のロウを地面にばらまく
-		WaxLeakOut(collectCount, {-10.f,-10.f}, {10.f,10.f});
+		WaxLeakOut(collectCount, -10.f, 10.f);
 	}
 
 	if (!WaxManager::GetInstance()->notCollect) {
@@ -1221,7 +1214,7 @@ void Player::MaxWaxPlus(int32_t plus)
 	waxUI.Start();
 }
 
-void Player::WaxLeakOut(int32_t leakNum, Vector2 minLeakLength, Vector2 maxLeakLength)
+void Player::WaxLeakOut(int32_t leakNum, float minLeakLength, float maxLeakLength)
 {
 	for (int32_t i = 0; i < leakNum; i++)
 	{
@@ -1233,8 +1226,8 @@ void Player::WaxLeakOut(int32_t leakNum, Vector2 minLeakLength, Vector2 maxLeakL
 			startTrans.position.y = atkHeight;
 
 			Vector3 endPos = waxWall.obj.mTransform.position;
-			endPos.x += Util::GetRand(-minLeakLength.x,maxLeakLength.x);
-			endPos.z += Util::GetRand(-minLeakLength.y,maxLeakLength.y);
+			endPos.x += Util::GetRand(minLeakLength, maxLeakLength);
+			endPos.z += Util::GetRand(minLeakLength, maxLeakLength);
 
 			WaxManager::GetInstance()->Create(
 				startTrans,

@@ -250,7 +250,7 @@ public:
 
 	void MaxWaxPlus(int32_t plus);
 
-	void WaxLeakOut(int32_t leakNum, Vector2 minLeakLength = { -2.5f,-2.5f }, Vector2 maxLeakLength = { 2.5f,2.5f });
+	void WaxLeakOut(int32_t leakNum, float minLeakLength = -2.5f, float maxLeakLength = 2.5f);
 
 	void Reset();	//Updateの最初で初期化するもの
 
