@@ -234,6 +234,8 @@ void Player::Update()
 	maxWaxStock = Util::Clamp(maxWaxStock, 0, 100);
 	waxStock = Util::Clamp(waxStock, 0, maxWaxStock);
 
+	WaxManager::GetInstance()->SetMaxWaxStock(maxWaxStock);
+
 	//回収が終わったらモデルを戻す
 	if (WaxManager::GetInstance()->notCollect && modelChange) {
 		obj.mModel = ModelManager::Get("playerBag");

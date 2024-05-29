@@ -45,6 +45,7 @@ public:
 
 	SlimeWax slimeWax;
 
+	int32_t maxWaxStock = 0;
 	int32_t collectWaxNum = 0;
 
 	GameObject* collectTarget = nullptr;
@@ -100,6 +101,8 @@ public:
 
 	//死んでるやつらを殺したりする
 	void Delete();
+	//ロウの総量設定
+	void SetMaxWaxStock(int32_t maxWax) { maxWaxStock = maxWax; }
 
 private:
 

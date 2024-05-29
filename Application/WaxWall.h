@@ -32,12 +32,20 @@ public:
 	//パリィ判定
 	Easing::EaseTimer parryTimer = 0.1f;
 
+	struct WaxWallData {
+		Color waxColor;
+		Color rimColor;
+		float rimPower;
+	};
+	SRConstBuffer<WaxWallData> hogeBuff;
+
 private:
 	bool endFlag = false;
 
 	//この秒数のたびにロウが出現する
 	Easing::EaseTimer leakOutTimer = 0.5f;
 
-	Vector3 baseScale = { 1,1,1 };
+	RootSignature* GetWaxWallRootSig();
+	GraphicsPipeline* GetWaxWallPipeline();
 };
 
