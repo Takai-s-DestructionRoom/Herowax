@@ -103,6 +103,7 @@ void Player::Init()
 	obj = PaintableModelObj("playerBag");
 	humanObj = ModelObj("playerHuman");
 	tankWaterObj = ModelObj("TankWater");
+	tankMeterObj = ModelObj("TankWater");
 
 	std::map<std::string, std::string> extract = Parameter::Extract("Player");
 	defColor.r = Parameter::GetParam(extract, "プレイヤーの色R", 1);
@@ -420,11 +421,18 @@ void Player::Update()
 	humanObj.TransferBuffer(Camera::sNowCamera->mViewProjection);
 
 	//タンクデータ
-	tankWaterObj.mTransform.position = obj.mTransform.position + Vector3(0, 1.0f + bagScale / 2.0f, 0);
+	tankWaterObj.mTransform.position = tankMeterObj.mTransform.position = obj.mTransform.position + Vector3(0, 1.0f + bagScale / 2.0f, 0);
 	tankWaterObj.mTransform.scale = Vector3(bagScale - 0.8f, bagScale - 0.8f, bagScale - 0.8f);
+	tankMeterObj.mTransform.scale = Vector3(bagScale - 0.7f, bagScale - 0.7f, bagScale - 0.7f);
 	tankWaterObj.mTransform.UpdateMatrix();
+	tankWaterObj.mTuneMaterial.mAmbient = { 10, 10, 10 };
+	tankWaterObj.mTuneMaterial.mDiffuse = { 10, 10, 10 };
 	tankWaterObj.TransferBuffer(Camera::sNowCamera->mViewProjection);
-	tankBuff->centerPos = tankWaterObj.mTransform.position;
+	tankMeterObj.mTuneMaterial.mColor = { 1, 0, 0, 1 };
+	tankMeterObj.mTuneMaterial.mAmbient = { 100, 100, 100 };
+	tankMeterObj.mTransform.UpdateMatrix();
+	tankMeterObj.TransferBuffer(Camera::sNowCamera->mViewProjection);
+	tankBuff->centerPos = tankMeterBuff->centerPos = tankWaterObj.mTransform.position;
 	tankBuff->amplitude = 0.04f;
 	tankBuff->frequency = 10.0f;
 	float tankRatio = waxStock / 100.0f;
@@ -433,6 +441,9 @@ void Player::Update()
 	tankValue += (newTankValue - tankValue) / 7.0f;
 	tankBuff->upper = tankValue;
 	tankBuff->time += TimeManager::deltaTime;
+	tankMeterBuff->upper = -tankMeterObj.mTransform.scale.y
+		+ (tankMeterObj.mTransform.scale.y * 2.0f) * (maxWaxStock / 100.0f);
+	tankMeterBuff->thickness = 0.05f;
 
 	if (RInput::GetKeyDown(DIK_H)) {
 		waxStock = 100;
@@ -616,6 +627,12 @@ void Player::Draw()
 				orderB.pipelineState = GetTankWaterPipelineB()->mPtr.Get();
 				Renderer::DrawCall("Opaque", orderA);
 				Renderer::DrawCall("Opaque", orderB);
+			}
+			for (RenderOrder order : tankMeterObj.GetRenderOrder()) {
+				order.mRootSignature = GetTankMeterRootSig()->mPtr.Get();
+				order.pipelineState = GetTankMeterPipeline()->mPtr.Get();
+				order.rootData.push_back(RootData(RootDataType::SRBUFFER_CBV, tankMeterBuff.mBuff));
+				Renderer::DrawCall("Opaque", order);
 			}
 		}
 
@@ -1429,4 +1446,29 @@ GraphicsPipeline* Player::GetTankWaterPipelineB()
 
 	desc.RasterizerState.CullMode = D3D12_CULL_MODE_FRONT;
 	return &GraphicsPipeline::GetOrCreate("TankWaterBack", desc);
+}
+
+RootSignature* Player::GetTankMeterRootSig()
+{
+	RootSignatureDesc desc = RDirectX::GetDefRootSignature().mDesc;
+
+	desc.RootParamaters.emplace_back();
+
+	desc.RootParamaters.back().ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;
+	desc.RootParamaters.back().Descriptor.ShaderRegister = 10;
+	desc.RootParamaters.back().Descriptor.RegisterSpace = 0;
+	desc.RootParamaters.back().ShaderVisibility = D3D12_SHADER_VISIBILITY_ALL;
+
+	desc.Flags = D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT;
+	return &RootSignature::GetOrCreate("TankMeter", desc);
+}
+
+GraphicsPipeline* Player::GetTankMeterPipeline()
+{
+	PipelineStateDesc desc = RDirectX::GetDefPipeline().mDesc;
+	desc.pRootSignature = GetTankWaterRootSig()->mPtr.Get();
+	desc.PS = Shader::GetOrCreate("TankMeterPS", "./Shader/TankWater/TankMeterPS.hlsl", "main", "ps_5_1");
+
+	desc.RasterizerState.CullMode = D3D12_CULL_MODE_NONE;
+	return &GraphicsPipeline::GetOrCreate("TankMeter", desc);
 }

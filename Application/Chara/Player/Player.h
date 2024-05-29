@@ -170,6 +170,13 @@ private:
 		float time;
 	};
 	SRConstBuffer<TankWaterData> tankBuff;
+	ModelObj tankMeterObj;
+	struct TankMeterData {
+		Vector3 centerPos;
+		float upper;
+		float thickness;
+	};
+	SRConstBuffer<TankMeterData> tankMeterBuff;
 
 	Vector3 modelOffset;//描画位置をずらす
 
@@ -268,4 +275,7 @@ private:
 	RootSignature* GetTankWaterRootSig();
 	GraphicsPipeline* GetTankWaterPipeline();
 	GraphicsPipeline* GetTankWaterPipelineB();
+
+	RootSignature* GetTankMeterRootSig();
+	GraphicsPipeline* GetTankMeterPipeline();
 };
