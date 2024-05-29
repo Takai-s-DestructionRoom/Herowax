@@ -99,11 +99,19 @@ void Enemy::BaseUpdate()
 		warningColor.a = Easing::OutQuad(0.f, 1.f, warningRoop.GetTimeRate());
 	}
 
+	if (spawnTimer.GetRun())
+	{
+		ParticleManager::GetInstance()->AddHoming(
+			obj.mTransform.position + Vector3::UP * obj.mTransform.scale.y, "enemy_pop_homing");
+		//パーティクル出現
+		ParticleManager::GetInstance()->AddSimple(
+			obj.mTransform.position + Vector3::UP * obj.mTransform.scale.y, "smoke");
+	}
+
 	if (spawnTimer.GetNowEnd()) {
 		//パーティクル出現
-		ParticleManager::GetInstance()->AddSimple(obj.mTransform.position, "smoke_red");
-		//ParticleManager::GetInstance()->AddSimple(obj.mTransform.position, "smoke_black");
-		ParticleManager::GetInstance()->AddRing(obj.mTransform.position, "enemy_pop_ring");
+		ParticleManager::GetInstance()->AddSimple(
+			obj.mTransform.position + Vector3::UP * obj.mTransform.scale.y, "smoke_red");
 	}
 
 	//こっから下は出現してからなので

@@ -5,6 +5,8 @@ maxscale:30
 accelpower:0.05
 growingTimer:0.05
 endscale:0
+rejectradius:0
+blendmode:1
 isgravity:false
 isbillboard:true
 emitscale:20.000000_20.000000_20.000000

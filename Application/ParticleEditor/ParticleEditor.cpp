@@ -128,15 +128,6 @@ void ParticleEditor::OrderCreateGUI()
 			ImGui::RadioButton("アルファブレンド",&saveSimplePData.blendMode,0);
 			ImGui::RadioButton("加算合成", &saveSimplePData.blendMode,1);
 			ImGui::RadioButton("減算合成", &saveSimplePData.blendMode,2);
-			if (saveSimplePData.blendMode == 0) {
-				ImGui::Text("アルファブレンド");
-			}
-			else if (saveSimplePData.blendMode == 1) {
-				ImGui::Text("加算合成");
-			}
-			else if (saveSimplePData.blendMode == 2) {
-				ImGui::Text("減算合成");
-			}
 			ImGui::Text("------------------------------------------");
 			ImGui::InputText("セーブするファイル名", &saveFileName);
 
@@ -169,8 +160,9 @@ void ParticleEditor::OrderCreateGUI()
 			ImGui::Text("------------------------------------------");
 			ImGui::Checkbox("重力を適用するか", &saveRingPData.isGravity);
 			ImGui::Checkbox("Y軸ビルボード化するか", &saveRingPData.isBillboard);
-			ImGui::RadioButton("ブレンドモード", &saveRingPData.blendMode);
-			ImGui::Text("0:Alpha,1:Add,2:Sub");
+			ImGui::RadioButton("アルファブレンド", &saveRingPData.blendMode, 0);
+			ImGui::RadioButton("加算合成", &saveRingPData.blendMode, 1);
+			ImGui::RadioButton("減算合成", &saveRingPData.blendMode, 2);
 			ImGui::Text("------------------------------------------");
 			ImGui::InputText("セーブするファイル名", &saveFileName);
 
@@ -216,8 +208,9 @@ void ParticleEditor::OrderCreateGUI()
 			ImGui::Checkbox("重力を適用するか", &saveHomingPData.isGravity);
 			ImGui::Checkbox("Y軸ビルボード化するか", &saveHomingPData.isBillboard);
 			ImGui::Checkbox("エミッターの中心に引き寄せられるか", &saveHomingPData.isTargetEmitter);
-			ImGui::RadioButton("ブレンドモード", &saveHomingPData.blendMode);
-			ImGui::Text("0:Alpha,1:Add,2:Sub");
+			ImGui::RadioButton("アルファブレンド", &saveHomingPData.blendMode, 0);
+			ImGui::RadioButton("加算合成", &saveHomingPData.blendMode, 1);
+			ImGui::RadioButton("減算合成", &saveHomingPData.blendMode, 2);
 			ImGui::Text("------------------------------------------");
 			ImGui::InputText("セーブするファイル名", &saveFileName);
 
@@ -258,8 +251,9 @@ void ParticleEditor::OrderCreateGUI()
 			ImGui::Text("------------------------------------------");
 			ImGui::Checkbox("重力を適用するか", &saveDirectionalPData.isGravity);
 			ImGui::Checkbox("Y軸ビルボード化するか", &saveDirectionalPData.isBillboard);
-			ImGui::RadioButton("ブレンドモード", &saveDirectionalPData.blendMode);
-			ImGui::Text("0:Alpha,1:Add,2:Sub");
+			ImGui::RadioButton("アルファブレンド", &saveDirectionalPData.blendMode, 0);
+			ImGui::RadioButton("加算合成", &saveDirectionalPData.blendMode, 1);
+			ImGui::RadioButton("減算合成", &saveDirectionalPData.blendMode, 2);
 			ImGui::Text("------------------------------------------");
 			ImGui::InputText("セーブするファイル名", &saveFileName);
 
