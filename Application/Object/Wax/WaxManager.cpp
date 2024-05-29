@@ -203,7 +203,7 @@ void WaxManager::Init()
 	waxGroups.clear();
 
 	slimeWax.Init();
-	notCollect = true;
+	//notCollect = true;
 }
 
 void WaxManager::Update()
@@ -376,7 +376,7 @@ bool WaxManager::Collect(ColPrimitive3D::Ray collider)
 		farObj->ChangeState<WaxCollect>();
 		//farObj = nullptr;	//消す
 
-		notCollect = false;
+		//notCollect = false;
 		return true;
 	}
 

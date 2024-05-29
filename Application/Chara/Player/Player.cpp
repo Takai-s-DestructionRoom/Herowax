@@ -310,12 +310,9 @@ void Player::Update()
 		godmodeTimer.Reset();
 	}
 
-	bool nowCollected = WaxManager::GetInstance()->notCollect && 
-		!EnemyManager::GetInstance()->GetNowCollectEnemy();
-
 	moveVec *=
 		moveSpeed * moveAccel *
-		nowCollected;				//移動速度をかけ合わせたら完成(回収中は動けない)
+		WaxManager::GetInstance()->notCollect;				//移動速度をかけ合わせたら完成(回収中は動けない)
 	obj.mTransform.position += moveVec;						//完成したものを座標に足し合わせる
 
 	//回収中なら回収中モデルのスケールを入れる
@@ -329,7 +326,7 @@ void Player::Update()
 	}
 
 	//攻撃中と回収中なら正面へ、それ以外なら後ろへ
-	if (isAttack || !nowCollected) {
+	if (isAttack || !WaxManager::GetInstance()->notCollect) {
 		Vector3 tVec = collectRangeModel.mTransform.position - collectCol.start;
 		tVec.y = 0;
 		tVec.Normalize();
@@ -392,7 +389,6 @@ void Player::Update()
 
 	if (RImGui::showImGui)
 	{
-
 		ImGui::SetNextWindowSize({ 600, 250 }, ImGuiCond_FirstUseEver);
 
 		ImGui::Begin("移動制限");
@@ -467,6 +463,7 @@ void Player::Update()
 
 		ImGui::Begin("Player");
 
+		ImGui::Checkbox("吸収フラグ", &WaxManager::GetInstance()->notCollect);
 		ImGui::Text("現在のHP:%f", hp);
 		ImGui::InputFloat("最大HP:", &maxHP, 1.0f);
 		ImGui::Text("Lスティック移動、Aボタンジャンプ、Rで攻撃,Lでロウ回収");
@@ -1046,14 +1043,18 @@ void Player::WaxCollect()
 		}
 	}
 
+	if (GetWaxCollectButtonDown()) {
+		WaxManager::GetInstance()->notCollect = false;
+	}
+
 	if (isMove)
 	{
 		//回収ボタンポチーw
-		if (GetWaxCollectButtonDown())
+		if (!WaxManager::GetInstance()->notCollect)
 		{
 			bool isCollectSuccess = false;;
 			//ロウがストック性かつ地面についてて回収できる状態なら
-			if (isWaxStock && isGround && WaxManager::GetInstance()->notCollect)
+			if (isWaxStock && isGround)
 			{
 				isCollectSuccess = true;
 
@@ -1109,7 +1110,7 @@ void Player::WaxCollect()
 				if (enemy->GetIsSolid() && ColPrimitive3D::RayToSphereCol(collectCol, enemy->collider))
 				{
 					//回収状態に遷移
-					WaxManager::GetInstance()->notCollect = true;
+					WaxManager::GetInstance()->notCollect = false;
 					EnemyManager::GetInstance()->collectTarget = this;
 					enemy->isCollect = true;
 					enemy->ChangeState<EnemyCollect>();
@@ -1128,10 +1129,6 @@ void Player::WaxCollect()
 		RInput::GetInstance()->GetKeyUp(DIK_Q))) {
 
 		WaxManager::GetInstance()->notCollect = true;
-
-		//ロウからターゲットを除去
-		WaxManager::GetInstance()->collectTarget = nullptr;
-		EnemyManager::GetInstance()->collectTarget = nullptr;
 	}
 
 	//回収中にダメージを受けたら回収をキャンセル
@@ -1143,8 +1140,17 @@ void Player::WaxCollect()
 		WaxLeakOut(collectCount, {-10.f,-10.f}, {10.f,10.f});
 	}
 
+	if (!WaxManager::GetInstance()->notCollect) {
+		//ロウからターゲットを除去
+		WaxManager::GetInstance()->collectTarget = this;
+		EnemyManager::GetInstance()->collectTarget = this;
+	}
+
 	if (WaxManager::GetInstance()->notCollect) {
 		collectCount = 0;
+		//ロウからターゲットを除去
+		WaxManager::GetInstance()->collectTarget = nullptr;
+		EnemyManager::GetInstance()->collectTarget = nullptr;
 	}
 
 	if (WaxManager::GetInstance()->notCollect == false)
