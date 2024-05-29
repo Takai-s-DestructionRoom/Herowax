@@ -145,11 +145,11 @@ void PlayerUI::GaugeAdd(bool isOut)
 {
 	waxCircleGauges.emplace_back();
 	waxCircleGauges.back().Init();
-	waxCircleGauges.back().radian = 360.0f;
+	waxCircleGauges.back().baseRadian = 360.0f;
 	
 	waxCircleGaugeBacks.emplace_back();
 	waxCircleGaugeBacks.back().Init();
-	waxCircleGaugeBacks.back().radian = 360.0f;
+	waxCircleGaugeBacks.back().baseRadian = 360.0f;
 
 	if (isOut)
 	{
@@ -173,16 +173,16 @@ void PlayerUI::GaugeUpdate()
 	for (auto& gaugeOnce : waxCircleGauges)
 	{
 		float calRad = (baseRadian - i);//後ろの1.0fは変数化
-		gaugeOnce.radian = (360.f * calRad);
+		gaugeOnce.baseRadian = (360.f * calRad);
 
 		if (baseRadian <= i + 1)
 		{
-			gaugeOnce.radian -= 360.f;
-			gaugeOnce.radian = abs(gaugeOnce.radian);
+			gaugeOnce.baseRadian -= 360.f;
+			gaugeOnce.baseRadian = abs(gaugeOnce.baseRadian);
 		}
 		else
 		{
-			gaugeOnce.radian = 0.0f;
+			gaugeOnce.baseRadian = 0.0f;
 		}
 
 		gaugeOnce.baseTrans.position = basePos;
@@ -196,16 +196,16 @@ void PlayerUI::GaugeUpdate()
 	for (auto& gaugeOnce : waxCircleGaugeBacks)
 	{
 		float calBackRad = (baseBackRadian - i);//後ろの1.0fは変数化
-		gaugeOnce.radian = (360.f * calBackRad);
+		gaugeOnce.baseRadian = (360.f * calBackRad);
 
 		if (baseBackRadian <= i + 1)
 		{
-			gaugeOnce.radian -= 360.f;
-			gaugeOnce.radian = abs(gaugeOnce.radian);
+			gaugeOnce.baseRadian -= 360.f;
+			gaugeOnce.baseRadian = abs(gaugeOnce.baseRadian);
 		}
 		else
 		{
-			gaugeOnce.radian = 0.0f;
+			gaugeOnce.baseRadian = 0.0f;
 		}
 
 		gaugeOnce.baseTrans.position = basePos;

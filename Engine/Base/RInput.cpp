@@ -234,6 +234,15 @@ bool RInput::GetRTrigger()
 	return false;
 }
 
+bool RInput::GetLTrigger()
+{
+	if (mXInputState.Gamepad.bLeftTrigger >= 128)
+	{
+		return true;
+	}
+	return false;
+}
+
 bool RInput::GetLStickUp()
 {
 	if (mOldXInputState.Gamepad.sThumbLY < XINPUT_GAMEPAD_LEFT_THUMB_DEADZONE &&
