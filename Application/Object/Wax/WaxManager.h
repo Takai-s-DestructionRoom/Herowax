@@ -38,7 +38,7 @@ public:
 	float heatUpTemperature;	//蝋が燃えたときに上がる温度
 	uint32_t waxDamage;
 
-	bool isCollected = true;	//回収し終えたか
+	bool notCollect = true;	//回収し終えたか
 	float accelAmount = 0.1f;	//回収の加速度合い
 	
 	float collectTime = 1.0f;		//吸収されるまでの時間

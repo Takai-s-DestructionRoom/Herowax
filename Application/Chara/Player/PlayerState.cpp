@@ -20,7 +20,8 @@ void PlayerNormal::Update(Player* player)
 	//player->obj.mTransform.rotation = aLookat.ToEuler();
 
 	//入力があればステート遷移
-	if (RInput::GetInstance()->GetRTrigger() || RInput::GetKey(DIK_SPACE)) {
+	if ((RInput::GetInstance()->GetRTrigger() || RInput::GetKey(DIK_SPACE)) &&
+		WaxManager::GetInstance()->notCollect) {
 		player->ChangeState<PlayerPablo>();
 		//通常の移動速度に戻す
 		player->moveSpeed *= player->pabloSpeedMag;
