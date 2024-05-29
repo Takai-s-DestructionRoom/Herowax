@@ -428,7 +428,7 @@ void Player::Update()
 	tankWaterObj.mTuneMaterial.mAmbient = { 10, 10, 10 };
 	tankWaterObj.mTuneMaterial.mDiffuse = { 10, 10, 10 };
 	tankWaterObj.TransferBuffer(Camera::sNowCamera->mViewProjection);
-	tankMeterObj.mTuneMaterial.mColor = { 1, 0, 0, 1 };
+	tankMeterObj.mTuneMaterial.mColor = { 0, 0, 1, 1 };
 	tankMeterObj.mTuneMaterial.mAmbient = { 100, 100, 100 };
 	tankMeterObj.mTransform.UpdateMatrix();
 	tankMeterObj.TransferBuffer(Camera::sNowCamera->mViewProjection);
