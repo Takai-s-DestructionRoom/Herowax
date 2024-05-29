@@ -83,8 +83,6 @@ isFireStock(false), isWaxStock(true), waxCollectAmount(0)
 	initWaxStock = (int32_t)Parameter::GetParam(extract, "ロウの初期最大ストック数", (float)initWaxStock);
 	maxWaxStock = initWaxStock;
 	waxStock = initWaxStock;
-
-	bonusUI.Init();
 }
 
 void Player::Init()
@@ -474,9 +472,6 @@ void Player::Update()
 		ImGui::Text("Lスティック移動、Aボタンジャンプ、Rで攻撃,Lでロウ回収");
 		ImGui::Text("WASD移動、スペースジャンプ、右クリで攻撃,Pでパブロ攻撃,Qでロウ回収");
 
-		ImGui::DragInt("ボーナスが獲得できる回収量", &bonusLine);	
-		ImGui::DragInt("ボーナス時に追加で獲得できるロウの量", &bonusGetWax);	
-		
 		if (ImGui::TreeNode("初期状態設定"))
 		{
 			ImGui::SliderFloat("初期座標X", &initPos.x, -100.f, 100.f);
@@ -652,7 +647,6 @@ void Player::Draw()
 		
 		waxUI.Draw();
 		waxWall.Draw();
-		bonusUI.Draw();
 	}
 }
 
@@ -1033,7 +1027,7 @@ void Player::WaxCollect()
 		if (waxCollectAmount > 0)
 		{
 			waxStock += waxCollectAmount;
-			bonusCount += waxCollectAmount;
+			
 			//音鳴らす
 			RAudio::Play("eCollect",0.5f);
 
@@ -1134,24 +1128,7 @@ void Player::WaxCollect()
 		//ロウからターゲットを除去
 		WaxManager::GetInstance()->collectTarget = nullptr;
 		EnemyManager::GetInstance()->collectTarget = nullptr;
-
-		//回収量に応じてボーナス
-		if (bonusCount >= bonusLine) {
-			//追加でロウが増える
-			waxCollectAmount += bonusGetWax;
-
-			bonusCount = 0;
-		}
 	}
-
-	if (!(RInput::GetInstance()->GetLTrigger() || RInput::GetInstance()->GetKey(DIK_Q)))
-	{
-		bonusCount = 0;
-	}
-
-	bonusLine = max(bonusLine, 1);
-	bonusUI.circleGauge.baseRadian = 360.f - (float)((float)bonusCount / (float)bonusLine) * 360.f;
-	bonusUI.Update();
 
 	if (WaxManager::GetInstance()->notCollect == false)
 	{

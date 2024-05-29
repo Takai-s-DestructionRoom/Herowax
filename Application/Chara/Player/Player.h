@@ -184,14 +184,6 @@ private:
 
 	WaxWall waxWall;
 
-	//一度に回収したロウがこの値を超えたらボーナス
-	int32_t bonusLine = 25;
-	int32_t bonusCount = 0;
-
-	int32_t bonusGetWax = 5;	//ボーナスで取得する量
-
-	BonusUI bonusUI;
-
 public:
 	Player();
 
