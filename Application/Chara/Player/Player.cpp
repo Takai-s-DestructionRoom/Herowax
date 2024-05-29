@@ -80,6 +80,8 @@ isFireStock(false), isWaxStock(true), waxCollectAmount(0)
 	humanScale = Parameter::GetParam(extract, "人の大きさ", humanScale);
 	collectScale = Parameter::GetParam(extract, "回収中の大きさ", collectScale);
 
+	waxWall.parryTimer.maxTime_ = Parameter::GetParam(extract,"パリィの猶予時間", 0.1f);
+
 	initWaxStock = (int32_t)Parameter::GetParam(extract, "ロウの初期最大ストック数", (float)initWaxStock);
 	maxWaxStock = initWaxStock;
 	waxStock = initWaxStock;
@@ -541,6 +543,11 @@ void Player::Update()
 			ImGui::InputFloat("敵がこの範囲に入ると攻撃状態へ遷移する大きさ", &attackHitCollider.r, 1.0f);
 			ImGui::TreePop();
 		}
+		if (ImGui::TreeNode("ガード系"))
+		{
+			ImGui::DragFloat("パリィの猶予時間", &waxWall.parryTimer.maxTime_, 0.01f);
+			ImGui::TreePop();
+		}
 		if (ImGui::TreeNode("MUTEKI系"))
 		{
 			ImGui::Checkbox("無敵状態切り替え", &isGodmode);
@@ -589,7 +596,7 @@ void Player::Update()
 			Parameter::Save("風船の大きさ", bagScale);
 			Parameter::Save("回収中の大きさ", collectScale);
 			Parameter::Save("ロウの初期最大ストック数", initWaxStock);
-
+			Parameter::Save("パリィの猶予時間", waxWall.parryTimer.maxTime_);
 			Parameter::End();
 		}
 
