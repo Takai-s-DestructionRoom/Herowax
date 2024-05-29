@@ -7,6 +7,7 @@
 #include "Camera.h"
 #include "Float4.h"
 #include "ColPrimitive3D.h"
+#include "RImGui.h"
 
 EnemyNormal::EnemyNormal()
 {

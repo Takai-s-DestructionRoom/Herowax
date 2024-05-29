@@ -1,5 +1,6 @@
 #include "BossAppearance.h"
 #include "Boss.h"
+#include "ParticleManager.h"
 
 BossAppearance::BossAppearance()
 {
@@ -12,6 +13,7 @@ void BossAppearance::Update(Boss* boss)
 	boss->SetStateStr("Appearance");	//ステートがわかるように設定しとく
 	handEaseTimer.Update();
 	waitTimer.Update();
+	smokeTimer.Update();
 
 	//カメラの向く
 	Vector3 vec = Camera::sNowCamera->mViewProjection.mEye - boss->obj.mTransform.position;
@@ -27,6 +29,9 @@ void BossAppearance::Update(Boss* boss)
 	if (isStart)
 	{
 		waitTimer.Start();
+
+		handEaseTimer.Reset();
+		smokeTimer.Reset();
 
 		//こぶしから目標までのベクトル
 		for (size_t i = 0; i < handToTarget.size(); i++)
@@ -61,6 +66,19 @@ void BossAppearance::Update(Boss* boss)
 	if (waitTimer.GetEnd() && handEaseTimer.GetStarted() == false)
 	{
 		handEaseTimer.Start();
+	}
+
+	if (handEaseTimer.GetEnd() && smokeTimer.GetStarted() == false)
+	{
+		smokeTimer.Start();
+	}
+
+	if (smokeTimer.GetRun())
+	{
+		ParticleManager::GetInstance()->AddSimple(
+			boss->obj.mTransform.position + Vector3(1,0,0) * boss->obj.mTransform.scale.x,"boss_smoke");
+		ParticleManager::GetInstance()->AddSimple(
+			boss->obj.mTransform.position + Vector3(-1, 0, 0) * boss->obj.mTransform.scale.x, "boss_smoke2");
 	}
 
 	//スプライン使って飛ばす
