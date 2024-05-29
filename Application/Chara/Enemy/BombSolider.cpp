@@ -8,6 +8,8 @@ BombSolider::BombSolider(ModelObj* target_) : Enemy(target_)
 
 	std::string loadName = "./Resources/Data/StateOrder/BombSolider.txt";
 	stateStrings = Util::GetFileData(loadName);
+
+	SetModelSize({3.f,6.f,3.f});
 }
 
 void BombSolider::Update()

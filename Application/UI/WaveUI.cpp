@@ -80,15 +80,8 @@ void WaveUI::Update()
 
 void WaveUI::Draw()
 {
-	if (WaveManager::Get()->GetWaitTimer().nowTime_ > 0.0f) {
-		nextwave.Draw();
-		atText.Draw();
-		timerUI.Draw();
-	}
-	else {
-		numDrawer.Draw();
-		atText.Draw();
-		tai.Draw();
-		enemyAllKillText.Draw();
-	}
+	numDrawer.Draw();
+	atText.Draw();
+	tai.Draw();
+	enemyAllKillText.Draw();
 }

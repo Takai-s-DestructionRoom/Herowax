@@ -57,6 +57,7 @@ public:
 	//------------ HP関連 ------------//
 	float hp;				//現在のヒットポイント
 	float maxHP;			//最大HP
+	float oldHp;			//1フレーム前のHP
 
 	Easing::EaseTimer damageCoolTimer;	//再びダメージくらうようになるまでのクールタイム
 
@@ -170,6 +171,13 @@ private:
 		float time;
 	};
 	SRConstBuffer<TankWaterData> tankBuff;
+	ModelObj tankMeterObj;
+	struct TankMeterData {
+		Vector3 centerPos;
+		float upper;
+		float thickness;
+	};
+	SRConstBuffer<TankMeterData> tankMeterBuff;
 
 	Vector3 modelOffset;//描画位置をずらす
 
@@ -177,13 +185,7 @@ private:
 
 	WaxWall waxWall;
 
-	//一度に回収したロウがこの値を超えたらボーナス
-	int32_t bonusLine = 25;
-	int32_t bonusCount = 0;
-
-	int32_t bonusGetWax = 5;	//ボーナスで取得する量
-
-	BonusUI bonusUI;
+	int32_t collectCount = 0;
 
 public:
 	Player();
@@ -235,6 +237,8 @@ public:
 
 	bool GetWaxCollectButtonDown();
 
+	bool GetDamageTrigger() { return oldHp != hp; };	//ダメージを受けた瞬間か
+
 	// セッター //
 	//回収できるかフラグ設定
 	void SetIsCollect(bool frag) { isCollect = frag; }
@@ -246,7 +250,9 @@ public:
 
 	void MaxWaxPlus(int32_t plus);
 
-	void WaxLeakOut(int32_t leakNum);
+	void WaxLeakOut(int32_t leakNum, Vector2 minLeakLength = { -2.5f,-2.5f }, Vector2 maxLeakLength = { 2.5f,2.5f });
+
+	void Reset();	//Updateの最初で初期化するもの
 
 	WaxWall* GetWaxWall() {
 		if (waxWall.isAlive) {
@@ -260,7 +266,6 @@ public:
 private:
 	void DamageBlink();	//被弾時の点滅(後々もっとリッチなのに置き換え予定)
 
-	void Reset();	//Updateの最初で初期化するもの
 
 	void UpdateAttackCollider();
 	void DrawAttackCollider();
@@ -268,4 +273,7 @@ private:
 	RootSignature* GetTankWaterRootSig();
 	GraphicsPipeline* GetTankWaterPipeline();
 	GraphicsPipeline* GetTankWaterPipelineB();
+
+	RootSignature* GetTankMeterRootSig();
+	GraphicsPipeline* GetTankMeterPipeline();
 };

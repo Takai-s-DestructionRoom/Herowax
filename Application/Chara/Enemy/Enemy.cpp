@@ -37,6 +37,8 @@ gravity(0.2f)
 	obj.mTransform.scale = oriScale;
 	baseScale = oriScale;
 
+	modelSize = oriScale;
+
 	predictionLine = ModelObj(Model::Load("./Resources/Model/Cube.obj", "Cube"));
 	//影をなくす
 	predictionLine.mTuneMaterial.mAmbient = Vector3(1, 1, 1) * 100.f;
@@ -104,8 +106,13 @@ void Enemy::BaseUpdate()
 		ParticleManager::GetInstance()->AddHoming(
 			obj.mTransform.position + Vector3::UP * obj.mTransform.scale.y, "enemy_pop_homing");
 		//パーティクル出現
-		ParticleManager::GetInstance()->AddSimple(
-			obj.mTransform.position + Vector3::UP * obj.mTransform.scale.y, "smoke");
+		smokeCount++;
+		if (smokeCount > 5)
+		{
+			ParticleManager::GetInstance()->AddSimple(
+				obj.mTransform.position + Vector3::UP * obj.mTransform.scale.y, "smoke");
+			smokeCount = 0;
+		}
 	}
 
 	if (spawnTimer.GetNowEnd()) {
@@ -271,12 +278,12 @@ void Enemy::TransfarBuffer()
 
 void Enemy::Draw()
 {
-	//警告を表示
-	if (spawnTimer.GetRun()) {
-		Vector3 pos = obj.mTransform.position;
-		pos.y += obj.mTransform.scale.y;
-		InstantDrawer::DrawGraph3D(pos, 10.f, 10.f, "warning", warningColor);
-	}
+	////警告を表示
+	//if (spawnTimer.GetRun()) {
+	//	Vector3 pos = obj.mTransform.position;
+	//	pos.y += obj.mTransform.scale.y;
+	//	InstantDrawer::DrawGraph3D(pos, 10.f, 10.f, "warning", warningColor);
+	//}
 
 	if (!spawnTimer.GetEnd()) return;
 
@@ -470,7 +477,7 @@ void Enemy::WaxVisualUpdate()
 
 void Enemy::SlowUpdate()
 {
-	if (GetState() == "Slow")
+	if (GetState() == "Slow" && GetIsSolid() == false)
 	{
 		Quaternion aLookat =
 			Quaternion::LookAt(moveVec);

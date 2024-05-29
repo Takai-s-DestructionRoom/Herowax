@@ -66,12 +66,13 @@ void ControlUI::Update()
 		ImGui::SetNextWindowSize({ 400, 200 }, ImGuiCond_FirstUseEver);
 
 		// デバッグモード //
-		ImGui::Begin("UI配置");
+		ImGui::Begin("操作説明UI");
 
 		for (int32_t i = 0; i < uiOnces.size(); i++)
 		{
 			std::string text1 = "ui位置" + std::to_string(i);
 			std::string text2 = "uiサイズ" + std::to_string(i);
+			ImGui::Text(uiOnces[i].load_file.c_str());
 			ImGui::DragFloat2(text1.c_str(), &uiOnces[i].position.x);
 			ImGui::DragFloat2(text2.c_str(), &uiOnces[i].size.x);
 		}

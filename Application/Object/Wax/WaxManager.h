@@ -38,13 +38,14 @@ public:
 	float heatUpTemperature;	//蝋が燃えたときに上がる温度
 	uint32_t waxDamage;
 
-	bool isCollected = true;	//回収し終えたか
+	bool notCollect = true;	//回収し終えたか
 	float accelAmount = 0.1f;	//回収の加速度合い
 	
 	float collectTime = 1.0f;		//吸収されるまでの時間
 
 	SlimeWax slimeWax;
 
+	int32_t maxWaxStock = 0;
 	int32_t collectWaxNum = 0;
 
 	GameObject* collectTarget = nullptr;
@@ -100,6 +101,8 @@ public:
 
 	//死んでるやつらを殺したりする
 	void Delete();
+	//ロウの総量設定
+	void SetMaxWaxStock(int32_t maxWax) { maxWaxStock = maxWax; }
 
 private:
 

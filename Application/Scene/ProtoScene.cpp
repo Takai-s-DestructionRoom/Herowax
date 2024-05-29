@@ -114,6 +114,7 @@ void ProtoScene::Update()
 	//初期化周り
 	InstantDrawer::DrawInit();
 	WaxManager::GetInstance()->slimeWax.Reset();
+	player.Reset();
 
 	//ボス撃破シーンに切り替え
 	if (Util::debugBool) {
