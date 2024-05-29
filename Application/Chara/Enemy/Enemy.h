@@ -23,6 +23,11 @@ private:
 	bool isGraund;				//接地しているかフラグ
 	float gravity;				//重力
 
+	Easing::EaseTimer motionTimer = 1.f;
+	bool motionFrag;
+	float radianX;
+	float radianZ;
+
 	Vector3 basis;
 	Vector3 behaviorOrigen;
 
@@ -171,6 +176,8 @@ public:
 
 	void WaxVisualUpdate();
 
+	void SlowUpdate();
+
 	//ウェーブタイマーを開始
 	void StartToMoving();
 
@@ -257,6 +264,8 @@ public:
 	void MoveVecPlus(const Vector3& plusVec);
 	//回転量に足す
 	void RotVecPlus(const Vector3& plusVec);
+	//回転量設定
+	void SetRotVec(const Vector3& rotaionVec);
 	//
 	void BehaviorOrigenPosPlus(const Vector3& plusVec) { behaviorOrigen += plusVec; };
 	void BehaviorOrigenReset() { behaviorOrigen = basis; }

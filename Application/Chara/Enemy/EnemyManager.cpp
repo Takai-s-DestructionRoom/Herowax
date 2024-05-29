@@ -72,7 +72,7 @@ void EnemyManager::CreateEnemyShot(Enemy* enemy,Vector3 attackEndPos)
 	enemyShots.back()->Init();
 	Vector3 targetVec = attackEndPos - enemy->GetPos();
 	targetVec.Normalize();
-	enemyShots.back()->SetParam(enemy->GetPos(), targetVec);
+	enemyShots.back()->SetParam(enemy->GetPos() + Vector3::UP * enemy->GetScale().y, targetVec);
 }
 
 void EnemyManager::SetShotParam(float damage, float moveSpeed_, float lifeTime_)

@@ -16,6 +16,7 @@ private:
 	std::array<float,2> handRadianX;
 	std::array<float,2> handRadianY;
 	Easing::EaseTimer handEaseTimer = 0.8f;				//手のイージング制御用
-	Easing::EaseTimer waitTimer = 0.5f;					//
+	Easing::EaseTimer waitTimer = 0.5f;					//待機時間
+	Easing::EaseTimer smokeTimer = 0.7f;				//煙出す時間
 };
 
