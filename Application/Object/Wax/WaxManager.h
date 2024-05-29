@@ -45,6 +45,10 @@ public:
 
 	SlimeWax slimeWax;
 
+	int32_t collectWaxNum = 0;
+
+	GameObject* collectTarget = nullptr;
+
 public:
 	//シングルトンインスタンス取得
 	static WaxManager* GetInstance();
@@ -79,7 +83,7 @@ public:
 	/// <param name="collider"></param>
 	/// <param name="waxCollectVertical"></param>
 	/// <returns>回収した数</returns>
-	int32_t Collect(ColPrimitive3D::Ray collider,float waxCollectVertical);
+	int32_t Collect(ColPrimitive3D::Ray collider,float waxCollectVertical,GameObject* target);
 
 	uint32_t GetWaxNum();
 
@@ -91,6 +95,8 @@ public:
 		std::unique_ptr<WaxGroup>& group2);
 
 	GraphicsPipeline CreateDisolvePipeLine();
+
+	GraphicsPipeline SlimeShaderPipeLine();	//パイプライン生成
 
 	//死んでるやつらを殺したりする
 	void Delete();

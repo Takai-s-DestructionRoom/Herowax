@@ -35,6 +35,7 @@ gravity(0.2f)
 
 	oriScale = { 3,3,3 };
 	obj.mTransform.scale = oriScale;
+	baseScale = oriScale;
 
 	predictionLine = ModelObj(Model::Load("./Resources/Model/Cube.obj", "Cube"));
 	//影をなくす
@@ -220,6 +221,10 @@ void Enemy::BaseUpdate()
 	}
 	//回転の適用
 	obj.mTransform.rotation = rotVec;
+	scalingTimer.Update();
+	float solid = Easing::GoAndBackInQuad(0.0f, 3.0f, scalingTimer.GetTimeRate());
+	obj.mTransform.scale = baseScale;
+	obj.mTransform.scale += {solid, solid, solid};
 
 	if (GetIsSolid()) {
 		obj.mTuneMaterial.mColor = changeColor;
@@ -272,7 +277,9 @@ void Enemy::Draw()
 
 		ui.Draw();
 
-		predictionLine.Draw();
+		if (!GetIsSolid()) {
+			predictionLine.Draw();
+		}
 
 		DrawCollider();
 		DrawAttackCollider();
@@ -515,11 +522,15 @@ void Enemy::DealDamage(uint32_t damage, const Vector3& dir, ModelObj* target_)
 	waxSolidCount++;
 	waxShakeOffTimer = 0;
 
+	//固まった瞬間
 	if (GetIsSolid())
 	{
 		ParticleManager::GetInstance()->AddHoming(obj.mTransform.position, "enemy_solid_homing");
 		ParticleManager::GetInstance()->AddSimple(
 			obj.mTransform.position + Vector3::UP * obj.mTransform.scale.y,"enemy_solid");
+		
+		//拡縮タイマーを開始
+		scalingTimer.Start();
 	}
 }
 

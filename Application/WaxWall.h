@@ -37,5 +37,7 @@ private:
 
 	//この秒数のたびにロウが出現する
 	Easing::EaseTimer leakOutTimer = 0.5f;
+
+	Vector3 baseScale = { 1,1,1 };
 };
 

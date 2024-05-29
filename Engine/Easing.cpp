@@ -252,6 +252,7 @@ void Easing::EaseTimer::Update(const float elapseTimer)
 void Easing::EaseTimer::Roop(const float elapseTimer)
 {
 	Update(elapseTimer);
+	roopend_ = false;
 	if (GetStarted() == false)
 	{
 		Start();
@@ -259,12 +260,15 @@ void Easing::EaseTimer::Roop(const float elapseTimer)
 	else if (GetEnd())
 	{
 		Reset();
+		roopend_ = true;
 	}
 }
 
 void Easing::EaseTimer::RoopReverse(const float elapseTimer)
 {
 	Update(elapseTimer);
+	roopend_ = false;
+	roopReverseEnd_ = false;
 	if (GetStarted() == false && GetReverseStarted() == false)
 	{
 		Start();
@@ -272,10 +276,12 @@ void Easing::EaseTimer::RoopReverse(const float elapseTimer)
 	else if (GetEnd())
 	{
 		ReverseStart();
+		roopend_ = true;
 	}
 	else if (GetReverseEnd())
 	{
 		Reset();
+		roopReverseEnd_ = true;
 	}
 }
 

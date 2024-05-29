@@ -144,6 +144,7 @@ void ProtoScene::Update()
 		RAudio::Stop("Normal");
 
 		player.isMove = false;
+		player.SetIsGodmode(true);	//プレイヤー無敵に
 		Boss::GetInstance()->isDead = true;
 
 		SceneTrance::GetInstance()->SetIsChange(false);	//忘れずに
@@ -381,7 +382,7 @@ void ProtoScene::Update()
 
 				bool isCollision = ColPrimitive3D::CheckSphereToSphere(enemy->collider, wax->collider);
 
-				if (isCollision && wax->isSolid == false) {
+				if (isCollision) {
 					//投げられてる蝋に当たった時はダメージと蝋蓄積
 					if (wax->isGround == false) {
 						//enemyにダメージ
@@ -440,9 +441,6 @@ void ProtoScene::Update()
 		}
 	}
 
-	//吸収ボタンを押して、吸収状態の敵が一匹もいないなら吸収できる
-	bool isCollected2 = player.GetWaxCollectButtonDown() && !EnemyManager::GetInstance()->GetNowCollectEnemy();
-
 	for (auto& enemy : EnemyManager::GetInstance()->enemys)
 	{
 		//プレイヤーとの当たり判定
@@ -494,21 +492,15 @@ void ProtoScene::Update()
 				player.DealDamage(EnemyManager::GetInstance()->GetContactAttackPower());
 			}
 		}
-		//回収ボタン押されたときに固まってるなら吸収
-		if (isCollected2 && enemy->GetIsSolid() &&
-			ColPrimitive3D::RayToSphereCol(player.collectCol, enemy->collider))
-		{
-			//回収状態に遷移
-			enemy->collectPos = player.GetPos();
-			enemy->isCollect = true;
-			enemy->ChangeState<EnemyCollect>();
-		}
-	}
-
-	int32_t nowPlusNum = EnemyManager::GetInstance()->collectNum;
-	if (nowPlusNum > 0) {
-		player.waxCollectAmount += nowPlusNum;
-		player.MaxWaxPlus(nowPlusNum);
+		////回収ボタン押されたときに固まってるなら吸収
+		//if (isCollected2 && enemy->GetIsSolid() &&
+		//	ColPrimitive3D::RayToSphereCol(player.collectCol, enemy->collider))
+		//{
+		//	//回収状態に遷移
+		//	enemy->collectPos = player.GetPos();
+		//	enemy->isCollect = true;
+		//	enemy->ChangeState<EnemyCollect>();
+		//}
 	}
 
 	if (isHitSound && !player.soundFlag) {
@@ -751,7 +743,7 @@ void ProtoScene::Update()
 
 	bossAppTimerUI.Update();
 	waveUI.Update();
-	
+
 #pragma region ImGui
 	if (RImGui::showImGui)
 	{
@@ -818,8 +810,8 @@ void ProtoScene::Draw()
 		if (Boss::GetInstance()->isAppearanced == false)
 		{
 			//bossAppTimerUI.Draw();
+			waveUI.Draw();
 		}
-		waveUI.Draw();
 	}
 
 	//更新

@@ -4,6 +4,7 @@
 #include "WaxManager.h"
 #include "ParticleManager.h"
 #include "Minimap.h"
+#include "Parameter.h"
 
 Wax::Wax():GameObject(),
 	atkSpeed(1.f),
@@ -13,7 +14,7 @@ Wax::Wax():GameObject(),
 	disolveValue(0.f)
 {
 	state = std::make_unique<WaxNormal>();
-	obj = PaintableModelObj(Model::Load("./Resources/Model/wax/wax.obj", "wax", true));
+	obj = PaintableModelObj(Model::Load("./Resources/Model/Sphere.obj", "wax", true));
 	obj.mTuneMaterial.mColor = Color::kWaxColor;
 	TextureManager::Load("./Resources/DissolveMap.png","DissolveMap");
 }
@@ -57,6 +58,12 @@ void Wax::Init(Transform transform, Vector3 endPos_, float height, float size, f
 	/*iconSize = { 0.5f,0.5f };
 	minimapIcon.SetTexture(TextureManager::Load("./Resources/circle.png", "circle"));
 	minimapIcon.mMaterial.mColor = Color::kWaxColor;*/
+
+	//パラメータ読み込み
+	std::map <std::string, std::string> extract = Parameter::Extract("slimeWax");
+	waxColor = Parameter::GetColorData(extract, "waxColor", waxColor);
+	rimColor = Parameter::GetColorData(extract, "rimColor", rimColor);
+	rimPower = Parameter::GetParam(extract, "rimPower", rimPower);
 }
 
 void Wax::Update()
@@ -138,13 +145,17 @@ void Wax::Update()
 
 	obj.mTransform.UpdateMatrix();
 	obj.TransferBuffer(Camera::sNowCamera->mViewProjection);
+
+	mSlimeBuff->waxColor = Float4(waxColor.r, waxColor.g, waxColor.b, waxColor.a);
+	mSlimeBuff->rimColor = Float4(rimColor.r, rimColor.g, rimColor.b, rimColor.a);
+	mSlimeBuff->rimPower = rimPower;
 }
 
 void Wax::Draw()
 {
 	if (isAlive)
 	{
-		GraphicsPipeline pipe = WaxManager::GetInstance()->CreateDisolvePipeLine();
+		GraphicsPipeline pipe = WaxManager::GetInstance()->SlimeShaderPipeLine();
 
 		for (std::shared_ptr<ModelMesh> data : obj.mModel->mData) {
 			std::vector<RootData> rootData = {
@@ -153,8 +164,7 @@ void Wax::Draw()
 				{ RootDataType::SRBUFFER_CBV, obj.mViewProjectionBuff.mBuff },
 				{ RootDataType::LIGHT },
 				{ TextureManager::Get(data->mMaterial.mTexture).mGpuHandle },
-				{ TextureManager::Get("DissolveMap").mGpuHandle},
-				{ RootDataType::SRBUFFER_CBV ,mDisolveBuff.mBuff}
+				{ RootDataType::SRBUFFER_CBV ,mSlimeBuff.mBuff}
 			};
 
 			RenderOrder order;
@@ -165,7 +175,7 @@ void Wax::Draw()
 			order.indexView = &data->mIndexBuff.mView;
 			order.indexCount = static_cast<uint32_t>(data->mIndices.size());
 
-			Renderer::DrawCall("Opaque", order);
+			Renderer::DrawCall("Transparent", order);
 		}
 	}
 }

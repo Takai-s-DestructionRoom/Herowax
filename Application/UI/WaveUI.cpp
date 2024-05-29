@@ -2,12 +2,14 @@
 #include "EnemyManager.h"
 #include "RImGui.h"
 #include "Parameter.h"
+#include "Wave.h"
 
 void WaveUI::LoadResource()
 {
 	atText = TextureManager::Load("./Resources/UI/at.png", "at");
 	nextwave = TextureManager::Load("./Resources/UI/nextwave.png", "nextwave");
 	tai = TextureManager::Load("./Resources/UI/tai.png", "tai");
+	enemyAllKillText = TextureManager::Load("./Resources/UI/enemyAllKillText.png", "enemyAllKillText");
 }
 
 void WaveUI::Init()
@@ -21,6 +23,9 @@ void WaveUI::Init()
 	nextwave.mTransform.scale = Parameter::GetVector3Data(extract,"nextwave_scale", nextwave.mTransform.scale);
 	tai.mTransform.position = Parameter::GetVector3Data(extract,"tai_pos", tai.mTransform.position);
 	tai.mTransform.scale = Parameter::GetVector3Data(extract,"tai_scale", tai.mTransform.scale);
+	enemyAllKillText.mTransform.position = Parameter::GetVector3Data(extract,"enemyAllKillText_pos", enemyAllKillText.mTransform.position);
+	enemyAllKillText.mTransform.scale = Parameter::GetVector3Data(extract,"enemyAllKillText_scale", enemyAllKillText.mTransform.scale);
+
 }
 
 void WaveUI::Update()
@@ -37,6 +42,8 @@ void WaveUI::Update()
 		ImGui::DragFloat3("nextwave:scale", &nextwave.mTransform.scale.x);
 		ImGui::DragFloat3("tai:pos", &tai.mTransform.position.x);
 		ImGui::DragFloat3("tai:scale", &tai.mTransform.scale.x);
+		ImGui::DragFloat3("enemyAllKillText_pos", &enemyAllKillText.mTransform.position.x);
+		ImGui::DragFloat3("enemyAllKillText_scale", &enemyAllKillText.mTransform.scale.x);
 
 		if (ImGui::Button("セーブ")) {
 			Parameter::Begin("waveUI");
@@ -46,6 +53,8 @@ void WaveUI::Update()
 			Parameter::SaveVector3("nextwave_scale", nextwave.mTransform.scale);
 			Parameter::SaveVector3("tai_pos", tai.mTransform.position);
 			Parameter::SaveVector3("tai_scale", tai.mTransform.scale);
+			Parameter::SaveVector3("enemyAllKillText_pos", enemyAllKillText.mTransform.position);
+			Parameter::SaveVector3("enemyAllKillText_scale", enemyAllKillText.mTransform.scale);
 			Parameter::End();
 		}
 
@@ -60,12 +69,26 @@ void WaveUI::Update()
 	
 	tai.mTransform.UpdateMatrix();
 	tai.TransferBuffer();
+	
+	enemyAllKillText.mTransform.UpdateMatrix();
+	enemyAllKillText.TransferBuffer();
+
+	timerUI.Imgui("WaveUI_Timer");
+	timerUI.SetMaxTime(WaveManager::Get()->GetWaitTimer().maxTime_);
+	timerUI.Update();
 }
 
 void WaveUI::Draw()
 {
-	numDrawer.Draw();
-	atText.Draw();
-	nextwave.Draw();
-	tai.Draw();
+	if (WaveManager::Get()->GetWaitTimer().nowTime_ > 0.0f) {
+		nextwave.Draw();
+		atText.Draw();
+		timerUI.Draw();
+	}
+	else {
+		numDrawer.Draw();
+		atText.Draw();
+		tai.Draw();
+		enemyAllKillText.Draw();
+	}
 }

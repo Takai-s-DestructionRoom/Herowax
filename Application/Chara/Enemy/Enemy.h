@@ -93,6 +93,9 @@ private:
 	//見た目用のロウ
 	std::vector<std::unique_ptr<WaxVisual>> waxVisual;
 
+	Easing::EaseTimer scalingTimer = 0.33f;	
+	Vector3 baseScale = {};	
+
 public:
 	Easing::EaseTimer solidTimer;	//動けなくなっている時間
 
