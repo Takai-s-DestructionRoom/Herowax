@@ -2,7 +2,7 @@
 
 BombSolider::BombSolider(ModelObj* target_) : Enemy(target_)
 {
-	obj = PaintableModelObj(Model::Load("./Resources/Model/bombSolider/bombSolider.obj", "bombSolider", true));
+	obj = PaintableModelObj(Model::Load("./Resources/Model/dustBoxMan/dustBoxMan.obj", "dustBoxMan", true));
 	//モデルを再設定するときはこのテクスチャももっかい設定する必要がある
 	obj.mPaintDissolveMapTex = TextureManager::Load("./Resources/DissolveMap.png", "DissolveMapTex");
 

@@ -482,12 +482,12 @@ void Enemy::SlowUpdate()
 
 		if (motionFrag)
 		{
-			radianX = Easing::InQuad(Util::AngleToRadian(-30.f), Util::AngleToRadian(50.f), motionTimer.GetTimeRate());
+			radianX = Easing::OutQuad(Util::AngleToRadian(-30.f), Util::AngleToRadian(50.f), motionTimer.GetTimeRate());
 			radianZ = Easing::InQuad(Util::AngleToRadian(30.f), Util::AngleToRadian(-30.f), motionTimer.GetTimeRate());
 		}
 		else
 		{
-			radianX = Easing::InQuad(Util::AngleToRadian(50.f), Util::AngleToRadian(-30.f), motionTimer.GetTimeRate());
+			radianX = Easing::OutQuad(Util::AngleToRadian(50.f), Util::AngleToRadian(-30.f), motionTimer.GetTimeRate());
 			radianZ = Easing::InQuad(Util::AngleToRadian(-30.f), Util::AngleToRadian(30.f), motionTimer.GetTimeRate());
 		}
 
