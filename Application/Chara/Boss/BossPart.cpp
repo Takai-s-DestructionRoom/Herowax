@@ -5,6 +5,7 @@
 #include "WaxManager.h"
 #include "Boss.h"
 #include "Renderer.h"
+#include "RAudio.h"
 
 Parts::Parts() : GameObject()
 {
@@ -25,6 +26,7 @@ Parts::~Parts()
 
 void Parts::Init()
 {
+	RAudio::Load("Resources/Sounds/SE/bossSolid.wav", "Break");
 	isAlive = true;
 
 	isCollected = false;
@@ -183,6 +185,8 @@ void Parts::DealDamage(int32_t damage)
 	{
 		ParticleManager::GetInstance()->AddSimple(obj.mTransform.position,"part_solid");
 		ParticleManager::GetInstance()->AddHoming(obj.mTransform.position, "part_solid_homing");
+
+		RAudio::Play("Break");
 	}
 }
 

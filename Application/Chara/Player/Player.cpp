@@ -100,7 +100,7 @@ void Player::Init()
 	RAudio::Load("Resources/Sounds/SE/P_attackHit.wav", "Hit");
 	RAudio::Load("Resources/Sounds/SE/P_enemyCollect.wav", "eCollect");
 
-	RAudio::Load("Resources/Sounds/SE/playerShield.wav", "Shield");
+	RAudio::Load("Resources/Sounds/SE/playerShield.wav", "PShield");
 	
 	
 
@@ -1332,7 +1332,7 @@ void Player::ShieldUp()
 
 				waxWall.Start();
 
-				RAudio::Play("Attack", 1.0f);
+				RAudio::Play("PShield", 0.8f);
 			}
 		}
 	}
