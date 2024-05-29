@@ -178,14 +178,6 @@ void Enemy::BaseUpdate()
 		}
 	}
 
-	hp = Util::Clamp(hp, 0.f, maxHP);
-
-	if (hp <= 0 && isCollect == false) {
-		//hpが0になったら、自身の状態を固まり状態へ遷移
-		//現在毎フレーム通常状態に戻す処理を行っているので無意味
-		ChangeState<EnemyAllStop>();
-	}
-
 	//無敵時間さん!?の更新
 	mutekiTimer.Update();
 
