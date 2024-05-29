@@ -92,6 +92,7 @@ void TitleScene::Update()
 		sceneChange = true;
 		RAudio::Play("Select", 0.6f);
 		SceneManager::GetInstance()->Change<ProtoScene, SimpleSceneTransition>();
+		//SceneManager::GetInstance()->Change<ProtoScene, WaxSceneTransition>();
 		RAudio::Stop("Title");
 	}
 
