@@ -4,6 +4,7 @@
 //#include "Temperature.h"
 #include "Parameter.h"
 #include "ColPrimitive3D.h"
+#include "Player.h"
 #include "Quaternion.h"
 #include <RAudio.h>
 #include "RImGui.h"
@@ -231,7 +232,7 @@ void WaxManager::Update()
 			slimeWax.spheres.emplace_back();
 			//コライダー基準でデータを送るように
 			slimeWax.spheres.back().collider.pos = wax->collider.pos;
-			slimeWax.spheres.back().collider.r = wax->collider.r * slimeWaxSizeMag;
+			slimeWax.spheres.back().collider.r = wax->collider.r * slimeWaxSizeMag * (float)maxWaxStock / 50.f;
 		}
 	}
 
