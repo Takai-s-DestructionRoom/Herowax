@@ -15,6 +15,10 @@ private:
 	Easing::EaseTimer clearStrTimer;
 	Easing::EaseTimer floatingTimer;
 
+	Easing::EaseTimer flashingTimer = 1.0f;
+
+	Vector2 buttonUIPos;
+
 	bool callStr = false;
 
 public:

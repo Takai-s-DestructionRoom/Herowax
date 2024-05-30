@@ -3,6 +3,7 @@
 #include "InstantDrawer.h"
 #include "Boss.h"
 #include "ParticleManager.h"
+#include "RInput.h"
 
 BossDeadScene::BossDeadScene()
 {
@@ -40,6 +41,9 @@ void BossDeadScene::Init(const Vector3 target)
 	clearStrTimer.Reset();
 	floatingTimer.Reset();
 	
+	buttonUIPos = { RWindow::GetWidth() * 0.5f,RWindow::GetHeight() * 0.5f - 100.f };;
+	buttonUIPos.y += 300.f;
+
 	for (size_t i = 0; i < cameraChangeTimer.size(); i++)
 	{
 		cameraChangeTimer[i].Reset();
@@ -98,10 +102,33 @@ void BossDeadScene::Update()
 		Boss::GetInstance()->isAlive = false;
 	}
 
+
 	//イベントシーン終わったらシーン遷移開始(待機を追加)
 	if (eventTimer.GetEnd())
 	{
-		SceneTrance::GetInstance()->Start();
+		flashingTimer.Roop();
+		//ボタンを表示
+		if (flashingTimer.GetTimeRate() > 0.8f)
+		{
+			InstantDrawer::DrawGraph(
+				buttonUIPos.x, buttonUIPos.y,
+				0.12f, 0.12f, 0.f, TextureManager::Load("./Resources/UI/A_push.png", "AbuttonPush"));
+		}
+		else
+		{
+			InstantDrawer::DrawGraph(
+				buttonUIPos.x, buttonUIPos.y,
+				0.12f, 0.12f, 0.f, TextureManager::Load("./Resources/UI/A_normal.png", "Abutton"));
+		}
+
+		bool button =
+			RInput::GetInstance()->GetKeyDown(DIK_SPACE) ||
+			RInput::GetInstance()->GetPadButtonDown(XINPUT_GAMEPAD_A);
+
+		if (button) {
+			//切り替え
+			SceneTrance::GetInstance()->Start();
+		}
 	}
 
 	//切り替えても良くなったら切り替えして終了
