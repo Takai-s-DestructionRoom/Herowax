@@ -37,13 +37,13 @@ void GameCamera::Update()
 	Vector2 stick = RInput::GetInstance()->GetRStick(false, true);
 
 	if (stick.LengthSq() > 0.0f) {
-		if (WaxManager::GetInstance()->notCollect && 
+		/*if (WaxManager::GetInstance()->notCollect && 
 			!EnemyManager::GetInstance()->GetNowCollectEnemy())
-		{
+		{*/
 			if (abs(stick.x) > 0.3f) {
 				cameraAngle.y += cameraSpeed.x * inverse.x * -stick.x;
 			}
-		}
+		/*}*/
 		if (abs(stick.y) > 0.3f) {
 			cameraAngle.x += cameraSpeed.y * inverse.y * stick.y;
 		}
