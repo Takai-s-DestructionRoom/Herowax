@@ -4,6 +4,8 @@
 #include "Boss.h"
 #include "ParticleManager.h"
 #include "RInput.h"
+#include "RAudio.h"
+
 
 BossDeadScene::BossDeadScene()
 {
@@ -25,6 +27,8 @@ BossDeadScene::~BossDeadScene()
 
 void BossDeadScene::Init(const Vector3 target)
 {
+	RAudio::Load("Resources/Sounds/SE/bossDead.wav", "Dead");
+
 	camera.mViewProjection.mEye = cameraPos[0];
 	camera.mViewProjection.mTarget = target;
 	camera.mViewProjection.UpdateMatrix();
@@ -98,6 +102,9 @@ void BossDeadScene::Update()
 		if (Boss::GetInstance()->isAlive)
 		{
 			ParticleManager::GetInstance()->AddSimple(Boss::GetInstance()->GetPos() + Vector3::UP * 20.f, "boss_dead");
+
+
+			RAudio::Play("Dead");
 		}
 		Boss::GetInstance()->isAlive = false;
 	}
