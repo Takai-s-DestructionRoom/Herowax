@@ -650,7 +650,8 @@ void Player::Draw()
 			humanObj.Draw();
 		}
 
-		collectRangeModel.Draw();
+		////ロウ回収範囲描画
+		//collectRangeModel.Draw();
 
 		//なんのイベントも呼ばれていないならUIを描画
 		if (EventCaller::GetNowEventStr() == "") {
@@ -923,6 +924,7 @@ void Player::Rotation()
 
 		//euler軸へ変換
 		rotVec = aLookat.ToEuler();
+		
 		change = true;
 	}
 	if (!change) {
