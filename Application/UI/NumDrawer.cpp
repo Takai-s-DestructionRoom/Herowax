@@ -96,7 +96,7 @@ void NumDrawer::SetNum(int32_t num)
 	int32_t result = num;	//影響出ないように別の変数に格納
 	int32_t divide = (int32_t)pow(10, numberSprites.size() - 1);	//最大桁数求める
 
-	result = Util::Clamp(result,0, (int32_t)pow(10, numberSprites.size() - 1));
+	result = Util::Clamp(result,0, (int32_t)pow(10, numberSprites.size()));
 
 	//桁数分回す
 	for (size_t i = 0; i < numberSprites.size(); i++)
