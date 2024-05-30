@@ -28,6 +28,7 @@ BossDeadScene::~BossDeadScene()
 void BossDeadScene::Init(const Vector3 target)
 {
 	RAudio::Load("Resources/Sounds/SE/bossDead.wav", "Dead");
+	RAudio::Load("Resources/Sounds/BGM/Gameclear.wav", "BGMM");
 
 	camera.mViewProjection.mEye = cameraPos[0];
 	camera.mViewProjection.mTarget = target;
@@ -127,6 +128,12 @@ void BossDeadScene::Update()
 				buttonUIPos.x, buttonUIPos.y,
 				0.12f, 0.12f, 0.f, TextureManager::Load("./Resources/UI/A_normal.png", "Abutton"));
 		}
+
+		if (!RAudio::IsPlaying("BGMM"))
+		{
+			RAudio::Play("BGMM");
+		}
+	
 
 		bool button =
 			RInput::GetInstance()->GetKeyDown(DIK_SPACE) ||
