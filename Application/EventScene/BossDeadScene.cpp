@@ -3,6 +3,8 @@
 #include "InstantDrawer.h"
 #include "Boss.h"
 #include "ParticleManager.h"
+#include "RAudio.h"
+
 
 BossDeadScene::BossDeadScene()
 {
@@ -24,6 +26,8 @@ BossDeadScene::~BossDeadScene()
 
 void BossDeadScene::Init(const Vector3 target)
 {
+	RAudio::Load("Resources/Sounds/SE/P_attack.wav", "Attack");
+
 	camera.mViewProjection.mEye = cameraPos[0];
 	camera.mViewProjection.mTarget = target;
 	camera.mViewProjection.UpdateMatrix();
