@@ -80,7 +80,7 @@ isFireStock(false), isWaxStock(true), waxCollectAmount(0)
 	humanScale = Parameter::GetParam(extract, "人の大きさ", humanScale);
 	collectScale = Parameter::GetParam(extract, "回収中の大きさ", collectScale);
 
-	waxWall.parryTimer.maxTime_ = Parameter::GetParam(extract,"パリィの猶予時間", 0.1f);
+	waxWall.parryTimer.maxTime_ = Parameter::GetParam(extract, "パリィの猶予時間", 0.1f);
 
 	initWaxStock = (int32_t)Parameter::GetParam(extract, "ロウの初期最大ストック数", (float)initWaxStock);
 	maxWaxStock = initWaxStock;
@@ -101,8 +101,8 @@ void Player::Init()
 	RAudio::Load("Resources/Sounds/SE/P_enemyCollect.wav", "eCollect");
 
 	RAudio::Load("Resources/Sounds/SE/playerShield.wav", "PShield");
-	
-	
+
+
 
 	obj = PaintableModelObj("playerBag");
 	humanObj = ModelObj("playerHuman");
@@ -149,7 +149,7 @@ void Player::Init()
 void Player::Reset()
 {
 	oldRot = rotVec;
-	
+
 	oldHp = hp;
 	//回転初期化
 	rotVec = { 0,0,0 };
@@ -206,7 +206,7 @@ void Player::Update()
 	}
 
 	//攻撃ボタン入力中で、実際にロウが出せたら攻撃フラグを立てる
-	isAttack = (RInput::GetInstance()->GetRTrigger() || RInput::GetKey(DIK_SPACE)) && 
+	isAttack = (RInput::GetInstance()->GetRTrigger() || RInput::GetKey(DIK_SPACE)) &&
 		(waxStock > 0) && WaxManager::GetInstance()->notCollect;
 
 	//-----------クールタイム管理-----------//
@@ -233,7 +233,7 @@ void Player::Update()
 	//}
 	////ストックがおかしな値にならないように
 	//waxStock = Util::Clamp(waxStock, 0, maxWaxStock);
-	
+
 	//回収処理
 	WaxCollect();
 
@@ -303,7 +303,7 @@ void Player::Update()
 		if (godmodeTimer.GetStarted() == false)
 		{
 			godmodeTimer.Start();
-		} 
+		}
 
 		////ゲーミング色に
 		//obj.mTuneMaterial.mColor = GamingColorUpdate();
@@ -350,7 +350,7 @@ void Player::Update()
 	humanObj.mTransform.rotation.y -= Util::AngleToRadian(180.f);
 
 	//大きさを適用
-	humanObj.mTransform.scale = Vector3(1,1,1) * humanScale;
+	humanObj.mTransform.scale = Vector3(1, 1, 1) * humanScale;
 
 	UpdateCollider();
 	UpdateAttackCollider();
@@ -374,7 +374,7 @@ void Player::Update()
 			vec = -wall.normal.Cross(vec);
 
 			if (isCollision)
-			{	
+			{
 				//2個目の壁なら移動前の壁の距離を一旦取り、
 				len = abs(wall.distance - Vector2(obj.mTransform.position.x, obj.mTransform.position.z).Length());
 				//「移動前の2個目の壁との距離」の方が「移動後の1個目の壁との距離」より遠ければ2個目の壁基準で動かす
@@ -455,7 +455,7 @@ void Player::Update()
 	ui.Update(this);
 
 	waxUI.Update(obj.mTransform.position);
-	
+
 	ShieldUp();
 
 	//残像
@@ -538,7 +538,7 @@ void Player::Update()
 			ImGui::SliderFloat("範囲objの透明度", &collectRangeModel.mTuneMaterial.mColor.a, 0.f, 1.f);
 			ImGui::InputFloat("ロウ回収範囲(縦幅)", &waxCollectVertical, 1.f);
 			ImGui::InputFloat("ロウ回収の時間", &WaxManager::GetInstance()->collectTime, 1.f);
-			
+
 			ImGui::TreePop();
 		}
 		if (ImGui::TreeNode("当たり判定"))
@@ -647,14 +647,14 @@ void Player::Draw()
 		}
 
 		collectRangeModel.Draw();
-		
+
 		//なんのイベントも呼ばれていないならUIを描画
 		if (EventCaller::GetNowEventStr() == "") {
 			ui.Draw();
 		}
 
-		DrawAttackCollider(); 
-		
+		DrawAttackCollider();
+
 		waxUI.Draw();
 		waxWall.Draw();
 	}
@@ -696,7 +696,7 @@ void Player::MovePad()
 	{
 		moveAccel -= moveAccelAmount;	//入力されてなければ徐々に減速
 	}
-	
+
 	moveAccel = Util::Clamp(moveAccel, 0.f, 1.f);			//無限に増減しないよう抑える
 
 	////接地してて回収中じゃない時にAボタン押すと
@@ -813,7 +813,7 @@ void Player::Avoidance()
 {
 	avoidTimer.Update();
 	avoidConsumTimer.Update();
-	
+
 	////削除
 	//for (auto itr = afterimagesObj.begin(); itr != afterimagesObj.end();)
 	//{
@@ -827,9 +827,9 @@ void Player::Avoidance()
 	//}
 
 	//ボタンを押したら
-	if (!avoidTimer.GetRun() && 
-		(RInput::GetPadButtonDown(XINPUT_GAMEPAD_A) || 
-		 RInput::GetKeyDown(DIK_X)))
+	if (!avoidTimer.GetRun() &&
+		(RInput::GetPadButtonDown(XINPUT_GAMEPAD_A) ||
+			RInput::GetKeyDown(DIK_X)))
 	{
 		avoidVec = -GetFrontVec();
 		avoidTimer.Start();
@@ -842,8 +842,8 @@ void Player::Avoidance()
 	//回避中は方向を足し続ける
 	if (avoidTimer.GetRun() && waxStock > 0) {
 		//スピードを最初を早めに、最後を遅めに
-		avoidSpeed = Easing::OutQuad(maxAvoidSpeed,minAvoidSpeed, avoidTimer.GetTimeRate());
-		
+		avoidSpeed = Easing::OutQuad(maxAvoidSpeed, minAvoidSpeed, avoidTimer.GetTimeRate());
+
 		moveAccel += moveAccelAmount;
 		moveAccel = Util::Clamp(moveAccel, 0.f, 1.f);			//無限に増減しないよう抑える
 
@@ -870,7 +870,7 @@ void Player::Avoidance()
 		afterimagesObj.back()->brightColor = brightColor;*/
 	}
 	else {
-		avoidVec = {0,0,0};
+		avoidVec = { 0,0,0 };
 	}
 }
 
@@ -932,7 +932,7 @@ void Player::PabloAttack()
 	if (atkCoolTimer.GetRun() || waxStock <= 0)return;
 	atkCoolTimer.Start();
 	soundFlag = false;
-	
+
 	Vector3 pabloVec = { 0,0,0 };
 	//入力があるならそっちへ
 	pabloVec = collectRangeModel.mTransform.position - collectCol.start;
@@ -991,7 +991,7 @@ void Player::PabloAttack()
 	}
 
 	//音鳴らす
-	RAudio::Play("Attack",0.6f);
+	RAudio::Play("Attack", 0.6f);
 }
 
 void Player::WaxCollect()
@@ -1006,8 +1006,9 @@ void Player::WaxCollect()
 	dir.y = 0;
 	collectCol.dir = dir.Normalize();
 
-	collectCol.start = GetFootPos();
-	collectCol.radius = waxCollectRange * 0.5f;
+	//プレイヤーよりちょい後ろも回収範囲に含む
+	collectCol.start = GetFootPos() - collectCol.dir * obj.mTransform.scale.z * 1.5f;
+	collectCol.radius = waxCollectRange * 0.5f + obj.mTransform.scale.z * 1.5f;
 
 	//大きさ分前に置く
 	collectRangeModel.mTransform.position += collectCol.dir * waxCollectVertical * 0.5f;
@@ -1058,11 +1059,11 @@ void Player::WaxCollect()
 
 	if (GetWaxCollectButtonDown()) {
 		WaxManager::GetInstance()->notCollect = false;
-	
+
 		if (!RAudio::IsPlaying("Collect"))
 		{
 			RAudio::Play("Collect", 0.6f);
-		}	
+		}
 	}
 
 	if (isMove)
@@ -1219,7 +1220,7 @@ void Player::DealDamage(float damage)
 void Player::MaxWaxPlus(int32_t plus)
 {
 	maxWaxStock += plus;
-	
+
 	waxUI.Start();
 }
 
@@ -1320,7 +1321,7 @@ void Player::ShieldUp()
 	frontVec.y = 0;
 	frontVec.Normalize();
 	frontVec *= 10.0f;
-	
+
 	/*waxWall.obj.mTransform.position = obj.mTransform.position + frontVec;
 	waxWall.obj.mTransform.rotation = Quaternion::LookAt(frontVec).ToEuler();
 	waxWall.obj.mTransform.rotation.y += Util::AngleToRadian(-90.f);*/
@@ -1355,7 +1356,7 @@ void Player::ShieldUp()
 	if (waxWall.GetLeakOutMode()) {
 		//ロウが残っているかチェック
 		if (waxWall.ContinueCheck(waxStock)) {
-			
+
 			WaxLeakOut(waxWall.CONTINUE_CHECK_WAXNUM);
 		}
 	}
@@ -1411,7 +1412,7 @@ void AfterImage::Update()
 		isAlive = false;
 	}
 
-	obj.mTuneMaterial.mColor.a = Easing::OutQuad(0.0f,1.0f, lifeTimer.GetTimeRate());
+	obj.mTuneMaterial.mColor.a = Easing::OutQuad(0.0f, 1.0f, lifeTimer.GetTimeRate());
 
 	if (obj.mTuneMaterial.mColor.a > 0.5f) {
 		int32_t hoge;

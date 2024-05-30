@@ -76,17 +76,15 @@ void MetaBall2DManager::CraeteMetaBall()
 
 void MetaBall2DManager::CraeteMetaBall(Vector2 pos, Vector2 size)
 {
-	for (auto& instant : metaballs)
+	if (!metaballs[metaball_num]->isUse)
 	{
-		if (!instant->isUse)
-		{
-			instant->Init();
-			instant->sprite.Init();
-			instant->sprite.SetTexture(TextureManager::Load("./Resources/Particle/particle_simple.png", "particle_simple"));
-			instant->sprite.mTransform.position = pos;
-			instant->sprite.mTransform.scale = size;
-			instant->isUse = true;
-		}
+		metaballs[metaball_num]->Init();
+		metaballs[metaball_num]->sprite.Init();
+		metaballs[metaball_num]->sprite.SetTexture(TextureManager::Load("./Resources/Particle/particle_simple.png", "particle_simple"));
+		metaballs[metaball_num]->sprite.mTransform.position = pos;
+		metaballs[metaball_num]->sprite.mTransform.scale = size;
+		metaballs[metaball_num]->isUse = true;
+		metaball_num++;
 	}
 }
 
@@ -194,6 +192,11 @@ void MetaBall2DManager::Init()
 	cutoff = Parameter::GetParam(extract,"cutoff", cutoff);
 }
 
+void MetaBall2DManager::Reset()
+{
+	metaball_num = 0;
+}
+
 void MetaBall2DManager::Update()
 {
 	Imgui();
@@ -239,7 +242,7 @@ void MetaBall2DManager::Draw()
 	{
 		for (auto& metaball : metaballs)
 		{
-			metaball->sprite.Draw();
+ 			metaball->sprite.Draw();
 		}
 	}
 	else {
