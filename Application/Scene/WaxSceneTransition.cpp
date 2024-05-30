@@ -15,6 +15,9 @@ WaxSceneTransition::WaxSceneTransition()
 void WaxSceneTransition::Update()
 {
 	MetaBall2DManager::GetInstance()->Update();
+	
+
+	MetaBall2DManager::GetInstance()->CraeteMetaBall();
 
 	openTimer.Update();
 	closeTimer.Update();

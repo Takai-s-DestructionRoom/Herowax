@@ -843,9 +843,6 @@
     <ClCompile Include="Application\CircleGauge.cpp">
       <Filter>ソース ファイル\Application\UI</Filter>
     </ClCompile>
-    <ClCompile Include="Application\WaxVisual.cpp">
-      <Filter>ソース ファイル\Application\Object\WaxVisual</Filter>
-    </ClCompile>
     <ClCompile Include="Engine\Particle\HomingParticle2D.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
@@ -884,6 +881,9 @@
     </ClCompile>
     <ClCompile Include="Application\Scene\WaxSceneTransition.cpp">
       <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Application\WaxVisual.cpp">
+      <Filter>ソース ファイル\Application\Object\WaxVisual</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

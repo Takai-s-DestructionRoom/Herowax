@@ -100,7 +100,7 @@ void Player::Init()
 	RAudio::Load("Resources/Sounds/SE/P_attackHit.wav", "Hit");
 	RAudio::Load("Resources/Sounds/SE/P_enemyCollect.wav", "eCollect");
 
-	RAudio::Load("Resources/Sounds/SE/playerShield.wav", "Shield");
+	RAudio::Load("Resources/Sounds/SE/playerShield.wav", "PShield");
 	
 	
 
@@ -1059,7 +1059,10 @@ void Player::WaxCollect()
 	if (GetWaxCollectButtonDown()) {
 		WaxManager::GetInstance()->notCollect = false;
 	
-		RAudio::Play("Collect", 0.6f);
+		if (!RAudio::IsPlaying("Collect"))
+		{
+			RAudio::Play("Collect", 0.6f);
+		}	
 	}
 
 	if (isMove)
@@ -1135,6 +1138,8 @@ void Player::WaxCollect()
 		RInput::GetInstance()->GetKeyUp(DIK_Q))) {
 
 		WaxManager::GetInstance()->notCollect = true;
+
+		RAudio::Stop("Collect");
 	}
 
 	//回収中にダメージを受けたら回収をキャンセル
@@ -1332,7 +1337,7 @@ void Player::ShieldUp()
 
 				waxWall.Start();
 
-				RAudio::Play("Attack", 1.0f);
+				RAudio::Play("PShield", 0.8f);
 			}
 		}
 	}

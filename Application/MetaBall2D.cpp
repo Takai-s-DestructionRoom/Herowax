@@ -243,7 +243,6 @@ void MetaBall2DManager::Draw()
 		}
 	}
 	else {
-		
 		//メタボールの元となる、ぼやけた球をmetaballRendererに描画する
 		//パーティクルで使っている球を使いまわす予定だが、
 		//解像度が高い球を用意して、プログラム側でぼやけ具合を調整した方が良い
@@ -262,7 +261,6 @@ void MetaBall2DManager::Draw()
 				Renderer::DrawCall(stageID, order);
 			}
 		}
-
 		
 		//metaballRendererをSRVとして見て、シェーダーを元にスプライトに書き込む
 		RenderTexture* tex = RenderTarget::GetInstance()->GetRenderTexture("metaballRenderer");
