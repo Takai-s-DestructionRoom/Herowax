@@ -554,7 +554,11 @@ void ProtoScene::Update()
 					//パリィ出来たら跳ね返す
 					shot->Reversal();
 
-					RAudio::Play("Parry", 0.8f);
+					if (!RAudio::IsPlaying("Parry"))
+					{
+						RAudio::Play("Parry", 0.8f);
+					}
+					
 				}
 				else
 				{
