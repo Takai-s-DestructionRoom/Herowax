@@ -28,7 +28,8 @@ BossDeadScene::~BossDeadScene()
 void BossDeadScene::Init(const Vector3 target)
 {
 	RAudio::Load("Resources/Sounds/SE/bossDead.wav", "Dead");
-	RAudio::Load("Resources/Sounds/BGM/Gameclear.wav", "BGMM");
+	RAudio::Load("Resources/Sounds/BGM/Gamec.wav", "BGMM");
+	RAudio::Load("Resources/Sounds/SE/A_select.wav", "Select");
 
 	camera.mViewProjection.mEye = cameraPos[0];
 	camera.mViewProjection.mTarget = target;
@@ -131,7 +132,7 @@ void BossDeadScene::Update()
 
 		if (!RAudio::IsPlaying("BGMM"))
 		{
-			RAudio::Play("BGMM");
+			RAudio::Play("BGMM", 0.9f);
 		}
 	
 
@@ -140,6 +141,9 @@ void BossDeadScene::Update()
 			RInput::GetInstance()->GetPadButtonDown(XINPUT_GAMEPAD_A);
 
 		if (button) {
+
+			RAudio::Stop("BGMM");
+			RAudio::Play("Select", 0.6f);
 			//切り替え
 			SceneTrance::GetInstance()->Start();
 		}
@@ -161,6 +165,6 @@ void BossDeadScene::Draw()
 {
 	InstantDrawer::DrawGraph(
 		clearStrPos.x,
-		clearStrPos.y + Easing::InQuad(floatingTimer.GetTimeRate()) * 15.f,
+		clearStrPos.y - 120 + Easing::InQuad(floatingTimer.GetTimeRate()) * 15.f,
 		1.f, 1.f, 0.f, "clear");
 }
