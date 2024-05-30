@@ -762,6 +762,22 @@
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='DebugIT|x64'">Vertex</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
     </FxCompile>
+    <FxCompile Include="Shader\SlimeShader\EasyWaxShaderPS.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.1</ShaderModel>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='DebugIT|x64'">Pixel</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='DebugIT|x64'">5.1</ShaderModel>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.1</ShaderModel>
+    </FxCompile>
+    <FxCompile Include="Shader\SlimeShader\EasyWaxShaderVS.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.1</ShaderModel>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='DebugIT|x64'">Vertex</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='DebugIT|x64'">5.1</ShaderModel>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.1</ShaderModel>
+    </FxCompile>
     <FxCompile Include="Shader\SlimeShader\SlimeShaderPS.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='DebugIT|x64'">Pixel</ShaderType>
@@ -1172,6 +1188,7 @@
     <None Include="Shader\SimpleInstance\SimpleInstance.hlsli" />
     <None Include="Shader\SimpleLine\SimpleLine.hlsli" />
     <None Include="Shader\SimpleMesh\SimpleMesh.hlsli" />
+    <None Include="Shader\SlimeShader\EasyWaxShader.hlsli" />
     <None Include="Shader\SlimeShader\SlimeShader.hlsli" />
     <None Include="Shader\SlimeShader\WaxMerge.hlsli" />
     <None Include="Shader\SlimeShader\WaxShader.hlsli" />

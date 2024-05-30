@@ -89,6 +89,7 @@ public:
 	float waxCollectVertical;			//ロウ回収するレイの範囲(縦幅)
 
 	int32_t waxCollectAmount;			//ロウ回収量
+	float waxCollectingTime = 0; //ロウ回収中の経過時間
 	
 	//----------- 新攻撃(パブロ攻撃)関連 -------------//
 	float pabloSideRange;		//横の射程

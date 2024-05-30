@@ -394,9 +394,9 @@ void ProtoScene::Update()
 						wax->isReverse = true;
 						tank->GetShield()->Hit(1);
 
-						if (!RAudio::IsPlaying("Parry"))
+						if (!RAudio::IsPlaying("Guard"))
 						{
-							RAudio::Play("Parry", 0.8f);
+							RAudio::Play("Guard", 0.8f);
 						}
 						
 					}
@@ -554,7 +554,11 @@ void ProtoScene::Update()
 					//パリィ出来たら跳ね返す
 					shot->Reversal();
 
-					RAudio::Play("Parry", 0.8f);
+					if (!RAudio::IsPlaying("Parry"))
+					{
+						RAudio::Play("Parry", 0.8f);
+					}
+					
 				}
 				else
 				{
