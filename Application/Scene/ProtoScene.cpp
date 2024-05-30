@@ -394,9 +394,9 @@ void ProtoScene::Update()
 						wax->isReverse = true;
 						tank->GetShield()->Hit(1);
 
-						if (!RAudio::IsPlaying("Parry"))
+						if (!RAudio::IsPlaying("Guard"))
 						{
-							RAudio::Play("Parry", 0.8f);
+							RAudio::Play("Guard", 0.8f);
 						}
 						
 					}
