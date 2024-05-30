@@ -57,6 +57,8 @@ public:
 	static MetaBall2DManager* GetInstance();
 
 	void Init();
+
+	void Reset();
 	void Update();
 	void Draw();
 
@@ -80,9 +82,10 @@ private:
 public:
 	//こいつにボールを追加していく
 	std::vector<std::unique_ptr<MetaBall2D>> metaballs;
-
-private:
+	
 	const int32_t METABALL_NUM = 300;
+private:
+	int32_t metaball_num = 0;
 
 	Color color = Color::kGreen;
 	Color strokecolor = Color::kWhite;
@@ -96,7 +99,7 @@ private:
 	float sigma = 0.005f;
 	float stepwidth = 0.001f;
 
-	bool renderTargetFlag = false;
+	bool renderTargetFlag = true;
 	int32_t createNum = 100;
 	Vector2 createSize = { 0.1f,0.1f};
 	
