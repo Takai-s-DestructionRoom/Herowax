@@ -8,6 +8,8 @@
 #include "WaxSceneTransition.h"
 #include <RAudio.h>
 #include "LightObject.h"
+#include "RImGui.h"
+#include "Parameter.h"
 
 TitleScene::TitleScene()
 {
@@ -105,6 +107,45 @@ void TitleScene::Update()
 	SpotLightManager::GetInstance()->Imgui();
 	SpotLightManager::GetInstance()->Update();
 
+	if (RImGui::showImGui) {
+		ImGui::Begin("ブラシ");
+		if (ImGui::Button("作成")) {
+			brushs.emplace_back();
+			brushs.back().Init();
+			brushs.back().Start({0.f,0.f},{1.0f,1.0f});
+		}
+		int32_t i = 0;
+		for (auto& brush : brushs)
+		{
+			std::string string = "brush_pos_";
+			string += std::to_string(i);
+			ImGui::DragFloat3(string.c_str(), &brush.sprite.mTransform.position.x);
+			string = "brush_scale_";
+			string += std::to_string(i);
+			ImGui::DragFloat3(string.c_str(), &brush.sprite.mTransform.scale.x,0.01f);
+			i++;
+		}
+		if (ImGui::Button("セーブ")) {
+			Parameter::Begin("WaxSceneTransition");
+			i = 0;
+			for (auto& brush : brushs)
+			{
+				std::string string = "pos_";
+				string += std::to_string(i);
+				Parameter::SaveVector3(string.c_str(), brush.sprite.mTransform.position);
+				string = "scale_";
+				string += std::to_string(i);
+				Parameter::SaveVector3(string.c_str(), brush.sprite.mTransform.scale);
+				i++;
+			}
+			Parameter::End();
+		}
+		ImGui::End();
+	}
+	for (auto& brush : brushs)
+	{
+		brush.Update();
+	}
 }
 
 void TitleScene::Draw()
@@ -143,4 +184,9 @@ void TitleScene::Draw()
 	//更新
 	InstantDrawer::AllUpdate();
 	InstantDrawer::AllDraw2D();
+
+	for (auto& brush : brushs)
+	{
+		brush.Draw();
+	}
 }

@@ -6,7 +6,7 @@
 
 void WaxWall::Init()
 {
-	obj = PaintableModelObj(Model::Load("./Resources/Model/Sphere.obj", "Sphere"));
+	obj = PaintableModelObj(Model::Load("./Resources/Model/playerShield/playerShield.obj", "playerShield"));
 	obj.mTransform.scale = { 2,2,2 };
 
 	colliderSize = 10;
@@ -53,12 +53,14 @@ void WaxWall::Update()
 
 	if (GetParry()) {
 		hogeBuff->rimColor = Color::kLightblue;
+		hogeBuff->waxColor = Color::kWaxColor;
 	}
 	else {
-		hogeBuff->rimColor = Color::kWhite;
+		hogeBuff->rimColor = Color::kWaxColor;
+		hogeBuff->waxColor = Color::kWhite;
 	}	
-	hogeBuff->waxColor = Color::kWaxColor;
-	hogeBuff->waxColor.a = 0.1f;
+	
+	hogeBuff->waxColor.a = 0.2f;
 	hogeBuff->rimPower = 1.0f;
 
 	obj.mTransform.UpdateMatrix();

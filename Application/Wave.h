@@ -51,5 +51,9 @@ private:
 
 	bool zeroFlag = false;
 	bool bossApp = false;
+
+public:
+	int32_t GetNowWave() { return waveNum; }
+	int32_t GetMaxWave() { return MAX_NUM; }
 };
 

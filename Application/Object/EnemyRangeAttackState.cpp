@@ -47,7 +47,7 @@ void EnemyRangePreState::Update(Enemy* enemy)
 	Quaternion aLookat = Quaternion::LookAt(aVec);
 
 	//euler軸へ変換
-	enemy->RotVecPlus(aLookat.ToEuler());
+	enemy->SetRotVec(aLookat.ToEuler());
 	
 	//時間たったら次へ
 	if (lifeTimer.GetEnd()) {
@@ -89,7 +89,7 @@ void EnemyRangeNowState::Update(Enemy* enemy)
 	Quaternion aLookat = Quaternion::LookAt(aVec);
 
 	//euler軸へ変換
-	enemy->RotVecPlus(aLookat.ToEuler());
+	enemy->SetRotVec(aLookat.ToEuler());
 
 	blinkTimer.RoopReverse();
 	lifeTimer.Update();
@@ -159,7 +159,7 @@ void EnemyRangeCoolState::Update(Enemy* enemy)
 	Quaternion aLookat = Quaternion::LookAt(aVec);
 
 	//euler軸へ変換
-	enemy->RotVecPlus(aLookat.ToEuler());
+	enemy->SetRotVec(aLookat.ToEuler());
 }
 
 std::string EnemyRangeCoolState::GetStateStr()

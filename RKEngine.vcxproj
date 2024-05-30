@@ -169,6 +169,7 @@
     <ClCompile Include="Application\UI\BossAppUI.cpp" />
     <ClCompile Include="Application\Chara\Boss\BossFallAttack.cpp" />
     <ClCompile Include="Application\UI\BonusUI.cpp" />
+    <ClCompile Include="Application\Brush.cpp" />
     <ClCompile Include="Engine\Particle\DirectionalParticle.cpp" />
     <ClCompile Include="Engine\Collision\AABBCollider.cpp" />
     <ClCompile Include="Application\Chara\Enemy\EnemySpawner.cpp" />
@@ -1006,6 +1007,7 @@
     <ClInclude Include="Application\UI\BossAppUI.h" />
     <ClInclude Include="Application\Chara\Boss\BossFallAttack.h" />
     <ClInclude Include="Application\UI\BonusUI.h" />
+    <ClInclude Include="Application\Brush.h" />
     <ClInclude Include="Engine\Particle\DirectionalParticle.h" />
     <ClInclude Include="Engine\Collision\AABBCollider.h" />
     <ClInclude Include="Application\Chara\Enemy\EnemySpawner.h" />

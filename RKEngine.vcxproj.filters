@@ -885,6 +885,9 @@
     <ClCompile Include="Application\WaxVisual.cpp">
       <Filter>ソース ファイル\Application\Object\WaxVisual</Filter>
     </ClCompile>
+    <ClCompile Include="Application\Brush.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Shader\Basic\BasicPS.hlsl">
@@ -1665,6 +1668,9 @@
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
     <ClInclude Include="Application\Scene\WaxSceneTransition.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Application\Brush.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
   </ItemGroup>

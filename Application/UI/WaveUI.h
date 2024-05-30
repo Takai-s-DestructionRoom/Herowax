@@ -19,5 +19,9 @@ private:
 	Sprite tai;
 
 	Sprite enemyAllKillText;
-	TimerUI timerUI;;
+	TimerUI timerUI;
+
+	Sprite waveBase;			//ウェーブ　〇/〇
+	NumDrawer nowwaveDrawer;	//今のウェーブ数表示用
+	NumDrawer maxwaveDrawer;	//ウェーブ最大数表示用
 };
