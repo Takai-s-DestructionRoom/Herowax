@@ -44,7 +44,6 @@ void WaxWall::Update()
 		float f = 1 + 2.7f * powf(parryTimer.GetTimeRate() - 1, 3) + 1.7f * powf(parryTimer.GetTimeRate() - 1, 2);
 		
 		float barriarScale = 8.0f * f;
-		SimpleDrawer::DrawString(0, 0, 0, Util::StringFormat("%f, %f", parryTimer.GetTimeRate(), barriarScale));
 		obj.mTransform.scale += { barriarScale, barriarScale, barriarScale };
 	}
 	obj.mTuneMaterial.mColor.a = Easing::OutQuad(0.5f, 0.6f, parryTimer.GetTimeRate());

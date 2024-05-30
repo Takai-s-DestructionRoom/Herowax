@@ -1047,8 +1047,7 @@ void Player::WaxCollect()
 
 			//音鳴らす
 			RAudio::Play("eCollect", 0.5f, 1.0f + 1.0f * (collectCount / 100.0f));
-			SimpleDrawer::DrawString(0, 0, 0, Util::StringFormat("%f", collectCount / 100.0f));
-
+			
 			ParticleManager::GetInstance()->AddHoming2D(
 				Util::GetScreenPos(obj.mTransform.position), { 150.f,150.f }, waxCollectAmount, 0.8f,
 				Color::kWaxColor,
