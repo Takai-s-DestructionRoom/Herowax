@@ -323,10 +323,11 @@ void Player::Update()
 		WaxManager::GetInstance()->notCollect;				//移動速度をかけ合わせたら完成(回収中は動けない)
 	obj.mTransform.position += moveVec;						//完成したものを座標に足し合わせる
 
-	//回収中なら回収中モデルのスケールを入れる
-	if (modelChange)
+	//なんかによってスケールをいじる
+	if (!WaxManager::GetInstance()->notCollect)
 	{
-		obj.mTransform.scale = Vector3(1, 1, 1) * bagScale;
+		float wave = 0.2f * Util::GetRatio(-1.0f, 1.0f, sinf(Util::PI * 5 * waxCollectingTime));
+		obj.mTransform.scale = { bagScale + wave, bagScale + wave, bagScale + wave };
 	}
 	else
 	{
@@ -425,8 +426,8 @@ void Player::Update()
 
 	//タンクデータ
 	tankWaterObj.mTransform.position = tankMeterObj.mTransform.position = obj.mTransform.position + Vector3(0, 1.0f + bagScale / 2.0f, 0);
-	tankWaterObj.mTransform.scale = Vector3(bagScale - 0.8f, bagScale - 0.8f, bagScale - 0.8f);
-	tankMeterObj.mTransform.scale = Vector3(bagScale - 0.7f, bagScale - 0.7f, bagScale - 0.7f);
+	tankWaterObj.mTransform.scale = obj.mTransform.scale - Vector3(0.8f, 0.8f, 0.8f);
+	tankMeterObj.mTransform.scale = obj.mTransform.scale - Vector3(0.7f, 0.7f, 0.7f);
 	tankWaterObj.mTransform.UpdateMatrix();
 	tankWaterObj.mTuneMaterial.mAmbient = { 10, 10, 10 };
 	tankWaterObj.mTuneMaterial.mDiffuse = { 10, 10, 10 };
@@ -633,11 +634,14 @@ void Player::Draw()
 				Renderer::DrawCall("Opaque", orderA);
 				Renderer::DrawCall("Opaque", orderB);
 			}
-			for (RenderOrder order : tankMeterObj.GetRenderOrder()) {
-				order.mRootSignature = GetTankMeterRootSig()->mPtr.Get();
-				order.pipelineState = GetTankMeterPipeline()->mPtr.Get();
-				order.rootData.push_back(RootData(RootDataType::SRBUFFER_CBV, tankMeterBuff.mBuff));
-				Renderer::DrawCall("Opaque", order);
+
+			if (maxWaxStock < 100) {
+				for (RenderOrder order : tankMeterObj.GetRenderOrder()) {
+					order.mRootSignature = GetTankMeterRootSig()->mPtr.Get();
+					order.pipelineState = GetTankMeterPipeline()->mPtr.Get();
+					order.rootData.push_back(RootData(RootDataType::SRBUFFER_CBV, tankMeterBuff.mBuff));
+					Renderer::DrawCall("Opaque", order);
+				}
 			}
 		}
 
@@ -1041,7 +1045,8 @@ void Player::WaxCollect()
 			collectCount += waxCollectAmount;
 
 			//音鳴らす
-			RAudio::Play("eCollect", 0.5f);
+			RAudio::Play("eCollect", 0.5f, 1.0f + 1.0f * (collectCount / 100.0f));
+			SimpleDrawer::DrawString(0, 0, 0, Util::StringFormat("%f", collectCount / 100.0f));
 
 			ParticleManager::GetInstance()->AddHoming2D(
 				Util::GetScreenPos(obj.mTransform.position), { 150.f,150.f }, waxCollectAmount, 0.8f,
@@ -1058,6 +1063,7 @@ void Player::WaxCollect()
 
 	if (GetWaxCollectButtonDown()) {
 		WaxManager::GetInstance()->notCollect = false;
+		waxCollectingTime = 0;
 	
 		if (!RAudio::IsPlaying("Collect"))
 		{
@@ -1181,6 +1187,7 @@ void Player::WaxCollect()
 		ParticleManager::GetInstance()->AddHoming(emitPosFront, "front_collect_smoke_homing", GetFootPos());
 
 		count++;
+		waxCollectingTime += TimeManager::deltaTime;
 	}
 }
 
