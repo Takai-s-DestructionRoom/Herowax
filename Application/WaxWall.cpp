@@ -6,7 +6,7 @@
 
 void WaxWall::Init()
 {
-	obj = PaintableModelObj(Model::Load("./Resources/Model/Sphere.obj", "Sphere"));
+	obj = PaintableModelObj(Model::Load("./Resources/Model/playerShield/playerShield.obj", "playerShield"));
 	obj.mTransform.scale = { 2,2,2 };
 
 	colliderSize = 10;
