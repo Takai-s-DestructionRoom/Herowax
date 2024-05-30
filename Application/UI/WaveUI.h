@@ -1,6 +1,7 @@
 #pragma once
 #include "NumDrawer.h"
 #include "Sprite.h"
+#include "TimerUI.h"
 
 class WaveUI
 {
@@ -16,4 +17,11 @@ private:
 	Sprite atText;
 	Sprite nextwave;
 	Sprite tai;
+
+	Sprite enemyAllKillText;
+	TimerUI timerUI;
+
+	Sprite waveBase;			//ウェーブ　〇/〇
+	NumDrawer nowwaveDrawer;	//今のウェーブ数表示用
+	NumDrawer maxwaveDrawer;	//ウェーブ最大数表示用
 };

@@ -28,8 +28,10 @@ public:
 	static std::string GetStateStr();
 
 private:
-	float accel = 0.f;			//回収の加速度
+	Easing::EaseTimer timer = 0.1f;
+	float accel = 1.f;			//回収の加速度
 	bool isStart = true;
-	float oldTimeRate = 0.0f;
 	Vector3 startPos;
+
+	float collectSpeed = 1.0f;
 };

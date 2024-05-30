@@ -37,6 +37,8 @@ gravity(0.2f)
 	obj.mTransform.scale = oriScale;
 	baseScale = oriScale;
 
+	modelSize = oriScale;
+
 	predictionLine = ModelObj(Model::Load("./Resources/Model/Cube.obj", "Cube"));
 	//影をなくす
 	predictionLine.mTuneMaterial.mAmbient = Vector3(1, 1, 1) * 100.f;
@@ -93,17 +95,30 @@ void Enemy::BaseUpdate()
 	warningTimer.Update();
 
 	if (warningTimer.GetEnd()) {
-		if(!spawnTimer.GetStarted())spawnTimer.Start();
-		
+		if (!spawnTimer.GetStarted())spawnTimer.Start();
+
 		warningRoop.RoopReverse();
-		warningColor.a = Easing::OutQuad(0.f,1.f, warningRoop.GetTimeRate());
+		warningColor.a = Easing::OutQuad(0.f, 1.f, warningRoop.GetTimeRate());
+	}
+
+	if (spawnTimer.GetRun())
+	{
+		ParticleManager::GetInstance()->AddHoming(
+			obj.mTransform.position + Vector3::UP * obj.mTransform.scale.y, "enemy_pop_homing");
+		//パーティクル出現
+		smokeCount++;
+		if (smokeCount > 5)
+		{
+			ParticleManager::GetInstance()->AddSimple(
+				obj.mTransform.position + Vector3::UP * obj.mTransform.scale.y, "smoke");
+			smokeCount = 0;
+		}
 	}
 
 	if (spawnTimer.GetNowEnd()) {
 		//パーティクル出現
-		ParticleManager::GetInstance()->AddSimple(obj.mTransform.position, "smoke_red");
-		//ParticleManager::GetInstance()->AddSimple(obj.mTransform.position, "smoke_black");
-		ParticleManager::GetInstance()->AddRing(obj.mTransform.position, "enemy_pop_ring");
+		ParticleManager::GetInstance()->AddSimple(
+			obj.mTransform.position + Vector3::UP * obj.mTransform.scale.y, "smoke_red");
 	}
 
 	//こっから下は出現してからなので
@@ -135,6 +150,7 @@ void Enemy::BaseUpdate()
 		nextState = nullptr;
 	}
 
+	SlowUpdate();
 
 	//固まっていなければする処理
 	if (!GetIsSolid()) {
@@ -160,14 +176,6 @@ void Enemy::BaseUpdate()
 			Vector3 behaviorDir = loadBehaviorData.GetBehavior(behaviorOrigen, obj.mTransform.position).GetNormalize();
 			moveVec += behaviorDir * moveSpeed;
 		}
-	}
-
-	hp = Util::Clamp(hp, 0.f, maxHP);
-
-	if (hp <= 0 && isCollect == false) {
-		//hpが0になったら、自身の状態を固まり状態へ遷移
-		//現在毎フレーム通常状態に戻す処理を行っているので無意味
-		ChangeState<EnemyAllStop>();
 	}
 
 	//無敵時間さん!?の更新
@@ -262,12 +270,12 @@ void Enemy::TransfarBuffer()
 
 void Enemy::Draw()
 {
-	//警告を表示
-	if (spawnTimer.GetRun()) {
-		Vector3 pos = obj.mTransform.position;
-		pos.y += obj.mTransform.scale.y;
-		InstantDrawer::DrawGraph3D(pos,10.f,10.f,"warning", warningColor);
-	}
+	////警告を表示
+	//if (spawnTimer.GetRun()) {
+	//	Vector3 pos = obj.mTransform.position;
+	//	pos.y += obj.mTransform.scale.y;
+	//	InstantDrawer::DrawGraph3D(pos, 10.f, 10.f, "warning", warningColor);
+	//}
 
 	if (!spawnTimer.GetEnd()) return;
 
@@ -459,6 +467,46 @@ void Enemy::WaxVisualUpdate()
 	}
 }
 
+void Enemy::SlowUpdate()
+{
+	if (GetState() == "Slow" && GetIsSolid() == false)
+	{
+		Quaternion aLookat =
+			Quaternion::LookAt(moveVec);
+
+		//固有の足とられモーション
+		motionTimer.Update();
+		if (motionTimer.GetStarted() == false)
+		{
+			motionTimer.Start();
+		}
+		else if (motionTimer.GetEnd())
+		{
+			motionFrag = motionFrag ^ motionTimer.GetEnd();
+			motionTimer.Reset();
+		}
+
+
+		if (motionFrag)
+		{
+			radianX = Easing::OutQuad(Util::AngleToRadian(-30.f), Util::AngleToRadian(50.f), motionTimer.GetTimeRate());
+			radianZ = Easing::InQuad(Util::AngleToRadian(30.f), Util::AngleToRadian(-30.f), motionTimer.GetTimeRate());
+		}
+		else
+		{
+			radianX = Easing::OutQuad(Util::AngleToRadian(50.f), Util::AngleToRadian(-30.f), motionTimer.GetTimeRate());
+			radianZ = Easing::InQuad(Util::AngleToRadian(-30.f), Util::AngleToRadian(30.f), motionTimer.GetTimeRate());
+		}
+
+		Quaternion rotX = Quaternion::AngleAxis({ 1,0,0 }, radianX);
+		Quaternion rotZ = Quaternion::AngleAxis({ 0,0,1 }, radianZ);
+
+		aLookat = rotX * rotZ * aLookat;
+
+		RotVecPlus(aLookat.ToEuler());
+	}
+}
+
 void Enemy::StartToMoving()
 {
 	warningTimer.Start();
@@ -504,7 +552,7 @@ void Enemy::DealDamage(uint32_t damage, const Vector3& dir, ModelObj* target_)
 		0.03f, -Vector3(1, 1, 1) * 0.1f, Vector3(1, 1, 1) * 0.1f, 0.1f);
 
 	//ヒットエフェクト出す
-	Vector3 toPlayerVec = 
+	Vector3 toPlayerVec =
 		target->mTransform.position - obj.mTransform.position;	//プレイヤーへのベクトル
 
 	ParticleManager::GetInstance()->AddSimple(
@@ -527,8 +575,8 @@ void Enemy::DealDamage(uint32_t damage, const Vector3& dir, ModelObj* target_)
 	{
 		ParticleManager::GetInstance()->AddHoming(obj.mTransform.position, "enemy_solid_homing");
 		ParticleManager::GetInstance()->AddSimple(
-			obj.mTransform.position + Vector3::UP * obj.mTransform.scale.y,"enemy_solid");
-		
+			obj.mTransform.position + Vector3::UP * obj.mTransform.scale.y, "enemy_solid");
+
 		//拡縮タイマーを開始
 		scalingTimer.Start();
 	}
@@ -551,6 +599,12 @@ void Enemy::MoveVecPlus(const Vector3& plusVec)
 void Enemy::RotVecPlus(const Vector3& plusVec)
 {
 	rotVec += plusVec;
+	SetForceRot(true);
+}
+
+void Enemy::SetRotVec(const Vector3& rotationVec)
+{
+	rotVec = rotationVec;
 	SetForceRot(true);
 }
 

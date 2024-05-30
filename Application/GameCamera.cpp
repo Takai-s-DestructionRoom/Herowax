@@ -37,7 +37,7 @@ void GameCamera::Update()
 	Vector2 stick = RInput::GetInstance()->GetRStick(false, true);
 
 	if (stick.LengthSq() > 0.0f) {
-		if (WaxManager::GetInstance()->isCollected && 
+		if (WaxManager::GetInstance()->notCollect && 
 			!EnemyManager::GetInstance()->GetNowCollectEnemy())
 		{
 			if (abs(stick.x) > 0.3f) {

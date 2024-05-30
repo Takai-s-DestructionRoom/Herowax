@@ -26,6 +26,8 @@ public:
 
 	uint32_t collectNum;
 
+	GameObject* collectTarget = nullptr;
+
 private:
 	uint32_t solidCombo;	//連続で固まった敵の数カウント(これが多いと抜け出すまでの時間減る)
 	uint32_t burningCombo;	//連続で燃えた敵の数カウント(これが多いと温度爆上げ↑)

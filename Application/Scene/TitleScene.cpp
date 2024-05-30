@@ -5,6 +5,7 @@
 #include "ParticleManager.h"
 #include "InstantDrawer.h"
 #include "SimpleSceneTransition.h"
+#include "WaxSceneTransition.h"
 #include <RAudio.h>
 #include "LightObject.h"
 
@@ -37,6 +38,8 @@ TitleScene::TitleScene()
 
 void TitleScene::Init()
 {
+	RAudio::Load("Resources/Sounds/BGM/Gametitle.wav", "Title");
+
 	camera.mViewProjection.mEye = { 0, 30, -cameraDist };
 	camera.mViewProjection.mTarget = { 0, 10, 0 };
 	camera.mViewProjection.UpdateMatrix();
@@ -56,6 +59,8 @@ void TitleScene::Init()
 	SpotLightManager::GetInstance()->Init(&light);
 
 	RAudio::Stop("Boss");
+
+	RAudio::Play("Title", 0.4f, 1.0f, true);
 }
 
 void TitleScene::Update()
@@ -87,6 +92,8 @@ void TitleScene::Update()
 		sceneChange = true;
 		RAudio::Play("Select", 0.6f);
 		SceneManager::GetInstance()->Change<ProtoScene, SimpleSceneTransition>();
+		//SceneManager::GetInstance()->Change<ProtoScene, WaxSceneTransition>();
+		RAudio::Stop("Title");
 	}
 
 	camera.mViewProjection.UpdateMatrix();

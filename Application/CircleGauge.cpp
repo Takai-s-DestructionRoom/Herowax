@@ -3,14 +3,18 @@
 #include "Renderer.h"
 #include "Util.h"
 #include "Camera.h"
+#include "RImGui.h"
+#include "Parameter.h"
 
 CircleGauge::CircleGauge(bool mode_)
 {
 	mode = mode_;
 }
 
-void CircleGauge::Init()
+void CircleGauge::Init(const std::string& title_)
 {
+	title = title_;
+
 	if (mode) {
 		mRootSignature = RDirectX::GetDefRootSignature();
 		mPipelineState = billboard.mImage.GetPipeline();
@@ -67,10 +71,23 @@ void CircleGauge::Init()
 		//デフォテクスチャを配置
 		sprite.SetTexture(TextureManager::Load("./Resources/circleGauge.png", "circleGauge"));
 	}
+
+	if (title != "CircleGauge_Def") {
+		std::map<std::string, std::string> extract = Parameter::Extract(title);
+		baseTrans.position = Parameter::GetVector3Data(extract, "位置", baseTrans.position);
+		baseTrans.scale = Parameter::GetVector3Data(extract, "大きさ", baseTrans.scale);
+		angle = Parameter::GetParam(extract, "回転", angle);
+		rate = Parameter::GetParam(extract,"rate", rate);
+	}
 }
 
 void CircleGauge::Update()
 {
+	baseMax = 360.f * rate;
+	baseMin = 360.f - baseMax;
+
+	nowRadian = baseMin + baseRadian * rate;
+
 	if (mode) {
 		billboard.mTransform = baseTrans;
 		billboard.mImage.mTransform.rotation.z = angle;
@@ -84,7 +101,7 @@ void CircleGauge::Update()
 		sprite.TransferBuffer();
 	}
 
-	mRadianBuffer->radian = Util::AngleToRadian(radian);
+	mRadianBuffer->radian = Util::AngleToRadian(nowRadian);
 }
 
 void CircleGauge::Draw()
@@ -115,6 +132,30 @@ void CircleGauge::Draw()
 			}
 			Renderer::DrawCall(stageID, order);
 		}
+	}
+}
+
+void CircleGauge::ImGui()
+{
+	if (RImGui::showImGui) {
+		ImGui::Begin(title.c_str());
+		ImGui::Text("nowRadian:%f", nowRadian);
+		ImGui::Text("baseRadian:%f", baseRadian);
+		ImGui::DragFloat("rate", &rate, 0.01f);
+		ImGui::DragFloat3("位置", &baseTrans.position.x);
+		ImGui::DragFloat3("大きさ", &baseTrans.scale.x, 0.1f);
+		ImGui::DragFloat("回転", &angle, 0.01f);
+		
+		if (ImGui::Button("セーブ")) {
+			Parameter::Begin(title);
+			Parameter::SaveVector3("位置", baseTrans.position);
+			Parameter::SaveVector3("大きさ", baseTrans.scale);
+			Parameter::Save("回転", angle);
+			Parameter::Save("rate", rate);
+			Parameter::End();
+		}
+
+		ImGui::End();
 	}
 }
 

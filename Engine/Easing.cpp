@@ -252,6 +252,7 @@ void Easing::EaseTimer::Update(const float elapseTimer)
 void Easing::EaseTimer::Roop(const float elapseTimer)
 {
 	Update(elapseTimer);
+	roopend_ = false;
 	if (GetStarted() == false)
 	{
 		Start();
@@ -259,12 +260,15 @@ void Easing::EaseTimer::Roop(const float elapseTimer)
 	else if (GetEnd())
 	{
 		Reset();
+		roopend_ = true;
 	}
 }
 
 void Easing::EaseTimer::RoopReverse(const float elapseTimer)
 {
 	Update(elapseTimer);
+	roopend_ = false;
+	roopReverseEnd_ = false;
 	if (GetStarted() == false && GetReverseStarted() == false)
 	{
 		Start();
@@ -272,18 +276,18 @@ void Easing::EaseTimer::RoopReverse(const float elapseTimer)
 	else if (GetEnd())
 	{
 		ReverseStart();
+		roopend_ = true;
 	}
 	else if (GetReverseEnd())
 	{
 		Reset();
+		roopReverseEnd_ = true;
 	}
 }
 
 float Easing::EaseTimer::GetTimeRate()const
 {
-	float timeRate = 0.0f;
-	timeRate = Util::Clamp(timeRate, nowTime_ / maxTime_, 1.0f);
-	return timeRate;
+	return Util::Clamp(nowTime_ / maxTime_, 0.0f, 1.0f);
 }
 
 Vector3 InQuadVec3(const Vector3& start, const Vector3& end, float timerate)

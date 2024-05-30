@@ -76,11 +76,13 @@ isFireStock(false), isWaxStock(true), waxCollectAmount(0)
 	maxRange = Parameter::GetParam(extract, "攻撃範囲_最大", maxRange);
 
 	bagScale = Parameter::GetParam(extract, "風船の大きさ", 1.0f);
-	humanOffset = Parameter::GetParam(extract,"人の位置Y", humanOffset);
-	humanScale = Parameter::GetParam(extract,"人の大きさ", humanScale);
-	collectScale = Parameter::GetParam(extract,"回収中の大きさ", collectScale);
+	humanOffset = Parameter::GetParam(extract, "人の位置Y", humanOffset);
+	humanScale = Parameter::GetParam(extract, "人の大きさ", humanScale);
+	collectScale = Parameter::GetParam(extract, "回収中の大きさ", collectScale);
 
-	initWaxStock = (int32_t)Parameter::GetParam(extract,"ロウの初期最大ストック数", (float)initWaxStock);
+	waxWall.parryTimer.maxTime_ = Parameter::GetParam(extract,"パリィの猶予時間", 0.1f);
+
+	initWaxStock = (int32_t)Parameter::GetParam(extract, "ロウの初期最大ストック数", (float)initWaxStock);
 	maxWaxStock = initWaxStock;
 	waxStock = initWaxStock;
 }
@@ -98,9 +100,14 @@ void Player::Init()
 	RAudio::Load("Resources/Sounds/SE/P_attackHit.wav", "Hit");
 	RAudio::Load("Resources/Sounds/SE/P_enemyCollect.wav", "eCollect");
 
+	RAudio::Load("Resources/Sounds/SE/playerShield.wav", "PShield");
+	
+	
+
 	obj = PaintableModelObj("playerBag");
 	humanObj = ModelObj("playerHuman");
 	tankWaterObj = ModelObj("TankWater");
+	tankMeterObj = ModelObj("TankWater");
 
 	std::map<std::string, std::string> extract = Parameter::Extract("Player");
 	defColor.r = Parameter::GetParam(extract, "プレイヤーの色R", 1);
@@ -142,14 +149,14 @@ void Player::Init()
 void Player::Reset()
 {
 	oldRot = rotVec;
+	
+	oldHp = hp;
 	//回転初期化
 	rotVec = { 0,0,0 };
 }
 
 void Player::Update()
 {
-	Reset();
-
 	//タイマー更新
 	damageCoolTimer.Update();
 	godmodeTimer.Update();
@@ -199,7 +206,8 @@ void Player::Update()
 	}
 
 	//攻撃ボタン入力中で、実際にロウが出せたら攻撃フラグを立てる
-	isAttack = (RInput::GetInstance()->GetRTrigger() || RInput::GetKey(DIK_SPACE)) && (waxStock > 0);
+	isAttack = (RInput::GetInstance()->GetRTrigger() || RInput::GetKey(DIK_SPACE)) && 
+		(waxStock > 0) && WaxManager::GetInstance()->notCollect;
 
 	//-----------クールタイム管理-----------//
 	atkTimer.Update();
@@ -232,8 +240,10 @@ void Player::Update()
 	maxWaxStock = Util::Clamp(maxWaxStock, 0, 100);
 	waxStock = Util::Clamp(waxStock, 0, maxWaxStock);
 
+	WaxManager::GetInstance()->SetMaxWaxStock(maxWaxStock);
+
 	//回収が終わったらモデルを戻す
-	if (WaxManager::GetInstance()->isCollected && modelChange) {
+	if (WaxManager::GetInstance()->notCollect && modelChange) {
 		obj.mModel = ModelManager::Get("playerBag");
 		modelChange = false;
 	}
@@ -295,8 +305,8 @@ void Player::Update()
 			godmodeTimer.Start();
 		} 
 
-		//ゲーミング色に
-		obj.mTuneMaterial.mColor = GamingColorUpdate();
+		////ゲーミング色に
+		//obj.mTuneMaterial.mColor = GamingColorUpdate();
 	}
 
 	//無敵時間終了したらフラグもfalseに
@@ -308,12 +318,9 @@ void Player::Update()
 		godmodeTimer.Reset();
 	}
 
-	bool nowCollected = WaxManager::GetInstance()->isCollected && 
-		!EnemyManager::GetInstance()->GetNowCollectEnemy();
-
 	moveVec *=
 		moveSpeed * moveAccel *
-		nowCollected;				//移動速度をかけ合わせたら完成(回収中は動けない)
+		WaxManager::GetInstance()->notCollect;				//移動速度をかけ合わせたら完成(回収中は動けない)
 	obj.mTransform.position += moveVec;						//完成したものを座標に足し合わせる
 
 	//回収中なら回収中モデルのスケールを入れる
@@ -327,7 +334,7 @@ void Player::Update()
 	}
 
 	//攻撃中と回収中なら正面へ、それ以外なら後ろへ
-	if (isAttack || !nowCollected) {
+	if (isAttack || !WaxManager::GetInstance()->notCollect) {
 		Vector3 tVec = collectRangeModel.mTransform.position - collectCol.start;
 		tVec.y = 0;
 		tVec.Normalize();
@@ -390,7 +397,6 @@ void Player::Update()
 
 	if (RImGui::showImGui)
 	{
-
 		ImGui::SetNextWindowSize({ 600, 250 }, ImGuiCond_FirstUseEver);
 
 		ImGui::Begin("移動制限");
@@ -418,11 +424,18 @@ void Player::Update()
 	humanObj.TransferBuffer(Camera::sNowCamera->mViewProjection);
 
 	//タンクデータ
-	tankWaterObj.mTransform.position = obj.mTransform.position + Vector3(0, 1.0f + bagScale / 2.0f, 0);
+	tankWaterObj.mTransform.position = tankMeterObj.mTransform.position = obj.mTransform.position + Vector3(0, 1.0f + bagScale / 2.0f, 0);
 	tankWaterObj.mTransform.scale = Vector3(bagScale - 0.8f, bagScale - 0.8f, bagScale - 0.8f);
+	tankMeterObj.mTransform.scale = Vector3(bagScale - 0.7f, bagScale - 0.7f, bagScale - 0.7f);
 	tankWaterObj.mTransform.UpdateMatrix();
+	tankWaterObj.mTuneMaterial.mAmbient = { 10, 10, 10 };
+	tankWaterObj.mTuneMaterial.mDiffuse = { 10, 10, 10 };
 	tankWaterObj.TransferBuffer(Camera::sNowCamera->mViewProjection);
-	tankBuff->centerPos = tankWaterObj.mTransform.position;
+	tankMeterObj.mTuneMaterial.mColor = { 0, 0, 1, 1 };
+	tankMeterObj.mTuneMaterial.mAmbient = { 100, 100, 100 };
+	tankMeterObj.mTransform.UpdateMatrix();
+	tankMeterObj.TransferBuffer(Camera::sNowCamera->mViewProjection);
+	tankBuff->centerPos = tankMeterBuff->centerPos = tankWaterObj.mTransform.position;
 	tankBuff->amplitude = 0.04f;
 	tankBuff->frequency = 10.0f;
 	float tankRatio = waxStock / 100.0f;
@@ -431,6 +444,9 @@ void Player::Update()
 	tankValue += (newTankValue - tankValue) / 7.0f;
 	tankBuff->upper = tankValue;
 	tankBuff->time += TimeManager::deltaTime;
+	tankMeterBuff->upper = -tankMeterObj.mTransform.scale.y
+		+ (tankMeterObj.mTransform.scale.y * 2.0f) * (maxWaxStock / 100.0f);
+	tankMeterBuff->thickness = 0.05f;
 
 	if (RInput::GetKeyDown(DIK_H)) {
 		waxStock = 100;
@@ -451,19 +467,16 @@ void Player::Update()
 #pragma region ImGui
 	if (RImGui::showImGui)
 	{
-
 		ImGui::SetNextWindowSize({ 600, 250 }, ImGuiCond_FirstUseEver);
 
 		ImGui::Begin("Player");
 
+		ImGui::Checkbox("吸収フラグ", &WaxManager::GetInstance()->notCollect);
 		ImGui::Text("現在のHP:%f", hp);
 		ImGui::InputFloat("最大HP:", &maxHP, 1.0f);
 		ImGui::Text("Lスティック移動、Aボタンジャンプ、Rで攻撃,Lでロウ回収");
 		ImGui::Text("WASD移動、スペースジャンプ、右クリで攻撃,Pでパブロ攻撃,Qでロウ回収");
 
-		ImGui::DragFloat("modelChangeOffset", &modelChangeOffset);
-		ImGui::DragFloat3("avoidVec", &avoidVec.x);
-		
 		if (ImGui::TreeNode("初期状態設定"))
 		{
 			ImGui::SliderFloat("初期座標X", &initPos.x, -100.f, 100.f);
@@ -534,6 +547,11 @@ void Player::Update()
 			ImGui::InputFloat("敵がこの範囲に入ると攻撃状態へ遷移する大きさ", &attackHitCollider.r, 1.0f);
 			ImGui::TreePop();
 		}
+		if (ImGui::TreeNode("ガード系"))
+		{
+			ImGui::DragFloat("パリィの猶予時間", &waxWall.parryTimer.maxTime_, 0.01f);
+			ImGui::TreePop();
+		}
 		if (ImGui::TreeNode("MUTEKI系"))
 		{
 			ImGui::Checkbox("無敵状態切り替え", &isGodmode);
@@ -582,7 +600,7 @@ void Player::Update()
 			Parameter::Save("風船の大きさ", bagScale);
 			Parameter::Save("回収中の大きさ", collectScale);
 			Parameter::Save("ロウの初期最大ストック数", initWaxStock);
-
+			Parameter::Save("パリィの猶予時間", waxWall.parryTimer.maxTime_);
 			Parameter::End();
 		}
 
@@ -615,10 +633,16 @@ void Player::Draw()
 				Renderer::DrawCall("Opaque", orderA);
 				Renderer::DrawCall("Opaque", orderB);
 			}
+			for (RenderOrder order : tankMeterObj.GetRenderOrder()) {
+				order.mRootSignature = GetTankMeterRootSig()->mPtr.Get();
+				order.pipelineState = GetTankMeterPipeline()->mPtr.Get();
+				order.rootData.push_back(RootData(RootDataType::SRBUFFER_CBV, tankMeterBuff.mBuff));
+				Renderer::DrawCall("Opaque", order);
+			}
 		}
 
 		//回収中は別モデルに置き換えるので描画しない
-		if (WaxManager::GetInstance()->isCollected) {
+		if (WaxManager::GetInstance()->notCollect) {
 			humanObj.Draw();
 		}
 
@@ -716,7 +740,7 @@ void Player::MoveKey()
 	keyVec.y = (float)(RInput::GetInstance()->GetKey(DIK_W) - RInput::GetInstance()->GetKey(DIK_S));
 
 	//キー入力されてて回収中じゃないなら
-	if (keyVec.LengthSq() > 0.f && WaxManager::GetInstance()->isCollected) {
+	if (keyVec.LengthSq() > 0.f && WaxManager::GetInstance()->notCollect) {
 		//カメラから注視点へのベクトル
 		Vector3 cameraVec = Camera::sNowCamera->mViewProjection.mTarget - Camera::sNowCamera->mViewProjection.mEye;
 		//カメラの角度
@@ -874,7 +898,7 @@ void Player::Rotation()
 
 	Vector2 LStick = RInput::GetInstance()->GetLStick(true, false);
 	//スティック入力されてて回収中じゃなければ
-	if (LStick.LengthSq() > 0 && WaxManager::GetInstance()->isCollected) {
+	if (LStick.LengthSq() > 0 && WaxManager::GetInstance()->notCollect) {
 		//カメラから注視点へのベクトル
 		Vector3 cameraVec = Camera::sNowCamera->mViewProjection.mTarget -
 			Camera::sNowCamera->mViewProjection.mEye;
@@ -981,7 +1005,7 @@ void Player::WaxCollect()
 	Vector3 dir = Camera::sNowCamera->mViewProjection.mTarget - Camera::sNowCamera->mViewProjection.mEye;
 	dir.y = 0;
 	collectCol.dir = dir.Normalize();
-	
+
 	collectCol.start = GetFootPos();
 	collectCol.radius = waxCollectRange * 0.5f;
 
@@ -998,51 +1022,68 @@ void Player::WaxCollect()
 
 	//イベント中でなければ入る
 	if (EventCaller::GetNowEventStr() == "") {
-		//回収したロウに応じてストック増やす
-		if (isWaxStock && WaxManager::GetInstance()->isCollected)
-		{
-			if (waxCollectAmount > 0)
-			{
-				waxStock += waxCollectAmount;
-				//音鳴らす
-				RAudio::Play("eCollect");
 
-				ParticleManager::GetInstance()->AddHoming2D(
-					Util::GetScreenPos(obj.mTransform.position), { 150.f,150.f }, waxCollectAmount, 0.8f,
-					Color::kWaxColor,
-					TextureManager::Load("./Resources/Particle/particle_simple.png", "particleSimple"),
-					150.f, 180.f, { -1.f,-1.f }, { 1.f,1.f },
-					ui.numDrawer.GetPos(), 0.f,
-					0.01f, 0.05f,
-					0.1f, 0.f);
-
-				waxCollectAmount = 0;
-			}
+		int32_t nowPlusNum = EnemyManager::GetInstance()->collectNum;
+		if (nowPlusNum > 0) {
+			waxCollectAmount += nowPlusNum;
+			MaxWaxPlus(nowPlusNum);
 		}
+		EnemyManager::GetInstance()->collectNum = 0;
+
+		//回収が完了したら増やす
+		waxCollectAmount += WaxManager::GetInstance()->collectWaxNum;
+		WaxManager::GetInstance()->collectWaxNum = 0;
+
+		if (waxCollectAmount > 0)
+		{
+			waxStock += waxCollectAmount;
+
+			collectCount += waxCollectAmount;
+
+			//音鳴らす
+			RAudio::Play("eCollect", 0.5f);
+
+			ParticleManager::GetInstance()->AddHoming2D(
+				Util::GetScreenPos(obj.mTransform.position), { 150.f,150.f }, waxCollectAmount, 0.8f,
+				Color::kWaxColor,
+				TextureManager::Load("./Resources/Particle/particle_simple.png", "particleSimple"),
+				150.f, 180.f, { -1.f,-1.f }, { 1.f,1.f },
+				ui.numDrawer.GetPos(), 0.f,
+				0.01f, 0.05f,
+				0.1f, 0.f);
+
+			waxCollectAmount = 0;
+		}
+	}
+
+	if (GetWaxCollectButtonDown()) {
+		WaxManager::GetInstance()->notCollect = false;
+	
+		if (!RAudio::IsPlaying("Collect"))
+		{
+			RAudio::Play("Collect", 0.6f);
+		}	
 	}
 
 	if (isMove)
 	{
 		//回収ボタンポチーw
-		if (GetWaxCollectButtonDown())
+		if (!WaxManager::GetInstance()->notCollect)
 		{
-			bool isCollectSuccess = false;;
-			//ロウがストック性かつ地面についてて回収できる状態なら
-			if (isWaxStock && isGround && WaxManager::GetInstance()->isCollected)
-			{
-				isCollectSuccess = true;
+			obj.mModel = ModelManager::Get("collect");
+			modelChange = true;
 
+			//ロウがストック性かつ地面についてて回収できる状態なら
+			if (isWaxStock && isGround)
+			{
 				//ロウ回収
-				int32_t temp = WaxManager::GetInstance()->Collect(collectCol, waxCollectVertical);
-				waxCollectAmount += temp;
+				WaxManager::GetInstance()->Collect(collectCol, waxCollectVertical, this);
 			}
 			//腕吸収
-			if (boss->parts[(int32_t)PartsNum::LeftHand].isCollected && 
+			if (boss->parts[(int32_t)PartsNum::LeftHand].isCollected &&
 				!boss->parts[(int32_t)PartsNum::LeftHand].collectTimer.GetStarted()) {
 				if (RayToSphereCol(collectCol, boss->parts[(int32_t)PartsNum::LeftHand].collider))
 				{
-					isCollectSuccess = true;
-
 					//今のロウとの距離
 					float len = (collectCol.start -
 						boss->parts[(int32_t)PartsNum::LeftHand].GetPos()).Length();
@@ -1067,8 +1108,6 @@ void Player::WaxCollect()
 
 					//見たロウが範囲外ならスキップ
 					if (waxCollectVertical >= len) {
-						isCollectSuccess = true;
-
 						//とりあえず壊しちゃう
 						boss->parts[(int32_t)PartsNum::RightHand].collectPos = collectCol.start;
 						boss->parts[(int32_t)PartsNum::RightHand].ChangeState<BossPartCollect>();
@@ -1079,35 +1118,53 @@ void Player::WaxCollect()
 				}
 			}
 
-
-			//本体吸収
-			//演出の都合上、いったん消す
-			//if (boss->GetStateStr() == "Collected") {
-			//	if (RayToSphereCol(collectCol, boss->collider))
-			//	{
-			//		isCollectSuccess = true;
-
-			//		//今のロウとの距離
-			//		float len = (collectCol.start -
-			//			boss->GetPos()).Length();
-
-			//		//見たロウが範囲外ならスキップ
-			//		if (waxCollectVertical >= len) {
-			//			boss->collectPos = collectCol.start;
-			//			boss->ChangeState<BossDeadState>();
-			//			waxCollectAmount += 1;
-			//		}
-			//	}
-			//}
-
-			if (isCollectSuccess) {
-				obj.mModel = ModelManager::Get("collect");
-				modelChange = true;
+			for (auto& enemy : EnemyManager::GetInstance()->enemys)
+			{
+				//回収ボタン押されたときに固まってるなら吸収
+				if (enemy->GetIsSolid() && ColPrimitive3D::RayToSphereCol(collectCol, enemy->collider))
+				{
+					//回収状態に遷移
+					WaxManager::GetInstance()->notCollect = false;
+					EnemyManager::GetInstance()->collectTarget = this;
+					enemy->isCollect = true;
+					enemy->ChangeState<EnemyCollect>();
+				}
 			}
 		}
 	}
 
-	if (WaxManager::GetInstance()->isCollected == false)
+	//キーから手を離したら動ける
+	if ((RInput::GetInstance()->GetLTriggerUp() ||
+		RInput::GetInstance()->GetKeyUp(DIK_Q))) {
+
+		WaxManager::GetInstance()->notCollect = true;
+
+		RAudio::Stop("Collect");
+	}
+
+	//回収中にダメージを受けたら回収をキャンセル
+	if (!WaxManager::GetInstance()->notCollect && GetDamageTrigger()) {
+
+		WaxManager::GetInstance()->notCollect = true;
+
+		//回収したロウと同じ数のロウを地面にばらまく
+		WaxLeakOut(collectCount, -10.f, 10.f);
+	}
+
+	if (!WaxManager::GetInstance()->notCollect) {
+		//ロウからターゲットを除去
+		WaxManager::GetInstance()->collectTarget = this;
+		EnemyManager::GetInstance()->collectTarget = this;
+	}
+
+	if (WaxManager::GetInstance()->notCollect) {
+		collectCount = 0;
+		//ロウからターゲットを除去
+		WaxManager::GetInstance()->collectTarget = nullptr;
+		EnemyManager::GetInstance()->collectTarget = nullptr;
+	}
+
+	if (WaxManager::GetInstance()->notCollect == false)
 	{
 		Vector3 emitPos = obj.mTransform.position + dir * (waxCollectVertical - waxCollectRange);
 		emitPos.y += obj.mTransform.scale.y;
@@ -1166,7 +1223,7 @@ void Player::MaxWaxPlus(int32_t plus)
 	waxUI.Start();
 }
 
-void Player::WaxLeakOut(int32_t leakNum)
+void Player::WaxLeakOut(int32_t leakNum, float minLeakLength, float maxLeakLength)
 {
 	for (int32_t i = 0; i < leakNum; i++)
 	{
@@ -1178,8 +1235,8 @@ void Player::WaxLeakOut(int32_t leakNum)
 			startTrans.position.y = atkHeight;
 
 			Vector3 endPos = waxWall.obj.mTransform.position;
-			endPos.x += Util::GetRand(-2.5f,2.5f);
-			endPos.z += Util::GetRand(-2.5f,2.5f);
+			endPos.x += Util::GetRand(minLeakLength, maxLeakLength);
+			endPos.z += Util::GetRand(minLeakLength, maxLeakLength);
 
 			WaxManager::GetInstance()->Create(
 				startTrans,
@@ -1271,7 +1328,7 @@ void Player::ShieldUp()
 	waxWall.obj.mTransform.position = obj.mTransform.position;
 
 	if (RInput::GetInstance()->GetPadButtonDown(XINPUT_GAMEPAD_X) ||
-		RInput::GetKeyDown(DIK_Z)) {
+		RInput::GetKeyDown(DIK_Z) && WaxManager::GetInstance()->notCollect) {
 		//パリィ状態でなければ出現
 		if (!waxWall.GetParry()) {
 			if (waxWall.StartCheck(waxStock)) {
@@ -1279,14 +1336,19 @@ void Player::ShieldUp()
 				WaxLeakOut(waxWall.START_CHECK_WAXNUM);
 
 				waxWall.Start();
+
+				RAudio::Play("PShield", 0.8f);
 			}
 		}
 	}
 
-	//毎フレーム放してるかチェック
-	if (RInput::GetInstance()->GetPadButtonUp(XINPUT_GAMEPAD_X) || RInput::GetKeyUp(DIK_Z)) {
-		//離したら終了
-		waxWall.End();
+	if (waxWall.GetParry() || waxWall.GetLeakOutMode())
+	{
+		//毎フレーム放してるかチェック
+		if (RInput::GetInstance()->GetPadButtonUp(XINPUT_GAMEPAD_X) || RInput::GetKeyUp(DIK_Z)) {
+			//離したら終了
+			waxWall.End();
+		}
 	}
 
 	//ロウ漏れモードなら
@@ -1400,4 +1462,29 @@ GraphicsPipeline* Player::GetTankWaterPipelineB()
 
 	desc.RasterizerState.CullMode = D3D12_CULL_MODE_FRONT;
 	return &GraphicsPipeline::GetOrCreate("TankWaterBack", desc);
+}
+
+RootSignature* Player::GetTankMeterRootSig()
+{
+	RootSignatureDesc desc = RDirectX::GetDefRootSignature().mDesc;
+
+	desc.RootParamaters.emplace_back();
+
+	desc.RootParamaters.back().ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;
+	desc.RootParamaters.back().Descriptor.ShaderRegister = 10;
+	desc.RootParamaters.back().Descriptor.RegisterSpace = 0;
+	desc.RootParamaters.back().ShaderVisibility = D3D12_SHADER_VISIBILITY_ALL;
+
+	desc.Flags = D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT;
+	return &RootSignature::GetOrCreate("TankMeter", desc);
+}
+
+GraphicsPipeline* Player::GetTankMeterPipeline()
+{
+	PipelineStateDesc desc = RDirectX::GetDefPipeline().mDesc;
+	desc.pRootSignature = GetTankWaterRootSig()->mPtr.Get();
+	desc.PS = Shader::GetOrCreate("TankMeterPS", "./Shader/TankWater/TankMeterPS.hlsl", "main", "ps_5_1");
+
+	desc.RasterizerState.CullMode = D3D12_CULL_MODE_NONE;
+	return &GraphicsPipeline::GetOrCreate("TankMeter", desc);
 }

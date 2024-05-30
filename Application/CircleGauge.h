@@ -14,9 +14,11 @@ public:
 	//0でsprite、1でbillboard
 	CircleGauge(bool mode_ = 0);
 
-	void Init();
+	void Init(const std::string& title_ = "CircleGauge_Def");
 	void Update();
 	void Draw();
+
+	void ImGui();
 
 	void SetTexture(TextureHandle texture);
 	void SetBillboardSize(Vector2 size);
@@ -33,11 +35,11 @@ private:
 public:
 	Transform baseTrans;
 
-	float radian = 0.0f;
+	float baseRadian = 0.0f;
+	float rate = 1.0f;
 
 	float angle = 0.0f;
-	bool isOutside = false;
-
+	
 private:
 	BillboardImage billboard;
 	Sprite sprite;
@@ -46,6 +48,12 @@ private:
 
 	//0でsprite、1でbillboard
 	bool mode = false;
+
+	float nowRadian = 0.0f;
+	float baseMax = 0.0f;
+	float baseMin = 0.0f;
+
+	std::string title = "";
 
 	RootSignature mRootSignature;
 	GraphicsPipeline mPipelineState;

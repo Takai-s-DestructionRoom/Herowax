@@ -43,7 +43,11 @@ ProtoScene::ProtoScene()
 
 	RAudio::Load("Resources/Sounds/BGM/Ingame.wav", "Normal");
 	RAudio::Load("Resources/Sounds/BGM/Boss.wav", "Boss");
+	RAudio::Load("Resources/Sounds/BGM/Gameclear.wav", "Clear");
+	
 	RAudio::Load("Resources/Sounds/SE/P_attackHit.wav", "Hit");
+	RAudio::Load("Resources/Sounds/SE/playerParry.wav", "Parry");
+	RAudio::Load("Resources/Sounds/SE/playerGuard.wav", "Guard");
 
 	ControlUI::LoadResource();
 	TimerUI::LoadResource();
@@ -110,6 +114,7 @@ void ProtoScene::Update()
 	//初期化周り
 	InstantDrawer::DrawInit();
 	WaxManager::GetInstance()->slimeWax.Reset();
+	player.Reset();
 
 	//ボス撃破シーンに切り替え
 	if (Util::debugBool) {
@@ -131,6 +136,15 @@ void ProtoScene::Update()
 		}
 	}
 
+	if (player.hp <= 0)
+	{
+		if (RAudio::IsPlaying("Boss") || RAudio::IsPlaying("Normal"))
+		{
+			RAudio::Stop("Boss");
+			RAudio::Stop("Normal");
+		}
+	}
+
 	SceneTrance::GetInstance()->Update();
 
 	//ボス撃破シーンに遷移
@@ -143,7 +157,10 @@ void ProtoScene::Update()
 		RAudio::Stop("Boss");
 		RAudio::Stop("Normal");
 
+		
+
 		player.isMove = false;
+		player.SetIsGodmode(true);	//プレイヤー無敵に
 		Boss::GetInstance()->isDead = true;
 
 		SceneTrance::GetInstance()->SetIsChange(false);	//忘れずに
@@ -351,7 +368,7 @@ void ProtoScene::Update()
 	for (auto& enemy : EnemyManager::GetInstance()->enemys)
 	{
 		//蝋と当たり判定をする前に、足盗られは毎フレーム解除判定を行う
-		if (enemy->GetState() == "Slow") {
+		if (enemy->GetState() == EnemySlow::GetStateStr()) {
 			enemy->ChangeState<EnemyNormal>();
 		}
 	}
@@ -376,6 +393,12 @@ void ProtoScene::Update()
 					if (isShieldCollision && wax->isSolid == false && wax->isGround == false) {
 						wax->isReverse = true;
 						tank->GetShield()->Hit(1);
+
+						if (!RAudio::IsPlaying("Parry"))
+						{
+							RAudio::Play("Parry", 0.8f);
+						}
+						
 					}
 				}
 
@@ -440,9 +463,6 @@ void ProtoScene::Update()
 		}
 	}
 
-	//吸収ボタンを押して、吸収状態の敵が一匹もいないなら吸収できる
-	bool isCollected2 = player.GetWaxCollectButtonDown() && !EnemyManager::GetInstance()->GetNowCollectEnemy();
-
 	for (auto& enemy : EnemyManager::GetInstance()->enemys)
 	{
 		//プレイヤーとの当たり判定
@@ -474,6 +494,12 @@ void ProtoScene::Update()
 						Tank* tank = static_cast<Tank*>(enemy.get());
 						if (player.GetWaxWall()->GetParry()) {
 							tank->GetShield()->Break();
+
+							if (!RAudio::IsPlaying("Parry"))
+							{
+								RAudio::Play("Parry", 0.8f);
+							}
+							
 						}
 						else
 						{
@@ -481,6 +507,11 @@ void ProtoScene::Update()
 							consum = max(consum, 1);
 
 							player.WaxLeakOut(consum);
+
+							if (!RAudio::IsPlaying("Guard"))
+							{
+								RAudio::Play("Guard", 0.8f);
+							}
 						}
 					}
 				}
@@ -494,21 +525,15 @@ void ProtoScene::Update()
 				player.DealDamage(EnemyManager::GetInstance()->GetContactAttackPower());
 			}
 		}
-		//回収ボタン押されたときに固まってるなら吸収
-		if (isCollected2 && enemy->GetIsSolid() &&
-			ColPrimitive3D::RayToSphereCol(player.collectCol, enemy->collider))
-		{
-			//回収状態に遷移
-			enemy->collectPos = player.GetPos();
-			enemy->isCollect = true;
-			enemy->ChangeState<EnemyCollect>();
-		}
-	}
-
-	int32_t nowPlusNum = EnemyManager::GetInstance()->collectNum;
-	if (nowPlusNum > 0) {
-		player.waxCollectAmount += nowPlusNum;
-		player.MaxWaxPlus(nowPlusNum);
+		////回収ボタン押されたときに固まってるなら吸収
+		//if (isCollected2 && enemy->GetIsSolid() &&
+		//	ColPrimitive3D::RayToSphereCol(player.collectCol, enemy->collider))
+		//{
+		//	//回収状態に遷移
+		//	enemy->collectPos = player.GetPos();
+		//	enemy->isCollect = true;
+		//	enemy->ChangeState<EnemyCollect>();
+		//}
 	}
 
 	if (isHitSound && !player.soundFlag) {
@@ -528,6 +553,8 @@ void ProtoScene::Update()
 				if (player.GetWaxWall()->GetParry()) {
 					//パリィ出来たら跳ね返す
 					shot->Reversal();
+
+					RAudio::Play("Parry", 0.8f);
 				}
 				else
 				{
@@ -537,6 +564,8 @@ void ProtoScene::Update()
 
 					player.WaxLeakOut(consum);
 					shot->SetIsAlive(false);
+
+					RAudio::Play("Guard", 0.8f);
 				}
 
 				//判定に成功した時点で、プレイヤーと衝突しないように処理をスキップ
@@ -560,6 +589,8 @@ void ProtoScene::Update()
 				if (ColPrimitive3D::CheckSphereToSphere(shot->collider, enemy->collider) &&
 					shot->GetIsReversal()) {
 					shot->SetIsAlive(false);
+
+					RAudio::Play("Hit");
 
 					//enemyにダメージ
 					Vector3 knockVec = enemy->GetPos() - shot->GetPos();

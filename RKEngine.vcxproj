@@ -168,6 +168,7 @@
     <ClCompile Include="Application\CircleGauge.cpp" />
     <ClCompile Include="Application\UI\BossAppUI.cpp" />
     <ClCompile Include="Application\Chara\Boss\BossFallAttack.cpp" />
+    <ClCompile Include="Application\UI\BonusUI.cpp" />
     <ClCompile Include="Engine\Particle\DirectionalParticle.cpp" />
     <ClCompile Include="Engine\Collision\AABBCollider.cpp" />
     <ClCompile Include="Application\Chara\Enemy\EnemySpawner.cpp" />
@@ -313,6 +314,7 @@
     <ClCompile Include="Application\WaxWall.cpp" />
     <ClCompile Include="Application\MetaBall2D.cpp" />
     <ClCompile Include="Application\UI\WaveUI.cpp" />
+    <ClCompile Include="Application\Scene\WaxSceneTransition.cpp" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Shader\MetaballRenderer\MetaballRendererPS.hlsl">
@@ -895,6 +897,14 @@
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='DebugIT|x64'">5.0</ShaderModel>
     </FxCompile>
+    <FxCompile Include="Shader\TankWater\TankMeterPS.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.1</ShaderModel>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='DebugIT|x64'">Pixel</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='DebugIT|x64'">5.1</ShaderModel>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.1</ShaderModel>
+    </FxCompile>
     <FxCompile Include="Shader\TankWater\TankWaterPS.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.1</ShaderModel>
@@ -979,6 +989,7 @@
     <ClInclude Include="Application\CircleGauge.h" />
     <ClInclude Include="Application\UI\BossAppUI.h" />
     <ClInclude Include="Application\Chara\Boss\BossFallAttack.h" />
+    <ClInclude Include="Application\UI\BonusUI.h" />
     <ClInclude Include="Engine\Particle\DirectionalParticle.h" />
     <ClInclude Include="Engine\Collision\AABBCollider.h" />
     <ClInclude Include="Application\Chara\Enemy\EnemySpawner.h" />
@@ -1129,6 +1140,7 @@
     <ClInclude Include="Application\WaxWall.h" />
     <ClInclude Include="Application\MetaBall2D.h" />
     <ClInclude Include="Application\UI\WaveUI.h" />
+    <ClInclude Include="Application\Scene\WaxSceneTransition.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Shader\MetaballRenderer\MetaballRenderer.hlsli" />

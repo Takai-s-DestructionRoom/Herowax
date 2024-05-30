@@ -7,6 +7,7 @@
 #include "Camera.h"
 #include "Float4.h"
 #include "ColPrimitive3D.h"
+#include "RImGui.h"
 
 EnemyNormal::EnemyNormal()
 {
@@ -19,8 +20,6 @@ void EnemyNormal::Update(Enemy* enemy)
 	enemy->SetSlowMag(0.f);
 	enemy->SetSlowCoatingMag(0.f);
 	enemy->SetStateStr(EnemyNormal::GetStateStr());
-
-	enemy->obj.mTuneMaterial.mColor = Color::kWhite;
 
 	//ここからの遷移は当たり判定に任せる
 }
@@ -38,8 +37,6 @@ EnemySlow::EnemySlow()
 void EnemySlow::Update(Enemy* enemy)
 {
 	enemy->SetStateStr(EnemySlow::GetStateStr());
-
-	enemy->obj.mTuneMaterial.mColor = Color::kBlack;
 
 	//足とられた時の減速率はimguiでいじったものを基準とするのでここではいじらない
 	enemy->SetSlowCoatingMag(0.f);
@@ -167,10 +164,14 @@ EnemyCollect::EnemyCollect()
 
 void EnemyCollect::Update(Enemy* enemy)
 {
+	if (EnemyManager::GetInstance()->collectTarget == nullptr)
+	{
+		enemy->ChangeState<EnemyNormal>();
+		return;
+	}
+
 	enemy->isCollect = true;
 
-	oldTimeRate = enemy->collectTimer.GetTimeRate();
-	enemy->collectTimer.Update();
 	if (isStart) {
 		enemy->collectTimer.Start();
 		isStart = false;
@@ -178,15 +179,16 @@ void EnemyCollect::Update(Enemy* enemy)
 	}
 	enemy->SetStateStr(EnemyCollect::GetStateStr());
 
-	Vector3 now = OutQuadVec3(startPos, enemy->collectPos, enemy->collectTimer.GetTimeRate());
-	Vector3 old = OutQuadVec3(startPos, enemy->collectPos, oldTimeRate);
-	now.y = 0;
-	old.y = 0;
-	//現在フレームの移動量の分だけをmoveVecに足す
-	enemy->MoveVecPlus(now - old);
+	collectTimer.Roop();
+	if (collectTimer.GetRoopEnd()) {
+		accel += 0.1f;
+	}
 
-	//徐々にちっちゃくなる(ロウとまぎれてよくわかんなくなるから消してる)
-	//enemy->obj.mTransform.scale = OutQuadVec3(enemy->oriScale, Vector3::ZERO, enemy->collectTimer.GetTimeRate());
+	Vector3 tVec = EnemyManager::GetInstance()->collectTarget->obj.mTransform.position - enemy->GetPos();
+	tVec.Normalize();
+	tVec.y = 0;
+	//現在フレームの移動量の分だけをmoveVecに足す
+	enemy->MoveVecPlus(tVec * collectSpeed * accel);
 
 	Vector3 startRota = {0,0,0};
 	Vector3 endRota = {0,Util::AngleToRadian(360.f),0};
@@ -196,12 +198,11 @@ void EnemyCollect::Update(Enemy* enemy)
 	enemy->RotVecPlus(InQuadVec3(startRota, endRota, enemy->collectTimer.GetTimeRate()));
 
 	//到達したら殺す
-	if (enemy->collectTimer.GetEnd())
+	if (ColPrimitive3D::CheckSphereToSphere(enemy->collider,
+		EnemyManager::GetInstance()->collectTarget->collider))
 	{
 		enemy->SetDeath();
 		accel = 0.f;
-
-		//enemyManager::GetInstance()->isCollected = true;
 	}
 }
 

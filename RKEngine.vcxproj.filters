@@ -346,9 +346,6 @@
     <Filter Include="シェーダー ファイル\BillboardRadial360">
       <UniqueIdentifier>{bc4cc1a6-7ac1-4994-a290-d73c1aea5fa1}</UniqueIdentifier>
     </Filter>
-    <Filter Include="ソース ファイル\Application\Object\WaxShield">
-      <UniqueIdentifier>{9bb9ce3c-36ee-4e0a-b21a-b10ace3466da}</UniqueIdentifier>
-    </Filter>
     <Filter Include="ヘッダー ファイル\Application\Object\WaxShield">
       <UniqueIdentifier>{3aadd53d-74a5-4f99-bd4e-2b52b2eae293}</UniqueIdentifier>
     </Filter>
@@ -372,6 +369,9 @@
     </Filter>
     <Filter Include="シェーダー ファイル\SlimeWax_Light">
       <UniqueIdentifier>{7c2d467d-7722-4a38-92ef-beee19bb3e88}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\Application\Object\WaxShield">
+      <UniqueIdentifier>{9bb9ce3c-36ee-4e0a-b21a-b10ace3466da}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -843,9 +843,6 @@
     <ClCompile Include="Application\CircleGauge.cpp">
       <Filter>ソース ファイル\Application\UI</Filter>
     </ClCompile>
-    <ClCompile Include="Application\WaxVisual.cpp">
-      <Filter>ソース ファイル\Application\Object\WaxVisual</Filter>
-    </ClCompile>
     <ClCompile Include="Engine\Particle\HomingParticle2D.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
@@ -878,6 +875,15 @@
     </ClCompile>
     <ClCompile Include="Application\UI\WaveUI.cpp">
       <Filter>ソース ファイル\Application\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="Application\UI\BonusUI.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Application\Scene\WaxSceneTransition.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Application\WaxVisual.cpp">
+      <Filter>ソース ファイル\Application\Object\WaxVisual</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -1098,8 +1104,6 @@
     <FxCompile Include="Shader\SlimeShader\WaxShader3VS.hlsl">
       <Filter>シェーダー ファイル\SlimeShader</Filter>
     </FxCompile>
-    <FxCompile Include="Shader\MetaballRenderer\MetaballRendererPS.hlsl" />
-    <FxCompile Include="Shader\MetaballRenderer\MetaballRendererVS.hlsl" />
     <FxCompile Include="Shader\TankWater\TankWaterPS.hlsl">
       <Filter>シェーダー ファイル\TankWater</Filter>
     </FxCompile>
@@ -1111,6 +1115,15 @@
     </FxCompile>
     <FxCompile Include="Shader\SlimeWax_Light\SlimeWaxLightPS.hlsl">
       <Filter>シェーダー ファイル\SlimeWax_Light</Filter>
+    </FxCompile>
+    <FxCompile Include="Shader\MetaballRenderer\MetaballRendererPS.hlsl">
+      <Filter>シェーダー ファイル\MetaballRenderer</Filter>
+    </FxCompile>
+    <FxCompile Include="Shader\MetaballRenderer\MetaballRendererVS.hlsl">
+      <Filter>シェーダー ファイル\MetaballRenderer</Filter>
+    </FxCompile>
+    <FxCompile Include="Shader\TankWater\TankMeterPS.hlsl">
+      <Filter>シェーダー ファイル\TankWater</Filter>
     </FxCompile>
   </ItemGroup>
   <ItemGroup>
@@ -1642,6 +1655,12 @@
     <ClInclude Include="Application\UI\WaveUI.h">
       <Filter>ヘッダー ファイル\Application\UI</Filter>
     </ClInclude>
+    <ClInclude Include="Application\UI\BonusUI.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Application\Scene\WaxSceneTransition.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="Shader\Bloom\Bloom.hlsli">
@@ -1744,9 +1763,11 @@
     <None Include="Shader\SlimeShader\WaxShader3.hlsli">
       <Filter>シェーダー ファイル\SlimeShader</Filter>
     </None>
-    <None Include="Shader\MetaballRenderer\MetaballRenderer.hlsli" />
     <None Include="Shader\SlimeWax_Light\SlimeWaxLight.hlsli">
       <Filter>シェーダー ファイル\SlimeWax_Light</Filter>
+    </None>
+    <None Include="Shader\MetaballRenderer\MetaballRenderer.hlsli">
+      <Filter>シェーダー ファイル\MetaballRenderer</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>
