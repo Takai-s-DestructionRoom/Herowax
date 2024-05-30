@@ -88,6 +88,9 @@ void WaveManager::Imgui()
 		ImGui::Begin("WaveManager");
 		ImGui::Text("敵の数:%d", (int32_t)EnemyManager::GetInstance()->enemys.size());
 		ImGui::Text("waitTimer:%f", waitTimer.GetTimeRate());
+		ImGui::Text("MAX_NUM:%d", MAX_NUM);
+		ImGui::Text("debugNum:%d", debugNum);
+		ImGui::Text("waveNum:%d", waveNum);
 		if (ImGui::Button("敵を全消し(次のウェーブに進める)")) {
 			EnemyManager::GetInstance()->enemys.clear();
 		}
