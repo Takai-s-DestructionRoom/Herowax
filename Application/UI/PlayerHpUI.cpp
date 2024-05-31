@@ -37,7 +37,8 @@ void PlayerHpUI::Update()
 	baseMin = 360.f - baseMax;
 
 	if (player) {
-		baseRadian = (1.0f - (player->hp / player->maxHP)) * 360.f;
+		oldRadian = baseRadian;
+		baseRadian += (((1.0f - (player->hp / player->maxHP)) * 360.f) - oldRadian) / 7.0f;
 
 		circleGauge.baseTrans.position = player->obj.mTransform.position;
 

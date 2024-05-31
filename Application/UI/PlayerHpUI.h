@@ -22,6 +22,7 @@ private:
 	float baseMin = 0.0f;
 	float baseMax = 360.f;
 	float baseRadian = 0.0f;
+	float oldRadian = 0.0f;
 
 	Player* player = nullptr;
 	float playerRangeXZ = 3.0f;

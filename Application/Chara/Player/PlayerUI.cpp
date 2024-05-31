@@ -83,7 +83,8 @@ void PlayerUI::Update(Player* player)
 	float onePushSize = (72.f / (float)player->waxNum);
 	
 	//現在のロウの値を0.0f~1.0f~2.0f..で表す
-	baseRadian = ((onePushSize * (float)player->waxStock)) / 360.f;
+	oldBaseRadian = baseRadian;
+	baseRadian += ((((onePushSize * (float)player->waxStock)) / 360.f) - oldBaseRadian) / 5.0f;
 	baseBackRadian = ((onePushSize * (float)player->maxWaxStock)) / 360.f;
 
 	//0以下にならないように丸め

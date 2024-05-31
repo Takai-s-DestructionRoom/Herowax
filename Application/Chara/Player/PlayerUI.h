@@ -37,6 +37,8 @@ private:
 	float baseRadian = 0.0f;		//全体のロウの総量をゲージ事に0.0f~1.0fで管理
 	float baseBackRadian = 0.0f;	//全体のロウの総量をゲージ事に0.0f~1.0fで管理
 									//ゲージが2本になったら1.0f~2.0fになる
+	float oldBaseRadian = 0;
+
 public:
 	static void LoadResource();
 	PlayerUI();
