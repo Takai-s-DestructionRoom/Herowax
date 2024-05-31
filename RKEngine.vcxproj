@@ -316,6 +316,7 @@
     <ClCompile Include="Application\MetaBall2D.cpp" />
     <ClCompile Include="Application\UI\WaveUI.cpp" />
     <ClCompile Include="Application\Scene\WaxSceneTransition.cpp" />
+    <ClCompile Include="Application\EventScene\ParryTutorialScene.cpp" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Shader\MetaballRenderer\MetaballRendererPS.hlsl">
@@ -1159,6 +1160,7 @@
     <ClInclude Include="Application\MetaBall2D.h" />
     <ClInclude Include="Application\UI\WaveUI.h" />
     <ClInclude Include="Application\Scene\WaxSceneTransition.h" />
+    <ClInclude Include="Application\EventScene\ParryTutorialScene.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Shader\MetaballRenderer\MetaballRenderer.hlsli" />

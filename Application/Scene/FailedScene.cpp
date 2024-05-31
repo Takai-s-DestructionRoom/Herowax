@@ -4,7 +4,7 @@
 #include "RInput.h"
 #include "SceneManager.h"
 #include "InstantDrawer.h"
-#include "SimpleSceneTransition.h"
+#include "WaxSceneTransition.h"
 #include "Boss.h"
 #include "Level.h"
 #include <RAudio.h>
@@ -56,7 +56,7 @@ void FailedScene::Init()
 
 	SpotLightManager::GetInstance()->Init(&light);
 
-	RAudio::Play("Over", 0.3f, 1.0f, true);
+	RAudio::Play("Over", 0.5f, 1.0f, true);
 }
 
 void FailedScene::Update()
@@ -86,7 +86,7 @@ void FailedScene::Update()
 	if (button && !sceneChange)
 	{
 		RAudio::Play("Select", 0.6f);
-		SceneManager::GetInstance()->Change<TitleScene, SimpleSceneTransition>();
+		SceneManager::GetInstance()->Change<TitleScene, WaxSceneTransition>();
 		sceneChange = true;
 
 		RAudio::Stop("Over");

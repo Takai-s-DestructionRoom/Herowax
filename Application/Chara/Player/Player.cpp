@@ -16,13 +16,14 @@
 #include "BossDeadState.h"
 #include "TitleScene.h"
 #include "SceneManager.h"
-#include "SimpleSceneTransition.h"
+#include "WaxSceneTransition.h"
 #include "RAudio.h"
 #include "EnemyManager.h"
 #include "EventCaller.h"
 #include "FailedScene.h"
 #include "GameCamera.h"
 #include <SimpleDrawer.h>
+#include "ParryTutorialScene.h"
 
 Player::Player() :GameObject(),
 moveSpeed(1.f), moveAccelAmount(0.05f), isGround(true), hp(0), maxHP(10.f),
@@ -71,6 +72,8 @@ isFireStock(false), isWaxStock(true), waxCollectAmount(0)
 
 	godmodeTimer.maxTime_ = Parameter::GetParam(extract, "無敵時間", 10.f);
 	maxHP = Parameter::GetParam(extract, "最大HP", 10.0f);
+	pinchPercent = Parameter::GetParam(extract, "HPがローとみなす割合", 0.2f);
+	pinchFlashTimer = Parameter::GetParam(extract, "ピンチ時の点滅タイマー", 0.5f);
 
 	minRange = Parameter::GetParam(extract, "攻撃範囲_最小", minRange);
 	maxRange = Parameter::GetParam(extract, "攻撃範囲_最大", maxRange);
@@ -99,10 +102,10 @@ void Player::Init()
 	RAudio::Load("Resources/Sounds/SE/P_attack.wav", "Attack");
 	RAudio::Load("Resources/Sounds/SE/P_attackHit.wav", "Hit");
 	RAudio::Load("Resources/Sounds/SE/P_enemyCollect.wav", "eCollect");
+	RAudio::Load("Resources/Sounds/SE/playerLvUp.wav", "LevelUp");
 
 	RAudio::Load("Resources/Sounds/SE/playerShield.wav", "PShield");
-
-
+	
 
 	obj = PaintableModelObj("playerBag");
 	humanObj = ModelObj("playerHuman");
@@ -255,13 +258,25 @@ void Player::Update()
 	//	isJumping = false;
 	//}
 
+	if (hp / maxHP <= pinchPercent)
+	{
+		pinchFlashTimer.RoopReverse();
+
+		humanObj.mTuneMaterial.mColor.r = 
+			Easing::InBack(Color::kWhite.r,Color::kRed.r, pinchFlashTimer.GetTimeRate());
+		humanObj.mTuneMaterial.mColor.g =
+			Easing::InBack(Color::kWhite.g, Color::kRed.g, pinchFlashTimer.GetTimeRate());
+		humanObj.mTuneMaterial.mColor.b =
+			Easing::InBack(Color::kWhite.b, Color::kRed.b, pinchFlashTimer.GetTimeRate());
+	}
+
 	//HP0になったら死ぬ
 	if (hp <= 0)
 	{
 		//死んだ瞬間なら遷移を呼ぶ
 		if (isAlive && !Util::debugBool) {
 			//シーン遷移
-			SceneManager::GetInstance()->Change<FailedScene, SimpleSceneTransition>();
+			SceneManager::GetInstance()->Change<FailedScene, WaxSceneTransition>();
 		}
 		isAlive = false;
 	}
@@ -276,6 +291,9 @@ void Player::Update()
 	if (backwardTimer.GetStarted()) {
 		float radStartX = Util::AngleToRadian(-30.0f);
 		rotVec.x = Easing::InQuad(radStartX, 0, backwardTimer.GetTimeRate());
+		Vector3 vector = -GetFrontVec();
+		vector *= 2.0f;
+		tankOffset = InQuadVec3(vector, {0,0,0}, backwardTimer.GetTimeRate());
 	}
 
 	//回転を適用
@@ -415,7 +433,7 @@ void Player::Update()
 	humanObj.TransferBuffer(Camera::sNowCamera->mViewProjection);
 
 	//タンクデータ
-	tankWaterObj.mTransform.position = tankMeterObj.mTransform.position = obj.mTransform.position + Vector3(0, 1.0f + bagScale / 2.0f, 0);
+	tankWaterObj.mTransform.position = tankMeterObj.mTransform.position = obj.mTransform.position + Vector3(0, 1.0f + bagScale / 2.0f, 0) + tankOffset;
 	tankWaterObj.mTransform.scale = obj.mTransform.scale - Vector3(0.8f, 0.8f, 0.8f);
 	tankWaterObj.mTransform.UpdateMatrix();
 	tankWaterObj.mTuneMaterial.mAmbient = { 10, 10, 10 };
@@ -477,6 +495,8 @@ void Player::Update()
 	if ((RInput::GetInstance()->GetRTrigger() || RInput::GetKey(DIK_SPACE)) && waxStock <= 0)
 	{
 		ui.EmptyUIUpdate();
+
+
 	}
 
 	waxUI.Update(obj.mTransform.position);
@@ -499,6 +519,8 @@ void Player::Update()
 		ImGui::Checkbox("吸収フラグ", &WaxManager::GetInstance()->notCollect);
 		ImGui::Text("現在のHP:%f", hp);
 		ImGui::InputFloat("最大HP:", &maxHP, 1.0f);
+		ImGui::InputFloat("HPがローとみなす割合:", &pinchPercent, 0.05f);
+		ImGui::InputFloat("ピンチ時の点滅タイマー:", &pinchFlashTimer.maxTime_, 0.05f);
 		ImGui::Text("Lスティック移動、Aボタンジャンプ、Rで攻撃,Lでロウ回収");
 		ImGui::Text("WASD移動、スペースジャンプ、右クリで攻撃,Pでパブロ攻撃,Qでロウ回収");
 
@@ -618,6 +640,8 @@ void Player::Update()
 			Parameter::Save("プレイヤーの色B", obj.mTuneMaterial.mColor.b);
 			Parameter::Save("無敵時間", godmodeTimer.maxTime_);
 			Parameter::Save("最大HP", maxHP);
+			Parameter::Save("HPがローとみなす割合", pinchPercent);
+			Parameter::Save("ピンチ時の点滅タイマー", pinchFlashTimer.maxTime_);
 			Parameter::Save("攻撃範囲_最小", minRange);
 			Parameter::Save("攻撃範囲_最大", maxRange);
 			Parameter::Save("人の位置Y", humanOffset);
@@ -1063,7 +1087,7 @@ void Player::WaxCollect()
 	
 		if (!RAudio::IsPlaying("Collect"))
 		{
-			RAudio::Play("Collect", 0.6f);
+			RAudio::Play("Collect");
 		}
 	}
 
@@ -1225,6 +1249,11 @@ void Player::MaxWaxPlus(int32_t plus)
 	meterLvUpTime = 1.0f;
 	meterOldUpper = tankMeterBuff->upper;
 	waxUI.Start();
+	ParticleManager::GetInstance()->
+		AddSimple(obj.mTransform.position,"levelup");
+
+	//レベルアップ音
+	RAudio::Play("LevelUp");
 }
 
 void Player::WaxLeakOut(int32_t leakNum, float minLeakLength, float maxLeakLength)
@@ -1401,6 +1430,10 @@ bool Player::GetWaxCollectButtonDown()
 	return (RInput::GetInstance()->GetLTriggerDown() ||
 		RInput::GetInstance()->GetKeyDown(DIK_Q));
 }
+
+bool Player::GetParryButtonDown() {
+	return RInput::GetInstance()->GetPadButtonDown(XINPUT_GAMEPAD_X) || RInput::GetKeyDown(DIK_Z);
+};
 
 void AfterImage::Init()
 {

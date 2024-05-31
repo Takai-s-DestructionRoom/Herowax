@@ -6,5 +6,5 @@ tai_pos:743_102_0
 tai_scale:1_1_1
 enemyAllKillText_pos:635_45_0
 enemyAllKillText_scale:1_1_1
-waveBase_pos:260_643_0
-waveBase_scale:0.8_0.8_1
+waveBase_pos:1091_43_1
+waveBase_scale:0.5_0.5_1

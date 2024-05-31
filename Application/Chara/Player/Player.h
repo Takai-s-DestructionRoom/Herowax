@@ -62,6 +62,9 @@ public:
 
 	Easing::EaseTimer damageCoolTimer;	//再びダメージくらうようになるまでのクールタイム
 
+	float pinchPercent;					//HPローとみなす割合(0.f~1.f)
+	Easing::EaseTimer pinchFlashTimer;	//HPローの時の点滅タイマー
+
 	//------------ 攻撃関連 ------------//
 	bool isAttack;					//攻撃中かフラグ
 	float minRange;			//最大射程
@@ -184,6 +187,8 @@ private:
 	};
 	SRConstBuffer<TankMeterData> tankMeterBuff;
 
+	Vector3 tankOffset = {};
+
 	Vector3 modelOffset;//描画位置をずらす
 
 	WaxUI waxUI;
@@ -259,14 +264,18 @@ public:
 
 	void Reset();	//Updateの最初で初期化するもの
 
-	WaxWall* GetWaxWall() {
-		if (waxWall.isAlive) {
+	WaxWall* GetWaxWall(bool getforce = false) {
+		if (waxWall.isAlive || getforce) {
 			return &waxWall;
 		}
 		else {
 			return nullptr;
 		}
 	};
+
+	static bool GetParryButtonDown();
+
+	bool parryTutorial = false;
 
 private:
 	void DamageBlink();	//被弾時の点滅(後々もっとリッチなのに置き換え予定)

@@ -18,7 +18,7 @@
 #include "SceneTrance.h"
 #include "EventCaller.h"
 #include "TitleScene.h"
-#include "SimpleSceneTransition.h"
+#include "WaxSceneTransition.h"
 #include "RAudio.h"
 #include "Boss.h"
 #include "LightObject.h"
@@ -26,6 +26,7 @@
 #include "Wave.h"
 #include "Tank.h"
 #include "BombSolider.h"
+#include "ParryTutorialScene.h"
 
 ProtoScene::ProtoScene()
 {
@@ -147,6 +148,17 @@ void ProtoScene::Update()
 
 	SceneTrance::GetInstance()->Update();
 
+	if ((EventCaller::GetEventCallStr() == ParryTutorialScene::GetEventCallStr())) {
+		//パリィのチュートリアルに遷移
+		EventCaller::GetInstance()->eventScene = std::make_unique<ParryTutorialScene>();
+		EventCaller::GetInstance()->eventScene->Init(Camera::sNowCamera->mViewProjection.mTarget);
+	
+		player.isMove = false;
+		EnemyManager::GetInstance()->isStop = true;
+
+		EventCaller::EventCallStrReset();
+	}
+
 	//ボス撃破シーンに遷移
 	if ((EventCaller::GetEventCallStr() == BossDeadScene::GetEventCallStr()) &&
 		SceneTrance::GetInstance()->GetIsChange())
@@ -156,8 +168,6 @@ void ProtoScene::Update()
 
 		RAudio::Stop("Boss");
 		RAudio::Stop("Normal");
-
-		
 
 		player.isMove = false;
 		player.SetIsGodmode(true);	//プレイヤー無敵に
@@ -176,7 +186,7 @@ void ProtoScene::Update()
 
 		RAudio::Stop("Boss");
 		RAudio::Stop("Normal");
-		RAudio::Play("Boss", 0.5f, 1.0f, true);
+		RAudio::Play("Boss", 0.65f, 1.0f, true);
 
 		player.isMove = false;
 		Boss::GetInstance()->isAppearance = true;
@@ -194,7 +204,8 @@ void ProtoScene::Update()
 	//イベントシーンが終わりカメラが空っぽになったら
 	if (Camera::sNowCamera == nullptr)
 	{
-		GameCamera::GetInstance()->Init();	//カメラ入れる
+		Camera::sNowCamera = &GameCamera::GetInstance()->camera;
+		//カメラ入れる
 		player.isMove = true;
 		EnemyManager::GetInstance()->isStop = false;
 
@@ -208,8 +219,11 @@ void ProtoScene::Update()
 		if (EventCaller::GetNowEventStr() == BossDeadScene::GetEventCallStr()) {
 			RAudio::Stop("Boss");
 			RAudio::Stop("Normal");
-			SceneManager::GetInstance()->Change<TitleScene, SimpleSceneTransition>();
+			SceneManager::GetInstance()->Change<TitleScene, WaxSceneTransition>();
 		}
+
+		Camera::sNowCamera = EventCaller::saveCamera;
+		EventCaller::saveCamera = nullptr;
 
 		EventCaller::NowEventStrReset();
 	}
@@ -290,30 +304,6 @@ void ProtoScene::Update()
 			}
 		}
 	}
-
-	////パーツとの判定
-	//for (auto& part : CollectPartManager::GetInstance()->parts)
-	//{
-	//	if ((int32_t)player.carryingParts.size() <
-	//		CollectPartManager::GetInstance()->GetMaxCarryingNum()) {
-	//		if (ColPrimitive3D::CheckSphereToSphere(part->collider, player.collider)) {
-	//			//一旦複数持てる
-	//			//後でプレイヤー側でフラグ立てて個数制限する
-	//			part->Carrying(&player);
-	//		}
-	//	}
-
-	//	//プレイヤーが持っているなら
-	//	if (part->IsCarrying()) {
-	//		//当たり判定する
-	//		if (ColPrimitive3D::CheckSphereToAABB(player.collider,
-	//			CollectPartManager::GetInstance()->zone.aabbCol)) {
-	//			part->Collect();
-	//			part->SetIsAlive(false);
-	//			CollectPartManager::GetInstance()->zone.Create(*part);
-	//		}
-	//	}
-	//}
 
 	for (auto itr = player.carryingParts.begin(); itr != player.carryingParts.end();)
 	{
@@ -398,7 +388,6 @@ void ProtoScene::Update()
 						{
 							RAudio::Play("Guard", 0.8f);
 						}
-						
 					}
 				}
 
@@ -477,6 +466,19 @@ void ProtoScene::Update()
 		//攻撃中に本体同士がぶつかったらプレイヤーにダメージ
 		if (enemy->GetAttackState() == EnemyNowAttackState::GetStateStr())
 		{
+			//パリィのチュートリアルを呼ぶ
+			if (!player.parryTutorial) {
+				ColPrimitive3D::Sphere eventCollider = player.GetWaxWall(true)->collider;
+				eventCollider.r *= 1.5f;
+				if (ColPrimitive3D::CheckSphereToSphere(enemy->collider,
+					eventCollider) &&
+					enemy->GetIsSolid() == false)
+				{
+					player.parryTutorial = true;
+					EventCaller::EventCall(ParryTutorialScene::GetEventCallStr(),false);
+				}
+			}
+
 			if (ColPrimitive3D::CheckSphereToSphere(enemy->collider, player.collider) && enemy->GetIsSolid() == false)
 			{
 				//ダメージ
@@ -778,7 +780,7 @@ void ProtoScene::Update()
 	{
 		RAudio::Stop("Boss");
 		RAudio::Stop("Normal");
-		SceneManager::GetInstance()->Change<FailedScene, SimpleSceneTransition>();
+		SceneManager::GetInstance()->Change<FailedScene, WaxSceneTransition>();
 	}
 
 	controlUI.Update();
@@ -796,6 +798,7 @@ void ProtoScene::Update()
 		ImGui::Begin("デバッグ");
 		ImGui::Text("デバッグモード中はシーン切り替えが発生しません");
 		ImGui::Text("デバッグモードはF5で切り替えもできます");
+		ImGui::Checkbox("parryTutorial", &player.parryTutorial);
 		if (ImGui::Checkbox("デバッグモード切り替え", &Util::debugBool)) {
 			ImGui::Text("デバッグモード中です");
 		}

@@ -8,12 +8,16 @@
 #include "Camera.h"
 #include "Parameter.h"
 #include "RImGui.h"
+#include "RAudio.h"
+#include "RInput.h"
 
 void PlayerUI::LoadResource()
 {
 	TextureManager::Load("./Resources/UI/wax_empty_back.png", "waxEmptyBack");
 	TextureManager::Load("./Resources/UI/wax_empty_mark.png", "waxEmptyMark");
 	TextureManager::Load("./Resources/UI/wax_empty.png", "waxEmpty");
+	
+	RAudio::Load("Resources/Sounds/SE/waxNull.wav", "empty");
 }
 
 PlayerUI::PlayerUI()
@@ -118,6 +122,11 @@ void PlayerUI::Update(Player* player)
 	};
 
 	GaugeUpdate();
+
+	if (RInput::GetInstance()->GetRTriggerUp() || RInput::GetKeyUp(DIK_SPACE))
+	{
+		RAudio::Stop("empty");
+	};
 
 	if (RImGui::showImGui) {
 		//円形ロウゲージの位置
@@ -300,6 +309,16 @@ void PlayerUI::GaugeDraw()
 
 void PlayerUI::EmptyUIUpdate()
 {
+	if (emptyFlashTimer.GetStarted() == false)
+	{
+
+		//最初の1音だけ
+		if (!RAudio::IsPlaying("empty"))
+		{
+			RAudio::Play("empty", 0.8f);
+		}
+	}
+
 	emptyBackFlashTimer.RoopReverse();
 	emptyFlashTimer.RoopReverse();
 	isEmptyDraw = true;
