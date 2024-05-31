@@ -6,6 +6,9 @@ class ParryTutorialScene : public IEventScene
 {
 private:
 	Vector2 buttonUIPos{};
+	Vector2 textUIPos{};
+
+	Easing::EaseTimer flashingTimer = 1.0f;
 
 public:
 	ParryTutorialScene();

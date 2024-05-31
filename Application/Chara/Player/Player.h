@@ -145,6 +145,9 @@ public:
 	float modelChangeOffset;//モデルのズレに合わせたオフセット
 	bool modelChange = false;
 
+	bool parryTutorial = false;
+	bool eventParry = false;
+
 private:
 	ModelObj attackDrawerObj;			//上記の当たり判定描画オブジェクト
 
@@ -274,8 +277,6 @@ public:
 	};
 
 	static bool GetParryButtonDown();
-
-	bool parryTutorial = false;
 
 private:
 	void DamageBlink();	//被弾時の点滅(後々もっとリッチなのに置き換え予定)

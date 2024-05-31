@@ -467,7 +467,7 @@ void ProtoScene::Update()
 		if (enemy->GetAttackState() == EnemyNowAttackState::GetStateStr())
 		{
 			//パリィのチュートリアルを呼ぶ
-			if (!player.parryTutorial) {
+			if (!player.parryTutorial && WaveManager::Get()->GetNowWave() >= 1) {
 				ColPrimitive3D::Sphere eventCollider = player.GetWaxWall(true)->collider;
 				eventCollider.r *= 1.5f;
 				if (ColPrimitive3D::CheckSphereToSphere(enemy->collider,
@@ -475,14 +475,50 @@ void ProtoScene::Update()
 					enemy->GetIsSolid() == false)
 				{
 					player.parryTutorial = true;
+					player.eventParry = true;
 					EventCaller::EventCall(ParryTutorialScene::GetEventCallStr(),false);
 				}
 			}
 
-			if (ColPrimitive3D::CheckSphereToSphere(enemy->collider, player.collider) && enemy->GetIsSolid() == false)
+			if (ColPrimitive3D::CheckSphereToSphere(enemy->collider, player.collider) && 
+				enemy->GetIsSolid() == false)
 			{
-				//ダメージ
-				player.DealDamage(EnemyManager::GetInstance()->GetNormalAttackPower());
+				//チュートリアルなら無理やりパリィ成功したこととする
+				if (player.eventParry) {
+					if (enemy->enemyTag == Tank::GetEnemyTag())
+					{
+						enemy->ChangeAttackState<EnemyEndAttackState>();
+						Tank* tank = static_cast<Tank*>(enemy.get());
+						
+						tank->GetShield()->Break();
+
+						if (!RAudio::IsPlaying("Parry"))
+						{
+							RAudio::Play("Parry", 0.8f);
+						}
+						player.eventParry = false;
+
+						while (ColPrimitive3D::CheckSphereToSphere(enemy->collider,
+							player.GetWaxWall(true)->collider))
+						{
+							//プレイヤーと判定、当たってるなら押し戻す
+							Vector3 repulsionVec = enemy->GetPos() - player.GetWaxWall(true)->collider.pos;
+							repulsionVec.Normalize();
+							repulsionVec.y = 0;
+
+							//一旦これだけ無理やり足す
+							enemy->obj.mTransform.position += repulsionVec;
+							enemy->collider.pos += repulsionVec;
+
+							//コライダーがもう一度当たらないようにコライダー更新
+							enemy->UpdateCollider();
+						}
+					}
+				}
+				else {
+					//ダメージ
+					player.DealDamage(EnemyManager::GetInstance()->GetNormalAttackPower());
+				}
 			}
 			//攻撃中に本体と盾がぶつかったらそこで敵をストップ(Endに遷移)
 			if (player.GetWaxWall()) {
@@ -492,7 +528,6 @@ void ProtoScene::Update()
 					enemy->ChangeAttackState<EnemyEndAttackState>();
 					//もしパリィ中なら盾を吹っ飛ばす
 					if (enemy->enemyTag == Tank::GetEnemyTag()) {
-
 						Tank* tank = static_cast<Tank*>(enemy.get());
 						if (player.GetWaxWall()->GetParry()) {
 							tank->GetShield()->Break();
@@ -501,7 +536,6 @@ void ProtoScene::Update()
 							{
 								RAudio::Play("Parry", 0.8f);
 							}
-							
 						}
 						else
 						{

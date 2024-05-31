@@ -891,6 +891,12 @@
     <ClCompile Include="Application\EventScene\ParryTutorialScene.cpp">
       <Filter>ソース ファイル\Application\EventScene</Filter>
     </ClCompile>
+    <ClCompile Include="Application\EventScene\MoveTutorialScene.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Application\EventScene\AttackTutorialScene.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Shader\Basic\BasicPS.hlsl">
@@ -1678,6 +1684,12 @@
     </ClInclude>
     <ClInclude Include="Application\EventScene\ParryTutorialScene.h">
       <Filter>ヘッダー ファイル\Application\EventScene</Filter>
+    </ClInclude>
+    <ClInclude Include="Application\EventScene\MoveTutorialScene.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Application\EventScene\AttackTutorialScene.h">
+      <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
