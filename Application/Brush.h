@@ -9,13 +9,18 @@ public:
 	void Update();
 	void Draw();
 
-	void Start(Vector2 sizeMin_, Vector2 sizeMax_);
+	void Close(Vector2 pos,Vector2 sizeMin_, Vector2 sizeMax_);
+	void Open(Vector2 pos,Vector2 sizeMin_, Vector2 sizeMax_);
+	
+	bool Brush::GetOpenEnd();
+	bool Brush::GetCloseEnd();
 
 	Sprite sprite;
 	
 	Vector2 sizeMin = {};
 	Vector2 sizeMax = {};
 private:
-	Easing::EaseTimer timer = 0.2f;
+	Easing::EaseTimer openTimer = 0.2f;
+	Easing::EaseTimer closeTimer = 0.2f;
 };
 

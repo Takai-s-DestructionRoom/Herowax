@@ -4,6 +4,7 @@
 #include "SceneManager.h"
 #include "SimpleSceneTransition.h"
 #include "LightObject.h"
+#include "WaxSceneTransition.h"
 
 ResultScene::ResultScene()
 {
@@ -26,7 +27,7 @@ void ResultScene::Update()
 	if (RInput::GetInstance()->GetKeyDown(DIK_F6) ||
 		RInput::GetInstance()->GetPadButtonDown(XINPUT_GAMEPAD_START))
 	{
-		SceneManager::GetInstance()->Change<TitleScene, SimpleSceneTransition>();
+		SceneManager::GetInstance()->Change<TitleScene, WaxSceneTransition>();
 	}
 
 	ResultLogo.mTransform.UpdateMatrix();
