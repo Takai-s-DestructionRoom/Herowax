@@ -1,15 +1,6 @@
 #include "BlinkSpotLightObject.h"
 #include "Util.h"
-
-//タイマーが終わったら、チカチカを開始
-	//タイマーはループ(チカチカのクールタイムにする)
-	//ループ開始時にタイマーの最大時間をランダムで変える
-
-	//チカチカは別で進める
-
-	//チカチカタイマーを用意
-	//3回ループ
-
+#include "Camera.h"
 
 void BlinkSpotLightObject::Init()
 {
@@ -17,6 +8,8 @@ void BlinkSpotLightObject::Init()
 	blinkCoolTimer.Start();
 	
 	count = BLINK_COUNT;
+
+	stickObj = ModelObj(Model::Load("./Resources/Model/lightStick/lightStick.obj", "lightStick"));
 
 	SpotLightObject::Init();
 }
@@ -66,6 +59,20 @@ void BlinkSpotLightObject::Update()
 		//タイマーが終わるタイミングでカウントを加算
 		count++;
 	}
+
+	stickObj.mTransform.UpdateMatrix();
+	stickObj.TransferBuffer(Camera::sNowCamera->mViewProjection);
+}
+
+void BlinkSpotLightObject::Draw()
+{
+	//インデックスが上限値を超えてたら処理を行わない
+	assert(LightGroup::SPOT_LIGHT_NUM > index);
+	if (LightGroup::SPOT_LIGHT_NUM <= index) {
+		return;
+	}
+	obj.Draw();
+	stickObj.Draw();
 }
 
 void BlinkSpotLightObject::BlinkStart()

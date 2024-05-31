@@ -1,14 +1,19 @@
 #pragma once
 #include "LightObject.h"
 #include <vector>
+#include "ModelObj.h"
 
 class BlinkSpotLightObject : public SpotLightObject
 {
 public:
 	void Init()override;
 	void Update()override;
+	void Draw()override;
 
 	void BlinkStart();
+
+public:
+	ModelObj stickObj;
 
 private:
 	//チカチカ用タイマー

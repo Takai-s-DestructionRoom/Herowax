@@ -31,7 +31,7 @@ int32_t BaseSpotLight::GetIndex()
 
 void SpotLightObject::Init()
 {
-	obj = ModelObj(Model::Load("./Resources/Model/Cube.obj", "Cube"));
+	obj = ModelObj(Model::Load("./Resources/Model/light/light.obj", "light"));
 	isActive = true;
 }
 
@@ -53,6 +53,8 @@ void SpotLightObject::Update()
 
 	obj.mTransform.UpdateMatrix();
 	obj.TransferBuffer(Camera::sNowCamera->mViewProjection);
+
+	
 }
 
 void SpotLightManager::Imgui()
@@ -80,12 +82,12 @@ void SpotLightManager::Imgui()
 		
 		if (ImGui::Button("生成")) {
 			Create(spawnPos, lightType,lightPtr);
-			lightType = "";
 		}
 
 		for (auto& obj : spotLightObjs)
 		{
 			std::string name = "active" + std::to_string(obj->GetIndex());
+			ImGui::Text("ライトの種類:%s", obj->lightType.c_str());
 			ImGui::Checkbox(name.c_str(), &obj->isActive);
 			name = "position" + std::to_string(obj->GetIndex());
 			ImGui::DragFloat3(name.c_str(), &obj->obj.mTransform.position.x);
@@ -97,6 +99,17 @@ void SpotLightManager::Imgui()
 			ImGui::DragFloat2(name.c_str(), &obj->factorAngle.x,0.01f);
 			name = "Color" + std::to_string(obj->GetIndex());
 			ImGui::DragFloat4(name.c_str(), &obj->obj.mTuneMaterial.mColor.r);
+			if (obj->lightType == "Blink") {
+				BlinkSpotLightObject* blink = static_cast<BlinkSpotLightObject*>(obj.get());
+				name = "stickObj_pos" + std::to_string(obj->GetIndex());
+				ImGui::DragFloat3(name.c_str(), &blink->stickObj.mTransform.position.x);
+				name = "stickObj_scale" + std::to_string(obj->GetIndex());
+				ImGui::DragFloat3(name.c_str(), &blink->stickObj.mTransform.scale.x);
+				name = "stickObj_rota" + std::to_string(obj->GetIndex());
+				ImGui::DragFloat3(name.c_str(), &blink->stickObj.mTransform.rotation.x);
+				name = "light_scale" + std::to_string(obj->GetIndex());
+				ImGui::DragFloat3(name.c_str(), &blink->obj.mTransform.scale.x);
+			}
 		}
 
 		if (ImGui::Button("セーブ"))
@@ -128,7 +141,8 @@ void SpotLightManager::Create(Vector3 spawnPos_, std::string lightType_, LightGr
 	spotLightObjs.back()->obj.mTransform.position = spawnPos_;
 	spotLightObjs.back()->SetPtr(lightPtr_);
 	spotLightObjs.back()->SetIndex(createIndex);
-	
+	spotLightObjs.back()->lightType = lightType_;
+
 	createIndex++;
 }
 
@@ -165,6 +179,22 @@ void SpotLightManager::Load()
 			spotLightObjs.back()->factorAngle.y = Parameter::GetParam(extract, name, 0);
 			name = "Color" + std::to_string(i);
 			spotLightObjs.back()->obj.mTuneMaterial.mColor = Parameter::GetColorData(extract, name, 0);
+		
+			if (spotLightObjs.back()->lightType == "Blink") {
+				BlinkSpotLightObject* blink = static_cast<BlinkSpotLightObject*>(spotLightObjs.back().get());
+				name = "stickObj_pos" + std::to_string(i);
+				blink->stickObj.mTransform.position =
+					Parameter::GetVector3Data(extract,name.c_str(), blink->stickObj.mTransform.position);
+				name = "stickObj_scale" + std::to_string(i);
+				blink->stickObj.mTransform.scale =
+					Parameter::GetVector3Data(extract,name.c_str(), blink->stickObj.mTransform.scale);
+				name = "stickObj_rota" + std::to_string(i);
+				blink->stickObj.mTransform.rotation =
+					Parameter::GetVector3Data(extract,name.c_str(), blink->stickObj.mTransform.rotation);
+				name = "light_scale" + std::to_string(i);
+				blink->obj.mTransform.scale = 
+					Parameter::GetVector3Data(extract,name.c_str(), blink->obj.mTransform.scale);
+			}
 		}
 	}
 }
@@ -183,6 +213,8 @@ void SpotLightManager::Save()
 	{
 		std::string name = "exist" + std::to_string(obj->GetIndex());
 		Parameter::Save(name, 1);
+		name = "lightType" + std::to_string(obj->GetIndex());
+		Parameter::Save(name, obj->lightType);
 		name = "active" + std::to_string(obj->GetIndex());
 		Parameter::Save(name, obj->isActive);
 		name = "position" + std::to_string(obj->GetIndex());
@@ -197,6 +229,17 @@ void SpotLightManager::Save()
 		Parameter::Save(name, obj->factorAngle.y);
 		name = "Color" + std::to_string(obj->GetIndex());
 		Parameter::SaveColor(name, obj->obj.mTuneMaterial.mColor);
+		if (obj->lightType == "Blink") {
+			BlinkSpotLightObject* blink = static_cast<BlinkSpotLightObject*>(obj.get());
+			name = "stickObj_pos" + std::to_string(obj->GetIndex());
+			Parameter::SaveVector3(name.c_str(), blink->stickObj.mTransform.position);
+			name = "stickObj_scale" + std::to_string(obj->GetIndex());
+			Parameter::SaveVector3(name.c_str(), blink->stickObj.mTransform.scale);
+			name = "stickObj_rota" + std::to_string(obj->GetIndex());
+			Parameter::SaveVector3(name.c_str(), blink->stickObj.mTransform.rotation);
+			name = "light_scale" + std::to_string(obj->GetIndex());
+			Parameter::SaveVector3(name.c_str(), blink->obj.mTransform.scale);
+		}
 	}
 
 	Parameter::End();
@@ -242,10 +285,10 @@ void SpotLightManager::Update()
 void SpotLightManager::Draw()
 {
 	//imguiでいじってる時だけライトの位置オブジェクトを描画
-	if (!RImGui::showImGui)
+	/*if (!RImGui::showImGui)
 	{
 		return;
-	}
+	}*/
 
 	for (auto& obj : spotLightObjs)
 	{
