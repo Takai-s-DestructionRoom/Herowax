@@ -171,20 +171,9 @@ void Player::Update()
 
 	//回避していない時
 	if (!avoidTimer.GetRun()) {
-		//パッド接続してたら
-		if (RInput::GetInstance()->GetPadConnect())
+		if (isMove)
 		{
-			if (isMove)
-			{
-				MovePad();
-			}
-		}
-		else
-		{
-			if (isMove)
-			{
-				MoveKey();
-			}
+			MoveKey();
 		}
 	}
 
@@ -200,9 +189,6 @@ void Player::Update()
 			changingState = false;
 			nextState = nullptr;
 		}
-
-		////回避
-		//Avoidance();
 	}
 
 	//攻撃ボタン入力中で、実際にロウが出せたら攻撃フラグを立てる
@@ -327,6 +313,10 @@ void Player::Update()
 	if (!WaxManager::GetInstance()->notCollect)
 	{
 		float wave = 0.2f * Util::GetRatio(-1.0f, 1.0f, sinf(Util::PI * 5 * waxCollectingTime));
+		obj.mTransform.scale = { bagScale + wave, bagScale + wave, bagScale + wave };
+	}
+	else if(movingTime > 0) {
+		float wave = 0.1f * Util::GetRatio(-1.0f, 1.0f, sinf(Util::PI * 5 * movingTime));
 		obj.mTransform.scale = { bagScale + wave, bagScale + wave, bagScale + wave };
 	}
 	else
@@ -740,10 +730,7 @@ void Player::MovePad()
 
 void Player::MoveKey()
 {
-	Vector2 keyVec = {};
-	keyVec.x = (float)(RInput::GetInstance()->GetKey(DIK_D) - RInput::GetInstance()->GetKey(DIK_A));
-	keyVec.y = (float)(RInput::GetInstance()->GetKey(DIK_W) - RInput::GetInstance()->GetKey(DIK_S));
-
+	Vector2 keyVec = RInput::GetInstance()->GetLStick(true, false);
 	//キー入力されてて回収中じゃないなら
 	if (keyVec.LengthSq() > 0.f && WaxManager::GetInstance()->notCollect) {
 		//カメラから注視点へのベクトル
@@ -766,36 +753,12 @@ void Player::MoveKey()
 	}
 
 	moveAccel = Util::Clamp(moveAccel, 0.f, moveVec.LengthSq());
-
-	////接地時で回収中じゃない時にスペース押すと
-	//if (isGround && RInput::GetInstance()->GetKeyDown(DIK_SPACE) &&
-	//	WaxManager::GetInstance()->isCollected)
-	//{
-	//	isJumping = true;
-	//	isGround = false;
-	//	jumpSpeed = jumpPower;	//速度に初速を代入
-	//	jumpTimer.Start();
-
-	//	//エミッターの座標はプレイヤーの座標からY座標だけにスケール分ずらしたもの
-	//	Vector3 emitterPos = GetCenterPos();
-
-	//	ParticleManager::GetInstance()->AddRing(
-	//		emitterPos, "player_jump_ring");
-	//}
-
-	////ジャンプ中は
-	//if (isJumping) {
-	//	jumpTimer.Update();
-	//	//速度に対して重力をかけ続けて減速
-	//	jumpSpeed -= gravity;
-	//	//高さに対して速度を足し続ける
-	//	jumpHeight += jumpSpeed;
-	//}
-	//else
-	//{
-	//	//ジャンプしてないときはジャンプの高さを0に
-	//	jumpHeight = 0.f;
-	//}
+	if (moveAccel > 0) {
+		movingTime += TimeManager::deltaTime;
+	}
+	else {
+		movingTime = 0;
+	}
 
 	if (keyVec.LengthSq() > 0.f || isJumping) {
 		//エミッターの座標はプレイヤーの座標から移動方向の逆側にスケール分ずらしたもの
@@ -809,9 +772,6 @@ void Player::MoveKey()
 		ParticleManager::GetInstance()->AddSimple(
 			emitterPos, "player_move");
 	}
-
-	//「ジャンプの高さ」+「プレイヤーの大きさ」を反映
-	//obj.mTransform.position.y = jumpHeight + obj.mTransform.scale.y;
 }
 
 void Player::Avoidance()
