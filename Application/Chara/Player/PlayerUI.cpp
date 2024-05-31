@@ -300,6 +300,11 @@ void PlayerUI::GaugeDraw()
 
 void PlayerUI::EmptyUIUpdate()
 {
+	if (emptyFlashTimer.GetStarted() == false)
+	{
+		//最初の1音だけ
+	}
+
 	emptyBackFlashTimer.RoopReverse();
 	emptyFlashTimer.RoopReverse();
 	isEmptyDraw = true;
