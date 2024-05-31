@@ -87,8 +87,6 @@ void CollectZone::Create(const CollectPart& collect)
 void CollectZone::UIDraw()
 {
 	if (isCreate) {
-		InstantDrawer::DrawGraph(anvpos.x, anvpos.y, 0.5f, 0.5f, 0.0f, "anvil");
-		InstantDrawer::DrawGraph(hampos.x, hampos.y, 0.5f, 0.5f, hamRot, "hammer");
 	}
 }
 
