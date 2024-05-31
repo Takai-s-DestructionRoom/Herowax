@@ -289,6 +289,9 @@ void Player::Update()
 	if (backwardTimer.GetStarted()) {
 		float radStartX = Util::AngleToRadian(-30.0f);
 		rotVec.x = Easing::InQuad(radStartX, 0, backwardTimer.GetTimeRate());
+		Vector3 vector = -GetFrontVec();
+		vector *= 2.0f;
+		tankOffset = InQuadVec3(vector, {0,0,0}, backwardTimer.GetTimeRate());
 	}
 
 	//回転を適用
@@ -428,7 +431,7 @@ void Player::Update()
 	humanObj.TransferBuffer(Camera::sNowCamera->mViewProjection);
 
 	//タンクデータ
-	tankWaterObj.mTransform.position = tankMeterObj.mTransform.position = obj.mTransform.position + Vector3(0, 1.0f + bagScale / 2.0f, 0);
+	tankWaterObj.mTransform.position = tankMeterObj.mTransform.position = obj.mTransform.position + Vector3(0, 1.0f + bagScale / 2.0f, 0) + tankOffset;
 	tankWaterObj.mTransform.scale = obj.mTransform.scale - Vector3(0.8f, 0.8f, 0.8f);
 	tankMeterObj.mTransform.scale = obj.mTransform.scale - Vector3(0.7f, 0.7f, 0.7f);
 	tankWaterObj.mTransform.UpdateMatrix();

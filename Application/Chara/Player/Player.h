@@ -184,6 +184,8 @@ private:
 	};
 	SRConstBuffer<TankMeterData> tankMeterBuff;
 
+	Vector3 tankOffset = {};
+
 	Vector3 modelOffset;//描画位置をずらす
 
 	WaxUI waxUI;
