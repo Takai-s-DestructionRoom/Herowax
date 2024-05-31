@@ -71,6 +71,8 @@ isFireStock(false), isWaxStock(true), waxCollectAmount(0)
 
 	godmodeTimer.maxTime_ = Parameter::GetParam(extract, "無敵時間", 10.f);
 	maxHP = Parameter::GetParam(extract, "最大HP", 10.0f);
+	pinchPercent = Parameter::GetParam(extract, "HPがローとみなす割合", 0.2f);
+	pinchFlashTimer = Parameter::GetParam(extract, "ピンチ時の点滅タイマー", 0.5f);
 
 	minRange = Parameter::GetParam(extract, "攻撃範囲_最小", minRange);
 	maxRange = Parameter::GetParam(extract, "攻撃範囲_最大", maxRange);
@@ -259,7 +261,12 @@ void Player::Update()
 	{
 		pinchFlashTimer.RoopReverse();
 
-		//humanObj.mTuneMaterial.mColor = 色のイージング
+		humanObj.mTuneMaterial.mColor.r = 
+			Easing::InOutBack(Color::kWhite.r,Color::kRed.r, pinchFlashTimer.GetTimeRate());
+		humanObj.mTuneMaterial.mColor.g =
+			Easing::InOutBack(Color::kWhite.g, Color::kRed.g, pinchFlashTimer.GetTimeRate());
+		humanObj.mTuneMaterial.mColor.b =
+			Easing::InOutBack(Color::kWhite.b, Color::kRed.b, pinchFlashTimer.GetTimeRate());
 	}
 
 	//HP0になったら死ぬ
@@ -479,6 +486,8 @@ void Player::Update()
 		ImGui::Checkbox("吸収フラグ", &WaxManager::GetInstance()->notCollect);
 		ImGui::Text("現在のHP:%f", hp);
 		ImGui::InputFloat("最大HP:", &maxHP, 1.0f);
+		ImGui::InputFloat("HPがローとみなす割合:", &pinchPercent, 0.05f);
+		ImGui::InputFloat("ピンチ時の点滅タイマー:", &pinchFlashTimer.maxTime_, 0.05f);
 		ImGui::Text("Lスティック移動、Aボタンジャンプ、Rで攻撃,Lでロウ回収");
 		ImGui::Text("WASD移動、スペースジャンプ、右クリで攻撃,Pでパブロ攻撃,Qでロウ回収");
 
@@ -598,6 +607,8 @@ void Player::Update()
 			Parameter::Save("プレイヤーの色B", obj.mTuneMaterial.mColor.b);
 			Parameter::Save("無敵時間", godmodeTimer.maxTime_);
 			Parameter::Save("最大HP", maxHP);
+			Parameter::Save("HPがローとみなす割合", pinchPercent);
+			Parameter::Save("ピンチ時の点滅タイマー", pinchFlashTimer.maxTime_);
 			Parameter::Save("攻撃範囲_最小", minRange);
 			Parameter::Save("攻撃範囲_最大", maxRange);
 			Parameter::Save("人の位置Y", humanOffset);
