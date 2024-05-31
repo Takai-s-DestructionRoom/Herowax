@@ -467,7 +467,7 @@ void ProtoScene::Update()
 		if (enemy->GetAttackState() == EnemyNowAttackState::GetStateStr())
 		{
 			//パリィのチュートリアルを呼ぶ
-			if (!player.parryTutorial) {
+			if (!player.parryTutorial && WaveManager::Get()->GetNowWave() >= 1) {
 				ColPrimitive3D::Sphere eventCollider = player.GetWaxWall(true)->collider;
 				eventCollider.r *= 1.5f;
 				if (ColPrimitive3D::CheckSphereToSphere(enemy->collider,
