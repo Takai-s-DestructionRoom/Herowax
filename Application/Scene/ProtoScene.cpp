@@ -612,6 +612,18 @@ void ProtoScene::Update()
 	//弾とプレイヤーの判定
 	for (auto& shot : EnemyManager::GetInstance()->enemyShots)
 	{
+		//パリィのチュートリアルを呼ぶ
+		if (!player.parryTutorial && WaveManager::Get()->GetNowWave() >= 1) {
+			ColPrimitive3D::Sphere eventCollider = player.GetWaxWall(true)->collider;
+			eventCollider.r *= 1.5f;
+			if (ColPrimitive3D::CheckSphereToSphere(shot->collider,eventCollider))
+			{
+				player.parryTutorial = true;
+				player.eventParry = true;
+				EventCaller::EventCall(ParryTutorialScene::GetEventCallStr(), false);
+			}
+		}
+
 		//弾が盾と衝突したら
 		if (player.GetWaxWall()) {
 			if (ColPrimitive3D::CheckSphereToSphere(shot->collider, player.GetWaxWall()->collider))
@@ -619,7 +631,7 @@ void ProtoScene::Update()
 				if (player.GetWaxWall()->GetParry()) {
 					//パリィ出来たら跳ね返す
 					shot->Reversal();
-
+					
 					if (!RAudio::IsPlaying("Parry"))
 					{
 						RAudio::Play("Parry", 0.8f);
@@ -645,8 +657,22 @@ void ProtoScene::Update()
 
 		//本体とぶつかったらダメージ
 		if (ColPrimitive3D::CheckSphereToSphere(shot->collider, player.collider)) {
-			shot->SetIsAlive(false);
-			player.DealDamage(shot->GetDamage());
+			//チュートリアルなら無理やりパリィ成功したこととする
+			if (player.eventParry) {
+				//パリィ出来たら跳ね返す
+				shot->Reversal();
+
+				if (!RAudio::IsPlaying("Parry"))
+				{
+					RAudio::Play("Parry", 0.8f);
+				}
+
+				player.eventParry = false;
+			}
+			else {
+				shot->SetIsAlive(false);
+				player.DealDamage(shot->GetDamage());
+			}
 		}
 	}
 

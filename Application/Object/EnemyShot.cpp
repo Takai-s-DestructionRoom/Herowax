@@ -91,4 +91,5 @@ void EnemyShot::Reversal()
 
 	isReversal = true;
 	moveVec = -moveVec;
+	brightColor = Color::kWaxColor;
 }

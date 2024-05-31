@@ -60,5 +60,5 @@ void ParryTutorialScene::Draw()
 
 	InstantDrawer::DrawGraph(
 		textUIPos.x, textUIPos.y,
-		0.5f, 0.5f, 0.f, TextureManager::Load("./Resources/UI/tutoreal_guard.png", "tutoreal_guard"));
+		0.5f, 0.5f, 0.f, TextureManager::Load("./Resources/UI/tutorial_guard.png", "tutorial_guard"));
 }
