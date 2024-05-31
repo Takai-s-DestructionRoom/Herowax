@@ -3,7 +3,7 @@
 struct PS_OUT
 {
     float4 color : SV_TARGET0;
-    float4 normal : SV_TARGET1;
+    //float4 normal : SV_TARGET1;
 };
 
 PS_OUT main(VSOUT input)
@@ -12,7 +12,7 @@ PS_OUT main(VSOUT input)
             
     PS_OUT output;
     output.color = bWax.color;
-    output.normal = float4(input.normal.xyz, 1);
+    //output.normal = float4(input.normal.xyz, 1);
     
     return output;
 }
