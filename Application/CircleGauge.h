@@ -21,7 +21,7 @@ public:
 	void ImGui();
 
 	void SetTexture(TextureHandle texture);
-	void SetBillboardSize(Vector2 size);
+	void SetSize(Vector2 size);
 	void SetColor(Color color);
 
 private:

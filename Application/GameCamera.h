@@ -8,11 +8,13 @@ class GameCamera
 public:
 	void Init();
 	void Update();
-	
+
 	//カメラシェイク
-	void Shake(float time,float power);
+	void Shake(float time, float power);
 
 	void SetTarget(ModelObj* target_);
+
+	Vector2 GetCameraAngle() {return cameraAngle;};
 
 	static GameCamera* GetInstance();
 
