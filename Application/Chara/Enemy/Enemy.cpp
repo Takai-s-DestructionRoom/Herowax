@@ -241,8 +241,8 @@ void Enemy::BaseUpdate()
 	//色の加算
 	whiteTimer.Update();
 	brightColor.r = Easing::OutQuad(1, 0, whiteTimer.GetTimeRate());
-	brightColor.g = Easing::OutQuad(1, 0, whiteTimer.GetTimeRate());
-	brightColor.b = Easing::OutQuad(1, 0, whiteTimer.GetTimeRate());
+	brightColor.g = Easing::OutQuad(0, 0, whiteTimer.GetTimeRate());
+	brightColor.b = Easing::OutQuad(0, 0, whiteTimer.GetTimeRate());
 	brightColor.a = Easing::OutQuad(1, 0, whiteTimer.GetTimeRate());
 	if (!whiteTimer.GetStarted())brightColor = { 0,0,0,0 };
 

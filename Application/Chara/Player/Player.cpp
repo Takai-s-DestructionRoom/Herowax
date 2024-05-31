@@ -435,15 +435,10 @@ void Player::Update()
 	//タンクデータ
 	tankWaterObj.mTransform.position = tankMeterObj.mTransform.position = obj.mTransform.position + Vector3(0, 1.0f + bagScale / 2.0f, 0) + tankOffset;
 	tankWaterObj.mTransform.scale = obj.mTransform.scale - Vector3(0.8f, 0.8f, 0.8f);
-	tankMeterObj.mTransform.scale = obj.mTransform.scale - Vector3(0.7f, 0.7f, 0.7f);
 	tankWaterObj.mTransform.UpdateMatrix();
 	tankWaterObj.mTuneMaterial.mAmbient = { 10, 10, 10 };
 	tankWaterObj.mTuneMaterial.mDiffuse = { 10, 10, 10 };
 	tankWaterObj.TransferBuffer(Camera::sNowCamera->mViewProjection);
-	tankMeterObj.mTuneMaterial.mColor = { 0, 0, 1, 1 };
-	tankMeterObj.mTuneMaterial.mAmbient = { 100, 100, 100 };
-	tankMeterObj.mTransform.UpdateMatrix();
-	tankMeterObj.TransferBuffer(Camera::sNowCamera->mViewProjection);
 	tankBuff->centerPos = tankMeterBuff->centerPos = tankWaterObj.mTransform.position;
 	tankBuff->amplitude = 0.04f;
 	tankBuff->frequency = 10.0f;
@@ -453,8 +448,40 @@ void Player::Update()
 	tankValue += (newTankValue - tankValue) / 7.0f;
 	tankBuff->upper = tankValue;
 	tankBuff->time += TimeManager::deltaTime;
-	tankMeterBuff->upper = -tankMeterObj.mTransform.scale.y
-		+ (tankMeterObj.mTransform.scale.y * 2.0f) * (maxWaxStock / 100.0f);
+
+	tankMeterObj.mTransform.scale = obj.mTransform.scale - Vector3(0.7f, 0.7f, 0.7f);
+	tankMeterObj.mTuneMaterial.mColor = { 0, 0, 1, 1 };
+	tankMeterObj.mTuneMaterial.mAmbient = { 100, 100, 100 };
+	if (meterLvUpTime > 0.0f) {
+		float t = min(1.0f, (1.0f - meterLvUpTime) / 1.0f);
+
+		if (t > 0.5f) {
+			float tB = (0.5f - meterLvUpTime) / 0.5f;
+			float fxB = tB < 0.5f ? 8 * tB * tB * tB * tB : 1 - powf(-2 * tB + 2, 4) / 2;
+			float scale = 2.0f * (1 - fxB);
+			tankMeterObj.mTransform.scale += Vector3(scale, scale, scale);
+		}
+		else {
+			float tB = (1.0f - meterLvUpTime) / 0.5f;
+			float fxB = 1 - powf(1 - tB, 4);
+			float scale = 2.0f * fxB;
+			tankMeterObj.mTransform.scale += Vector3(scale, scale, scale);
+		}
+
+		float fxA = 1 + 2.7f * powf(t - 1.0f, 3.0f) + 1.7f * powf(t - 1.0f, 2.0f);
+		float target = -tankMeterObj.mTransform.scale.y
+			+ (tankMeterObj.mTransform.scale.y * 2.0f) * (maxWaxStock / 100.0f);
+		tankMeterBuff->upper = meterOldUpper * (1 - fxA) + target * fxA;
+
+		meterLvUpTime -= TimeManager::deltaTime;
+	}
+	else {
+		tankMeterBuff->upper = -tankMeterObj.mTransform.scale.y
+			+ (tankMeterObj.mTransform.scale.y * 2.0f) * (maxWaxStock / 100.0f);
+	}
+	tankMeterObj.mTransform.UpdateMatrix();
+	tankMeterObj.TransferBuffer(Camera::sNowCamera->mViewProjection);
+
 	tankMeterBuff->thickness = 0.05f;
 
 	if (RInput::GetKeyDown(DIK_H)) {
@@ -1219,7 +1246,8 @@ void Player::DealDamage(float damage)
 void Player::MaxWaxPlus(int32_t plus)
 {
 	maxWaxStock += plus;
-
+	meterLvUpTime = 1.0f;
+	meterOldUpper = tankMeterBuff->upper;
 	waxUI.Start();
 	ParticleManager::GetInstance()->
 		AddSimple(obj.mTransform.position,"levelup");
