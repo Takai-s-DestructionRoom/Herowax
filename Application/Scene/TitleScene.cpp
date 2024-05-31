@@ -36,6 +36,7 @@ TitleScene::TitleScene()
 	buttonUIPos.y += 300.f;
 
 	RAudio::Load("Resources/Sounds/SE/A_select.wav", "Select");
+
 }
 
 void TitleScene::Init()
@@ -93,6 +94,7 @@ void TitleScene::Update()
 	{
 		sceneChange = true;
 		RAudio::Play("Select", 0.6f);
+
 		SceneManager::GetInstance()->Change<ProtoScene, WaxSceneTransition>();
 		RAudio::Stop("Title");
 	}
