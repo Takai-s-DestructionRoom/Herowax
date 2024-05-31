@@ -36,8 +36,6 @@ void WaxWall::Update()
 
 	leakOutTimer.Update();
 
-	if (!isAlive)return;
-
 	//入りの挙動(外側から濃くなって、プレイヤーの周りに発生する)
 	obj.mTransform.scale = { 0, 0, 0 };
 	if (parryTimer.GetStarted()) {

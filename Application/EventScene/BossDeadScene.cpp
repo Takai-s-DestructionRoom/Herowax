@@ -6,7 +6,6 @@
 #include "RInput.h"
 #include "RAudio.h"
 
-
 BossDeadScene::BossDeadScene()
 {
 	cameraPos[0] = { 50, 70, -100 };

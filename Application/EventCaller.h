@@ -1,13 +1,14 @@
 #pragma once
 #include "string"
 #include "IEventScene.h"
+#include "Camera.h"
 
 //イベント呼び出し機
 class EventCaller
 {
 public:
 	//イベント呼び出しハンドルを設定
-	static void EventCall(const std::string& str);
+	static void EventCall(const std::string& str,bool transFlag = true);
 
 	//イベント呼び出しハンドルを取得
 	static std::string GetEventCallStr();
@@ -25,6 +26,8 @@ public:
 
 	static EventCaller* GetInstance();
 	std::unique_ptr<IEventScene> eventScene;
+
+	static Camera* saveCamera;
 
 private:
 	EventCaller() = default;

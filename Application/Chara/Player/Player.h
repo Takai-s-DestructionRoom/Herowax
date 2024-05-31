@@ -261,14 +261,18 @@ public:
 
 	void Reset();	//Updateの最初で初期化するもの
 
-	WaxWall* GetWaxWall() {
-		if (waxWall.isAlive) {
+	WaxWall* GetWaxWall(bool getforce = false) {
+		if (waxWall.isAlive || getforce) {
 			return &waxWall;
 		}
 		else {
 			return nullptr;
 		}
 	};
+
+	static bool GetParryButtonDown();
+
+	bool parryTutorial = false;
 
 private:
 	void DamageBlink();	//被弾時の点滅(後々もっとリッチなのに置き換え予定)

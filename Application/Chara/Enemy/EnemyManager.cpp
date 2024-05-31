@@ -131,9 +131,11 @@ void EnemyManager::Update()
 		}
 	}
 
-	for (auto& shot : enemyShots)
-	{
-		shot->Update();
+	if (!isStop) {
+		for (auto& shot : enemyShots)
+		{
+			shot->Update();
+		}
 	}
 
 	burningComboTimer.Update();

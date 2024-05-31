@@ -23,6 +23,7 @@
 #include "FailedScene.h"
 #include "GameCamera.h"
 #include <SimpleDrawer.h>
+#include "ParryTutorialScene.h"
 
 Player::Player() :GameObject(),
 moveSpeed(1.f), moveAccelAmount(0.05f), isGround(true), hp(0), maxHP(10.f),
@@ -1395,6 +1396,10 @@ bool Player::GetWaxCollectButtonDown()
 	return (RInput::GetInstance()->GetLTriggerDown() ||
 		RInput::GetInstance()->GetKeyDown(DIK_Q));
 }
+
+bool Player::GetParryButtonDown() {
+	return RInput::GetInstance()->GetPadButtonDown(XINPUT_GAMEPAD_X) || RInput::GetKeyDown(DIK_Z);
+};
 
 void AfterImage::Init()
 {

@@ -5,17 +5,23 @@
 std::string EventCaller::eventCallStr = "";
 std::string EventCaller::nowEventStr = "";
 
+Camera* EventCaller::saveCamera = nullptr;
+
 std::string EventCaller::GetEventCallStr()
 {
     return eventCallStr;
 }
 
-void EventCaller::EventCall(const std::string& str)
+void EventCaller::EventCall(const std::string& str, bool transFlag)
 {
-    SceneTrance::GetInstance()->Start();
+    if (transFlag) {
+        SceneTrance::GetInstance()->Start();
+    }
     eventCallStr = str;
 
     nowEventStr = str;
+
+    saveCamera = Camera::sNowCamera;
 }
 
 void EventCaller::EventCallStrReset()
