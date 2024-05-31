@@ -6,7 +6,6 @@
 #include "RInput.h"
 #include "RAudio.h"
 
-
 BossDeadScene::BossDeadScene()
 {
 	cameraPos[0] = { 50, 70, -100 };
@@ -132,7 +131,7 @@ void BossDeadScene::Update()
 
 		if (!RAudio::IsPlaying("BGMM"))
 		{
-			RAudio::Play("BGMM", 0.9f);
+			RAudio::Play("BGMM",1.05f);
 		}
 	
 
@@ -155,6 +154,7 @@ void BossDeadScene::Update()
 		Camera::sNowCamera = nullptr;
 		isActive = false;
 
+		RAudio::Stop("BGMM");
 		SceneTrance::GetInstance()->SetIsChange(false);
 	}
 
