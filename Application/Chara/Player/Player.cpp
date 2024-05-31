@@ -261,11 +261,11 @@ void Player::Update()
 		pinchFlashTimer.RoopReverse();
 
 		humanObj.mTuneMaterial.mColor.r = 
-			Easing::InOutBack(Color::kWhite.r,Color::kRed.r, pinchFlashTimer.GetTimeRate());
+			Easing::InBack(Color::kWhite.r,Color::kRed.r, pinchFlashTimer.GetTimeRate());
 		humanObj.mTuneMaterial.mColor.g =
-			Easing::InOutBack(Color::kWhite.g, Color::kRed.g, pinchFlashTimer.GetTimeRate());
+			Easing::InBack(Color::kWhite.g, Color::kRed.g, pinchFlashTimer.GetTimeRate());
 		humanObj.mTuneMaterial.mColor.b =
-			Easing::InOutBack(Color::kWhite.b, Color::kRed.b, pinchFlashTimer.GetTimeRate());
+			Easing::InBack(Color::kWhite.b, Color::kRed.b, pinchFlashTimer.GetTimeRate());
 	}
 
 	//HP0になったら死ぬ
