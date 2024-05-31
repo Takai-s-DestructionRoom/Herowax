@@ -132,7 +132,7 @@ void BossDeadScene::Update()
 
 		if (!RAudio::IsPlaying("BGMM"))
 		{
-			RAudio::Play("BGMM", 0.9f);
+			RAudio::Play("BGMM",1.05f);
 		}
 	
 
@@ -155,6 +155,7 @@ void BossDeadScene::Update()
 		Camera::sNowCamera = nullptr;
 		isActive = false;
 
+		RAudio::Stop("BGMM");
 		SceneTrance::GetInstance()->SetIsChange(false);
 	}
 

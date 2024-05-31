@@ -176,7 +176,7 @@ void ProtoScene::Update()
 
 		RAudio::Stop("Boss");
 		RAudio::Stop("Normal");
-		RAudio::Play("Boss", 0.5f, 1.0f, true);
+		RAudio::Play("Boss", 0.65f, 1.0f, true);
 
 		player.isMove = false;
 		Boss::GetInstance()->isAppearance = true;
