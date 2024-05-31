@@ -4,10 +4,13 @@
 #include "SimpleDrawer.h"
 #include "MetaBall2D.h"
 #include "Parameter.h"
+#include "RAudio.h"
 
 WaxSceneTransition::WaxSceneTransition()
 {
 	MetaBall2DManager::GetInstance()->Init();
+
+	RAudio::Load("Resources/Sounds/SE/Transition.wav", "Transition");
 }
 
 void WaxSceneTransition::Update()
@@ -31,6 +34,11 @@ void WaxSceneTransition::Update()
 				{ brushs[nowNum].sizeMax.x,
 				brushs[nowNum].sizeMax.y });
 			nowNum++;
+
+			if (!RAudio::IsPlaying("Transition"))
+			{
+				RAudio::Play("Transition", 0.6f, 1.2f);
+			}
 		}
 
 		if (nowNum >= num && brushs.back().GetCloseEnd()) {

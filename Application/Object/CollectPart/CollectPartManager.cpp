@@ -11,8 +11,7 @@ void CollectPartManager::LoadResouces()
     Model::Load("./Resources/Model/gear/gear.obj", "gear");
     Model::Load("./Resources/Model/plusScrew/plusScrew.obj", "plusScrew");
 
-    TextureManager::Load("./Resources/anvil.png", "anvil");
-    TextureManager::Load("./Resources/hammer.png", "hammer");
+
 }
 
 void CollectPartManager::Init()

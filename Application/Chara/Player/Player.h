@@ -179,6 +179,9 @@ private:
 		float time;
 	};
 	SRConstBuffer<TankWaterData> tankBuff;
+
+	float meterLvUpTime = 0;
+	float meterOldUpper = 0;
 	ModelObj tankMeterObj;
 	struct TankMeterData {
 		Vector3 centerPos;
