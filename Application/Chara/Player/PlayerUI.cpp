@@ -9,6 +9,7 @@
 #include "Parameter.h"
 #include "RImGui.h"
 #include "RAudio.h"
+#include "RInput.h"
 
 void PlayerUI::LoadResource()
 {
@@ -16,7 +17,7 @@ void PlayerUI::LoadResource()
 	TextureManager::Load("./Resources/UI/wax_empty_mark.png", "waxEmptyMark");
 	TextureManager::Load("./Resources/UI/wax_empty.png", "waxEmpty");
 	
-	RAudio::Load("Resources/Sounds/SE/waxempty.wav", "empty");
+	RAudio::Load("Resources/Sounds/SE/waxNull.wav", "empty");
 }
 
 PlayerUI::PlayerUI()
@@ -121,6 +122,11 @@ void PlayerUI::Update(Player* player)
 	};
 
 	GaugeUpdate();
+
+	if (RInput::GetInstance()->GetRTriggerUp() || RInput::GetKeyUp(DIK_SPACE))
+	{
+		RAudio::Stop("empty");
+	};
 
 	if (RImGui::showImGui) {
 		//円形ロウゲージの位置
