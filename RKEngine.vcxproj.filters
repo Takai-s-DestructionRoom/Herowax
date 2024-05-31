@@ -373,6 +373,12 @@
     <Filter Include="ソース ファイル\Application\Object\WaxShield">
       <UniqueIdentifier>{9bb9ce3c-36ee-4e0a-b21a-b10ace3466da}</UniqueIdentifier>
     </Filter>
+    <Filter Include="ソース ファイル\Application\Object\SpotLight">
+      <UniqueIdentifier>{526ed3f5-96cd-42dc-81f7-bd0f3bb4a67d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\Application\SpotLight">
+      <UniqueIdentifier>{7c98e582-d315-4121-916b-250de26ea983}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Engine\2d\Sprite.cpp">
@@ -813,9 +819,6 @@
     <ClCompile Include="Application\LightObject.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Application\BlinkSpotLightObject.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
     <ClCompile Include="Application\Scene\FailedScene.cpp">
       <Filter>ソース ファイル\Application\Scene</Filter>
     </ClCompile>
@@ -891,11 +894,14 @@
     <ClCompile Include="Application\EventScene\ParryTutorialScene.cpp">
       <Filter>ソース ファイル\Application\EventScene</Filter>
     </ClCompile>
-    <ClCompile Include="Application\EventScene\MoveTutorialScene.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
     <ClCompile Include="Application\EventScene\AttackTutorialScene.cpp">
-      <Filter>ソース ファイル</Filter>
+      <Filter>ソース ファイル\Application\EventScene</Filter>
+    </ClCompile>
+    <ClCompile Include="Application\BlinkSpotLightObject.cpp">
+      <Filter>ソース ファイル\Application\Object\SpotLight</Filter>
+    </ClCompile>
+    <ClCompile Include="Application\EventScene\MoveTutorialScene.cpp">
+      <Filter>ソース ファイル\Application\EventScene</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -1607,9 +1613,6 @@
     <ClInclude Include="Application\Object\EnemyShot.h">
       <Filter>ヘッダー ファイル\Application\Object\Chara\Enemy</Filter>
     </ClInclude>
-    <ClInclude Include="Application\LightObject.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
     <ClInclude Include="Application\BlinkSpotLightObject.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
@@ -1685,11 +1688,14 @@
     <ClInclude Include="Application\EventScene\ParryTutorialScene.h">
       <Filter>ヘッダー ファイル\Application\EventScene</Filter>
     </ClInclude>
-    <ClInclude Include="Application\EventScene\MoveTutorialScene.h">
-      <Filter>ヘッダー ファイル</Filter>
+    <ClInclude Include="Application\LightObject.h">
+      <Filter>ヘッダー ファイル\Application\SpotLight</Filter>
     </ClInclude>
     <ClInclude Include="Application\EventScene\AttackTutorialScene.h">
-      <Filter>ヘッダー ファイル</Filter>
+      <Filter>ヘッダー ファイル\Application\EventScene</Filter>
+    </ClInclude>
+    <ClInclude Include="Application\EventScene\MoveTutorialScene.h">
+      <Filter>ヘッダー ファイル\Application\EventScene</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
