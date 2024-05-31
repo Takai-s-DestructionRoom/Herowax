@@ -93,8 +93,7 @@ void TitleScene::Update()
 	{
 		sceneChange = true;
 		RAudio::Play("Select", 0.6f);
-		SceneManager::GetInstance()->Change<ProtoScene, SimpleSceneTransition>();
-		//SceneManager::GetInstance()->Change<ProtoScene, WaxSceneTransition>();
+		SceneManager::GetInstance()->Change<ProtoScene, WaxSceneTransition>();
 		RAudio::Stop("Title");
 	}
 
@@ -112,7 +111,7 @@ void TitleScene::Update()
 		if (ImGui::Button("作成")) {
 			brushs.emplace_back();
 			brushs.back().Init();
-			brushs.back().Start({0.f,0.f},{1.0f,1.0f});
+			brushs.back().Close({0,0}, { 0.f,0.f }, { 1.0f,1.0f });
 		}
 		int32_t i = 0;
 		for (auto& brush : brushs)
@@ -123,6 +122,10 @@ void TitleScene::Update()
 			string = "brush_scale_";
 			string += std::to_string(i);
 			ImGui::DragFloat3(string.c_str(), &brush.sprite.mTransform.scale.x,0.01f);
+			string = "brush_color_";
+			string += std::to_string(i);
+			ImGui::ColorEdit4(string.c_str(), &brush.sprite.mMaterial.mColor.r);
+
 			i++;
 		}
 		if (ImGui::Button("セーブ")) {
@@ -181,12 +184,12 @@ void TitleScene::Draw()
 
 	ParticleManager::GetInstance()->Draw();
 
-	//更新
-	InstantDrawer::AllUpdate();
-	InstantDrawer::AllDraw2D();
-
 	for (auto& brush : brushs)
 	{
 		brush.Draw();
 	}
+
+	//更新
+	InstantDrawer::AllUpdate();
+	InstantDrawer::AllDraw2D();
 }

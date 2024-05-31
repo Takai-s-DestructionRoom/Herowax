@@ -18,7 +18,7 @@
 #include "SceneTrance.h"
 #include "EventCaller.h"
 #include "TitleScene.h"
-#include "SimpleSceneTransition.h"
+#include "WaxSceneTransition.h"
 #include "RAudio.h"
 #include "Boss.h"
 #include "LightObject.h"
@@ -208,7 +208,7 @@ void ProtoScene::Update()
 		if (EventCaller::GetNowEventStr() == BossDeadScene::GetEventCallStr()) {
 			RAudio::Stop("Boss");
 			RAudio::Stop("Normal");
-			SceneManager::GetInstance()->Change<TitleScene, SimpleSceneTransition>();
+			SceneManager::GetInstance()->Change<TitleScene, WaxSceneTransition>();
 		}
 
 		EventCaller::NowEventStrReset();
@@ -778,7 +778,7 @@ void ProtoScene::Update()
 	{
 		RAudio::Stop("Boss");
 		RAudio::Stop("Normal");
-		SceneManager::GetInstance()->Change<FailedScene, SimpleSceneTransition>();
+		SceneManager::GetInstance()->Change<FailedScene, WaxSceneTransition>();
 	}
 
 	controlUI.Update();

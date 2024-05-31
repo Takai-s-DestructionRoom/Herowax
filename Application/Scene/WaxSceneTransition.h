@@ -13,8 +13,11 @@ class WaxSceneTransition : public ISceneTransition
 {
 private:
 	bool inProgress = false;				//進行中かフラグ
-	Easing::EaseTimer openTimer = 0.5f;		//開いてく時のタイマー
-	Easing::EaseTimer closeTimer = 0.5f;	//閉じてく時のタイマー
+
+	bool inOpen = false;
+	bool inClose = false;
+
+	Easing::EaseTimer openTimer = 1.0f;
 
 	//いったんロウなしでべたべた塗るやつを作る
 	std::vector<Brush> brushs;

@@ -8,26 +8,6 @@
 WaxSceneTransition::WaxSceneTransition()
 {
 	MetaBall2DManager::GetInstance()->Init();
-
-	openTimer.Reset();
-	closeTimer.Start();
-
-	std::map<std::string, std::string> extract =  Parameter::Extract("WaxSceneTransition");
-	
-	for (int32_t i = 0; i < (int32_t)Parameter::GetParam(extract, "num", 0.f); i++)
-	{
-		brushs.emplace_back();
-		brushs.back().Init();
-		std::string string = "pos_";
-		string += std::to_string(i);
-		brushs.back().sprite.mTransform.position = Parameter::GetVector3Data(extract, string, {0.0f,0.0f,0.0f});
-		string = "scale_";
-		string += std::to_string(i);
-		brushs.back().sprite.mTransform.scale = Parameter::GetVector3Data(extract, string, {0.0f,0.0f,0.0f});
-		brushs.back().sizeMax = Parameter::GetVector3Data(extract, string, {0.0f,0.0f,0.0f});
-	}
-
-	nowNum = 0;
 }
 
 void WaxSceneTransition::Update()
@@ -38,36 +18,34 @@ void WaxSceneTransition::Update()
 	{
 		brush.Update();
 	}
-
-	//超えたら
-	//ループを止める
 	brushTimer.Roop();
-	if (brushTimer.GetRoopEnd() && (nowNum < num)) {
-		brushs[nowNum].Start({0.f,0.f },
-			{ brushs[nowNum].sizeMax.x,brushs[nowNum].sizeMax.y});
-		nowNum++;
-	}
-
 	openTimer.Update();
-	closeTimer.Update();
 
-	//閉じてくよって時
-	if (mIsClosed) {
-		if (closeTimer.GetEnd()) {		//タイマー終わったら
-			inProgress = false;			//進行終了
-			openTimer.Start();
+	if (inClose)
+	{
+		if (brushTimer.GetRoopEnd() && (nowNum < num)) {
+			brushs[nowNum].Close({
+				brushs[nowNum].sprite.mTransform.position.x,
+				brushs[nowNum].sprite.mTransform.position.y
+				}, { 0.f,0.f },
+				{ brushs[nowNum].sizeMax.x,
+				brushs[nowNum].sizeMax.y });
+			nowNum++;
 		}
-		else {
-			inProgress = true;		//進行中
+
+		if (nowNum >= num && brushs.back().GetCloseEnd()) {
+			inProgress = false;
+			mIsClosed = true;
 		}
 	}
-	//開いてくよって時
-	else {
-		if (openTimer.GetEnd()) {
-			inProgress = false;
+	if (inOpen)
+	{
+		for (auto& brush : brushs)
+		{
+			brush.sprite.mMaterial.mColor.a = Easing::OutQuad(1.0f,0.0f, openTimer.GetTimeRate());
 		}
-		else {
-			inProgress = true;
+		if (IsOpened()) {
+			inProgress = false;
 		}
 	}
 }
@@ -85,15 +63,11 @@ void WaxSceneTransition::Draw()
 void WaxSceneTransition::Open()
 {
 	mIsClosed = false;
+	inOpen = true;
+	inClose = false;
 	openTimer.Start();
-	closeTimer.SetEnd(true);
 
-	/*for (int32_t i = 0;i < MetaBall2DManager::GetInstance()->METABALL_NUM; i++)
-	{
-		MetaBall2DManager::GetInstance()->metaballs[i]->isUse = false;
-	}*/
-
-	brushs.clear();
+	inProgress = true;
 }
 
 bool WaxSceneTransition::IsOpened()
@@ -103,14 +77,47 @@ bool WaxSceneTransition::IsOpened()
 
 void WaxSceneTransition::Close()
 {
-	mIsClosed = true;
-	openTimer.Reset();
-	closeTimer.Start();
+ 	brushs.clear();
+	
+	std::map<std::string, std::string> extract = Parameter::Extract("WaxSceneTransition");
+	num = (int32_t)Parameter::GetParam(extract, "num", 0.f);
+
+	Color colors[4] =
+	{
+		Color::kWaxColor,
+		Color(0xE99730),
+		Color(0xE67C33),
+		Color(0xCC7F59)
+	};
+
+	for (int32_t i = 0; i < num; i++)
+	{
+		brushs.emplace_back();
+		brushs.back().Init();
+		std::string string = "pos_";
+		string += std::to_string(i);
+		brushs.back().sprite.mTransform.position = Parameter::GetVector3Data(extract, string,{ 0.0f,0.0f,0.0f });
+		brushs.back().sprite.mTransform.position.z = 114514;
+		string = "scale_";
+		string += std::to_string(i);
+		brushs.back().sprite.mTransform.scale = { 0,0,0 };
+		brushs.back().sizeMax = Parameter::GetVector3Data(extract, string, { 0.0f,0.0f,0.0f });
+		
+		int32_t j = i;
+		if (j >= 4)j -= 4;
+		brushs.back().sprite.mMaterial.mColor = colors[j];
+	}
+
+	inProgress = true;
+	inOpen = false;
+	inClose = true;
+
+	nowNum = 0;
 }
 
 bool WaxSceneTransition::IsClosed()
 {
-	return closeTimer.GetEnd();
+	return mIsClosed;
 }
 
 bool WaxSceneTransition::InProgress()

@@ -16,7 +16,7 @@
 #include "BossDeadState.h"
 #include "TitleScene.h"
 #include "SceneManager.h"
-#include "SimpleSceneTransition.h"
+#include "WaxSceneTransition.h"
 #include "RAudio.h"
 #include "EnemyManager.h"
 #include "EventCaller.h"
@@ -103,8 +103,7 @@ void Player::Init()
 	RAudio::Load("Resources/Sounds/SE/P_enemyCollect.wav", "eCollect");
 
 	RAudio::Load("Resources/Sounds/SE/playerShield.wav", "PShield");
-
-
+	
 
 	obj = PaintableModelObj("playerBag");
 	humanObj = ModelObj("playerHuman");
@@ -275,7 +274,7 @@ void Player::Update()
 		//死んだ瞬間なら遷移を呼ぶ
 		if (isAlive && !Util::debugBool) {
 			//シーン遷移
-			SceneManager::GetInstance()->Change<FailedScene, SimpleSceneTransition>();
+			SceneManager::GetInstance()->Change<FailedScene, WaxSceneTransition>();
 		}
 		isAlive = false;
 	}
@@ -464,6 +463,8 @@ void Player::Update()
 	if ((RInput::GetInstance()->GetRTrigger() || RInput::GetKey(DIK_SPACE)) && waxStock <= 0)
 	{
 		ui.EmptyUIUpdate();
+
+
 	}
 
 	waxUI.Update(obj.mTransform.position);
