@@ -16,7 +16,7 @@
 #include "BossDeadState.h"
 #include "TitleScene.h"
 #include "SceneManager.h"
-#include "SimpleSceneTransition.h"
+#include "WaxSceneTransition.h"
 #include "RAudio.h"
 #include "EnemyManager.h"
 #include "EventCaller.h"
@@ -267,7 +267,7 @@ void Player::Update()
 		//死んだ瞬間なら遷移を呼ぶ
 		if (isAlive && !Util::debugBool) {
 			//シーン遷移
-			SceneManager::GetInstance()->Change<FailedScene, SimpleSceneTransition>();
+			SceneManager::GetInstance()->Change<FailedScene, WaxSceneTransition>();
 		}
 		isAlive = false;
 	}

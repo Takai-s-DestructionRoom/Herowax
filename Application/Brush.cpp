@@ -7,13 +7,25 @@ void Brush::Init()
 
 void Brush::Update()
 {
-	timer.Update();
+	openTimer.Update();
+	closeTimer.Update();
 
-	sprite.mTransform.scale = {
-		Easing::OutQuad(sizeMin.x,sizeMax.x,timer.GetTimeRate()),
-		Easing::OutQuad(sizeMin.y,sizeMax.y,timer.GetTimeRate()),
-		0
-	};
+	if (closeTimer.GetStarted())
+	{
+		sprite.mTransform.scale = {
+			Easing::OutBack(sizeMin.x,sizeMax.x,closeTimer.GetTimeRate()),
+			Easing::OutBack(sizeMin.y,sizeMax.y,closeTimer.GetTimeRate()),
+			0
+		};
+	}
+	if (openTimer.GetStarted())
+	{
+		sprite.mTransform.scale = {
+			Easing::InBack(sizeMax.x,sizeMin.x,openTimer.GetTimeRate()),
+			Easing::InBack(sizeMax.y,sizeMin.y,openTimer.GetTimeRate()),
+			0
+		};
+	}
 
 	sprite.mTransform.UpdateMatrix();
 	sprite.TransferBuffer();
@@ -24,22 +36,34 @@ void Brush::Draw()
 	sprite.Draw();
 }
 
-void Brush::Start(Vector2 sizeMin_, Vector2 sizeMax_)
+void Brush::Close(Vector2 pos,Vector2 sizeMin_, Vector2 sizeMax_)
 {
 	sizeMin = sizeMin_;
 	sizeMax = sizeMax_;
-	timer.Start();
+	closeTimer.Start();
+	openTimer.Reset();
 
-	sprite.mTransform.position = {
-		Util::GetRand(0.f, (float)Util::WIN_WIDTH),
-		Util::GetRand(0.f, (float)Util::WIN_HEIGHT),
-		0
-	};
+	sprite.mTransform.position.x = pos.x;
+	sprite.mTransform.position.y = pos.y;
+}
 
-	sprite.mMaterial.mColor = {
-		Util::GetRand(0.0f,1.0f),
-		Util::GetRand(0.0f,1.0f),
-		Util::GetRand(0.0f,1.0f),
-		1.0f
-	};
+void Brush::Open(Vector2 pos, Vector2 sizeMin_, Vector2 sizeMax_)
+{
+	sizeMin = sizeMin_;
+	sizeMax = sizeMax_;
+	openTimer.Start();
+	closeTimer.Reset();
+
+	sprite.mTransform.position.x = pos.x;
+	sprite.mTransform.position.y = pos.y;
+}
+
+bool Brush::GetOpenEnd()
+{
+	return openTimer.GetEnd();
+}
+
+bool Brush::GetCloseEnd()
+{
+	return closeTimer.GetEnd();
 }
