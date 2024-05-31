@@ -102,6 +102,7 @@ void Player::Init()
 	RAudio::Load("Resources/Sounds/SE/P_attack.wav", "Attack");
 	RAudio::Load("Resources/Sounds/SE/P_attackHit.wav", "Hit");
 	RAudio::Load("Resources/Sounds/SE/P_enemyCollect.wav", "eCollect");
+	RAudio::Load("Resources/Sounds/SE/playerLvUp.wav", "LevelUp");
 
 	RAudio::Load("Resources/Sounds/SE/playerShield.wav", "PShield");
 	
@@ -1222,6 +1223,9 @@ void Player::MaxWaxPlus(int32_t plus)
 	waxUI.Start();
 	ParticleManager::GetInstance()->
 		AddSimple(obj.mTransform.position,"levelup");
+
+	//レベルアップ音
+	RAudio::Play("LevelUp");
 }
 
 void Player::WaxLeakOut(int32_t leakNum, float minLeakLength, float maxLeakLength)
