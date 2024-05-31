@@ -47,6 +47,7 @@ public:
 	bool isMove;					//行動可能かフラグ
 	Vector3 slideVec;				//壁に当たった時スライドさせるベクトル
 	float toWallLen;				//壁との距離
+	float movingTime = 0;
 
 	//------------ 回転関連 ------------//
 	Vector3 rotVec;				//回転ベクトル

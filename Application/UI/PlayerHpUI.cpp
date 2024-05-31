@@ -10,6 +10,10 @@ void PlayerHpUI::Init()
 	circleGauge.SetTexture(TextureManager::Load("./Resources/UI/hpGauge.png", "hpGauge"));
 	circleGauge.SetColor(Color::kGreen);
 
+	circleGaugeDam.Init();
+	circleGaugeDam.SetTexture(TextureManager::Load("./Resources/UI/hpGauge.png", "hpGauge"));
+	circleGaugeDam.SetColor(Color::kRed);
+
 	circleGaugeBack.Init();
 	circleGaugeBack.SetTexture(TextureManager::Load("./Resources/UI/hpGauge.png", "hpGauge"));
 	circleGaugeBack.SetColor({0.1f,0.1f, 0.1f, 1.0f});
@@ -37,8 +41,10 @@ void PlayerHpUI::Update()
 	baseMin = 360.f - baseMax;
 
 	if (player) {
-		oldRadian = baseRadian;
-		baseRadian += (((1.0f - (player->hp / player->maxHP)) * 360.f) - oldRadian) / 7.0f;
+		baseRadian = (1.0f - (player->hp / player->maxHP)) * 360.f;
+
+		oldRadian = baseRadianDam;
+		baseRadianDam += (baseRadian - oldRadian) / 15.0f;
 
 		circleGauge.baseTrans.position = player->obj.mTransform.position;
 
@@ -49,11 +55,17 @@ void PlayerHpUI::Update()
 	}
 
 	circleGauge.SetBillboardSize(sizeFront);
+	circleGaugeDam.SetBillboardSize(sizeFront);
 	circleGaugeBack.SetBillboardSize(sizeFront);
 	circleGaugeFrame.SetBillboardSize(sizeBack);
 
 	circleGauge.baseRadian = baseMin + baseRadian * rate;
 	circleGauge.Update();
+
+	circleGaugeDam.baseRadian = baseMin + baseRadianDam * rate;
+	circleGaugeDam.baseTrans.position = circleGauge.baseTrans.position;
+	circleGaugeDam.angle = circleGauge.angle;
+	circleGaugeDam.Update();
 
 	circleGaugeBack.baseRadian = baseMin;
 	circleGaugeBack.baseTrans.position = circleGauge.baseTrans.position;
@@ -109,6 +121,7 @@ void PlayerHpUI::Update()
 void PlayerHpUI::Draw()
 {
 	circleGaugeBack.Draw();
+	circleGaugeDam.Draw();
 	circleGauge.Draw();
 	
 	circleGaugeFrame.Draw();
