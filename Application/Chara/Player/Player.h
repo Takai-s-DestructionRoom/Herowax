@@ -61,6 +61,9 @@ public:
 
 	Easing::EaseTimer damageCoolTimer;	//再びダメージくらうようになるまでのクールタイム
 
+	float pinchPercent;					//HPローとみなす割合(0.f~1.f)
+	Easing::EaseTimer pinchFlashTimer;	//HPローの時の点滅タイマー
+
 	//------------ 攻撃関連 ------------//
 	bool isAttack;					//攻撃中かフラグ
 	float minRange;			//最大射程

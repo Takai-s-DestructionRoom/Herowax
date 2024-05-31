@@ -269,6 +269,13 @@ void Player::Update()
 	//	isJumping = false;
 	//}
 
+	if (hp / maxHP <= pinchPercent)
+	{
+		pinchFlashTimer.RoopReverse();
+
+		//humanObj.mTuneMaterial.mColor = 色のイージング
+	}
+
 	//HP0になったら死ぬ
 	if (hp <= 0)
 	{
