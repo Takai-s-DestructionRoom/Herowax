@@ -101,8 +101,7 @@ void Player::Init()
 	RAudio::Load("Resources/Sounds/SE/P_enemyCollect.wav", "eCollect");
 
 	RAudio::Load("Resources/Sounds/SE/playerShield.wav", "PShield");
-
-
+	
 
 	obj = PaintableModelObj("playerBag");
 	humanObj = ModelObj("playerHuman");
@@ -457,6 +456,8 @@ void Player::Update()
 	if ((RInput::GetInstance()->GetRTrigger() || RInput::GetKey(DIK_SPACE)) && waxStock <= 0)
 	{
 		ui.EmptyUIUpdate();
+
+
 	}
 
 	waxUI.Update(obj.mTransform.position);

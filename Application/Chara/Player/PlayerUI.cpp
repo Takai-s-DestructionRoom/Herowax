@@ -8,12 +8,15 @@
 #include "Camera.h"
 #include "Parameter.h"
 #include "RImGui.h"
+#include "RAudio.h"
 
 void PlayerUI::LoadResource()
 {
 	TextureManager::Load("./Resources/UI/wax_empty_back.png", "waxEmptyBack");
 	TextureManager::Load("./Resources/UI/wax_empty_mark.png", "waxEmptyMark");
 	TextureManager::Load("./Resources/UI/wax_empty.png", "waxEmpty");
+	
+	RAudio::Load("Resources/Sounds/SE/waxempty.wav", "empty");
 }
 
 PlayerUI::PlayerUI()
@@ -300,6 +303,16 @@ void PlayerUI::GaugeDraw()
 
 void PlayerUI::EmptyUIUpdate()
 {
+	if (emptyFlashTimer.GetStarted() == false)
+	{
+
+		//最初の1音だけ
+		if (!RAudio::IsPlaying("empty"))
+		{
+			RAudio::Play("empty", 0.8f);
+		}
+	}
+
 	emptyBackFlashTimer.RoopReverse();
 	emptyFlashTimer.RoopReverse();
 	isEmptyDraw = true;
