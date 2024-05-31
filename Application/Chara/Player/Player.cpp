@@ -1431,9 +1431,27 @@ bool Player::GetWaxCollectButtonDown()
 		RInput::GetInstance()->GetKeyDown(DIK_Q));
 }
 
+bool Player::GetIsMove()
+{
+	return RInput::GetInstance()->GetPadLStick().Length() <= 0.f || 
+		RInput::GetInstance()->GetKeyDown(DIK_W) ||
+		RInput::GetInstance()->GetKeyDown(DIK_A) || 
+		RInput::GetInstance()->GetKeyDown(DIK_S) || 
+		RInput::GetInstance()->GetKeyDown(DIK_D);
+}
+
+bool Player::GetIsCameraMove()
+{
+	return RInput::GetInstance()->GetPadRStick().Length() <= 0.f ||
+		RInput::GetInstance()->GetKeyDown(DIK_UP) ||
+		RInput::GetInstance()->GetKeyDown(DIK_LEFT) ||
+		RInput::GetInstance()->GetKeyDown(DIK_DOWN) ||
+		RInput::GetInstance()->GetKeyDown(DIK_RIGHT);
+}
+
 bool Player::GetParryButtonDown() {
 	return RInput::GetInstance()->GetPadButtonDown(XINPUT_GAMEPAD_X) || RInput::GetKeyDown(DIK_Z);
-};
+}
 
 void AfterImage::Init()
 {

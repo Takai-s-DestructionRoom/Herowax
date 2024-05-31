@@ -22,10 +22,10 @@ void ParryTutorialScene::Init(const Vector3 target)
 
 	isActive = true;
 
-	buttonUIPos = { RWindow::GetWidth() * 0.5f,RWindow::GetHeight() * 0.5f - 100.f };;
+	buttonUIPos = { RWindow::GetWidth() * 0.5f,RWindow::GetHeight() * 0.5f - 100.f };
 	buttonUIPos.y += 300.f;
 
-	textUIPos = { RWindow::GetWidth() * 0.5f,RWindow::GetHeight() * 0.5f - 100.f };;
+	textUIPos = { RWindow::GetWidth() * 0.5f,RWindow::GetHeight() * 0.5f - 100.f };
 	textUIPos.y -= 100.f;
 }
 

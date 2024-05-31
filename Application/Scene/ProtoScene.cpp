@@ -26,6 +26,8 @@
 #include "Wave.h"
 #include "Tank.h"
 #include "BombSolider.h"
+#include "MoveTutorialScene.h"
+#include "AttackTutorialScene.h"
 #include "ParryTutorialScene.h"
 
 ProtoScene::ProtoScene()
@@ -148,6 +150,22 @@ void ProtoScene::Update()
 
 	SceneTrance::GetInstance()->Update();
 
+	if ((EventCaller::GetEventCallStr() == MoveTutorialScene::GetEventCallStr())) {
+		//移動のチュートリアルに遷移
+		EventCaller::GetInstance()->eventScene = std::make_unique<MoveTutorialScene>();
+		EventCaller::GetInstance()->eventScene->Init(Camera::sNowCamera->mViewProjection.mTarget);
+
+		EventCaller::EventCallStrReset();
+	}
+
+	if ((EventCaller::GetEventCallStr() == AttackTutorialScene::GetEventCallStr())) {
+		//攻撃のチュートリアルに遷移
+		EventCaller::GetInstance()->eventScene = std::make_unique<AttackTutorialScene>();
+		EventCaller::GetInstance()->eventScene->Init(Camera::sNowCamera->mViewProjection.mTarget);
+
+		EventCaller::EventCallStrReset();
+	}
+
 	if ((EventCaller::GetEventCallStr() == ParryTutorialScene::GetEventCallStr())) {
 		//パリィのチュートリアルに遷移
 		EventCaller::GetInstance()->eventScene = std::make_unique<ParryTutorialScene>();
@@ -158,6 +176,18 @@ void ProtoScene::Update()
 
 		EventCaller::EventCallStrReset();
 	}
+
+	//if (player.moveTutorial == false)
+	//{
+	//	EventCaller::EventCall(MoveTutorialScene::GetEventCallStr(), false);
+	//	//player.moveTutorial = true;
+	//}
+
+	//if (player.moveTutorial && player.attackTutorial == false)
+	//{
+	//	EventCaller::EventCall(AttackTutorialScene::GetEventCallStr(), false);
+	//	player.attackTutorial = true;
+	//}
 
 	//ボス撃破シーンに遷移
 	if ((EventCaller::GetEventCallStr() == BossDeadScene::GetEventCallStr()) &&

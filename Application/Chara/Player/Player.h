@@ -145,6 +145,8 @@ public:
 	float modelChangeOffset;//モデルのズレに合わせたオフセット
 	bool modelChange = false;
 
+	bool moveTutorial = false;
+	bool attackTutorial = false;
 	bool parryTutorial = false;
 	bool eventParry = false;
 
@@ -276,6 +278,8 @@ public:
 		}
 	};
 
+	static bool GetIsMove();
+	static bool GetIsCameraMove();
 	static bool GetParryButtonDown();
 
 private:
