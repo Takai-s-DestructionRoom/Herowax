@@ -453,7 +453,14 @@ void Player::Update()
 		waxStock = 100;
 	}
 
+	//ここの順番入れ替えるとロウ不足UIが正常に動かないからやめてね//
+	//UIの更新
 	ui.Update(this);
+	//攻撃ボタン入力中でストックがない場合ロウ不足UI出す
+	if ((RInput::GetInstance()->GetRTrigger() || RInput::GetKey(DIK_SPACE)) && waxStock <= 0)
+	{
+		ui.EmptyUIUpdate();
+	}
 
 	waxUI.Update(obj.mTransform.position);
 
