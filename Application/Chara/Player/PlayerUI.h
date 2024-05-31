@@ -37,11 +37,23 @@ private:
 	float baseRadian = 0.0f;		//全体のロウの総量をゲージ事に0.0f~1.0fで管理
 	float baseBackRadian = 0.0f;	//全体のロウの総量をゲージ事に0.0f~1.0fで管理
 									//ゲージが2本になったら1.0f~2.0fになる
+	float oldBaseRadian = 0;
+
+
+	Easing::EaseTimer emptyFlashTimer;		//ロウ不足の点滅タイマー
+	Easing::EaseTimer emptyBackFlashTimer;	//ロウ不足背景の点滅タイマー
+
+	Vector3 emptyPos;	//ロウ不足の座標
+	Vector3 emptySize;	//ロウ不足のサイズ
+	bool isEmptyDraw;	//ロウ不足描画フラグ
+
 public:
 	static void LoadResource();
 	PlayerUI();
 	void Update(Player* player);
 	void Draw();
+
+	void EmptyUIUpdate();
 
 private:
 	void GaugeReset();

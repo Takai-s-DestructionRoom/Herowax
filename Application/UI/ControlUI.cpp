@@ -55,6 +55,10 @@ void ControlUI::Init()
 	uiOnces[10].load_file = "X_normal";
 	uiOnces[11].load_file = "avoidText";
 
+	uiOnces[0].alpha = 0.f;
+	uiOnces[1].alpha = 0.f;
+	uiOnces[2].alpha = 0.f;
+	uiOnces[3].alpha = 0.f;
 	uiOnces[8].alpha = 0.f;
 	uiOnces[11].alpha = 0.f;
 }

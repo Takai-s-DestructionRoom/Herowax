@@ -47,6 +47,7 @@ public:
 	bool isMove;					//行動可能かフラグ
 	Vector3 slideVec;				//壁に当たった時スライドさせるベクトル
 	float toWallLen;				//壁との距離
+	float movingTime = 0;
 
 	//------------ 回転関連 ------------//
 	Vector3 rotVec;				//回転ベクトル
@@ -60,6 +61,9 @@ public:
 	float oldHp;			//1フレーム前のHP
 
 	Easing::EaseTimer damageCoolTimer;	//再びダメージくらうようになるまでのクールタイム
+
+	float pinchPercent;					//HPローとみなす割合(0.f~1.f)
+	Easing::EaseTimer pinchFlashTimer;	//HPローの時の点滅タイマー
 
 	//------------ 攻撃関連 ------------//
 	bool isAttack;					//攻撃中かフラグ

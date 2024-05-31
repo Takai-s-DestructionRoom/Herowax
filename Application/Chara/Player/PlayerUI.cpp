@@ -11,23 +11,36 @@
 
 void PlayerUI::LoadResource()
 {
-	TextureManager::Load("./Resources/white2x2.png", "white2x2");
+	TextureManager::Load("./Resources/UI/wax_empty_back.png", "waxEmptyBack");
+	TextureManager::Load("./Resources/UI/wax_empty_mark.png", "waxEmptyMark");
+	TextureManager::Load("./Resources/UI/wax_empty.png", "waxEmpty");
 }
 
 PlayerUI::PlayerUI()
 {
+	LoadResource();
+
 	std::map<std::string, std::string> extract = Parameter::Extract("waxCircleGauge");
-	
-	basePos = Parameter::GetVector3Data(extract, "ゲージの位置", {0,0,0});
-	baseScale = Parameter::GetVector3Data(extract,"ゲージの大きさ", { 1,1,1 });
-	sizeCoeffPlus = Parameter::GetParam(extract,"ゲージ間の幅", 0.2f);
+
+	basePos = Parameter::GetVector3Data(extract, "ゲージの位置", { 0,0,0 });
+	baseScale = Parameter::GetVector3Data(extract, "ゲージの大きさ", { 1,1,1 });
+	sizeCoeffPlus = Parameter::GetParam(extract, "ゲージ間の幅", 0.2f);
+
+	std::map<std::string, std::string> extractEmpty = Parameter::Extract("waxEmpty");
+	emptyPos = Parameter::GetVector3Data(extractEmpty, "ロウ不足の位置", { 0,0,0 });
+	emptySize = Parameter::GetVector3Data(extractEmpty, "ロウ不足の大きさ", { 1,1,1 });
+	emptyBackFlashTimer = Parameter::GetParam(extractEmpty, "ロウ不足背景の点滅タイマー", 1.f);
+	emptyFlashTimer = Parameter::GetParam(extractEmpty, "ロウ不足の点滅タイマー", 1.f);
 
 	GaugeReset();
 	GaugeAdd();
 
-	numDrawer.Init(3,"NumDrawer");
+	numDrawer.Init(3, "NumDrawer");
 
 	playerHpUI.Init();
+
+	emptyBackFlashTimer.Reset();
+	emptyFlashTimer.Reset();
 
 	/*iconSize = { 0.25f,0.25f };
 	minimapIcon.SetTexture(TextureManager::Load("./Resources/minimap_icon.png", "minimapIcon"));
@@ -71,6 +84,13 @@ void PlayerUI::Update(Player* player)
 	//minimapIconRange.mTransform.UpdateMatrix();
 	//minimapIconRange.TransferBuffer();
 
+	if (isEmptyDraw == false)
+	{
+		emptyBackFlashTimer.Reset();
+		emptyFlashTimer.Reset();
+	}
+	isEmptyDraw = false;
+
 	//ロウの残量を反映
 	numDrawer.SetNum(player->waxStock);
 	numDrawer.Imgui();
@@ -81,9 +101,10 @@ void PlayerUI::Update(Player* player)
 
 	//ボタンを一回押すごとに減る量
 	float onePushSize = (72.f / (float)player->waxNum);
-	
+
 	//現在のロウの値を0.0f~1.0f~2.0f..で表す
-	baseRadian = ((onePushSize * (float)player->waxStock)) / 360.f;
+	oldBaseRadian = baseRadian;
+	baseRadian += ((((onePushSize * (float)player->waxStock)) / 360.f) - oldBaseRadian) / 5.0f;
 	baseBackRadian = ((onePushSize * (float)player->maxWaxStock)) / 360.f;
 
 	//0以下にならないように丸め
@@ -118,6 +139,27 @@ void PlayerUI::Update(Player* player)
 		}
 
 		ImGui::End();
+
+		//ロウ不足
+		ImGui::SetNextWindowSize({ 300, 250 }, ImGuiCond_FirstUseEver);
+
+		ImGui::Begin("WaxEmpty");
+
+		ImGui::DragFloat3("位置", &emptyPos.x);
+		ImGui::DragFloat3("大きさ", &emptySize.x, 0.05f);
+		ImGui::DragFloat("背景点滅タイマー", &emptyBackFlashTimer.maxTime_, 0.05f);
+		ImGui::DragFloat("バツ印点滅タイマー", &emptyFlashTimer.maxTime_, 0.05f);
+
+		if (ImGui::Button("セーブ")) {
+			Parameter::Begin("waxEmpty");
+			Parameter::SaveVector3("ロウ不足の位置", emptyPos);
+			Parameter::SaveVector3("ロウ不足の大きさ", emptySize);
+			Parameter::Save("ロウ不足背景の点滅タイマー", emptyBackFlashTimer.maxTime_);
+			Parameter::Save("ロウ不足の点滅タイマー", emptyFlashTimer.maxTime_);
+			Parameter::End();
+		}
+
+		ImGui::End();
 	}
 }
 
@@ -146,7 +188,7 @@ void PlayerUI::GaugeAdd(bool isOut)
 	waxCircleGauges.emplace_back();
 	waxCircleGauges.back().Init();
 	waxCircleGauges.back().baseRadian = 360.0f;
-	
+
 	waxCircleGaugeBacks.emplace_back();
 	waxCircleGaugeBacks.back().Init();
 	waxCircleGaugeBacks.back().baseRadian = 360.0f;
@@ -161,7 +203,7 @@ void PlayerUI::GaugeAdd(bool isOut)
 		//デフォルトと同じだけど明示的にしたいのでテクスチャ配置
 		//waxCircleGauges.back().sprite.SetTexture(TextureManager::Load("./Resources/circleGauge.png", "circleGauge"));
 		waxCircleGauges.back().SetTexture(TextureManager::Load("./Resources/UI/waxGauge.png", "waxGauge"));
-		
+
 		//waxCircleGaugeBacks.back().sprite.SetTexture(TextureManager::Load("./Resources/circleGaugeBack.png", "circleGaugeBack"));
 		waxCircleGaugeBacks.back().SetTexture(TextureManager::Load("./Resources/UI/circleGaugeBack.png", "circleGaugeBack"));
 	}
@@ -216,7 +258,7 @@ void PlayerUI::GaugeUpdate()
 }
 
 void PlayerUI::GaugeDraw()
-{	
+{
 	InstantDrawer::DrawGraph(
 		waxCircleGaugeBacks[0].baseTrans.position.x,
 		waxCircleGaugeBacks[0].baseTrans.position.y,
@@ -236,4 +278,29 @@ void PlayerUI::GaugeDraw()
 	}
 
 	numDrawer.Draw();
+
+	if (isEmptyDraw)
+	{
+		InstantDrawer::DrawGraph(
+			emptyPos.x, emptyPos.y,
+			emptySize.x, emptySize.y, 0.f,
+			"waxEmptyBack",
+			{ 1,1,1,Easing::InOutQuad(emptyBackFlashTimer.GetTimeRate()) + 0.1f });
+		InstantDrawer::DrawGraph(
+			emptyPos.x, emptyPos.y,
+			emptySize.x, emptySize.y, 0.f,
+			"waxEmpty");
+		InstantDrawer::DrawGraph(
+			emptyPos.x, emptyPos.y,
+			emptySize.x, emptySize.y, 0.f,
+			"waxEmptyMark",
+			{ 1,1,1,Easing::OutBack(emptyFlashTimer.GetTimeRate()) });
+	}
+}
+
+void PlayerUI::EmptyUIUpdate()
+{
+	emptyBackFlashTimer.RoopReverse();
+	emptyFlashTimer.RoopReverse();
+	isEmptyDraw = true;
 }

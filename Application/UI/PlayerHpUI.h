@@ -7,6 +7,7 @@ class PlayerHpUI
 {
 public:
 	CircleGauge circleGauge = {true};
+	CircleGauge circleGaugeDam = { true };
 	CircleGauge circleGaugeBack = {true};
 	CircleGauge circleGaugeFrame = {true};
 
@@ -22,6 +23,8 @@ private:
 	float baseMin = 0.0f;
 	float baseMax = 360.f;
 	float baseRadian = 0.0f;
+	float baseRadianDam = 0.0f;
+	float oldRadian = 0.0f;
 
 	Player* player = nullptr;
 	float playerRangeXZ = 3.0f;
