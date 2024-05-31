@@ -1219,6 +1219,8 @@ void Player::MaxWaxPlus(int32_t plus)
 	maxWaxStock += plus;
 
 	waxUI.Start();
+	ParticleManager::GetInstance()->
+		AddSimple(obj.mTransform.position,"levelup");
 }
 
 void Player::WaxLeakOut(int32_t leakNum, float minLeakLength, float maxLeakLength)
