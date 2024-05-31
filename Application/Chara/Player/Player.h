@@ -278,7 +278,9 @@ public:
 		}
 	};
 
+	//動いてるかチェック
 	static bool GetIsMove();
+	//カメラ動かしてるかチェック
 	static bool GetIsCameraMove();
 	static bool GetParryButtonDown();
 
