@@ -6,10 +6,10 @@ class Player;
 class PlayerHpUI
 {
 public:
-	CircleGauge circleGauge = {true};
-	CircleGauge circleGaugeDam = { true };
-	CircleGauge circleGaugeBack = {true};
-	CircleGauge circleGaugeFrame = {true};
+	CircleGauge circleGauge = {false};
+	CircleGauge circleGaugeDam = { false };
+	CircleGauge circleGaugeBack = { false };
+	CircleGauge circleGaugeFrame = { false };
 
 	void Init();
 	void Update();
@@ -27,11 +27,8 @@ private:
 	float oldRadian = 0.0f;
 
 	Player* player = nullptr;
-	float playerRangeXZ = 3.0f;
 	float playerRangeY = 0.0f;
+	float angleCompensNum = 85.f;
 	bool checkBox = false;
-
-	Vector2 sizeFront = {1,1};
-	Vector2 sizeBack = {1,1};
 };
 
