@@ -37,7 +37,7 @@ void WaxSceneTransition::Update()
 
 			if (!RAudio::IsPlaying("Transition"))
 			{
-				RAudio::Play("Transition", 0.6f);
+				RAudio::Play("Transition", 0.6f, 1.25f);
 			}
 		}
 
