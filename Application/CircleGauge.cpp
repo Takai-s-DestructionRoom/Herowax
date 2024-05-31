@@ -169,9 +169,14 @@ void CircleGauge::SetTexture(TextureHandle texture)
 	}
 }
 
-void CircleGauge::SetBillboardSize(Vector2 size)
+void CircleGauge::SetSize(Vector2 size)
 {
-	billboard.mImage.SetSize(size);
+	if (mode) {
+		billboard.mImage.SetSize(size);
+	}
+	else {
+		
+	}
 }
 
 void CircleGauge::SetColor(Color color)
