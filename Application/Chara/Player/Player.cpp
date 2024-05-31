@@ -1433,7 +1433,7 @@ bool Player::GetWaxCollectButtonDown()
 
 bool Player::GetIsMove()
 {
-	return RInput::GetInstance()->GetPadLStick().Length() <= 0.f || 
+	return RInput::GetInstance()->GetPadLStick().Length() > 0.f || 
 		RInput::GetInstance()->GetKeyDown(DIK_W) ||
 		RInput::GetInstance()->GetKeyDown(DIK_A) || 
 		RInput::GetInstance()->GetKeyDown(DIK_S) || 
@@ -1442,7 +1442,7 @@ bool Player::GetIsMove()
 
 bool Player::GetIsCameraMove()
 {
-	return RInput::GetInstance()->GetPadRStick().Length() <= 0.f ||
+	return RInput::GetInstance()->GetPadRStick().Length() > 0.f ||
 		RInput::GetInstance()->GetKeyDown(DIK_UP) ||
 		RInput::GetInstance()->GetKeyDown(DIK_LEFT) ||
 		RInput::GetInstance()->GetKeyDown(DIK_DOWN) ||

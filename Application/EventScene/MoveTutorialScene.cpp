@@ -4,8 +4,8 @@
 
 MoveTutorialScene::MoveTutorialScene()
 {
-	moveCountTimer = 2.f;
-	cameraMoveCountTimer = 2.f;
+	moveCountTimer = 0.2f;
+	cameraMoveCountTimer = 0.2f;
 }
 
 MoveTutorialScene::~MoveTutorialScene()

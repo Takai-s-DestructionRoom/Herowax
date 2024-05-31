@@ -47,7 +47,7 @@ ProtoScene::ProtoScene()
 	RAudio::Load("Resources/Sounds/BGM/Ingame.wav", "Normal");
 	RAudio::Load("Resources/Sounds/BGM/Boss.wav", "Boss");
 	RAudio::Load("Resources/Sounds/BGM/Gameclear.wav", "Clear");
-	
+
 	RAudio::Load("Resources/Sounds/SE/P_attackHit.wav", "Hit");
 	RAudio::Load("Resources/Sounds/SE/playerParry.wav", "Parry");
 	RAudio::Load("Resources/Sounds/SE/playerGuard.wav", "Guard");
@@ -157,33 +157,34 @@ void ProtoScene::Update()
 
 		EventCaller::EventCallStrReset();
 	}
-
-	if ((EventCaller::GetEventCallStr() == AttackTutorialScene::GetEventCallStr())) {
+	else if ((EventCaller::GetEventCallStr() == AttackTutorialScene::GetEventCallStr())) {
 		//攻撃のチュートリアルに遷移
 		EventCaller::GetInstance()->eventScene = std::make_unique<AttackTutorialScene>();
 		EventCaller::GetInstance()->eventScene->Init(Camera::sNowCamera->mViewProjection.mTarget);
 
 		EventCaller::EventCallStrReset();
 	}
-
-	if ((EventCaller::GetEventCallStr() == ParryTutorialScene::GetEventCallStr())) {
+	else if ((EventCaller::GetEventCallStr() == ParryTutorialScene::GetEventCallStr())) {
 		//パリィのチュートリアルに遷移
 		EventCaller::GetInstance()->eventScene = std::make_unique<ParryTutorialScene>();
 		EventCaller::GetInstance()->eventScene->Init(Camera::sNowCamera->mViewProjection.mTarget);
-	
+
 		player.isMove = false;
 		EnemyManager::GetInstance()->isStop = true;
 
 		EventCaller::EventCallStrReset();
 	}
 
-	//if (player.moveTutorial == false)
-	//{
-	//	EventCaller::EventCall(MoveTutorialScene::GetEventCallStr(), false);
-	//	//player.moveTutorial = true;
-	//}
+	//移動チュートリアルが終わっておらず、イベントシーンではないなら
+	if (player.moveTutorial == false && EventCaller::GetEventCallStr() == "")
+	{
+		player.moveTutorial = true;
+		EventCaller::EventCall(MoveTutorialScene::GetEventCallStr(), false);
+	}
 
-	//if (player.moveTutorial && player.attackTutorial == false)
+	////移動チュートリアルが終わってて、イベントシーンではなく、攻撃チュートリアルが終わってないなら
+	//if (player.moveTutorial && player.attackTutorial == false &&
+	//	EventCaller::GetEventCallStr() == "")
 	//{
 	//	EventCaller::EventCall(AttackTutorialScene::GetEventCallStr(), false);
 	//	player.attackTutorial = true;
@@ -506,11 +507,11 @@ void ProtoScene::Update()
 				{
 					player.parryTutorial = true;
 					player.eventParry = true;
-					EventCaller::EventCall(ParryTutorialScene::GetEventCallStr(),false);
+					EventCaller::EventCall(ParryTutorialScene::GetEventCallStr(), false);
 				}
 			}
 
-			if (ColPrimitive3D::CheckSphereToSphere(enemy->collider, player.collider) && 
+			if (ColPrimitive3D::CheckSphereToSphere(enemy->collider, player.collider) &&
 				enemy->GetIsSolid() == false)
 			{
 				//チュートリアルなら無理やりパリィ成功したこととする
@@ -519,7 +520,7 @@ void ProtoScene::Update()
 					{
 						enemy->ChangeAttackState<EnemyEndAttackState>();
 						Tank* tank = static_cast<Tank*>(enemy.get());
-						
+
 						tank->GetShield()->Break();
 
 						if (!RAudio::IsPlaying("Parry"))
@@ -624,7 +625,7 @@ void ProtoScene::Update()
 					{
 						RAudio::Play("Parry", 0.8f);
 					}
-					
+
 				}
 				else
 				{
