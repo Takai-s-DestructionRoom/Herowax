@@ -866,7 +866,7 @@ void ProtoScene::Update()
 	skydome.TransferBuffer(Camera::sNowCamera->mViewProjection);
 
 	//F6かメニューボタン押されたらリザルトシーンへ
-	if (RInput::GetInstance()->GetKeyDown(DIK_F6) ||
+	if ((RInput::GetInstance()->GetKeyDown(DIK_F6) && Util::debugBool)||
 		RInput::GetInstance()->GetPadButtonDown(XINPUT_GAMEPAD_START))
 	{
 		RAudio::Stop("Boss");

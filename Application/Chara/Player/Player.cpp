@@ -484,8 +484,10 @@ void Player::Update()
 
 	tankMeterBuff->thickness = 0.05f;
 
-	if (RInput::GetKeyDown(DIK_H)) {
-		waxStock = 100;
+	if (Util::debugBool) {
+		if (RInput::GetKeyDown(DIK_H)) {
+			waxStock = 100;
+		}
 	}
 
 	//ここの順番入れ替えるとロウ不足UIが正常に動かないからやめてね//

@@ -24,7 +24,7 @@ void ResultScene::Init()
 void ResultScene::Update()
 {
 	//F6かメニューボタン押されたらタイトルシーンへ
-	if (RInput::GetInstance()->GetKeyDown(DIK_F6) ||
+	if ((RInput::GetInstance()->GetKeyDown(DIK_F6) && Util::debugBool) ||
 		RInput::GetInstance()->GetPadButtonDown(XINPUT_GAMEPAD_START))
 	{
 		SceneManager::GetInstance()->Change<TitleScene, WaxSceneTransition>();

@@ -44,10 +44,12 @@ Level* Level::Get()
 
 void Level::Update()
 {
-	//Rキーで再読み込み
-	if (RInput::GetInstance()->GetKeyDown(DIK_R))
-	{
-		Reload();
+	if (Util::debugBool) {
+		//Rキーで再読み込み
+		if (RInput::GetInstance()->GetKeyDown(DIK_R))
+		{
+			Reload();
+		}
 	}
 
 	for (auto& obj : objects)

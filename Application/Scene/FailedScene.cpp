@@ -79,7 +79,7 @@ void FailedScene::Update()
 	Level::Get()->Update();
 
 	//F6かメニューボタン押されたらタイトルシーンへ
-	bool button = RInput::GetInstance()->GetKeyDown(DIK_F6) ||
+	bool button = (RInput::GetInstance()->GetKeyDown(DIK_F6) && Util::debugBool) ||
 		RInput::GetInstance()->GetKeyDown(DIK_SPACE) ||
 		RInput::GetInstance()->GetPadButtonDown(XINPUT_GAMEPAD_A);
 

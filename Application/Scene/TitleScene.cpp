@@ -87,7 +87,7 @@ void TitleScene::Update()
 	ParticleManager::GetInstance()->Update();
 
 	//F6かメニューボタン押されたらプロトシーンへ
-	bool button = RInput::GetInstance()->GetKeyDown(DIK_F6) ||
+	bool button = (RInput::GetInstance()->GetKeyDown(DIK_F6) && Util::debugBool) ||
 		RInput::GetInstance()->GetKeyDown(DIK_SPACE) ||
 		RInput::GetInstance()->GetPadButtonDown(XINPUT_GAMEPAD_A);
 	if (button && !sceneChange)

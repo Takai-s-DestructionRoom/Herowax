@@ -132,9 +132,9 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 			RWindow::SetMouseLock(false);
 		}
 
-		if (RInput::GetKeyDown(DIK_F5)) {
+		/*if (RInput::GetKeyDown(DIK_F5)) {
 			Util::debugBool = !Util::debugBool;
-		}
+		}*/
 
 		RInput::Update();
 		RAudio::Update();

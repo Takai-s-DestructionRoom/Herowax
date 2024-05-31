@@ -109,6 +109,8 @@ void SpotLightManager::Imgui()
 				ImGui::DragFloat3(name.c_str(), &blink->stickObj.mTransform.rotation.x);
 				name = "light_scale" + std::to_string(obj->GetIndex());
 				ImGui::DragFloat3(name.c_str(), &blink->obj.mTransform.scale.x);
+				name = "light_rota" + std::to_string(obj->GetIndex());
+				ImGui::DragFloat3(name.c_str(), &blink->obj.mTransform.rotation.x);
 			}
 		}
 
@@ -194,6 +196,9 @@ void SpotLightManager::Load()
 				name = "light_scale" + std::to_string(i);
 				blink->obj.mTransform.scale = 
 					Parameter::GetVector3Data(extract,name.c_str(), blink->obj.mTransform.scale);
+				name = "light_rota" + std::to_string(i);
+				blink->obj.mTransform.rotation =
+					Parameter::GetVector3Data(extract, name.c_str(), blink->obj.mTransform.rotation);
 			}
 		}
 	}
@@ -239,6 +244,8 @@ void SpotLightManager::Save()
 			Parameter::SaveVector3(name.c_str(), blink->stickObj.mTransform.rotation);
 			name = "light_scale" + std::to_string(obj->GetIndex());
 			Parameter::SaveVector3(name.c_str(), blink->obj.mTransform.scale);
+			name = "light_rota" + std::to_string(obj->GetIndex());
+			Parameter::SaveVector3(name.c_str(), blink->obj.mTransform.rotation);
 		}
 	}
 

@@ -816,9 +816,6 @@
     <ClCompile Include="Application\Object\EnemyShot.cpp">
       <Filter>ソース ファイル\Application\Object\Chara\Enemy</Filter>
     </ClCompile>
-    <ClCompile Include="Application\LightObject.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
     <ClCompile Include="Application\Scene\FailedScene.cpp">
       <Filter>ソース ファイル\Application\Scene</Filter>
     </ClCompile>
@@ -902,6 +899,9 @@
     </ClCompile>
     <ClCompile Include="Application\EventScene\MoveTutorialScene.cpp">
       <Filter>ソース ファイル\Application\EventScene</Filter>
+    </ClCompile>
+    <ClCompile Include="Application\LightObject.cpp">
+      <Filter>ソース ファイル\Application\Object\SpotLight</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -1613,9 +1613,6 @@
     <ClInclude Include="Application\Object\EnemyShot.h">
       <Filter>ヘッダー ファイル\Application\Object\Chara\Enemy</Filter>
     </ClInclude>
-    <ClInclude Include="Application\BlinkSpotLightObject.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
     <ClInclude Include="Application\Scene\FailedScene.h">
       <Filter>ヘッダー ファイル\Application\Scene</Filter>
     </ClInclude>
@@ -1696,6 +1693,9 @@
     </ClInclude>
     <ClInclude Include="Application\EventScene\MoveTutorialScene.h">
       <Filter>ヘッダー ファイル\Application\EventScene</Filter>
+    </ClInclude>
+    <ClInclude Include="Application\BlinkSpotLightObject.h">
+      <Filter>ヘッダー ファイル\Application\SpotLight</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
