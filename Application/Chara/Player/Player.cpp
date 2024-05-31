@@ -1059,7 +1059,7 @@ void Player::WaxCollect()
 	
 		if (!RAudio::IsPlaying("Collect"))
 		{
-			RAudio::Play("Collect", 0.6f);
+			RAudio::Play("Collect");
 		}
 	}
 

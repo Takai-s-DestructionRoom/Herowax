@@ -56,7 +56,7 @@ void FailedScene::Init()
 
 	SpotLightManager::GetInstance()->Init(&light);
 
-	RAudio::Play("Over", 0.3f, 1.0f, true);
+	RAudio::Play("Over", 0.5f, 1.0f, true);
 }
 
 void FailedScene::Update()
