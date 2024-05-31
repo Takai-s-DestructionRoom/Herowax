@@ -24,6 +24,9 @@ void ParryTutorialScene::Init(const Vector3 target)
 
 	buttonUIPos = { RWindow::GetWidth() * 0.5f,RWindow::GetHeight() * 0.5f - 100.f };;
 	buttonUIPos.y += 300.f;
+
+	textUIPos = { RWindow::GetWidth() * 0.5f,RWindow::GetHeight() * 0.5f - 100.f };;
+	textUIPos.y -= 100.f;
 }
 
 void ParryTutorialScene::Update()
@@ -40,7 +43,22 @@ void ParryTutorialScene::Update()
 
 void ParryTutorialScene::Draw()
 {
+	flashingTimer.Roop();
+	//ボタンを表示
+	if (flashingTimer.GetTimeRate() > 0.8f)
+	{
+		InstantDrawer::DrawGraph(
+			buttonUIPos.x, buttonUIPos.y,
+			0.5f, 0.5f, 0.f, TextureManager::Load("./Resources/UI/X_push.png", "XbuttonPush"));
+	}
+	else
+	{
+		InstantDrawer::DrawGraph(
+			buttonUIPos.x, buttonUIPos.y,
+			0.5f, 0.5f, 0.f, TextureManager::Load("./Resources/UI/X_normal2.png", "Xbutton"));
+	}
+
 	InstantDrawer::DrawGraph(
-		buttonUIPos.x, buttonUIPos.y,
-		0.12f, 0.12f, 0.f, TextureManager::Load("./Resources/UI/A_normal.png", "Abutton"));
+		textUIPos.x, textUIPos.y,
+		0.5f, 0.5f, 0.f, TextureManager::Load("./Resources/UI/tutoreal_guard.png", "tutoreal_guard"));
 }
