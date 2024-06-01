@@ -28,7 +28,7 @@ void RImGui::NewFrame()
 
 void RImGui::Render()
 {
-    /*if (RInput::GetKeyDown(DIK_F7)) {
+   /* if (RInput::GetKeyDown(DIK_F7)) {
         showImGui = !showImGui;
     }*/
 
