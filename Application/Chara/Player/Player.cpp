@@ -23,6 +23,7 @@
 #include "FailedScene.h"
 #include "GameCamera.h"
 #include <SimpleDrawer.h>
+#include "AttackTutorialScene.h"
 #include "ParryTutorialScene.h"
 
 Player::Player() :GameObject(),
@@ -105,7 +106,7 @@ void Player::Init()
 	RAudio::Load("Resources/Sounds/SE/playerLvUp.wav", "LevelUp");
 
 	RAudio::Load("Resources/Sounds/SE/playerShield.wav", "PShield");
-	
+
 
 	obj = PaintableModelObj("playerBag");
 	humanObj = ModelObj("playerHuman");
@@ -262,8 +263,8 @@ void Player::Update()
 	{
 		pinchFlashTimer.RoopReverse();
 
-		humanObj.mTuneMaterial.mColor.r = 
-			Easing::InBack(Color::kWhite.r,Color::kRed.r, pinchFlashTimer.GetTimeRate());
+		humanObj.mTuneMaterial.mColor.r =
+			Easing::InBack(Color::kWhite.r, Color::kRed.r, pinchFlashTimer.GetTimeRate());
 		humanObj.mTuneMaterial.mColor.g =
 			Easing::InBack(Color::kWhite.g, Color::kRed.g, pinchFlashTimer.GetTimeRate());
 		humanObj.mTuneMaterial.mColor.b =
@@ -293,7 +294,7 @@ void Player::Update()
 		rotVec.x = Easing::InQuad(radStartX, 0, backwardTimer.GetTimeRate());
 		Vector3 vector = -GetFrontVec();
 		vector *= 2.0f;
-		tankOffset = InQuadVec3(vector, {0,0,0}, backwardTimer.GetTimeRate());
+		tankOffset = InQuadVec3(vector, { 0,0,0 }, backwardTimer.GetTimeRate());
 	}
 
 	//回転を適用
@@ -333,7 +334,7 @@ void Player::Update()
 		float wave = 0.2f * Util::GetRatio(-1.0f, 1.0f, sinf(Util::PI * 5 * waxCollectingTime));
 		obj.mTransform.scale = { bagScale + wave, bagScale + wave, bagScale + wave };
 	}
-	else if(movingTime > 0) {
+	else if (movingTime > 0) {
 		float wave = 0.1f * Util::GetRatio(-1.0f, 1.0f, sinf(Util::PI * 5 * movingTime));
 		obj.mTransform.scale = { bagScale + wave, bagScale + wave, bagScale + wave };
 	}
@@ -497,13 +498,14 @@ void Player::Update()
 	if ((RInput::GetInstance()->GetRTrigger() || RInput::GetKey(DIK_SPACE)) && waxStock <= 0)
 	{
 		ui.EmptyUIUpdate();
-
-
 	}
 
 	waxUI.Update(obj.mTransform.position);
 
-	ShieldUp();
+	if (attackTutorial)	//攻撃チュートリアルに入ってからガード可能に
+	{
+		ShieldUp();
+	}
 
 	//残像
 	/*for (auto& once : afterimagesObj)
@@ -703,8 +705,9 @@ void Player::Draw()
 		////ロウ回収範囲描画
 		//collectRangeModel.Draw();
 
-		//なんのイベントも呼ばれていないならUIを描画
-		if (EventCaller::GetNowEventStr() == "") {
+		//なんのイベントも呼ばれていないか攻撃チュートリアル中ならUIを描画
+		if (EventCaller::GetNowEventStr() == "" ||
+			EventCaller::GetNowEventStr() == AttackTutorialScene::GetEventCallStr()) {
 			ui.Draw();
 		}
 
@@ -944,7 +947,7 @@ void Player::Rotation()
 
 		//euler軸へ変換
 		rotVec = aLookat.ToEuler();
-		
+
 		change = true;
 	}
 	if (!change) {
@@ -1069,7 +1072,7 @@ void Player::WaxCollect()
 
 			//音鳴らす
 			RAudio::Play("eCollect", 0.5f, 1.0f + 1.0f * (collectCount / 100.0f));
-			
+
 			ParticleManager::GetInstance()->AddHoming2D(
 				Util::GetScreenPos(obj.mTransform.position), { 150.f,150.f }, waxCollectAmount, 0.8f,
 				Color::kWaxColor,
@@ -1086,7 +1089,7 @@ void Player::WaxCollect()
 	if (GetWaxCollectButtonDown()) {
 		WaxManager::GetInstance()->notCollect = false;
 		waxCollectingTime = 0;
-	
+
 		if (!RAudio::IsPlaying("Collect"))
 		{
 			RAudio::Play("Collect");
@@ -1252,7 +1255,7 @@ void Player::MaxWaxPlus(int32_t plus)
 	meterOldUpper = tankMeterBuff->upper;
 	waxUI.Start();
 	ParticleManager::GetInstance()->
-		AddSimple(obj.mTransform.position,"levelup");
+		AddSimple(obj.mTransform.position, "levelup");
 
 	//レベルアップ音
 	RAudio::Play("LevelUp");
@@ -1435,10 +1438,10 @@ bool Player::GetWaxCollectButtonDown()
 
 bool Player::GetIsMove()
 {
-	return RInput::GetInstance()->GetPadLStick().Length() > 0.f || 
+	return RInput::GetInstance()->GetPadLStick().Length() > 0.f ||
 		RInput::GetInstance()->GetKey(DIK_W) ||
-		RInput::GetInstance()->GetKey(DIK_A) || 
-		RInput::GetInstance()->GetKey(DIK_S) || 
+		RInput::GetInstance()->GetKey(DIK_A) ||
+		RInput::GetInstance()->GetKey(DIK_S) ||
 		RInput::GetInstance()->GetKey(DIK_D);
 }
 
@@ -1449,6 +1452,18 @@ bool Player::GetIsCameraMove()
 		RInput::GetInstance()->GetKey(DIK_LEFT) ||
 		RInput::GetInstance()->GetKey(DIK_DOWN) ||
 		RInput::GetInstance()->GetKey(DIK_RIGHT);
+}
+
+bool Player::GetIsAttackTutorial()
+{
+	return (RInput::GetInstance()->GetRTrigger() || RInput::GetKey(DIK_SPACE)) &&
+		WaxManager::GetInstance()->notCollect;
+}
+
+bool Player::GetIsCollectTutorial()
+{
+	return RInput::GetInstance()->GetLTrigger() ||
+		RInput::GetInstance()->GetKey(DIK_Q);
 }
 
 bool Player::GetParryButtonDown() {

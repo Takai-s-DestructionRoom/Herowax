@@ -20,8 +20,9 @@ void PlayerNormal::Update(Player* player)
 	//player->obj.mTransform.rotation = aLookat.ToEuler();
 
 	//入力があればステート遷移
+	//攻撃チュートリアル入るまでは攻撃しない
 	if ((RInput::GetInstance()->GetRTrigger() || RInput::GetKey(DIK_SPACE)) &&
-		WaxManager::GetInstance()->notCollect) {
+		WaxManager::GetInstance()->notCollect && player->attackTutorial) {
 		player->ChangeState<PlayerPablo>();
 		//通常の移動速度に戻す
 		player->moveSpeed *= player->pabloSpeedMag;

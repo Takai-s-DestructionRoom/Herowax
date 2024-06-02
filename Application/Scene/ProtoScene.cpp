@@ -175,20 +175,12 @@ void ProtoScene::Update()
 		EventCaller::EventCallStrReset();
 	}
 
-	//移動チュートリアルが終わっておらず、イベントシーンではないなら
-	if (player.moveTutorial == false && EventCaller::GetEventCallStr() == "")
+	//移動チュートリアルが終わってないなら
+	if (player.moveTutorial == false)
 	{
 		player.moveTutorial = true;
 		EventCaller::EventCall(MoveTutorialScene::GetEventCallStr(), false);
 	}
-
-	////移動チュートリアルが終わってて、イベントシーンではなく、攻撃チュートリアルが終わってないなら
-	//if (player.moveTutorial && player.attackTutorial == false &&
-	//	EventCaller::GetEventCallStr() == "")
-	//{
-	//	EventCaller::EventCall(AttackTutorialScene::GetEventCallStr(), false);
-	//	player.attackTutorial = true;
-	//}
 
 	//ボス撃破シーンに遷移
 	if ((EventCaller::GetEventCallStr() == BossDeadScene::GetEventCallStr()) &&
@@ -240,10 +232,21 @@ void ProtoScene::Update()
 		player.isMove = true;
 		EnemyManager::GetInstance()->isStop = false;
 
+		bool isEventSceneChange = false;
+
 		//今後まとめるときは、End()みたいな項目でこれらを呼べるようにしたい
 		//登場演出なら、ボスの登場演出モードを解除
 		if (EventCaller::GetNowEventStr() == BossAppearanceScene::GetEventCallStr()) {
 			Boss::GetInstance()->isAppearance = false;
+			isEventSceneChange = true;
+		}
+
+		//移動チュートリアルが終わってて、イベントシーンではなく、攻撃チュートリアルが終わってないなら
+		if (EventCaller::GetNowEventStr() == MoveTutorialScene::GetEventCallStr())
+		{
+			EventCaller::EventCall(AttackTutorialScene::GetEventCallStr(), false);
+			player.attackTutorial = true;
+			isEventSceneChange = true;
 		}
 
 		//死亡シーンの呼び出しが終わったならタイトルに戻す
@@ -256,7 +259,10 @@ void ProtoScene::Update()
 		Camera::sNowCamera = EventCaller::saveCamera;
 		EventCaller::saveCamera = nullptr;
 
-		EventCaller::NowEventStrReset();
+		if (isEventSceneChange == false)
+		{
+			EventCaller::NowEventStrReset();
+		}
 	}
 
 	GameCamera::GetInstance()->Update();
@@ -937,18 +943,18 @@ void ProtoScene::Draw()
 	Level::Get()->Draw();
 	Boss::GetInstance()->Draw();
 	player.Draw();
-
 	EventCaller::Draw();
+
 
 	//なんのイベントも呼ばれていないならUIを描画
 	if (EventCaller::GetNowEventStr() == "") {
 		controlUI.Draw();
+	}
 
-		if (Boss::GetInstance()->isAppearanced == false)
-		{
-			//bossAppTimerUI.Draw();
-			waveUI.Draw();
-		}
+	if (Boss::GetInstance()->isAppearanced == false)
+	{
+		//bossAppTimerUI.Draw();
+		waveUI.Draw();
 	}
 
 	//更新

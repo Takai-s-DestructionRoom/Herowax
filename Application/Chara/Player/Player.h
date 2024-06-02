@@ -282,6 +282,8 @@ public:
 	static bool GetIsMove();
 	//カメラ動かしてるかチェック
 	static bool GetIsCameraMove();
+	static bool GetIsAttackTutorial();
+	static bool GetIsCollectTutorial();
 	static bool GetParryButtonDown();
 
 private:
