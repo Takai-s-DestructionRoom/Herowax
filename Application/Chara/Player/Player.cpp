@@ -1436,19 +1436,19 @@ bool Player::GetWaxCollectButtonDown()
 bool Player::GetIsMove()
 {
 	return RInput::GetInstance()->GetPadLStick().Length() > 0.f || 
-		RInput::GetInstance()->GetKeyDown(DIK_W) ||
-		RInput::GetInstance()->GetKeyDown(DIK_A) || 
-		RInput::GetInstance()->GetKeyDown(DIK_S) || 
-		RInput::GetInstance()->GetKeyDown(DIK_D);
+		RInput::GetInstance()->GetKey(DIK_W) ||
+		RInput::GetInstance()->GetKey(DIK_A) || 
+		RInput::GetInstance()->GetKey(DIK_S) || 
+		RInput::GetInstance()->GetKey(DIK_D);
 }
 
 bool Player::GetIsCameraMove()
 {
 	return RInput::GetInstance()->GetPadRStick().Length() > 0.f ||
-		RInput::GetInstance()->GetKeyDown(DIK_UP) ||
-		RInput::GetInstance()->GetKeyDown(DIK_LEFT) ||
-		RInput::GetInstance()->GetKeyDown(DIK_DOWN) ||
-		RInput::GetInstance()->GetKeyDown(DIK_RIGHT);
+		RInput::GetInstance()->GetKey(DIK_UP) ||
+		RInput::GetInstance()->GetKey(DIK_LEFT) ||
+		RInput::GetInstance()->GetKey(DIK_DOWN) ||
+		RInput::GetInstance()->GetKey(DIK_RIGHT);
 }
 
 bool Player::GetParryButtonDown() {
