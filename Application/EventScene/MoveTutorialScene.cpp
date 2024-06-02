@@ -20,6 +20,7 @@ void MoveTutorialScene::Init(const Vector3 target)
 
 	Camera::sNowCamera = &GameCamera::GetInstance()->camera;
 
+
 	eventTimer.Start();
 
 	isActive = true;
@@ -41,7 +42,7 @@ void MoveTutorialScene::Update()
 {
 	eventTimer.Update();
 
-	GameCamera::GetInstance()->Update();
+	//GameCamera::GetInstance()->Update();
 
 	//動いてる間
 	if (Player::GetIsMove())

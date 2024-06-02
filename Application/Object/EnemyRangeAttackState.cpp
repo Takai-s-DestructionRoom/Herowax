@@ -81,7 +81,7 @@ void EnemyRangeNowState::Update(Enemy* enemy)
 
 	//角度加算
 	//向く方向のベクトルを取得
-	Vector3 aVec = enemy->GetTarget()->mTransform.position - enemy->obj.mTransform.position;
+	Vector3 aVec = enemy->attackEndPos - enemy->obj.mTransform.position;
 	aVec.Normalize();
 	aVec.y = 0;
 

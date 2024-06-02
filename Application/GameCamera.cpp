@@ -83,7 +83,6 @@ void GameCamera::Update()
 
 		ImGui::SetNextWindowSize({ 500, 200 }, ImGuiCond_FirstUseEver);
 		ImGui::Begin("Camera");
-
 		ImGui::Text("スティック x: % f y : % f", stick.x, stick.y);
 		ImGui::Text("座標:%f,%f,%f",
 			camera.mViewProjection.mEye.x,
