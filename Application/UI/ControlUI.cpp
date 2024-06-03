@@ -6,14 +6,15 @@
 void ControlUI::LoadResource()
 {
 	TextureManager::Load("./Resources/UI/L_Stick.png", "L_Stick");
-	TextureManager::Load("./Resources/UI/LT.png", "LT");
+	//TextureManager::Load("./Resources/UI/LT.png", "LT");
 	TextureManager::Load("./Resources/UI/collect_icon.png", "collect_icon");
 	TextureManager::Load("./Resources/UI/R_Stick.png", "R_Stick");
-	TextureManager::Load("./Resources/UI/RT.png", "RT");
+	//TextureManager::Load("./Resources/UI/RT.png", "RT");
 	TextureManager::Load("./Resources/UI/attack_icon.png", "attack_icon");
 	TextureManager::Load("./Resources/UI/Stick_shaft.png", "Stick_shaft");
 	TextureManager::Load("./Resources/UI/A_normal.png", "A_normal");
-	TextureManager::Load("./Resources/UI/X_normal.png", "X_normal");
+	//TextureManager::Load("./Resources/UI/X_normal.png", "X_normal");
+	TextureManager::Load("./Resources/UI/guard_icon.png", "guard_icon");
 
 	TextureManager::Load("./Resources/UI/cameraText.png", "cameraText");
 	TextureManager::Load("./Resources/UI/collectText.png", "collectText");
@@ -56,7 +57,8 @@ void ControlUI::Init()
 	uiOnces[7].load_file = "collectText";
 	uiOnces[8].load_file = "A_normal";
 	uiOnces[9].load_file = "guardText";
-	uiOnces[10].load_file = "X_normal";
+	//uiOnces[10].load_file = "X_normal";
+	uiOnces[10].load_file = "guard_icon";
 	uiOnces[11].load_file = "avoidText";
 
 	uiOnces[0].alpha = 0.f;

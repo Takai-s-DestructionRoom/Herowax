@@ -39,9 +39,9 @@ uiPosY9:694
 uiSizeX9:0.3
 uiSizeZ9:0.3
 uiPosX10:1189
-uiPosY10:632
-uiSizeX10:0.3
-uiSizeZ10:0.3
+uiPosY10:630
+uiSizeX10:0.4
+uiSizeZ10:0.4
 uiPosX11:991
 uiPosY11:421
 uiSizeX11:0.45
