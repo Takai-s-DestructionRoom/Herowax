@@ -1,6 +1,7 @@
 #include "ParryTutorialScene.h"
 #include "Player.h"
 #include "InstantDrawer.h"
+#include "RAudio.h"
 
 ParryTutorialScene::ParryTutorialScene()
 {
@@ -15,7 +16,7 @@ void ParryTutorialScene::Init(const Vector3 target)
 	camera.mViewProjection.mEye = Camera::sNowCamera->mViewProjection.mEye;
 	camera.mViewProjection.mTarget = target;
 	camera.mViewProjection.UpdateMatrix();
-
+	RAudio::Load("Resources/Sounds/SE/A_select.wav", "Select");
 	Camera::sNowCamera = &camera;
 
 	eventTimer.Start();
@@ -37,6 +38,7 @@ void ParryTutorialScene::Update()
 
 	if (Player::GetParryButtonDown()){
 		Camera::sNowCamera = nullptr;
+		RAudio::Play("Select", 1.4f);
 		isActive = false;
 	}
 }

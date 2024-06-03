@@ -3,6 +3,7 @@
 #include "InstantDrawer.h"
 #include "GameCamera.h"
 #include "EventCaller.h"
+#include "RAudio.h"
 
 AttackTutorialScene::AttackTutorialScene()
 {
@@ -17,7 +18,7 @@ void AttackTutorialScene::Init(const Vector3 target)
 	camera.mViewProjection.mEye = Camera::sNowCamera->mViewProjection.mEye;
 	camera.mViewProjection.mTarget = target;
 	camera.mViewProjection.UpdateMatrix();
-
+	RAudio::Load("Resources/Sounds/SE/A_select.wav", "Select");
 	Camera::sNowCamera = &GameCamera::GetInstance()->camera;
 
 	eventTimer.Start();
@@ -58,7 +59,7 @@ void AttackTutorialScene::Update()
 	if (attackCountGauge.baseRadian <= 0.0f && collectCountGauge.baseRadian <= 0.0f)
 	{
 		EventCaller::saveCamera = Camera::sNowCamera;
-
+		RAudio::Play("Select", 1.4f);
 		Camera::sNowCamera = nullptr;
 		isActive = false;
 	}

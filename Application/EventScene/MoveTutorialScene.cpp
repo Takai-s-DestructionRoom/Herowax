@@ -2,6 +2,7 @@
 #include "Player.h"
 #include "InstantDrawer.h"
 #include "GameCamera.h"
+#include "RAudio.h"
 
 MoveTutorialScene::MoveTutorialScene()
 {
@@ -19,7 +20,7 @@ void MoveTutorialScene::Init(const Vector3 target)
 	camera.mViewProjection.UpdateMatrix();
 
 	Camera::sNowCamera = &GameCamera::GetInstance()->camera;
-
+	RAudio::Load("Resources/Sounds/SE/A_select.wav", "Select");
 
 	eventTimer.Start();
 
@@ -61,6 +62,7 @@ void MoveTutorialScene::Update()
 	if (moveCountGauge.baseRadian <= 0.0f && cameraCountGauge.baseRadian <= 0.0f) {
 		Camera::sNowCamera = nullptr;
 		isActive = false;
+		RAudio::Play("Select", 1.4f);
 	}
 
 	moveCountGauge.ImGui();
