@@ -6,14 +6,15 @@
 void ControlUI::LoadResource()
 {
 	TextureManager::Load("./Resources/UI/L_Stick.png", "L_Stick");
-	TextureManager::Load("./Resources/UI/LT.png", "LT");
+	//TextureManager::Load("./Resources/UI/LT.png", "LT");
 	TextureManager::Load("./Resources/UI/collect_icon.png", "collect_icon");
 	TextureManager::Load("./Resources/UI/R_Stick.png", "R_Stick");
-	TextureManager::Load("./Resources/UI/RT.png", "RT");
+	//TextureManager::Load("./Resources/UI/RT.png", "RT");
 	TextureManager::Load("./Resources/UI/attack_icon.png", "attack_icon");
 	TextureManager::Load("./Resources/UI/Stick_shaft.png", "Stick_shaft");
 	TextureManager::Load("./Resources/UI/A_normal.png", "A_normal");
-	TextureManager::Load("./Resources/UI/X_normal.png", "X_normal");
+	//TextureManager::Load("./Resources/UI/X_normal.png", "X_normal");
+	TextureManager::Load("./Resources/UI/guard_icon.png", "guard_icon");
 
 	TextureManager::Load("./Resources/UI/cameraText.png", "cameraText");
 	TextureManager::Load("./Resources/UI/collectText.png", "collectText");
@@ -31,6 +32,12 @@ ControlUI::ControlUI()
 void ControlUI::Init()
 {
 	auto extract = Parameter::Extract("UI配置");
+
+	position.x = Parameter::GetParam(extract, "背景位置X", 0);
+	position.y = Parameter::GetParam(extract, "背景位置Y", 0);
+	size.x = Parameter::GetParam(extract, "背景サイズX", 0);
+	size.y = Parameter::GetParam(extract, "背景サイズY", 0);
+	alpha = Parameter::GetParam(extract, "背景透明度", 0);
 
 	for (int32_t i = 0; i < uiOnces.size(); i++)
 	{
@@ -56,7 +63,8 @@ void ControlUI::Init()
 	uiOnces[7].load_file = "collectText";
 	uiOnces[8].load_file = "A_normal";
 	uiOnces[9].load_file = "guardText";
-	uiOnces[10].load_file = "X_normal";
+	//uiOnces[10].load_file = "X_normal";
+	uiOnces[10].load_file = "guard_icon";
 	uiOnces[11].load_file = "avoidText";
 
 	uiOnces[0].alpha = 0.f;
@@ -76,6 +84,10 @@ void ControlUI::Update()
 		// デバッグモード //
 		ImGui::Begin("操作説明UI");
 
+		ImGui::DragFloat2("背景位置", &position.x);
+		ImGui::DragFloat2("背景サイズ", &size.x);
+		ImGui::DragFloat("背景透明度", &alpha,0.05f);
+
 		for (int32_t i = 0; i < uiOnces.size(); i++)
 		{
 			std::string text1 = "ui位置" + std::to_string(i);
@@ -87,6 +99,13 @@ void ControlUI::Update()
 
 		if (ImGui::Button("セーブ")) {
 			Parameter::Begin("UI配置");
+
+			Parameter::Save("背景位置X", position.x);
+			Parameter::Save("背景位置Y", position.y);
+			Parameter::Save("背景サイズX", size.x);
+			Parameter::Save("背景サイズY", size.y);
+			Parameter::Save("背景透明度", alpha);
+
 			for (int32_t i = 0; i < uiOnces.size(); i++)
 			{
 				std::string text1 = "uiPosX" + std::to_string(i);
@@ -107,6 +126,8 @@ void ControlUI::Update()
 
 void ControlUI::Draw()
 {
+	InstantDrawer::DrawGraph(position.x, position.y, size.x, size.y, 0, "white2x2", { 0,0,0,alpha });
+
 	for (int32_t i = 0; i < uiOnces.size(); i++)
 	{
 		uiOnces[i].Draw();

@@ -10,9 +10,17 @@ private:
 
 	CircleGauge attackCountGauge;		//動かしたらゲージが伸びて
 	CircleGauge collectCountGauge;
+	CircleGauge skipCountGauge;
 
 	Sprite attackOk;		//okって出したい
 	Sprite collectOk;
+
+	bool isPush;
+	Vector2 AbuttonPos{};
+	Vector2 AbuttonSize{};
+
+	Vector2 skipPos{};
+	Vector2 skipSize{};
 
 public:
 	AttackTutorialScene();

@@ -10,9 +10,17 @@ private:
 
 	CircleGauge moveCountGauge;		//動かしたらゲージが伸びて
 	CircleGauge cameraCountGauge;	
+	CircleGauge skipCountGauge;
 
 	Sprite moveOk;		//okって出したい
 	Sprite cameraOk;	
+
+	bool isPush;
+	Vector2 AbuttonPos{};
+	Vector2 AbuttonSize{};
+
+	Vector2 skipPos{};
+	Vector2 skipSize{};
 
 public:
 	MoveTutorialScene();

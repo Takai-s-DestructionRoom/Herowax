@@ -3,6 +3,8 @@
 #include "InstantDrawer.h"
 #include "GameCamera.h"
 #include "EventCaller.h"
+#include "RInput.h"
+#include "Parameter.h"
 #include "RAudio.h"
 
 AttackTutorialScene::AttackTutorialScene()
@@ -30,12 +32,20 @@ void AttackTutorialScene::Init(const Vector3 target)
 
 	attackCountGauge.Init("attackCountGauge");
 	collectCountGauge.Init("collectCountGauge");
+	skipCountGauge.Init("skipCountGauge");
 
 	attackCountGauge.baseRadian = 360.f;
 	collectCountGauge.baseRadian = 360.f;
+	skipCountGauge.baseRadian = 360.f;
 
 	attackOk = TextureManager::Load("./Resources/UI/ok.png", "ok");
 	collectOk = TextureManager::Load("./Resources/UI/ok.png", "ok");
+
+	auto extract = Parameter::Extract("Aボタン");
+	AbuttonPos.x = Parameter::GetParam(extract, "Aボタン位置X", 0);
+	AbuttonPos.y = Parameter::GetParam(extract, "Aボタン位置Y", 0);
+	AbuttonSize.x = Parameter::GetParam(extract, "AボタンサイズX", 0);
+	AbuttonSize.y = Parameter::GetParam(extract, "AボタンサイズY", 0);
 }
 
 void AttackTutorialScene::Update()
@@ -52,11 +62,24 @@ void AttackTutorialScene::Update()
 	{
 		collectCountGauge.baseRadian -= 3.0f;
 	}
+	//Aボタンかエンターキー押してる間
+	if (RInput::GetInstance()->GetPadButton(XINPUT_GAMEPAD_A) || RInput::GetKey(DIK_RETURN))
+	{
+		skipCountGauge.baseRadian -= 4.0f;
+		isPush = true;
+	}
+	else
+	{
+		skipCountGauge.baseRadian += 8.f;
+		isPush = false;
+	}
 
 	attackCountGauge.baseRadian = Util::Clamp(attackCountGauge.baseRadian, 0.0f, 360.f);
 	collectCountGauge.baseRadian = Util::Clamp(collectCountGauge.baseRadian, 0.0f, 360.f);
+	skipCountGauge.baseRadian = Util::Clamp(skipCountGauge.baseRadian, 0.f, 360.f);
 
-	if (attackCountGauge.baseRadian <= 0.0f && collectCountGauge.baseRadian <= 0.0f)
+	if ((attackCountGauge.baseRadian <= 0.0f && collectCountGauge.baseRadian <= 0.0f) ||
+		skipCountGauge.baseRadian <= 0.0f)
 	{
 		EventCaller::saveCamera = Camera::sNowCamera;
 		RAudio::Play("Select", 1.4f);
@@ -66,9 +89,11 @@ void AttackTutorialScene::Update()
 
 	attackCountGauge.ImGui();
 	collectCountGauge.ImGui();
+	skipCountGauge.ImGui();
 
 	attackCountGauge.Update();
 	collectCountGauge.Update();
+	skipCountGauge.Update();
 
 	attackOk.mTransform.position = attackCountGauge.baseTrans.position;
 	attackOk.mTransform.position.x += 100;
@@ -89,8 +114,26 @@ void AttackTutorialScene::Draw()
 		tutorialUIPos.x, tutorialUIPos.y,
 		0.5f, 0.5f, 0.f, TextureManager::Load("./Resources/UI/tutorial_attack.png", "tutorial_attack"));
 
+	if (isPush)
+	{
+		InstantDrawer::DrawGraph(
+			AbuttonPos.x, AbuttonPos.y,
+			AbuttonSize.x, AbuttonSize.y, 0.f, TextureManager::Load("./Resources/UI/A_push.png", "A_push"));
+	}
+	else
+	{
+		InstantDrawer::DrawGraph(
+			AbuttonPos.x, AbuttonPos.y,
+			AbuttonSize.x, AbuttonSize.y, 0.f, TextureManager::Load("./Resources/UI/A_normal.png", "A_normal"));
+	}
+
+	InstantDrawer::DrawGraph(
+		AbuttonPos.x - 150.f, AbuttonPos.y,
+		0.8f, 0.8f, 0.f, TextureManager::Load("./Resources/UI/skipText.png", "skip"));
+
 	attackCountGauge.Draw();
 	collectCountGauge.Draw();
+	skipCountGauge.Draw();
 
 	if (attackCountGauge.baseRadian <= 0.0f) {
 		attackOk.Draw();

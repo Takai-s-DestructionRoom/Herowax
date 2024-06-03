@@ -1,3 +1,8 @@
+背景位置X:1028
+背景位置Y:643
+背景サイズX:225
+背景サイズY:70
+背景透明度:0.3
 uiPosX0:985
 uiPosY0:54
 uiSizeX0:0.5
@@ -39,9 +44,9 @@ uiPosY9:694
 uiSizeX9:0.3
 uiSizeZ9:0.3
 uiPosX10:1189
-uiPosY10:632
-uiSizeX10:0.3
-uiSizeZ10:0.3
+uiPosY10:630
+uiSizeX10:0.4
+uiSizeZ10:0.4
 uiPosX11:991
 uiPosY11:421
 uiSizeX11:0.45

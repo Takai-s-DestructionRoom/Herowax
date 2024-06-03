@@ -30,5 +30,7 @@ public:
 private:
 	std::array<UIOnce,12> uiOnces;
 	Vector2 position;
+	Vector2 size;
+	float alpha;
 };
 
