@@ -19,9 +19,6 @@ private:
 	Vector2 AbuttonPos{};
 	Vector2 AbuttonSize{};
 
-	Vector2 skipPos{};
-	Vector2 skipSize{};
-
 public:
 	AttackTutorialScene();
 	~AttackTutorialScene();

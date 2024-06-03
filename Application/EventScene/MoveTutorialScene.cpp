@@ -150,6 +150,10 @@ void MoveTutorialScene::Draw()
 			AbuttonSize.x, AbuttonSize.y, 0.f, TextureManager::Load("./Resources/UI/A_normal.png", "A_normal"));
 	}
 
+	InstantDrawer::DrawGraph(
+		AbuttonPos.x - 150.f, AbuttonPos.y,
+		0.8f, 0.8f, 0.f, TextureManager::Load("./Resources/UI/skipText.png", "skip"));
+
 	moveCountGauge.Draw();
 	cameraCountGauge.Draw();
 	skipCountGauge.Draw();
