@@ -33,6 +33,12 @@ void ControlUI::Init()
 {
 	auto extract = Parameter::Extract("UI配置");
 
+	position.x = Parameter::GetParam(extract, "背景位置X", 0);
+	position.y = Parameter::GetParam(extract, "背景位置Y", 0);
+	size.x = Parameter::GetParam(extract, "背景サイズX", 0);
+	size.y = Parameter::GetParam(extract, "背景サイズY", 0);
+	alpha = Parameter::GetParam(extract, "背景透明度", 0);
+
 	for (int32_t i = 0; i < uiOnces.size(); i++)
 	{
 		std::string text1 = "uiPosX" + std::to_string(i);
@@ -78,6 +84,10 @@ void ControlUI::Update()
 		// デバッグモード //
 		ImGui::Begin("操作説明UI");
 
+		ImGui::DragFloat2("背景位置", &position.x);
+		ImGui::DragFloat2("背景サイズ", &size.x);
+		ImGui::DragFloat("背景透明度", &alpha,0.05f);
+
 		for (int32_t i = 0; i < uiOnces.size(); i++)
 		{
 			std::string text1 = "ui位置" + std::to_string(i);
@@ -89,6 +99,13 @@ void ControlUI::Update()
 
 		if (ImGui::Button("セーブ")) {
 			Parameter::Begin("UI配置");
+
+			Parameter::Save("背景位置X", position.x);
+			Parameter::Save("背景位置Y", position.y);
+			Parameter::Save("背景サイズX", size.x);
+			Parameter::Save("背景サイズY", size.y);
+			Parameter::Save("背景透明度", alpha);
+
 			for (int32_t i = 0; i < uiOnces.size(); i++)
 			{
 				std::string text1 = "uiPosX" + std::to_string(i);
@@ -109,6 +126,8 @@ void ControlUI::Update()
 
 void ControlUI::Draw()
 {
+	InstantDrawer::DrawGraph(position.x, position.y, size.x, size.y, 0, "white2x2", { 0,0,0,alpha });
+
 	for (int32_t i = 0; i < uiOnces.size(); i++)
 	{
 		uiOnces[i].Draw();
