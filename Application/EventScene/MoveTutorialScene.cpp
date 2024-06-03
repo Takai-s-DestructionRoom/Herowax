@@ -42,11 +42,16 @@ void MoveTutorialScene::Init(const Vector3 target)
 	moveOk = TextureManager::Load("./Resources/UI/ok.png", "ok");
 	cameraOk = TextureManager::Load("./Resources/UI/ok.png", "ok");
 
-	auto extract = Parameter::Extract("Aボタン");
+	auto extract = Parameter::Extract("スキップ");
 	AbuttonPos.x = Parameter::GetParam(extract, "Aボタン位置X", 0);
 	AbuttonPos.y = Parameter::GetParam(extract, "Aボタン位置Y", 0);
 	AbuttonSize.x = Parameter::GetParam(extract, "AボタンサイズX", 0);
 	AbuttonSize.y = Parameter::GetParam(extract, "AボタンサイズY", 0);
+
+	skipPos.x = Parameter::GetParam(extract, "スキップ位置X", 0);
+	skipPos.y = Parameter::GetParam(extract, "スキップ位置Y", 0);
+	skipSize.x = Parameter::GetParam(extract, "スキップサイズX", 0);
+	skipSize.y = Parameter::GetParam(extract, "スキップサイズY", 0);
 }
 
 void MoveTutorialScene::Update()
@@ -93,18 +98,25 @@ void MoveTutorialScene::Update()
 		ImGui::SetNextWindowSize({ 400, 200 }, ImGuiCond_FirstUseEver);
 
 		// デバッグモード //
-		ImGui::Begin("Aボタン");
+		ImGui::Begin("スキップ");
 
 		ImGui::DragFloat2("Aボタン位置", &AbuttonPos.x);
 		ImGui::DragFloat2("Aボタンサイズ", &AbuttonSize.x);
+		ImGui::DragFloat2("スキップ位置", &skipPos.x);
+		ImGui::DragFloat2("スキップサイズ", &skipSize.x);
 
 		if (ImGui::Button("セーブ")) {
-			Parameter::Begin("Aボタン");
+			Parameter::Begin("スキップ");
 
 			Parameter::Save("Aボタン位置X", AbuttonPos.x);
 			Parameter::Save("Aボタン位置Y", AbuttonPos.y);
 			Parameter::Save("AボタンサイズX", AbuttonSize.x);
 			Parameter::Save("AボタンサイズY", AbuttonSize.y);
+
+			Parameter::Save("スキップ位置X", skipPos.x);
+			Parameter::Save("スキップ位置Y", skipPos.y);
+			Parameter::Save("スキップサイズX", skipSize.x);
+			Parameter::Save("スキップサイズY", skipSize.y);
 			Parameter::End();
 		}
 		ImGui::End();
@@ -151,8 +163,8 @@ void MoveTutorialScene::Draw()
 	}
 
 	InstantDrawer::DrawGraph(
-		AbuttonPos.x - 150.f, AbuttonPos.y,
-		0.8f, 0.8f, 0.f, TextureManager::Load("./Resources/UI/skipText.png", "skip"));
+		skipPos.x, skipPos.y,
+		skipSize.x, skipSize.y, 0.f, TextureManager::Load("./Resources/UI/skipText.png", "skip"));
 
 	moveCountGauge.Draw();
 	cameraCountGauge.Draw();
