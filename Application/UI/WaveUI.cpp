@@ -3,6 +3,8 @@
 #include "RImGui.h"
 #include "Parameter.h"
 #include "Wave.h"
+#include "EventCaller.h"
+#include "ParryTutorialScene.h"
 
 void WaveUI::LoadResource()
 {
@@ -99,10 +101,13 @@ void WaveUI::Update()
 
 void WaveUI::Draw()
 {
-	numDrawer.Draw();
-	atText.Draw();
-	tai.Draw();
-	enemyAllKillText.Draw();
+	if (EventCaller::GetNowEventStr() != ParryTutorialScene::GetEventCallStr()) {
+		numDrawer.Draw();
+		atText.Draw();
+		tai.Draw();
+		enemyAllKillText.Draw();
+	}
+
 	waveBase.Draw();
 	nowwaveDrawer.Draw();
 	maxwaveDrawer.Draw();

@@ -25,6 +25,8 @@
 #include <SimpleDrawer.h>
 #include "AttackTutorialScene.h"
 #include "ParryTutorialScene.h"
+#include "BossAppearanceScene.h"
+#include "BossDeadScene.h"
 
 Player::Player() :GameObject(),
 moveSpeed(1.f), moveAccelAmount(0.05f), isGround(true), hp(0), maxHP(10.f),
@@ -706,8 +708,8 @@ void Player::Draw()
 		//collectRangeModel.Draw();
 
 		//なんのイベントも呼ばれていないか攻撃チュートリアル中ならUIを描画
-		if (EventCaller::GetNowEventStr() == "" ||
-			EventCaller::GetNowEventStr() == AttackTutorialScene::GetEventCallStr()) {
+		if (!(EventCaller::GetNowEventStr() == BossAppearanceScene::GetEventCallStr() ||
+			EventCaller::GetNowEventStr() == BossDeadScene::GetEventCallStr())) {
 			ui.Draw();
 		}
 

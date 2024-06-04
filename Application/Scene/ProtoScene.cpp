@@ -947,14 +947,20 @@ void ProtoScene::Draw()
 
 
 	//なんのイベントも呼ばれていないならUIを描画
-	if (EventCaller::GetNowEventStr() == "") {
-		controlUI.Draw();
+	if (!(EventCaller::GetNowEventStr() == BossAppearanceScene::GetEventCallStr() || 
+		EventCaller::GetNowEventStr() == BossDeadScene::GetEventCallStr())) {
+
+		if (EventCaller::GetNowEventStr() != MoveTutorialScene::GetEventCallStr() && 
+			EventCaller::GetNowEventStr() != AttackTutorialScene::GetEventCallStr()) {
+			controlUI.Draw();
+		}
+		
+		waveUI.Draw();
 	}
 
 	if (Boss::GetInstance()->isAppearanced == false)
 	{
 		//bossAppTimerUI.Draw();
-		waveUI.Draw();
 	}
 
 	//更新
