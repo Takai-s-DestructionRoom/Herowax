@@ -105,8 +105,8 @@ void MoveTutorialScene::Update()
 		if (waitTimer.GetStarted() == false)
 		{
 			waitTimer.Start();
+			RAudio::Play("Select", 1.4f);
 		}
-		RAudio::Play("Select", 1.4f);
 	}
 
 	if (waitTimer.GetEnd())
@@ -160,7 +160,7 @@ void MoveTutorialScene::Update()
 
 	moveOk.mTransform.UpdateMatrix();
 	moveOk.TransferBuffer();
-	
+
 	cameraOk.mTransform.position = cameraCountGauge.baseTrans.position;
 	cameraOk.mTransform.position.x += 100;
 
@@ -173,7 +173,7 @@ void MoveTutorialScene::Draw()
 	InstantDrawer::DrawGraph(
 		tutorialUIPos.x, tutorialUIPos.y,
 		0.5f, 0.5f, 0.f, TextureManager::Load("./Resources/UI/tutorial_move.png", "tutorial_move"));
-	
+
 	if (isPush)
 	{
 		InstantDrawer::DrawGraph(
@@ -197,7 +197,7 @@ void MoveTutorialScene::Draw()
 	cameraCountGauge.Draw();
 	skipCountGaugeBack.Draw();
 	skipCountGauge.Draw();
-	
+
 	if (moveCountGauge.baseRadian <= 0.0f) {
 		moveOk.Draw();
 	}

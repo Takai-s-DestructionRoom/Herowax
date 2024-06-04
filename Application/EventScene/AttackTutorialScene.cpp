@@ -101,8 +101,8 @@ void AttackTutorialScene::Update()
 		if (waitTimer.GetStarted() == false)
 		{
 			waitTimer.Start();
+			RAudio::Play("Select", 1.4f);
 		}
-		RAudio::Play("Select", 1.4f);
 	}
 
 	if (waitTimer.GetEnd())
