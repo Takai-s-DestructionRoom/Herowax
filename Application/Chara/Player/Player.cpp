@@ -708,8 +708,8 @@ void Player::Draw()
 		//collectRangeModel.Draw();
 
 		//なんのイベントも呼ばれていないか攻撃チュートリアル中ならUIを描画
-		if (!(EventCaller::GetNowEventStr() == BossAppearanceScene::GetEventCallStr() ||
-			EventCaller::GetNowEventStr() == BossDeadScene::GetEventCallStr())) {
+		if ((EventCaller::GetNowEventStr() != BossAppearanceScene::GetEventCallStr() ||
+			EventCaller::GetNowEventStr() != BossDeadScene::GetEventCallStr())) {
 			ui.Draw();
 		}
 
