@@ -9,8 +9,11 @@ private:
 	Vector2 tutorialUIPos{};
 
 	CircleGauge moveCountGauge;		//動かしたらゲージが伸びて
+	CircleGauge moveCountGaugeBack;
 	CircleGauge cameraCountGauge;	
+	CircleGauge cameraCountGaugeBack;
 	CircleGauge skipCountGauge;
+	CircleGauge skipCountGaugeBack;
 
 	Sprite moveOk;		//okって出したい
 	Sprite cameraOk;	

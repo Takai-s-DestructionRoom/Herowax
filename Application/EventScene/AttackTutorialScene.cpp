@@ -31,21 +31,36 @@ void AttackTutorialScene::Init(const Vector3 target)
 	tutorialUIPos.y += 300.f;
 
 	attackCountGauge.Init("attackCountGauge");
+	attackCountGaugeBack.Init("attackCountGauge");
 	collectCountGauge.Init("collectCountGauge");
+	collectCountGaugeBack.Init("collectCountGauge");
 	skipCountGauge.Init("skipCountGauge");
+	skipCountGaugeBack.Init("skipCountGauge");
+
+	attackCountGaugeBack.SetTexture(TextureManager::Load("./Resources/circleGaugeBack.png", "circleGaugeBack"));
+	collectCountGaugeBack.SetTexture(TextureManager::Load("./Resources/circleGaugeBack.png", "circleGaugeBack"));
+	skipCountGaugeBack.SetTexture(TextureManager::Load("./Resources/circleGaugeBack.png", "circleGaugeBack"));
 
 	attackCountGauge.baseRadian = 360.f;
+	attackCountGaugeBack.baseRadian = 0.f;
 	collectCountGauge.baseRadian = 360.f;
+	collectCountGaugeBack.baseRadian = 0.f;
 	skipCountGauge.baseRadian = 360.f;
+	skipCountGaugeBack.baseRadian = 0.f;
 
 	attackOk = TextureManager::Load("./Resources/UI/ok.png", "ok");
 	collectOk = TextureManager::Load("./Resources/UI/ok.png", "ok");
 
-	auto extract = Parameter::Extract("Aボタン");
+	auto extract = Parameter::Extract("スキップ");
 	AbuttonPos.x = Parameter::GetParam(extract, "Aボタン位置X", 0);
 	AbuttonPos.y = Parameter::GetParam(extract, "Aボタン位置Y", 0);
 	AbuttonSize.x = Parameter::GetParam(extract, "AボタンサイズX", 0);
 	AbuttonSize.y = Parameter::GetParam(extract, "AボタンサイズY", 0);
+
+	skipPos.x = Parameter::GetParam(extract, "スキップ位置X", 0);
+	skipPos.y = Parameter::GetParam(extract, "スキップ位置Y", 0);
+	skipSize.x = Parameter::GetParam(extract, "スキップサイズX", 0);
+	skipSize.y = Parameter::GetParam(extract, "スキップサイズY", 0);
 }
 
 void AttackTutorialScene::Update()
@@ -92,8 +107,11 @@ void AttackTutorialScene::Update()
 	skipCountGauge.ImGui();
 
 	attackCountGauge.Update();
+	attackCountGaugeBack.Update();
 	collectCountGauge.Update();
+	collectCountGaugeBack.Update();
 	skipCountGauge.Update();
+	skipCountGaugeBack.Update();
 
 	attackOk.mTransform.position = attackCountGauge.baseTrans.position;
 	attackOk.mTransform.position.x += 100;
@@ -128,11 +146,14 @@ void AttackTutorialScene::Draw()
 	}
 
 	InstantDrawer::DrawGraph(
-		AbuttonPos.x - 150.f, AbuttonPos.y,
-		0.8f, 0.8f, 0.f, TextureManager::Load("./Resources/UI/skipText.png", "skip"));
+		skipPos.x, skipPos.y,
+		skipSize.x, skipSize.y, 0.f, TextureManager::Load("./Resources/UI/skipText.png", "skip"));
 
+	attackCountGaugeBack.Draw();
 	attackCountGauge.Draw();
+	collectCountGaugeBack.Draw();
 	collectCountGauge.Draw();
+	skipCountGaugeBack.Draw();
 	skipCountGauge.Draw();
 
 	if (attackCountGauge.baseRadian <= 0.0f) {

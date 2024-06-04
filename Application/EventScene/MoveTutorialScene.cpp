@@ -33,12 +33,22 @@ void MoveTutorialScene::Init(const Vector3 target)
 	tutorialUIPos.y += 300.f;
 
 	moveCountGauge.Init("moveCountGauge");
+	moveCountGaugeBack.Init("moveCountGauge");
 	cameraCountGauge.Init("cameraCountGauge");
+	cameraCountGaugeBack.Init("cameraCountGauge");
 	skipCountGauge.Init("skipCountGauge");
+	skipCountGaugeBack.Init("skipCountGauge");
+
+	moveCountGaugeBack.SetTexture(TextureManager::Load("./Resources/circleGaugeBack.png", "circleGaugeBack"));
+	cameraCountGaugeBack.SetTexture(TextureManager::Load("./Resources/circleGaugeBack.png", "circleGaugeBack"));
+	skipCountGaugeBack.SetTexture(TextureManager::Load("./Resources/circleGaugeBack.png", "circleGaugeBack"));
 
 	moveCountGauge.baseRadian = 360.f;
+	moveCountGaugeBack.baseRadian = 0.f;
 	cameraCountGauge.baseRadian = 360.f;
+	cameraCountGaugeBack.baseRadian = 0.f;
 	skipCountGauge.baseRadian = 360.f;
+	skipCountGaugeBack.baseRadian = 0.f;
 
 	moveOk = TextureManager::Load("./Resources/UI/ok.png", "ok");
 	cameraOk = TextureManager::Load("./Resources/UI/ok.png", "ok");
@@ -129,8 +139,11 @@ void MoveTutorialScene::Update()
 	skipCountGauge.ImGui();
 
 	moveCountGauge.Update();
+	moveCountGaugeBack.Update();
 	cameraCountGauge.Update();
+	cameraCountGaugeBack.Update();
 	skipCountGauge.Update();
+	skipCountGaugeBack.Update();
 
 	moveOk.mTransform.position = moveCountGauge.baseTrans.position;
 	moveOk.mTransform.position.x += 100;
@@ -168,8 +181,11 @@ void MoveTutorialScene::Draw()
 		skipPos.x, skipPos.y,
 		skipSize.x, skipSize.y, 0.f, TextureManager::Load("./Resources/UI/skipText.png", "skip"));
 
+	moveCountGaugeBack.Draw();
 	moveCountGauge.Draw();
+	cameraCountGaugeBack.Draw();
 	cameraCountGauge.Draw();
+	skipCountGaugeBack.Draw();
 	skipCountGauge.Draw();
 	
 	if (moveCountGauge.baseRadian <= 0.0f) {

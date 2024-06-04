@@ -9,8 +9,11 @@ private:
 	Vector2 tutorialUIPos{};
 
 	CircleGauge attackCountGauge;		//動かしたらゲージが伸びて
+	CircleGauge attackCountGaugeBack;		//動かしたらゲージが伸びて
 	CircleGauge collectCountGauge;
+	CircleGauge collectCountGaugeBack;
 	CircleGauge skipCountGauge;
+	CircleGauge skipCountGaugeBack;
 
 	Sprite attackOk;		//okって出したい
 	Sprite collectOk;
