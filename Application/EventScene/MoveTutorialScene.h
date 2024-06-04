@@ -25,6 +25,8 @@ private:
 	Vector2 skipPos{};
 	Vector2 skipSize{};
 
+	Easing::EaseTimer waitTimer = 0.5f;
+
 public:
 	MoveTutorialScene();
 	~MoveTutorialScene();

@@ -26,6 +26,7 @@ void MoveTutorialScene::Init(const Vector3 target)
 	RAudio::Load("Resources/Sounds/SE/A_select.wav", "Select");
 
 	eventTimer.Start();
+	waitTimer.Reset();
 
 	isActive = true;
 
@@ -68,6 +69,7 @@ void MoveTutorialScene::Init(const Vector3 target)
 void MoveTutorialScene::Update()
 {
 	eventTimer.Update();
+	waitTimer.Update();
 
 	//GameCamera::GetInstance()->Update();
 
@@ -100,9 +102,17 @@ void MoveTutorialScene::Update()
 	if (moveCountGauge.baseRadian <= 0.0f && cameraCountGauge.baseRadian <= 0.0f ||
 		skipCountGauge.baseRadian <= 0.0f)
 	{
+		if (waitTimer.GetStarted() == false)
+		{
+			waitTimer.Start();
+		}
+		RAudio::Play("Select", 1.4f);
+	}
+
+	if (waitTimer.GetEnd())
+	{
 		Camera::sNowCamera = nullptr;
 		isActive = false;
-		RAudio::Play("Select", 1.4f);
 	}
 
 	if (RImGui::showImGui)

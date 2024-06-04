@@ -24,6 +24,7 @@ void AttackTutorialScene::Init(const Vector3 target)
 	Camera::sNowCamera = &GameCamera::GetInstance()->camera;
 
 	eventTimer.Start();
+	waitTimer.Reset();
 
 	isActive = true;
 
@@ -66,6 +67,7 @@ void AttackTutorialScene::Init(const Vector3 target)
 void AttackTutorialScene::Update()
 {
 	eventTimer.Update();
+	waitTimer.Update();
 
 	//攻撃してる間
 	if (Player::GetIsAttackTutorial())
@@ -96,8 +98,16 @@ void AttackTutorialScene::Update()
 	if ((attackCountGauge.baseRadian <= 0.0f && collectCountGauge.baseRadian <= 0.0f) ||
 		skipCountGauge.baseRadian <= 0.0f)
 	{
-		EventCaller::saveCamera = Camera::sNowCamera;
+		if (waitTimer.GetStarted() == false)
+		{
+			waitTimer.Start();
+		}
 		RAudio::Play("Select", 1.4f);
+	}
+
+	if (waitTimer.GetEnd())
+	{
+		EventCaller::saveCamera = Camera::sNowCamera;
 		Camera::sNowCamera = nullptr;
 		isActive = false;
 	}
