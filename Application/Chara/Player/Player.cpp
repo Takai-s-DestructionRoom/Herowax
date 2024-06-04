@@ -1053,39 +1053,36 @@ void Player::WaxCollect()
 	collectRangeModel.TransferBuffer(Camera::sNowCamera->mViewProjection);
 
 	//イベント中でなければ入る
-	if (EventCaller::GetNowEventStr() == "") {
+	int32_t nowPlusNum = EnemyManager::GetInstance()->collectNum;
+	if (nowPlusNum > 0) {
+		waxCollectAmount += nowPlusNum;
+		MaxWaxPlus(nowPlusNum);
+	}
+	EnemyManager::GetInstance()->collectNum = 0;
 
-		int32_t nowPlusNum = EnemyManager::GetInstance()->collectNum;
-		if (nowPlusNum > 0) {
-			waxCollectAmount += nowPlusNum;
-			MaxWaxPlus(nowPlusNum);
-		}
-		EnemyManager::GetInstance()->collectNum = 0;
+	//回収が完了したら増やす
+	waxCollectAmount += WaxManager::GetInstance()->collectWaxNum;
+	WaxManager::GetInstance()->collectWaxNum = 0;
 
-		//回収が完了したら増やす
-		waxCollectAmount += WaxManager::GetInstance()->collectWaxNum;
-		WaxManager::GetInstance()->collectWaxNum = 0;
+	if (waxCollectAmount > 0)
+	{
+		waxStock += waxCollectAmount;
 
-		if (waxCollectAmount > 0)
-		{
-			waxStock += waxCollectAmount;
+		collectCount += waxCollectAmount;
 
-			collectCount += waxCollectAmount;
+		//音鳴らす
+		RAudio::Play("eCollect", 0.5f, 1.0f + 1.0f * (collectCount / 100.0f));
 
-			//音鳴らす
-			RAudio::Play("eCollect", 0.5f, 1.0f + 1.0f * (collectCount / 100.0f));
+		ParticleManager::GetInstance()->AddHoming2D(
+			Util::GetScreenPos(obj.mTransform.position), { 150.f,150.f }, waxCollectAmount, 0.8f,
+			Color::kWaxColor,
+			TextureManager::Load("./Resources/Particle/particle_simple.png", "particleSimple"),
+			150.f, 180.f, { -1.f,-1.f }, { 1.f,1.f },
+			ui.numDrawer.GetPos(), 0.f,
+			0.01f, 0.05f,
+			0.1f, 0.f);
 
-			ParticleManager::GetInstance()->AddHoming2D(
-				Util::GetScreenPos(obj.mTransform.position), { 150.f,150.f }, waxCollectAmount, 0.8f,
-				Color::kWaxColor,
-				TextureManager::Load("./Resources/Particle/particle_simple.png", "particleSimple"),
-				150.f, 180.f, { -1.f,-1.f }, { 1.f,1.f },
-				ui.numDrawer.GetPos(), 0.f,
-				0.01f, 0.05f,
-				0.1f, 0.f);
-
-			waxCollectAmount = 0;
-		}
+		waxCollectAmount = 0;
 	}
 
 	if (GetWaxCollectButtonDown()) {
