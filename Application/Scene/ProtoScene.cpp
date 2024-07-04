@@ -238,7 +238,7 @@ void ProtoScene::Update()
 		//登場演出なら、ボスの登場演出モードを解除
 		if (EventCaller::GetNowEventStr() == BossAppearanceScene::GetEventCallStr()) {
 			Boss::GetInstance()->isAppearance = false;
-			isEventSceneChange = true;
+			//isEventSceneChange = true;
 		}
 
 		//移動チュートリアルが終わってて、イベントシーンではなく、攻撃チュートリアルが終わってないなら
@@ -260,9 +260,10 @@ void ProtoScene::Update()
 		EventCaller::saveCamera = nullptr;
 
 		if (isEventSceneChange == false)
-		{
+		{	
 			EventCaller::NowEventStrReset();
 		}
+
 	}
 
 	GameCamera::GetInstance()->Update();
@@ -947,16 +948,14 @@ void ProtoScene::Draw()
 
 
 	//なんのイベントも呼ばれていないならUIを描画
-	
-
-	if ((EventCaller::GetNowEventStr() != BossAppearanceScene::GetEventCallStr() && 
-		EventCaller::GetNowEventStr() != BossDeadScene::GetEventCallStr())) {
-		
-		
-	}
+	std::string eventstr = EventCaller::GetNowEventStr();
+	eventstr;
 
 	if (EventCaller::GetNowEventStr() != MoveTutorialScene::GetEventCallStr() &&
-		EventCaller::GetNowEventStr() != AttackTutorialScene::GetEventCallStr()) {
+		EventCaller::GetNowEventStr() != AttackTutorialScene::GetEventCallStr() &&
+		EventCaller::GetNowEventStr() != BossAppearanceScene::GetEventCallStr() &&
+		EventCaller::GetNowEventStr() != BossDeadScene::GetEventCallStr()) {
+		
 		controlUI.Draw();
 
 		waveUI.Draw();
